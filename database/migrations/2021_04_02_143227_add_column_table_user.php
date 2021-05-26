@@ -31,7 +31,7 @@ class AddColumnTableUser extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('posts_parent_id_foreign');
+            $table->dropForeign('users_parent_id_foreign');
             $table->dropColumn('status');
         });
     }
