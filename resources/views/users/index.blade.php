@@ -21,7 +21,9 @@
                                 <th scope="col">@lang('Name')</th>
                                 <th scope="col">@lang('E-mail')</th>
                                 <th scope="col">@lang('Role')</th>
+                                @unlessrole('SuperAdmin')
                                 <th scope="col">@lang('Legal entities')</th>
+                                @endunlessrole
                                 <th scope="col">@lang('Status')</th>
                                 <th scope="col"></th>
                             </tr>
@@ -42,6 +44,7 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->getRole() }}</td>
+                                @unlessrole('SuperAdmin')
                                 <td>
                                     @if($user->legals->isNotEmpty())
                                     <a href="{{ route('legals.view', ['user'=>$user->id, 'legal'=>$user->legals->pluck('id')->first()]) }}">
@@ -53,6 +56,7 @@
                                         <p>{{ __('No Legal entity') }}</p>
                                     @endif
                                 </td>
+                                @endunlessrole
                                 <td>@if($user->status)
                                         <span class="badge badge-success">{{ 'Включен' }}</span>
                                     @else
