@@ -84,8 +84,8 @@
 
         <div class="col-md-6">
             <select class="custom-select @error('status') is-invalid @enderror" name="status" id="status" required>
-                <option @if(isset($user) && $user->status == 1) selected @endif  value="1">{{ __('Enabled') }}</option>
-                <option @if(isset($user) && $user->status == 0) selected @endif value="0">{{ __('Disabled') }}</option>
+                <option @if(isset($user) && $user->status == 1) selected @endif  value="1">{{ __('Active') }}</option>
+                <option @if(isset($user) && $user->status == 0) selected @endif value="0">{{ __('Not active') }}</option>
             </select>
             @error('status')
             <span class="invalid-feedback" role="alert">

@@ -231,5 +231,7 @@
     "No Legal entity": "Нет Юр.лица",
     "Your Administrator did not create more than one Legal Entity. You can't continue working.": "Ваш Администратор не создал не одного Юр. лица. Вы не можете продолжить работу.",
     "Deleted.": "Удалено",
-    "show all": "показать все"
+    "show all": "показать все",
+    "Active": "Активен",
+    "Not active": "Не активен"
 }
