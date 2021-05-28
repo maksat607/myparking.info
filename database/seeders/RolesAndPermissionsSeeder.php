@@ -26,6 +26,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'permission_update',
             'legal_view',
             'legal_create',
+            'legal_update',
             'legal_delete',
         ];
 
