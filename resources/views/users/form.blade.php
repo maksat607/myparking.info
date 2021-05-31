@@ -53,7 +53,7 @@
 
         <div class="col-md-6">
             <input id="password-confirm" type="password" class="form-control"
-                   name="password_confirmation" @if(!isset($user)) {{ 'required' }} @endif>
+                   name="password_confirmation" @if(!isset($user)) {{ 'required' }} @endif autocomplete="off">
         </div>
     </div>
 
