@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Legal;
+use App\Models\Parking;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,8 +16,26 @@ class LegalController extends AppController
 {
     public function __construct()
     {
-        $this->middleware(['role:SuperAdmin'])->only(['all', 'view']);
-        $this->middleware(['role:Admin'])->except(['all', 'view']);
+
+        $this->middleware(['role:Admin'])->except([
+            'allForParking',
+            'viewForParking',
+            'allForUser',
+            'viewForUser',
+        ]);
+
+        $this->middleware(['role:SuperAdmin'])->except([
+            'allForParking',
+            'viewForParking',
+            'index',
+            'create',
+            'show',
+            'store',
+            'edit',
+            'update',
+            'destroy',
+        ]);
+
 
         $this->middleware(['permission:legal_view'])->only('index', 'show');
         $this->middleware(['permission:legal_create'])->only('create', 'store');
@@ -25,7 +44,7 @@ class LegalController extends AppController
     }
 
 
-    public function all($id)
+    public function allForUser($id)
     {
         $user = User::role(['SuperAdmin', 'Admin'])->findOrFail($id);
         $legals = $user->legals;
@@ -34,10 +53,34 @@ class LegalController extends AppController
         return view('legals.admin.index', compact('legals', 'title'));
     }
 
-    public function view($user_id, $legal_id)
+    public function viewForUser($user_id, $legal_id)
     {
 //        $legal = User::findOrFail($user_id)->legals()->where('id', $legal_id)->firstOrFail();
         $legal = Legal::where('id', $legal_id)->where('user_id', $user_id)->firstOrFail();
+
+        $title = __('View legal entity: :Legal', ['legal'=>$legal->name]);
+
+        return view('legals.admin.view', compact('legal', 'title'));
+    }
+
+    public function allForParking($id)
+    {
+        $parking = Parking::where('id', $id)->firstOrFail();
+        $legals = $parking->legals;
+        $title = __('Legal entities of the parking :Parking', ['parking'=>$parking->title]);
+
+        return view('legals.admin.index', compact('legals', 'parking', 'title'));
+    }
+
+    public function viewForParking($parking_id, $legal_id)
+    {
+        $parking = Parking::where('id', $parking_id)->firstOrFail();
+        $legal = $parking->legals->find($legal_id);
+//        $legal = $parking->legals->where('id', $legal_id)->first();
+
+        if(is_null($legal)) {
+            abort(404);
+        };
 
         $title = __('View legal entity: :Legal', ['legal'=>$legal->name]);
 

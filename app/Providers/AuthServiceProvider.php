@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Parking;
 use App\Models\User;
+use App\Policies\ParkingPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -18,8 +20,9 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-//         'App\Models\Model' => 'App\Policies\ModelPolicy',
-         User::class => UserPolicy::class,
+//      'App\Models\Model' => 'App\Policies\ModelPolicy',
+        User::class => UserPolicy::class,
+        Parking::class => ParkingPolicy::class,
     ];
 
     /**

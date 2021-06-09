@@ -13,25 +13,17 @@
 
                             @if($legals->isNotEmpty())
                             <table class="table">
-                            <thead class="thead-dark">
-                                <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">@lang('Name')</th>
-                                <th scope="col">@lang('Reg. Number')</th>
-                                <th scope="col">@lang('INN')</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($legals as $legal)
-                                <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
-                                    <td>
-                                        <a href="{{ route('legals.view', ['user'=>$legal->owner->id, 'legal'=>$legal->id]) }}">{{ $legal->name }}</a>
-                                    </td>
-                                    <td>{{ $legal->reg_number }}</td>
-                                    <td>{{ $legal->inn }}</td>
-                            @endforeach
-                            </tbody>
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">@lang('Name')</th>
+                                        <th scope="col">@lang('Reg. Number')</th>
+                                        <th scope="col">@lang('INN')</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                @includeWhen(request()->routeIs('legals.all'), 'legals.admin.all_for_user')
+                                @includeWhen(request()->routeIs('legals.parkings.all'), 'legals.admin.all_for_parking')
                             </table>
                             @else
                                 <p>{{ __('Legal entities have not yet been created. Create at least one record.') }}</p>
