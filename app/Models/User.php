@@ -90,6 +90,16 @@ class User extends Authenticatable implements MustVerifyEmail
         } else {
             return $query->where('parent_id', auth()->id())->with(['roles']);
         }
+        return $query;
+    }
 
+    public function scopeUser($query, $id)
+    {
+        if(auth()->user()->hasRole('Admin')) {
+            return $query->where('id', $id)->where('parent_id', auth()->user()->id);
+        } else {
+            return $query->where('id', $id);
+        }
+        return $query;
     }
 }

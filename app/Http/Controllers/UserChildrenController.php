@@ -20,11 +20,7 @@ class UserChildrenController extends AppController
      */
     public function __construct()
     {
-
-        $this->middleware(['permission:user_view'])->only('index', 'show');
-        $this->middleware(['permission:user_create'])->only('create', 'store');
-        $this->middleware(['permission:user_update'])->only('edit', 'update');
-        $this->middleware(['permission:user_delete'])->only('destroy');
+        $this->middleware(['role:SuperAdmin']);
     }
     /**
      * Display a listing of the resource.
@@ -33,8 +29,8 @@ class UserChildrenController extends AppController
      */
     public function index($id)
     {
-
-        $user = User::with('roles')->findOrFail($id);
+        $user = User::role(['SuperAdmin', 'Admin'])
+            ->with(['roles', 'children'])->findOrFail($id);
         $children = $user->children;
         $title = __('Your Users');
 
@@ -52,7 +48,7 @@ class UserChildrenController extends AppController
      */
     public function create($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::role(['SuperAdmin', 'Admin'])->findOrFail($id);
         $roles = Role::whereIn('name', ['Moderator', 'Operator'])->pluck('name');
         $title = __('Create new user for :User', ['User' => $user->name]);
 
@@ -76,11 +72,9 @@ class UserChildrenController extends AppController
             'status' => ['boolean'],
         ])->validate();
 
-        if( !isset($id) ) {
-            abort(404);
-        }
+        $user = User::role(['SuperAdmin', 'Admin'])->findOrFail($id);
 
-        $userData = [
+        $childData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -88,15 +82,15 @@ class UserChildrenController extends AppController
             'parent_id' => $id,
         ];
 
-        $user = User::create($userData);
+        $childModel = new User($childData);
+        $child = $user->children()->save($childModel);
 
-        $user->roles()->detach();
-        $user->assignRole($request->role);
+        $child->assignRole($request->role);
 
-        $user->notify(new CreateUserNotifications($request->password));
+        $child->notify(new CreateUserNotifications($request->password));
 
-        return ($user->exists)
-            ? redirect()->route('users.children.index', ['user' => $id])->with('success', __('Saved.'))
+        return ($child->exists)
+            ? redirect()->route('users.children.index', ['user' => $user->id])->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
     }
 
@@ -160,7 +154,7 @@ class UserChildrenController extends AppController
         $child->assignRole($request->role);
 
         return ($child->save())
-            ? redirect()->back()->with('success', __('Saved.'))
+            ? redirect()->route('users.children.index', ['user' => $user_id])->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
     }
 

@@ -114,7 +114,7 @@ class UserController extends AppController
     public function show($id)
     {
 
-        $user = User::findOrFail($id);
+        $user = User::user($id)->firstOrFail();
         $this->authorize('viewUser', $user);
         $title = __('View user :User', ['user' => $user->name]);
 
@@ -129,7 +129,7 @@ class UserController extends AppController
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::user($id)->firstOrFail();
         $this->authorize('updateUser', $user);
         $roles = Role::all()->pluck('name');
 
@@ -148,7 +148,7 @@ class UserController extends AppController
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::user($id)->firstOrFail();
         $this->authorize('updateUser', $user);
 
         Validator::make($request->all(), [
@@ -177,7 +177,7 @@ class UserController extends AppController
         $user->assignRole($request->role);
 
         return ($user->save())
-            ? redirect()->back()->with('success', __('Saved.'))
+            ? redirect()->route('users.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
     }
 
@@ -189,7 +189,7 @@ class UserController extends AppController
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::user($id)->firstOrFail();
         $this->authorize('deleteUser', $user);
         if (Gate::denies('delete_self', $user)) {
             return redirect()->back()->with('warning', __('You are not allowed to delete it.'));
