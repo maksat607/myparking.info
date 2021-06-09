@@ -85,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         if(auth()->user()->hasRole('SuperAdmin')) {
             return $query->whereNull('parent_id')->with(['roles'])->withCount('children');
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $query->where('parent_id', auth()->user()->parent_id)->where('id', '<>', auth()->id())->with(['roles']);
         } else {
             return $query->where('parent_id', auth()->id())->with(['roles']);

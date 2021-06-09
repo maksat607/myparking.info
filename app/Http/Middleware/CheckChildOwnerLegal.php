@@ -19,7 +19,7 @@ class CheckChildOwnerLegal
     {
         if(Auth::guest()) return $next($request);
 
-        if (auth()->user()->owner && auth()->user()->owner->legals()->doesntExist() && auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        if (auth()->user()->owner && auth()->user()->owner->legals()->doesntExist() && auth()->user()->hasRole(['Manager', 'Operator'])) {
             return redirect()->route('home')
                 ->with('warning',
                     __('Your Administrator did not create more than one Legal Entity. You can\'t continue working.'));

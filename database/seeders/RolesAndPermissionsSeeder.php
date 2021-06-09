@@ -28,6 +28,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'legal_create',
             'legal_update',
             'legal_delete',
+            'parking_view',
+            'parking_create',
+            'parking_update',
+            'parking_delete',
         ];
 
         $permissions = collect($arrayOfPermissionNames)->map(function ($permission) {
@@ -38,7 +42,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $role = Role::create(['name' => 'SuperAdmin']);
                 Role::create(['name' => 'Admin']);
-                Role::create(['name' => 'Moderator']);
+                Role::create(['name' => 'Manager']);
                 Role::create(['name' => 'Operator']);
         $role->givePermissionTo(Permission::all());
     }

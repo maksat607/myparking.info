@@ -49,7 +49,7 @@ class UserChildrenController extends AppController
     public function create($id)
     {
         $user = User::role(['SuperAdmin', 'Admin'])->findOrFail($id);
-        $roles = Role::whereIn('name', ['Moderator', 'Operator'])->pluck('name');
+        $roles = Role::whereIn('name', ['Manager', 'Operator'])->pluck('name');
         $title = __('Create new user for :User', ['User' => $user->name]);
 
         return view('users.children.create', compact('user', 'roles', 'title'));
@@ -117,7 +117,7 @@ class UserChildrenController extends AppController
     public function edit($user_id, $child_id)
     {
         $child = User::where('id', $child_id)->where('parent_id', $user_id)->firstOrFail();
-        $roles = Role::whereIn('name', ['Moderator', 'Operator'])->pluck('name');
+        $roles = Role::whereIn('name', ['Manager', 'Operator'])->pluck('name');
         $title = __('Edit user :User', ['user' => $child->name]);
 
         return view('users.children.edit', compact('child', 'roles', 'title'));

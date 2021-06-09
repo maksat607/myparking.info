@@ -21,7 +21,7 @@ class UserPolicy
     {
         if(auth()->user()->hasRole('SuperAdmin')) {
             return true;
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $model->parent_id == $user->owner->id;
         } else {
             return $model->parent_id == $user->id;
@@ -39,7 +39,7 @@ class UserPolicy
     {
         if(auth()->user()->hasRole('SuperAdmin')) {
             return true;
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $model->parent_id == $user->owner->id;
         } else {
             return $model->parent_id == $user->id;
@@ -57,7 +57,7 @@ class UserPolicy
     {
         if(auth()->user()->hasRole('SuperAdmin')) {
             return true;
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $model->parent_id == $user->owner->id;
         } else {
             return $model->parent_id == $user->id;
