@@ -29,8 +29,7 @@ class UserChildrenController extends AppController
      */
     public function index($id)
     {
-        $user = User::role(['SuperAdmin', 'Admin'])
-            ->with(['roles', 'children'])->findOrFail($id);
+        $user = User::role(['SuperAdmin', 'Admin'])->findOrFail($id);
         $children = $user->children;
         $title = __('Your Users');
 
