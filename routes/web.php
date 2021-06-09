@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserChildrenController;
@@ -75,10 +76,16 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Legal*/
 //    Route::get('legal', [LegalController::class, 'edit'])->name('legal');
     Route::resource('legals', LegalController::class);
-    Route::get('legals/all/{user}', [LegalController::class, 'all'])->name('legals.all');
-    Route::get('legals/user/{user}/legal/{legal}', [LegalController::class, 'view'])->name('legals.view');
+    Route::get('legals/user/{user}/all', [LegalController::class, 'allForUser'])->name('legals.all');
+    Route::get('legals/user/{user}/legal/{legal}', [LegalController::class, 'viewForUser'])->name('legals.view');
+    Route::get('legals/parking/{parking}/all', [LegalController::class, 'allForParking'])->name('legals.parkings.all');
+    Route::get('legals/parking/{parking}/legal/{legal}', [LegalController::class, 'viewForParking'])
+        ->name('legals.parkings.view');
 
     /*Profile*/
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    /*Parkings*/
+    Route::resource('parkings', ParkingController::class);
 });

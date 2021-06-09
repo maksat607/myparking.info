@@ -229,9 +229,18 @@
     "Legal entities of the user :User": "Юр.лица пользователя :User",
     "You don't have a single Legal entity. Please create at least one Legal Entity to continue using the service.": "У Вас нет ни одного Юр.лица. Пожалуйста создайте минимум одно Юр.лицо, чтобы продолжить использование сервиса.",
     "No Legal entity": "Нет Юр.лица",
+    "Edit legal entity: :Legal": "Редактировать юридическое лицо: :Legal",
     "Your Administrator did not create more than one Legal Entity. You can't continue working.": "Ваш Администратор не создал не одного Юр. лица. Вы не можете продолжить работу.",
     "Deleted.": "Удалено",
     "show all": "показать все",
     "Active": "Активен",
-    "Not active": "Не активен"
+    "Not active": "Не активен",
+    "Failed to save": "Не удалось сохранить",
+    "Parking lots": "Парковки",
+    "Create new Parking": "Создайте новую парковку",
+    "View parking :Parking": "Просмотр парковки :Parking",
+    "Region": "Регион",
+    "Address": "Адрес",
+    "Timezone": "Часовой пояс",
+    "Edit parking :Parking": "Редактировать парковку: :Parking"
 }

@@ -331,7 +331,7 @@ eval("window._ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodas
   \*****************************************/
 /***/ (() => {
 
-eval("$('select').select2({\n  theme: 'bootstrap4'\n});//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9yZXNvdXJjZXMvanMvc2VsZWN0Mi9zZWxjdGUyLmpzP2E4NTUiXSwibmFtZXMiOlsiJCIsInNlbGVjdDIiLCJ0aGVtZSJdLCJtYXBwaW5ncyI6IkFBQUFBLENBQUMsQ0FBQyxRQUFELENBQUQsQ0FBWUMsT0FBWixDQUFvQjtBQUNoQkMsRUFBQUEsS0FBSyxFQUFFO0FBRFMsQ0FBcEIiLCJzb3VyY2VzQ29udGVudCI6WyIkKCdzZWxlY3QnKS5zZWxlY3QyKHtcbiAgICB0aGVtZTogJ2Jvb3RzdHJhcDQnLFxufSk7XG4iXSwiZmlsZSI6Ii4vcmVzb3VyY2VzL2pzL3NlbGVjdDIvc2VsY3RlMi5qcy5qcyIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./resources/js/select2/selcte2.js\n");
+eval("$('select').select2({\n  theme: 'bootstrap4'\n});\n$('select.multiple').select2();//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9yZXNvdXJjZXMvanMvc2VsZWN0Mi9zZWxjdGUyLmpzP2E4NTUiXSwibmFtZXMiOlsiJCIsInNlbGVjdDIiLCJ0aGVtZSJdLCJtYXBwaW5ncyI6IkFBQUFBLENBQUMsQ0FBQyxRQUFELENBQUQsQ0FBWUMsT0FBWixDQUFvQjtBQUNoQkMsRUFBQUEsS0FBSyxFQUFFO0FBRFMsQ0FBcEI7QUFJQUYsQ0FBQyxDQUFDLGlCQUFELENBQUQsQ0FBcUJDLE9BQXJCIiwic291cmNlc0NvbnRlbnQiOlsiJCgnc2VsZWN0Jykuc2VsZWN0Mih7XG4gICAgdGhlbWU6ICdib290c3RyYXA0Jyxcbn0pO1xuXG4kKCdzZWxlY3QubXVsdGlwbGUnKS5zZWxlY3QyKCk7XG4iXSwiZmlsZSI6Ii4vcmVzb3VyY2VzL2pzL3NlbGVjdDIvc2VsY3RlMi5qcy5qcyIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./resources/js/select2/selcte2.js\n");
 
 /***/ }),
 
