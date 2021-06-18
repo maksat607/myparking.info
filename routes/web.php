@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
+use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PartnerTypeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserChildrenController;
 use App\Http\Controllers\UserController;
+use App\Models\Partner;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -88,4 +91,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     /*Parkings*/
     Route::resource('parkings', ParkingController::class);
+
+    /*PartnerTypes*/
+    Route::resource('partner-types', PartnerTypeController::class)
+        ->except(['show', 'destroy']);
+
+    /*Partners*/
+    Route::resource('partners', PartnerController::class)
+        ->except(['show', 'destroy']);
 });
