@@ -44,6 +44,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 Role::create(['name' => 'Admin']);
                 Role::create(['name' => 'Manager']);
                 Role::create(['name' => 'Operator']);
+                Role::create(['name' => 'Partner']);
+                Role::create(['name' => 'Partner Operator']);
         $role->givePermissionTo(Permission::all());
     }
 }

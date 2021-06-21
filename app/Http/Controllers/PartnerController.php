@@ -7,7 +7,7 @@ use App\Models\PartnerType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PartnerController extends Controller
+class PartnerController extends AppController
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +19,7 @@ class PartnerController extends Controller
         $partners = Partner::with('partnerType')->get();
         $title = __('Partners');
 
-        return view('partner.index', compact('title', 'partners'));
+        return view('partners.index', compact('title', 'partners'));
     }
 
     /**
@@ -32,7 +32,7 @@ class PartnerController extends Controller
         $partner_types = PartnerType::all();
         $title = __('Create new Partner');
 
-        return view('partner.create', compact('title', 'partner_types'));
+        return view('partners.create', compact('title', 'partner_types'));
     }
 
     /**
@@ -84,7 +84,7 @@ class PartnerController extends Controller
         $partner = Partner::findOrFail($id);
         $partner_types = PartnerType::all();
         $title = __('Edit partner :Partner', ['partner' => $partner->name]);
-        return view('partner.edit', compact('title', 'partner', 'partner_types'));
+        return view('partners.edit', compact('title', 'partner', 'partner_types'));
     }
 
     /**

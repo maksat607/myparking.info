@@ -23,4 +23,9 @@ class Partner extends Model
     {
         return $this->belongsTo(PartnerType::class, 'partner_type_id', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

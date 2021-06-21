@@ -52,7 +52,7 @@
 
         <div class="col-md-6">
             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email"
-                   value="@if(isset($partner)){{ $partner->address }}@else{{ old('email') }}@endif">
+                   value="@if(isset($partner)){{ $partner->email }}@else{{ old('email') }}@endif">
 
             @error('email')
             <span class="invalid-feedback" role="alert">

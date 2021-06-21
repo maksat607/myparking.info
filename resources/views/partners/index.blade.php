@@ -45,11 +45,27 @@
                                     </td>
 
                                     <td class="text-right">
-                                        {{--                                    @can('user_update')--}}
-                                        <a class="btn btn-primary" href="{{ route('partners.edit', ['partner'=>$partner->id]) }}">
-                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                        </a>
-                                        {{--                                    @endcan--}}
+                                        <div class="btn-group" role="group">
+                                            {{--                                    @can('user_update')--}}
+                                            <a class="btn btn-primary" href="{{ route('partners.edit', ['partner'=>$partner->id]) }}">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>
+                                            {{--                                    @endcan--}}
+                                           {{-- <a class="btn btn-warning" href="{{ route('partner-users.create', ['partner'=>$partner->id]) }}">
+                                                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                            </a>--}}
+                                            @can('issetPartnerUser', $partner)
+                                            <a class="btn btn-warning" href="{{ route('partner-users.create', ['partner'=>$partner->id]) }}">
+                                                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                            </a>
+                                            @else
+                                                <a class="btn btn-danger"
+                                                   href="{{ route('partner-users.edit',
+                                                                    ['partner_user'=>$partner->user->id, 'partner'=>$partner->id]) }}">
+                                                    <i class="fa fa-user-times" aria-hidden="true"></i>
+                                                </a>
+                                            @endcan
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

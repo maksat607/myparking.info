@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class PartnerTypeController extends Controller
+class PartnerTypeController extends AppController
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +18,7 @@ class PartnerTypeController extends Controller
     {
         $partner_types = PartnerType::all();
         $title = __('Partner type.');
-        return view('partner.type.index', compact('title', 'partner_types'));
+        return view('partners.type.index', compact('title', 'partner_types'));
     }
 
     /**
@@ -29,7 +29,7 @@ class PartnerTypeController extends Controller
     public function create()
     {
         $title = __('Create new Partner type');
-        return view('partner.type.create', compact('title'));
+        return view('partners.type.create', compact('title'));
     }
 
     /**
@@ -81,7 +81,7 @@ class PartnerTypeController extends Controller
     {
         $partner_type = PartnerType::findOrFail($id);
         $title = __('Edit partner type :Type', ['type' => $partner_type->name]);
-        return view('partner.type.edit', compact('title', 'partner_type'));
+        return view('partners.type.edit', compact('title', 'partner_type'));
     }
 
     /**

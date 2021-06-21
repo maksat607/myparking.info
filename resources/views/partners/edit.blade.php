@@ -9,7 +9,7 @@
 
                     <div class="card-body">
 
-                        @include('partner.form')
+                        @include('partners.form')
 
                     </div>
                 </div>

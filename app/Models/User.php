@@ -80,6 +80,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Legal::class, 'user_id', 'id')->with(['owner']);
     }
 
+    public function partner()
+    {
+        return $this->hasOne(Partner::class, 'user_id', 'id');
+    }
+
     public function getRole()
     {
         $roles = $this->getRoleNames()->toArray();

@@ -242,5 +242,6 @@
     "Region": "Регион",
     "Address": "Адрес",
     "Timezone": "Часовой пояс",
-    "Edit parking :Parking": "Редактировать парковку: :Parking"
+    "Edit parking :Parking": "Редактировать парковку: :Parking",
+    "The partner already has a linked user!": "У партнера уже есть привязанный пользователь!"
 }

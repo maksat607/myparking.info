@@ -4,6 +4,7 @@ use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PartnerTypeController;
+use App\Http\Controllers\PartnerUserController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserChildrenController;
@@ -73,21 +74,21 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Permissions*/
     Route::resource('permissions', PermissionController::class)->only('index')
         ->middleware(['check_legal', 'check_child_owner_legal']);
-    Route::post('permissions/sync', [PermissionController::class, 'sync'])->name('permissions.sync')
+    Route::post('/permissions/sync', [PermissionController::class, 'sync'])->name('permissions.sync')
         ->middleware(['check_legal', 'check_child_owner_legal']);
 
     /*Legal*/
 //    Route::get('legal', [LegalController::class, 'edit'])->name('legal');
     Route::resource('legals', LegalController::class);
-    Route::get('legals/user/{user}/all', [LegalController::class, 'allForUser'])->name('legals.all');
-    Route::get('legals/user/{user}/legal/{legal}', [LegalController::class, 'viewForUser'])->name('legals.view');
-    Route::get('legals/parking/{parking}/all', [LegalController::class, 'allForParking'])->name('legals.parkings.all');
-    Route::get('legals/parking/{parking}/legal/{legal}', [LegalController::class, 'viewForParking'])
+    Route::get('/legals/user/{user}/all', [LegalController::class, 'allForUser'])->name('legals.all');
+    Route::get('/legals/user/{user}/legal/{legal}', [LegalController::class, 'viewForUser'])->name('legals.view');
+    Route::get('/legals/parking/{parking}/all', [LegalController::class, 'allForParking'])->name('legals.parkings.all');
+    Route::get('/legals/parking/{parking}/legal/{legal}', [LegalController::class, 'viewForParking'])
         ->name('legals.parkings.view');
 
     /*Profile*/
-    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     /*Parkings*/
     Route::resource('parkings', ParkingController::class);
@@ -99,4 +100,15 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Partners*/
     Route::resource('partners', PartnerController::class)
         ->except(['show', 'destroy']);
+
+    Route::get('/partner-users/partner/{partner}/create', [PartnerUserController::class, 'create'])
+        ->name('partner-users.create');
+    Route::post('/partner-users/partner/{partner}/', [PartnerUserController::class, 'store'])
+        ->name('partner-users.store');
+    Route::get('/partner-users/{partner_user}/partner/{partner}/edit', [PartnerUserController::class, 'edit'])
+        ->name('partner-users.edit');
+    Route::put('/partner-users/{partner_user}/partner/{partner}/', [PartnerUserController::class, 'update'])
+        ->name('partner-users.update');
+    Route::delete('/partner-users/{partner_user}/partner/{partner}/', [PartnerUserController::class, 'destroy'])
+        ->name('partner-users.destroy');
 });

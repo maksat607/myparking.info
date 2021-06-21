@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class ParkingController extends Controller
+class ParkingController extends AppController
 {
     public function __construct()
     {
