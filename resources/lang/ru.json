@@ -243,5 +243,14 @@
     "Address": "Адрес",
     "Timezone": "Часовой пояс",
     "Edit parking :Parking": "Редактировать парковку: :Parking",
-    "The partner already has a linked user!": "У партнера уже есть привязанный пользователь!"
+    "The partner already has a linked user!": "У партнера уже есть привязанный пользователь!",
+    "Partners": "Партнеры",
+    "Partner types": "Тип партнера",
+    "Create new Partner": "Создать нового партнера",
+    "Sorting": "Сортировка",
+    "Select a Partner type": "Выберите тип партнера",
+    "Phone": "Телефон",
+    "Edit partner: :Partner": "Редактировать партнера: :Partner",
+    "Create new Partner Account": "Создать учетную запись Партнера",
+    "The user already has an Operator!": "У пользователя уже есть Оператор!"
 }

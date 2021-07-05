@@ -2,13 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\PartnerType;
+use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PartnerController extends AppController
 {
+    private $parkingAjax = [];
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(['role:Partner'])
+            ->only([
+                'getParkings',
+                'parkingList',
+                'addParking',
+                'removeParking',
+                ]);
+
+        $this->middleware(['permission:partner_view'])->only('index', 'show');
+        $this->middleware(['permission:partner_create'])->only('create', 'store');
+        $this->middleware(['permission:partner_update'])->only('edit', 'update');
+//        $this->middleware(['permission:partner_delete'])->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -83,7 +110,7 @@ class PartnerController extends AppController
     {
         $partner = Partner::findOrFail($id);
         $partner_types = PartnerType::all();
-        $title = __('Edit partner :Partner', ['partner' => $partner->name]);
+        $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
         return view('partners.edit', compact('title', 'partner', 'partner_types'));
     }
 
@@ -133,5 +160,82 @@ class PartnerController extends AppController
             'partner_type' => ['required', 'exists:partner_types,id'],
             'status' => ['boolean'],
         ]);
+    }
+
+    public function getParkings(Request $request)
+    {
+        if(!$request->ajax()) abort(404);
+
+        if($request->has('q')){
+            $search = $request->q;
+        }
+        $this->parkingAjax = DB::table('legal_parking')
+            ->join('parkings', 'legal_parking.parking_id', '=', 'parkings.id')
+            ->join('legals', 'legal_parking.legal_id', '=', 'legals.id')
+            ->select('parkings.id','parkings.title', 'legals.inn')
+            ->whereNotIn('parkings.id', DB::table('parking_user')
+                ->distinct()
+                ->where('parking_user.user_id', auth()->id())
+                ->pluck('parking_user.parking_id'))
+            ->where(function($query) use ($search){
+                $query->where('parkings.title','LIKE',"%{$search}%")
+                    ->orWhere('legals.inn','=',"{$search}");
+            })
+            ->get();
+
+        return response()->json($this->groupInns());
+    }
+
+    public function parkingList()
+    {
+        $title = __('Parking lots');
+        $partnerParkings = auth()->user()->partnerParkings;
+        return view('partners.parking.index', compact('title', 'partnerParkings'));
+    }
+
+    public function addParking(Request $request)
+    {
+
+        Validator::make($request->all(), [
+            'parking' => ['exists:parkings,id', 'required'],
+        ])->validate();
+
+        try {
+            DB::beginTransaction();
+            auth()->user()->partnerParkings()->detach($request->parking);
+            auth()->user()->partnerParkings()->attach($request->parking);
+            DB::commit();
+
+            return redirect()->route('partner.parkings')->with('success', __('Saved.'));
+
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
+        }
+    }
+
+    public function removeParking($id)
+    {
+        return (auth()->user()->partnerParkings()->detach($id))
+            ? redirect()->back()->with('success', __('Removed from your list'))
+            : redirect()->back()->with('error', __('Error'));
+    }
+
+    private function groupInns()
+    {
+        if(empty($this->parkingAjax)) return $this->parkingAjax;
+        $temps = [];
+        $this->parkingAjax->each(function ($item, $key) use (&$temps) {
+            if(Arr::exists($temps, $item->id)) {
+                $temps[$item->id]->inn .= ', ' . $item->inn;
+            } else {
+                $temps[$item->id] = $item;
+            }
+
+        });
+
+        return array_values(Arr::sort($temps, function($value){
+            return $value->title;
+        }));
     }
 }

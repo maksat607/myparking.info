@@ -7,9 +7,11 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         {{ $title }}
+                        @can('issetPartnerOperator', Auth::user())
                         <div class="text-right my-2">
                             <a class="btn btn-primary" href="{{ route('users.create') }}" >{{ __('Create') }}</a>
                         </div>
+                        @endcan
                     </div>
 
                     <div class="card-body">
@@ -20,8 +22,10 @@
                                 <th scope="col">#</th>
                                 <th scope="col">@lang('Name')</th>
                                 <th scope="col">@lang('E-mail')</th>
+                                @hasanyrole('SuperAdmin|Admin|Manager')
                                 <th scope="col">@lang('Role')</th>
                                 <th scope="col">@lang('Legal entities')</th>
+                                @endhasanyrole
                                 <th scope="col">@lang('Status')</th>
                                 <th scope="col"></th>
                             </tr>
@@ -41,6 +45,8 @@
                                     @endisset
                                 </td>
                                 <td>{{ $user->email }}</td>
+
+                                @hasanyrole('SuperAdmin|Admin|Manager')
                                 <td>{{ $user->getRole() }}</td>
                                 <td>
                                     @if($user->legals->isNotEmpty())
@@ -53,6 +59,7 @@
                                         <p>{{ __('No Legal entity') }}</p>
                                     @endif
                                 </td>
+                                @endhasanyrole
                                 <td>@if($user->status)
                                         <span class="badge badge-success">{{ __('Active') }}</span>
                                     @else

@@ -176,7 +176,6 @@ class ParkingController extends AppController
 
         } catch (QueryException $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
         }
     }

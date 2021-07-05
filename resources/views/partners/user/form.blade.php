@@ -81,17 +81,21 @@
             <button type="submit" class="btn btn-primary">
                 @if(isset($partner_user)) {{ __('Update') }} @else {{ __('Create') }} @endif
             </button>
+            @if(isset($partner_user))
             <a class="btn btn-danger" onclick="if( confirm('Delete it?') ) { event.preventDefault();
                 document.getElementById('deletePartnerUser').submit(); return true }">
                 {{ __('Delete') }}
             </a>
+            @endif
         </div>
     </div>
 </form>
 
+@if(isset($partner_user))
 <form id="deletePartnerUser"
       method="POST"
       action="{{ route('partner-users.destroy', ['partner_user'=>$partner_user->id, 'partner'=>$partner->id]) }}">
     @csrf
     @method('DELETE')
 </form>
+@endif

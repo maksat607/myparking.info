@@ -59,6 +59,7 @@
                                                 <i class="fa fa-user-plus" aria-hidden="true"></i>
                                             </a>
                                             @else
+
                                                 <a class="btn btn-danger"
                                                    href="{{ route('partner-users.edit',
                                                                     ['partner_user'=>$partner->user->id, 'partner'=>$partner->id]) }}">
@@ -68,6 +69,7 @@
                                         </div>
                                     </td>
                                 </tr>
+
                             @endforeach
                             </tbody>
                         </table>

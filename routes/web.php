@@ -111,4 +111,16 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('partner-users.update');
     Route::delete('/partner-users/{partner_user}/partner/{partner}/', [PartnerUserController::class, 'destroy'])
         ->name('partner-users.destroy');
+
+    Route::get('/partner/parkings/', [PartnerController::class, 'parkingList'])
+        ->name('partner.parkings');
+
+    Route::get('/partner/parkings/search', [PartnerController::class, 'getParkings'])
+        ->name('partner.parkings.search');
+
+    Route::post('/partner/parkings/add', [PartnerController::class, 'addParking'])
+        ->name('partner.parkings.add');
+
+    Route::delete('/partner/parkings/remove/{parking}/', [PartnerController::class, 'removeParking'])
+        ->name('partner.parkings.remove');
 });

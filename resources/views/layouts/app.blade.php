@@ -79,20 +79,34 @@
                                             </a>
                                         @endcanany
                                     @endhasanyrole
+
+                                    @hasanyrole('SuperAdmin|Admin')
                                     <a class="dropdown-item" href="{{ route('parkings.index') }}" >
                                         {{ __('Parking lots') }}
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('partners.index') }}" >
-                                        {{ __('Partners') }}
+                                        @canany(['partner_view', 'partner_create', 'partner_update'])
+                                            <a class="dropdown-item" href="{{ route('partners.index') }}" >
+                                                {{ __('Partners') }}
+                                            </a>
+                                        @endcanany
+                                        @canany(['partner_type_view', 'partner_type_create', 'partner_type_update'])
+                                            <a class="dropdown-item" href="{{ route('partner-types.index') }}" >
+                                                {{ __('Partner types') }}
+                                            </a>
+                                        @endcanany
+                                    @endhasanyrole
+
+                                    @hasanyrole('Partner')
+                                    <a class="dropdown-item" href="{{ route('partner.parkings') }}" >
+                                        {{ __('Parking lots') }}
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('partner-types.index') }}" >
-                                        {{ __('Partner types') }}
-                                    </a>
+                                    @endhasanyrole
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf

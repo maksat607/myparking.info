@@ -58,6 +58,7 @@ class UserController extends AppController
      */
     public function create()
     {
+        $this->authorize('issetPartnerOperator', auth()->user());
         $roles = Role::all()->pluck('name');
         $title = __('Create new user');
 
@@ -73,6 +74,8 @@ class UserController extends AppController
      */
     public function store(Request $request)
     {
+        $this->authorize('issetPartnerOperator', auth()->user());
+        $this->addRoleToRequest($request);
         Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -200,5 +203,12 @@ class UserController extends AppController
             ? redirect()->back()->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
 
+    }
+
+    protected function addRoleToRequest(Request &$request, $is_role = 'Partner', $role = 'PartnerOperator')
+    {
+        if(auth()->user()->hasRole($is_role)) {
+            $request->request->add(['role' => $role]);
+        }
     }
 }

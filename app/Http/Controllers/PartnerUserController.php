@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Partner;
 use App\Models\User;
+use App\Notifications\CreateUserNotifications;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,16 @@ use Illuminate\Validation\Rule;
 
 class PartnerUserController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(['role:SuperAdmin']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -66,6 +77,8 @@ class PartnerUserController extends Controller
             $partner->user()->associate($userModel);
             $partner->save();
             DB::commit();
+
+            $partner->notify(new CreateUserNotifications($request->password));
 
             return redirect()->route('partners.index')->with('success', __('Saved.'));
 

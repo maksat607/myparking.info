@@ -57,6 +57,7 @@
         </div>
     </div>
 
+    @hasanyrole('SuperAdmin|Admin|Manager')
     <div class="form-group row">
         <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
 
@@ -78,6 +79,7 @@
             @enderror
         </div>
     </div>
+    @endhasanyrole
 
     <div class="form-group row">
         <label for="status" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>

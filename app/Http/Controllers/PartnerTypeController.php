@@ -9,6 +9,13 @@ use Illuminate\Validation\Rule;
 
 class PartnerTypeController extends AppController
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:partner_type_view'])->only('index', 'show');
+        $this->middleware(['permission:partner_type_create'])->only('create', 'store');
+        $this->middleware(['permission:partner_type_update'])->only('edit', 'update');
+//        $this->middleware(['permission:partner_type_delete'])->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

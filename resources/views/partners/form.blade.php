@@ -82,7 +82,7 @@
 
         <div class="col-md-6">
             <select class="custom-select @error('partner_type') is-invalid @enderror" name="partner_type" id="partner_type" required>
-                <option selected hidden value="">{{ __('Select a Partner type.') }}</option>
+                <option selected hidden value="">{{ __('Select a Partner type') }}</option>
                 @foreach($partner_types as $partner_type)
                     @if(isset($partner) && ($partner->partnerType->id === $partner_type->id))
                         <option selected value="{{ $partner_type->id }}">{{ $partner_type->name }}</option>
