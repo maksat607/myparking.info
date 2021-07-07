@@ -11,13 +11,13 @@
             <td class="text-right">
                 <div class="btn-group">
                     @can('legal_update')
-                        <a class="btn btn-primary" href="{{ route('legals.edit', ['legal'=>$legal->id]) }}">
+                        <a class="tbale-btn" href="{{ route('legals.edit', ['legal'=>$legal->id]) }}">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                         </a>
                     @endcan
 
                     @can('legal_delete')
-                        <a class="btn btn-danger" onclick="if( confirm('Delete it?') ) { event.preventDefault();
+                        <a class="tbale-btn" onclick="if( confirm('Delete it?') ) { event.preventDefault();
                             document.getElementById('deleteLegal{{ $legal->id }}').submit(); return true }">
                             <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </a>

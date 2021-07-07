@@ -1,3 +1,5 @@
 require('./bootstrap');
-let a = require('./select2/selcte2');
+require('./select2/selcte2');
+require('./common');
+
 
