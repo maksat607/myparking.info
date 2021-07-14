@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -62,6 +63,17 @@ class UserPolicy
         } else {
             return $model->parent_id == $user->id;
         }
+    }
+
+    public function issetPartnerOperator(User $user)
+    {
+        if($user->hasRole(['Partner', 'PartnerOperator'])) {
+            return ($user->hasRole('Partner') && $user->children()->doesntExist())
+                ? Response::allow()
+                : Response::deny(__('The user already has an Operator!'));
+        }
+
+        return true;
     }
 
 }

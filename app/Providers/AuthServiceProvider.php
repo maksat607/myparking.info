@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Parking;
+use App\Models\Partner;
 use App\Models\User;
+use App\Policies\CheckPartnerUserPolicy;
 use App\Policies\ParkingPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -23,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
 //      'App\Models\Model' => 'App\Policies\ModelPolicy',
         User::class => UserPolicy::class,
         Parking::class => ParkingPolicy::class,
+        Partner::class => CheckPartnerUserPolicy::class,
     ];
 
     /**

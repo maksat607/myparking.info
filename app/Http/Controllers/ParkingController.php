@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class ParkingController extends Controller
+class ParkingController extends AppController
 {
     public function __construct()
     {
@@ -176,7 +176,6 @@ class ParkingController extends Controller
 
         } catch (QueryException $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
         }
     }

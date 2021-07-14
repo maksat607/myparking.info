@@ -65,6 +65,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    public function partnerParkings()
+    {
+        return $this->belongsToMany(Parking::class);
+    }
+
     public function parkings()
     {
         return $this->hasMany(Parking::class, 'user_id', 'id');
@@ -78,6 +83,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function legals()
     {
         return $this->hasMany(Legal::class, 'user_id', 'id')->with(['owner']);
+    }
+
+    public function partner()
+    {
+        return $this->hasOne(Partner::class, 'user_id', 'id');
     }
 
     public function getRole()
@@ -100,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function scopeUser($query, $id)
     {
-        if(auth()->user()->hasRole('Admin')) {
+        if(auth()->user()->hasRole('Admin|Partner')) {
             return $query->where('id', $id)->where('parent_id', auth()->user()->id);
         } else {
             return $query->where('id', $id);

@@ -28,6 +28,11 @@ class Parking extends Model
         return $this->belongsToMany(Legal::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -59,6 +64,6 @@ class Parking extends Model
             return $query->where('id', $id)
                 ->where('user_id', auth()->user()->id);
         }
-        return $query;
+        return $query->where('id', $id);
     }
 }

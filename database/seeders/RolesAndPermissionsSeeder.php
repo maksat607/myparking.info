@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -15,6 +16,12 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('permissions')->truncate();
+        DB::table('roles')->truncate();
+        DB::table('role_has_permissions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
@@ -32,6 +39,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'parking_create',
             'parking_update',
             'parking_delete',
+            'partner_view',
+            'partner_create',
+            'partner_update',
+            'partner_type_view',
+            'partner_type_create',
+            'partner_type_update',
         ];
 
         $permissions = collect($arrayOfPermissionNames)->map(function ($permission) {
@@ -44,6 +57,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 Role::create(['name' => 'Admin']);
                 Role::create(['name' => 'Manager']);
                 Role::create(['name' => 'Operator']);
+                Role::create(['name' => 'Partner']);
+                Role::create(['name' => 'PartnerOperator']);
         $role->givePermissionTo(Permission::all());
     }
 }
