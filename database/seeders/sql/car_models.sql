@@ -1,47 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.0.2
--- https://www.phpmyadmin.net/
---
--- Хост: 127.0.0.1:3306
--- Время создания: Июл 13 2021 г., 08:49
--- Версия сервера: 8.0.19
--- Версия PHP: 7.4.5
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- База данных: `car_storage_db`
---
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `car_models`
---
-
-CREATE TABLE `car_models` (
-  `id` bigint UNSIGNED NOT NULL,
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_rus` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `car_mark_id` bigint UNSIGNED DEFAULT NULL,
-  `rank` int DEFAULT '0',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `car_models`
---
-
 INSERT INTO `car_models` (`id`, `name`, `name_rus`, `car_mark_id`, `rank`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, '378 GT Zagato', '378 ГТ Загато', 1, 0, 0, NULL, NULL),
 (2, 'ACE', 'АЦЕ', 1, 0, 0, NULL, NULL),
@@ -8566,29 +8522,3 @@ INSERT INTO `car_models` (`id`, `name`, `name_rus`, `car_mark_id`, `rank`, `is_a
 (23422, 'Kuv100', 'Кув', 106, 0, 0, NULL, NULL),
 (23423, 'XUV500', '2011', 106, 0, 0, NULL, NULL),
 (23424, 'Besturn B30', 'Бестурн Б30', 59, 0, 1, NULL, NULL);
-
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `car_models`
---
-ALTER TABLE `car_models`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `car_models_name_index` (`name`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `car_models`
---
-ALTER TABLE `car_models`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23425;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

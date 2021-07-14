@@ -1,46 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.0.2
--- https://www.phpmyadmin.net/
---
--- Хост: 127.0.0.1:3306
--- Время создания: Июл 13 2021 г., 08:49
--- Версия сервера: 8.0.19
--- Версия PHP: 7.4.5
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- База данных: `car_storage_db`
---
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `car_series`
---
-
-CREATE TABLE `car_series` (
-  `id` bigint UNSIGNED NOT NULL COMMENT 'ID',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `car_model_id` bigint UNSIGNED DEFAULT NULL,
-  `car_generation_id` bigint UNSIGNED DEFAULT NULL,
-  `rank` int DEFAULT '0',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `car_series`
---
 
 INSERT INTO `car_series` (`id`, `name`, `car_model_id`, `car_generation_id`, `rank`, `is_active`, `created_at`, `updated_at`) VALUES
 (457, 'Кроссовер', 350, 7840, 0, 1, NULL, NULL),
@@ -18257,28 +18214,3 @@ INSERT INTO `car_series` (`id`, `name`, `car_model_id`, `car_generation_id`, `ra
 (63742, 'Купе', 1536, 123513, 0, 1, NULL, NULL),
 (63743, 'Родстер', 1536, 123513, 0, 1, NULL, NULL);
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `car_series`
---
-ALTER TABLE `car_series`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `car_series_name_index` (`name`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `car_series`
---
-ALTER TABLE `car_series`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=63744;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

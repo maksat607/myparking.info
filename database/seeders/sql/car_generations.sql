@@ -1,48 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.0.2
--- https://www.phpmyadmin.net/
---
--- Хост: 127.0.0.1:3306
--- Время создания: Июл 13 2021 г., 08:48
--- Версия сервера: 8.0.19
--- Версия PHP: 7.4.5
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- База данных: `car_storage_db`
---
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `car_generations`
---
-
-CREATE TABLE `car_generations` (
-  `id` bigint NOT NULL,
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `year_begin` int DEFAULT NULL,
-  `year_end` int DEFAULT NULL,
-  `car_model_id` bigint UNSIGNED DEFAULT NULL,
-  `rank` int DEFAULT '0',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `car_generations`
---
-
 INSERT INTO `car_generations` (`id`, `name`, `year_begin`, `year_end`, `car_model_id`, `rank`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, '2 поколение', 2013, 2020, 2123, 0, 1, NULL, NULL),
 (4, '2 поколение', 2001, 2003, 7, 0, 1, NULL, NULL),
@@ -8318,28 +8273,3 @@ INSERT INTO `car_generations` (`id`, `name`, `year_begin`, `year_end`, `car_mode
 (127035, '1 поколение', 2015, 2020, 23424, 0, 1, NULL, NULL),
 (127037, '1 поколение', 1984, 1985, 20012, 0, 1, NULL, NULL),
 (127039, '1 поколение', 1974, 1989, 20013, 0, 1, NULL, NULL);
-
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `car_generations`
---
-ALTER TABLE `car_generations`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `car_generations`
---
-ALTER TABLE `car_generations`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127040;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
