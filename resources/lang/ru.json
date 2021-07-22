@@ -252,5 +252,9 @@
     "Phone": "Телефон",
     "Edit partner: :Partner": "Редактировать партнера: :Partner",
     "Create new Partner Account": "Создать учетную запись Партнера",
-    "The user already has an Operator!": "У пользователя уже есть Оператор!"
+    "The user already has an Operator!": "У пользователя уже есть Оператор!",
+    "The type of car...": "Тип авто...",
+    "The brand of the car...": "Марка авто...",
+    "The car model...": "Модель авто...",
+    "The year of the car...": "Год авто..."
 }

@@ -13029,54 +13029,6 @@ h3 {
     border-color: #dee2e6;
   }
 }
-.toggle-control {
-  display: block;
-  position: relative;
-  height: 21px;
-  padding-left: 35px;
-  margin-bottom: 0px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.toggle-control input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-.toggle-control input:checked ~ .control {
-  background-color: dodgerblue;
-}
-.toggle-control input:checked ~ .control:after {
-  left: 17px;
-}
-.toggle-control .control {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 21px;
-  width: 35px;
-  border-radius: 10.5px;
-  background-color: darkgray;
-  transition: background-color 0.15s ease-in;
-}
-.toggle-control .control:after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 3px;
-  width: 15px;
-  height: 15px;
-  border-radius: 10.5px;
-  background: white;
-  transition: left 0.15s ease-in;
-}
-
 .select2-container {
   box-sizing: border-box;
   display: inline-block;

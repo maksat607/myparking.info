@@ -10,6 +10,9 @@
     <title>{{ $title }} | {{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
+    <script type="text/javascript">
+        const APP_URL = {!! json_encode(url('/')) !!};
+        </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->

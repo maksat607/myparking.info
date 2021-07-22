@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CarController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\PartnerController;
@@ -123,4 +124,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     Route::delete('/partner/parkings/remove/{parking}/', [PartnerController::class, 'removeParking'])
         ->name('partner.parkings.remove');
+
+    /*Cars select AJAX*/
+    Route::get('/car/mark/list/{type_id}', [CarController::class, 'carMarkList']);
+    Route::get('/car/model/list/{mark_id}', [CarController::class, 'carModelList']);
+    Route::get('/car/year/list/{model_id}', [CarController::class, 'carYearList']);
 });
