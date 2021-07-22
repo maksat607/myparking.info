@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
@@ -129,4 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/car/mark/list/{type_id}', [CarController::class, 'carMarkList']);
     Route::get('/car/model/list/{mark_id}', [CarController::class, 'carModelList']);
     Route::get('/car/year/list/{model_id}', [CarController::class, 'carYearList']);
+
+    /*Applications*/
+    Route::resource('applications', ApplicationController::class);
 });
