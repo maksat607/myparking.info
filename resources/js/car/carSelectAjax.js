@@ -5,7 +5,7 @@ const carSelectAjax = {
     excluded: [5, 3],
     init() {
         $.when(`#types`).then(() => {
-            $(`#types .select-item a.active`).trigger('click', {self:this});
+            $(`#types .select-item.active a`).trigger('click', {self:this});
         });
 
         $(`#types .select-item a`).on('click', {self:this}, this.getMarks);
@@ -121,8 +121,8 @@ const carSelectAjax = {
     setActive(element) {
         let self = this;
         $(element).parents(`.select-list`)
-            .find(`.select-item a`).removeClass(`active`);
-        $(element).addClass(`active`);
+            .find(`.select-item`).removeClass(`active`);
+        $(element).parent(`li`).addClass(`active`);
 
     },
     addHiddenInput() {

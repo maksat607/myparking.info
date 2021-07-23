@@ -1302,7 +1302,8 @@ button {
 
 .tabform-flex {
     display: flex;
-    -webkit-flex-flow: row wrap;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-start;
 }
 
@@ -1404,6 +1405,24 @@ button {
     padding: 0;
 }
 
+.first-cart{
+    width: calc(100% / 4);
+}
+
+#selectGroup,
+#textArea{
+    width: calc(100% - 354px);
+    display: flex;
+}
+
+#textArea{
+    flex-direction: column;
+}
+
+#textArea textarea{
+    flex-grow: 1;
+}
+
 .tabform__cart p {
     text-align: center;
 }
@@ -1439,24 +1458,51 @@ button {
     margin-top: 20px;
 }
 
-.tabform__li {
+.tabform__li,
+.select-item {
     list-style: none;
-    padding: 12px 10px;
     display: flex;
     align-items: center;
     cursor: pointer;
     transition: all 0.4s;
 }
+.select-item a,
+.tabform__li a{
+    padding: 12px 10px;
+    display: block;
+    width: 100%;
+}
 
+.select-item img,
 .tabform__li img {
     max-width: 20px;
 }
-
+.select-item:nth-child(odd),
 .tabform__li:nth-child(odd) {
     background: #F5F5F5;
 }
 
+.select-item a,
+.tabform__li a{
+    color: #000;
+    font-size: 16px;
+    text-decoration: none;
+}
+
 .tabform__li.active,
+.tabform__li.active a,
+.select-item.active,
+.select-item.active a,
+.tabform__li:hover a,
+.select-item:hover a,
+.tabform__li:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.select-item.active,
+.tabform__li.active,
+.select-item:hover, 
 .tabform__li:hover {
     background: #3991DA;
     color: #fff;

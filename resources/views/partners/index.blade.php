@@ -56,9 +56,11 @@
                                                 <i class="fa fa-user-plus" aria-hidden="true"></i>
                                             </a>
 
+
                                         @else
                                             <a class="tbale-btn"
-                                                href="{{ route('partner-users.edit', ['partner_user' => $partner->user->id, 'partner' => $partner->id]) }}">
+                                               href="{{ route('partner-users.edit',
+                                                                    ['partner_user'=>$partner->user->id, 'partner'=>$partner->id]) }}">
                                                 <i class="fa fa-user-times" aria-hidden="true"></i>
                                             </a>
                                         @endcan
