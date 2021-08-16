@@ -1,13 +1,13 @@
-	
-	// $(".lazy").slick({
-	// 	lazyLoad: 'ondemand', // ondemand progressive anticipated
-	// 	infinite: true,
-	// 	dots: true,
-	// 	autoplay: false,
-	// 	arrows: true
-	// });	
 
-	$(".newcart__dd > .newcart__btn").click(function () {
+	$(".lazy").slick({
+		lazyLoad: 'ondemand', // ondemand progressive anticipated
+		infinite: true,
+		dots: true,
+		autoplay: false,
+		arrows: true
+	});
+
+	$('body').on('click', '.newcart__dd > .newcart__btn', function () {
 		$(this).parent().find(".newcart__des").slideUp(500);
 		if (
 			$(this)
@@ -31,7 +31,7 @@
 
 	$('.newtopbar__mobtitle').append($('.newtopbar__item.active').text().trim());
 
-	
+
 	$(".newtopbar__mob").click(function () {
 		$(".newtopbar__nav").slideUp(500);
 		if (

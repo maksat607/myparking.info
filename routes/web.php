@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
@@ -130,7 +131,25 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/car/mark/list/{type_id}', [CarController::class, 'carMarkList']);
     Route::get('/car/model/list/{mark_id}', [CarController::class, 'carModelList']);
     Route::get('/car/year/list/{model_id}', [CarController::class, 'carYearList']);
+    Route::get('/car/generation/list/{model_id}/{year}', [CarController::class, 'carGenerationList']);
+    Route::get('/car/series/list/{model_id}/{generation_id}', [CarController::class, 'carSeriesList']);
+    Route::get('/car/modification/list/{model_id}/{series_id}/{year}', [CarController::class, 'carModificationList']);
+    Route::get('/car/characteristic/engine/{modification_id}', [CarController::class, 'carEngineList']);
+    Route::get('/car/characteristic/transmission/{modification_id}', [CarController::class, 'carTransmissionList']);
+    Route::get('/car/characteristic/gear/{modification_id}', [CarController::class, 'carGearList']);
 
     /*Applications*/
-    Route::resource('applications', ApplicationController::class);
+    Route::get('/applications/{status_id?}', [ApplicationController::class, 'index'])
+        ->where('status_id', '[0-9]+')
+        ->name('applications.index');
+    Route::resource('applications', ApplicationController::class)->except('index');
+    Route::get('/application/check-duplicate', [ApplicationController::class, 'checkDuplicate'])
+        ->name('application.check-duplicate');
+    Route::get('/application/acceptions/{application_id}', [ApplicationController::class, 'acceptions'])
+        ->name('application.acceptions');
+    Route::get('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
+        ->name('application.deny');
+
+    /*Attachments*/
+    Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])->name( 'attachment.destroy');
 });

@@ -45,4 +45,27 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * */
 
 window.select2 = require('select2');
-require('select2/dist/js/i18n/ru.js')
+require('select2/dist/js/i18n/ru.js');
+
+/**
+ * Flatpickr
+ * **/
+window.flatpickr = require('flatpickr').default;
+const Russian = require("flatpickr/dist/l10n/ru.js").default.ru;
+flatpickr.localize(Russian);
+
+/**
+ * Fancybox
+ * **/
+require('@fancyapps/fancybox');
+
+/**
+ * Inputmask
+ * **/
+require('inputmask/dist/jquery.inputmask.min');
+
+/**
+ * Slick
+ * **/
+require('../slick/slick');
+

@@ -159,7 +159,7 @@
                 </a>
                 <div class="mob-menu-btn"><span></span></div>
                 <div class="header__nav s-between">
-                    <a href="#" class="btn blue-btn">Добавить заявку</a>
+                    <a href="{{ route('applications.create') }}" class="btn blue-btn">Добавить заявку</a>
                     <ul class="nav s-between">
                         @guest
                             @if (Route::has('login'))
@@ -277,6 +277,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+
 </body>
 
 </html>

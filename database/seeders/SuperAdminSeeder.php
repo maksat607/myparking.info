@@ -29,7 +29,7 @@ class SuperAdminSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->truncate();
+//        DB::table('users')->truncate();
         $superAdmin = User::create($this->userData);
         $superAdmin->assignRole('SuperAdmin');
         $this->display($superAdmin);

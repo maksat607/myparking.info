@@ -7,6 +7,6 @@
     </div>
 </header>
 
-    @include('applications.form')
+    @include('applications.form.create')
 
 @endsection

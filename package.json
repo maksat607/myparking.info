@@ -22,8 +22,11 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
+        "@fancyapps/fancybox": "^3.5.7",
         "@ttskch/select2-bootstrap4-theme": "^1.5.2",
+        "flatpickr": "^4.6.9",
         "font-awesome": "^4.7.0",
+        "inputmask": "^5.0.6",
         "select2": "^4.1.0-rc.0"
     }
 }

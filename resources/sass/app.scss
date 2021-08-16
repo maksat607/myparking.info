@@ -4,16 +4,30 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
-// new style
+// Image-uploader
+@import "../css/image-uploader.min.css";
+
+// Fancybox
+@import "~@fancyapps/fancybox/dist/jquery.fancybox.min.css";
+
+// Slick
+@import "../slick/slick.css";
+@import "../slick/slick-theme.css";
+
+// Main
 @import '../css/style.css';
 
 // Main
-@import "./main";
+//@import "./main";
 
-//Select2.js
+// Select2.js
 @import "~select2/src/scss/core";
 @import "~@ttskch/select2-bootstrap4-theme/src/select2-bootstrap4";
+
+// Flatpickr.js
+@import "~flatpickr/dist/flatpickr.min.css";
 
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 @import '~font-awesome/scss/font-awesome';
+

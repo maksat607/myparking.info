@@ -1502,7 +1502,7 @@ button {
 
 .select-item.active,
 .tabform__li.active,
-.select-item:hover, 
+.select-item:hover,
 .tabform__li:hover {
     background: #3991DA;
     color: #fff;
@@ -2037,6 +2037,51 @@ button {
 
 .mob-menu-btn {
     display: none;
+}
+
+.has-files .uploaded::after {
+    content: "";
+    display: inline-block;
+    width: calc(16.6666667% - 1rem);
+    padding-bottom: calc(16.6666667% - 1rem);
+    height: 0;
+    position: relative;
+    margin: .5rem;
+    background: #f3f3f3;
+    cursor: default;
+}
+
+.has-files .uploaded-image {
+    animation: fadeIn .9s;
+    -webkit-animation: fadeIn .9s;
+    -moz-animation: fadeIn .9s;
+    -o-animation: fadeIn .9s;
+    -ms-animation: fadeIn .9s;
+}
+
+@keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+
+@-moz-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+
+@-webkit-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+
+@-o-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+
+@-ms-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
 }
 
 
