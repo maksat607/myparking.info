@@ -44,7 +44,8 @@ class ApplicationController extends AppController
         $status_name = ($status_id) ? Status::findOrFail($status_id)->name : 'Все';
 
         $applications = Application::
-            when($status_id, function($query, $status_id) {
+            where('user_id', auth()->id())
+            ->when($status_id, function($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
             ->when(!$status_id, function($query) use ($statuses){
