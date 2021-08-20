@@ -197,6 +197,11 @@
                                     {{ __('Profile') }}
                                 </a>
                             </li>
+                            <li class="nav__dd-item">
+                                <a class="nav__dd-link" href="{{ route('applications.index') }}">
+                                    {{ __('Application') }}
+                                </a>
+                            </li>
                             @hasanyrole('Admin')
                                 @canany(['legal_view', 'legal_create', 'legal_update', 'legal_delete'])
                                     <li class="nav__dd-item">
@@ -275,6 +280,9 @@
         </div>
     </footer>
 
+    <script type="text/javascript">
+    @stack('scripts')
+    </script>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 

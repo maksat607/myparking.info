@@ -854,6 +854,8 @@ button {
 
 .newcart__edit,
 .newcart__delete {
+    display: inline-block;
+    vertical-align: middle;
     font-size: 0;
     width: 30px;
     height: 30px;

@@ -1,3 +1,6 @@
 $('.input-images').imageUploader({
-    label: "Загрузите изображение"
+    label: "Загрузите изображение",
+    preloaded: (
+        typeof carAttachmentDataApplication != 'undefined'
+            && carAttachmentDataApplication != null) ? carAttachmentDataApplication : [],
 });

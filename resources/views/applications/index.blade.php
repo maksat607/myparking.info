@@ -70,7 +70,6 @@
 </div>
 <section class="newcart">
     <div class="wrapper">
-{{--        @dump($applications)--}}
         <div class="newcart__list d-flex">
             @foreach($applications as $application)
             <article class="newcart__item" id="application_{{ $application->id }}">
@@ -83,9 +82,9 @@
 
                 </div>
                 <div class="newcart__topbtn">
-                    <button class="newcart__edit">
+                    <a class="newcart__edit" href="{{ route('applications.edit', ['application' => $application->id]) }}">
                         редактировать
-                    </button>
+                    </a>
                     <button class="newcart__delete">
                         удалить
                     </button>
@@ -172,7 +171,7 @@
                             </li>
                             <li class="newcart__desitem">
                                 <span>Сумма простоя:</span>
-                                <strong>1,000.00 (2 дн.)</strong>
+                                <strong>{{ $application->parked_price_regular }} ({{ $application->parked_days_regular }} дн.)</strong>
                             </li>
                         </ul>
                     </div>

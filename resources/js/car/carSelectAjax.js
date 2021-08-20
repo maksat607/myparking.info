@@ -6,10 +6,18 @@ const carSelectAjax = {
     modificationId: null,
     items: null,
     excluded: [5, 3],
+    timeoutPromise: 500,
     init() {
-        $.when(`#types`).then(() => {
-            $(`#types .select-item.active a`).trigger('click', {self:this});
-        });
+        if(typeof carDataApplication == 'undefined' || carDataApplication == null) {
+            $.when(`#types .select-item.active a`).then((response) => {
+                $(`${response}`).trigger('click', {self:this});
+                return this.promiseReadyDom('#marks');
+            });
+        } else {
+            this.modelId = carDataApplication.modelId;
+            this.year = carDataApplication.year;
+            this.modificationId = carDataApplication.modificationId;
+        }
 
         $(`#types .select-item a`).on('click', {self:this}, this.getMarks);
         $(`body`).on('click', `#marks .select-item a`, {self:this}, this.getModels);
@@ -26,6 +34,26 @@ const carSelectAjax = {
             self.setActive(this);
             self.addHiddenInput();
         });
+    },
+    scrollActive(selects) {
+        $.when(selects).then(response => {
+            if(selects.is(':visible')) {
+                selects.each(function(index, element){
+                    // console.log($('ul', element))
+
+                    /*$('ul.select-list', element).animate({
+                        scrollTop: $(`.select-item.active a`, element).offset().top,
+                    }, 100);*/
+                    let topEl = $(`.select-item.active`, $(element)).position().top;
+                    $('ul.select-list', $(element)).scrollTop( 400 );
+                    console.log($(topEl));
+                });
+            }
+        });
+
+        /*selects.each(function(){});
+        let top = activeEl.position().top;
+        console.log(activeEl.offset(), '1233445');*/
     },
     async getMarks(e) {
         e.preventDefault();
@@ -227,7 +255,7 @@ const carSelectAjax = {
     setHTML(selectId, nameId = null) {
         let self = this;
         let html = '';
-        // console.log(self.items);
+
         if(!self.items.length) return;
 
         self.items.forEach((element)=>{

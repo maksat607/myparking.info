@@ -19,4 +19,10 @@ if(uploaded) {
         attributeOldValue: true,
         characterDataOldValue: true
     });
+
+    $(`.uploaded-image`, uploaded).on('click', function () {
+        $.fancybox.open({
+            src: $(this).data('src')
+        });
+    });
 }

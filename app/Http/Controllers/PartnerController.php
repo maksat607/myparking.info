@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarType;
 use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\PartnerType;
+use App\Models\Pricing;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -57,9 +59,16 @@ class PartnerController extends AppController
     public function create()
     {
         $partner_types = PartnerType::all();
+        $car_types  = CarType::where('is_active', 1)
+            ->select('id','name')
+            ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
+            ->get();
+
+        $pricings = createPriceList($car_types);
+
         $title = __('Create new Partner');
 
-        return view('partners.create', compact('title', 'partner_types'));
+        return view('partners.create', compact('title', 'partner_types', 'pricings'));
     }
 
     /**
@@ -70,6 +79,15 @@ class PartnerController extends AppController
      */
     public function store(Request $request)
     {
+
+        Validator::make($request->pricings, [
+            '*.regular_price' => ['nullable', 'integer'],
+            '*.dicount_price' => ['nullable', 'integer'],
+            '*.free_days' => ['nullable', 'integer'],
+            '*.car_type_id' => ['integer'],
+        ])->validate();
+
+
         $this->validator($request->all())->validate();
 
         $partnerData = [
@@ -83,6 +101,10 @@ class PartnerController extends AppController
         ];
 
         $partner = Partner::create($partnerData);
+
+        $partner->pricings()->createMany(
+            $request->pricings
+        );
 
         return ($partner->exists)
             ? redirect()->route('partners.index')->with('success', __('Saved.'))
@@ -109,9 +131,15 @@ class PartnerController extends AppController
     public function edit($id)
     {
         $partner = Partner::findOrFail($id);
+        $car_types  = CarType::where('is_active', 1)
+            ->select('id','name')
+            ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
+            ->get();
+
+        $pricings = createPriceList($car_types, $partner->pricings);
         $partner_types = PartnerType::all();
         $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
-        return view('partners.edit', compact('title', 'partner', 'partner_types'));
+        return view('partners.edit', compact('title', 'partner', 'partner_types', 'pricings'));
     }
 
     /**
@@ -123,6 +151,13 @@ class PartnerController extends AppController
      */
     public function update(Request $request, $id)
     {
+        Validator::make($request->pricings, [
+            '*.regular_price' => ['nullable', 'integer'],
+            '*.dicount_price' => ['nullable', 'integer'],
+            '*.free_days' => ['nullable', 'integer'],
+            '*.car_type_id' => ['integer'],
+        ])->validate();
+
         $partner = Partner::findOrFail($id);
 
         $this->validator($request->all())->validate();
@@ -132,6 +167,19 @@ class PartnerController extends AppController
 
 //        $is_update = Partner::where('id', $id)->update($request->except(['partner_type', '_token', '_method']));
 
+        foreach ($request->pricings as $pricing) {
+            Pricing::updateOrCreate(
+                [
+                    'car_type_id'=> $pricing['car_type_id'],
+                    'partner_id'=> $partner->id,
+                ],
+                [
+                    'free_days'=> $pricing['free_days'],
+                    'discount_price'=> $pricing['discount_price'],
+                    'regular_price'=> $pricing['regular_price']
+                ]
+            );
+        }
 
         return ($is_update)
             ? redirect()->route('partners.index')->with('success', __('Saved.'))

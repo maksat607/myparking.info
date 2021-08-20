@@ -35,7 +35,7 @@
                                         <input type="text" id="vin"
                                                class="vin @error('vin') is-invalid @enderror"
                                                name="car_data[vin_array]"
-                                               value="{{ old('car_data.vin_array') }}"
+                                               value="{{ $application->vin }}"
                                                placeholder="XTA210600C000001">
                                     </div>
                                     <div id="vinDuplicates"></div>
@@ -44,26 +44,26 @@
                                         <input type="text" id="license_plate"
                                                class="license_plate @error('license_plate') is-invalid @enderror"
                                                name="car_data[license_plate]"
-                                               value="{{ old('car_data.license_plate') }}"
+                                               value="{{ $application->license_plate }}"
                                                placeholder="A001AA177">
                                     </div>
                                     <div id="licensePlateDuplicates"></div>
                                     <div class="tabform__inputwrap w-100">
                                         <label>Номер убытка или лизингового договора</label>
                                         <input type="text" name="app_data[external_id]"
-                                               value="{{ old('app_data.external_id') }}"
+                                               value="{{ $application->external_id }}"
                                                placeholder="002AT-20/0200285, 002AS21-004489">
                                     </div>
                                     <div class="tabform__inputwrap">
                                         <label>ФИО собственника</label>
                                         <input type="text" name="app_data[courier_fullname]"
-                                               value="{{ old('app_data.courier_fullname') }}"
+                                               value="{{ $application->courier_fullname }}"
                                                placeholder="Иванов Иван Иванович">
                                     </div>
                                     <div class="tabform__inputwrap">
                                         <label>Телефон собственника</label>
                                         <input type="tel" name="app_data[courier_phone]"
-                                               value="{{ old('app_data.courier_phone') }}"
+                                               value="{{ $application->courier_phone }}"
                                                placeholder="+7 (___) ___-__-__">
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@
                                         <select name="app_data[partner_id]" class="partner_id @error('license_plate') is-invalid @enderror">
                                             <option selected hidden value="">{{ __('Select a partner..') }}</option>
                                             @foreach($partners as $partner)
-                                                <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                <option @if($application->partner_id == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -85,7 +85,7 @@
                                         <select name="app_data[parking_id]" id="parking_id">
                                             <option selected hidden value="">{{ __('Select a parking..') }}</option>
                                             @foreach($parkings as $parking)
-                                                <option value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                <option @if($application->parking_id == $parking->id) selected @endif value="{{ $parking->id }}">{{ $parking->title }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -94,12 +94,15 @@
                                         <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]"
                                                placeholder="Выберите дату..">
                                     </div>
+                                    @push('scripts')
+                                        const dateDataApplication = '{{ $application->arriving_at->format('d-m-Y') }}';
+                                    @endpush
                                     <div class="tabform__inputwrap">
                                         <label>Промежуток</label>
                                         <select id="arriving_interval" name="app_data[arriving_interval]">
                                             <option selected hidden value="">{{ __('Select a time interval..') }}</option>
-                                            <option value="10:00 - 14:00">10:00 - 14:00</option>
-                                            <option value="14:00 - 18:00">14:00 - 18:00</option>
+                                            <option @if( $application->arriving_interval == "10:00 - 14:00" ) selected @endif value="10:00 - 14:00">10:00 - 14:00</option>
+                                            <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
                                         </select>
                                     </div>
                                 </div>
@@ -116,14 +119,18 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul">
-                                                @foreach($carList as $car)
-                                                    @if ($loop->first)
+                                                @foreach($carTypes as $carType)
+                                                    @if ($loop->first && empty($application->car_type_id))
                                                         <li class="select-item tabform__li active">
-                                                            <a href="" data-name-id="car_type_id" data-id="{{ $car->id }}">{{ $car->name }}</a>
+                                                            <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
+                                                        </li>
+                                                    @elseif($application->car_type_id === $carType->id)
+                                                        <li class="select-item tabform__li active">
+                                                            <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
                                                         </li>
                                                     @else
                                                         <li class="select-item tabform__li">
-                                                            <a href="" data-name-id="car_type_id" data-id="{{ $car->id }}">{{ $car->name }}</a>
+                                                            <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
                                                         </li>
                                                     @endif
                                                 @endforeach
@@ -137,6 +144,21 @@
                                                 <input type="text" placeholder="Поиск" class="select-search">
                                                 <ul class="tabform__ul select-list" data-placeholder="Выберите тип авто">
                                                     {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                    @if(!$carMarks)
+                                                        <li class="placeholder statuspink">Выберите тип авто</li>
+                                                    @else
+                                                        @foreach($carMarks as $carMark)
+                                                            @if($application->car_mark_id === $carMark->id)
+                                                                <li class="select-item tabform__li active">
+                                                                    <a href="" data-name-id="car_mark_id" data-id="{{ $carMark->id }}">{{ $carMark->name }}</a>
+                                                                </li>
+                                                            @else
+                                                                <li class="select-item tabform__li">
+                                                                    <a href="" data-name-id="car_mark_id" data-id="{{ $carMark->id }}">{{ $carMark->name }}</a>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
                                                 </ul>
                                             </div>
                                         </div>
@@ -145,7 +167,21 @@
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
                                                 <ul class="select-list tabform__ul" data-placeholder="Выберите марку авто">
-                                                    <li class="placeholder statuspink">Выберите марку авто</li>
+                                                    @if(!$carModels)
+                                                        <li class="placeholder statuspink">Выберите марку авто</li>
+                                                    @else
+                                                        @foreach($carModels as $carModel)
+                                                            @if($application->car_model_id === $carModel->id)
+                                                                <li class="select-item tabform__li active">
+                                                                    <a href="" data-name-id="car_model_id" data-id="{{ $carModel->id }}">{{ $carModel->name }}</a>
+                                                                </li>
+                                                            @else
+                                                                <li class="select-item tabform__li">
+                                                                    <a href="" data-name-id="car_model_id" data-id="{{ $carModel->id }}">{{ $carModel->name }}</a>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
                                                 </ul>
                                             </div>
                                         </div>
@@ -154,7 +190,21 @@
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
                                                 <ul class="select-list tabform__ul" data-placeholder="Выберите модель авто">
-                                                    <li class="placeholder statuspink">Выберите модель авто</li>
+                                                    @if(!$carYears)
+                                                        <li class="placeholder statuspink">Выберите модель авто</li>
+                                                    @else
+                                                        @foreach($carYears as $carYear)
+                                                            @if($application->year === $carYear->id)
+                                                                <li class="select-item tabform__li active">
+                                                                    <a href="" data-name-id="year" data-id="{{ $carYear->id }}">{{ $carYear->name }}</a>
+                                                                </li>
+                                                            @else
+                                                                <li class="select-item tabform__li">
+                                                                    <a href="" data-name-id="year" data-id="{{ $carYear->id }}">{{ $carYear->name }}</a>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
                                                 </ul>
                                             </div>
                                         </div>
@@ -174,6 +224,9 @@
                                 <div class="tabform__gallery">
                                     <div class="input-images"></div>
                                 </div>
+                                @push('scripts')
+                                    const carAttachmentDataApplication = @json($attachments);
+                                @endpush
                             </div>
                             <div class="tabform__itemwrap">
                                 <div class="tabform__item">
@@ -192,8 +245,7 @@
                                 <div class="tabform__item">
                                     <h2>Комментарий</h2>
                                     <textarea name="car_data[car_additional]"
-                                              value="{{ old('car_data.car_additional') }}"
-                                              id="car_additional" placeholder="Комментарий"></textarea>
+                                              id="car_additional" placeholder="Комментарий">{{ $application->car_additional }}</textarea>
                                 </div>
                             </div>
                             <div class="tabform__item">
@@ -201,28 +253,28 @@
                                 <div class="tabform__inputwrap w-100">
                                     <label>Количество ключей</label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[car_key_quantity]" checked value="0">
+                                        <input type="radio" name="car_data[car_key_quantity]" @if(!$application->car_key_quantity) checked @endif value="0">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="tabform__radionum">0</span>
                                     </span>
                                     </label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[car_key_quantity]" value="1">
+                                        <input type="radio" name="car_data[car_key_quantity]" @if($application->car_key_quantity == 1) checked @endif value="1">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="tabform__radionum">1</span>
                                     </span>
                                     </label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[car_key_quantity]" value="2">
+                                        <input type="radio" name="car_data[car_key_quantity]" @if($application->car_key_quantity == 2) checked @endif value="2">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="tabform__radionum">2</span>
                                     </span>
                                     </label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[car_key_quantity]" value="4">
+                                        <input type="radio" name="car_data[car_key_quantity]" @if($application->car_key_quantity == 4) checked @endif value="4">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="">4</span>
@@ -231,31 +283,31 @@
                                 </div>
                                 <div class="tabform__inputwrap w-100">
                                     <label>Свидетельство о регистрации (СТС)</label>
-                                    <input type="text" name="car_data[sts]" value="{{ old('car_data.sts') }}" id="sts" placeholder="XTA210600C000001">
+                                    <input type="text" name="car_data[sts]" value="{{ $application->sts }}" id="sts" placeholder="XTA210600C000001">
                                     <label class="tabform__checkbox">
-                                        <input type="checkbox" name="car_data[sts_provided]" value="1">
+                                        <input type="checkbox" name="car_data[sts_provided]" @if($application->sts_provided) checked @endif value="1">
                                         <span class="tabform__checkboxnew"></span> Принят на хранение
                                     </label>
                                 </div>
                                 <div class="tabform__inputwrap w-100">
                                     <label>Паспорт транспортного средства (ПТС)</label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[pts_type]" value="Оригинал">
+                                        <input type="radio" name="car_data[pts_type]" @if($application->pts_type == 'Оригинал') checked @endif value="Оригинал">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="tabform__radionum">Оригинал</span>
                                     </span>
                                     </label>
                                     <label class="tabform__radio">
-                                        <input type="radio" name="car_data[pts_type]" value="Электронный">
+                                        <input type="radio" name="car_data[pts_type]" @if($application->pts_type == 'Электронный') checked @endif value="Электронный">
                                         <span class="d-flex">
                                         <span class="tabform__radionew"></span>
                                         <span class="tabform__radionum">Электронный</span>
                                     </span>
                                     </label>
-                                    <input type="text" name="car_data[pts]" placeholder="XTA210600C000001">
+                                    <input type="text" name="car_data[pts]" value="{{ $application->pts }}" placeholder="XTA210600C000001">
                                     <label class="tabform__checkbox">
-                                        <input type="checkbox" name="car_data[pts_provided]" value="{{ old('car_data.pts_provided') }}" value="1">
+                                        <input type="checkbox" name="car_data[pts_provided]" @if($application->pts_provided) checked @endif value="1">
                                         <span class="tabform__checkboxnew"></span> Принят на хранение
                                     </label>
                                 </div>
@@ -272,7 +324,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите поколение авто">
-                                                <li class="placeholder statuspink">Выберите поколение авто</li>
+                                                @if(!$carGenerations)
+                                                    <li class="placeholder statuspink">Выберите поколение авто</li>
+                                                @else
+                                                    @foreach($carGenerations as $carGeneration)
+                                                        @if($application->car_generation_id === $carGeneration->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_generation_id" data-id="{{ $carGeneration->id }}">{{ $carGeneration->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_generation_id" data-id="{{ $carGeneration->id }}">{{ $carGeneration->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -281,7 +347,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите кузов авто">
-                                                <li class="placeholder statuspink">Выберите кузов авто</li>
+                                                @if(!$carSeriess)
+                                                    <li class="placeholder statuspink">Выберите кузов авто</li>
+                                                @else
+                                                    @foreach($carSeriess as $carSeries)
+                                                        @if($application->car_series_id === $carSeries->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_series_id" data-id="{{ $carSeries->id }}" data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_series_id" data-id="{{ $carSeries->id }}" data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -290,7 +370,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите модификацию авто">
-                                                <li class="placeholder statuspink">Выберите модификацию авто</li>
+                                                @if(!$carModifications)
+                                                    <li class="placeholder statuspink">Выберите модификацию авто</li>
+                                                @else
+                                                    @foreach($carModifications as $carModification)
+                                                        @if($application->car_modification_id === $carModification->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_modification_id" data-id="{{ $carModification->id }}">{{ $carModification->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_modification_id" data-id="{{ $carModification->id }}">{{ $carModification->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -299,7 +393,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите двигатель авто">
-                                                <li class="placeholder statuspink">Выберите двигатель авто</li>
+                                                @if(!$carEngines)
+                                                    <li class="placeholder statuspink">Выберите двигатель авто</li>
+                                                @else
+                                                    @foreach($carEngines as $carEngine)
+                                                        @if($application->car_engine_id === $carEngine->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_engine_id" data-id="{{ $carEngine->id }}">{{ $carEngine->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_engine_id" data-id="{{ $carEngine->id }}">{{ $carEngine->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -308,7 +416,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите КПП авто">
-                                                <li class="placeholder statuspink">Выберите КПП авто</li>
+                                                @if(!$carTransmissions)
+                                                    <li class="placeholder statuspink">Выберите КПП авто</li>
+                                                @else
+                                                    @foreach($carTransmissions as $carTransmission)
+                                                        @if($application->car_transmission_id === $carTransmission->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_transmission_id" data-id="{{ $carTransmission->id }}">{{ $carTransmission->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_transmission_id" data-id="{{ $carTransmission->id }}">{{ $carTransmission->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -317,7 +439,21 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul" data-placeholder="Выберите привод авто">
-                                                <li class="placeholder statuspink">Выберите привод авто</li>
+                                                @if(!$carGears)
+                                                    <li class="placeholder statuspink">Выберите привод авто</li>
+                                                @else
+                                                    @foreach($carGears as $carGear)
+                                                        @if($application->car_gear_id === $carGear->id)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_gear_id" data-id="{{ $carGear->id }}">{{ $carGear->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_gear_id" data-id="{{ $carGear->id }}">{{ $carGear->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -325,32 +461,35 @@
                                         <label>Цвет</label>
                                         <select name="car_data[color]" id="color">
                                             @foreach($colors as $color)
+                                                @if($application->color == $color['value'])
+                                                    <option selected value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                @endif
                                                 <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="tabform__inputwrap cart-3">
                                         <label>Пробег</label>
-                                        <input type="text" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="50000">
+                                        <input type="text" name="car_data[milage]" value="{{ $application->milage }}" placeholder="50000">
                                     </div>
                                     <div class="tabform__inputwrap cart-3">
                                         <label>Количество владельцев</label>
                                         <label class="tabform__radio">
-                                            <input type="radio" name="car_data[owner_number]" value="1">
+                                            <input type="radio" name="car_data[owner_number]" @if($application->owner_number == 1) checked @endif  value="1">
                                             <span class="d-flex">
                                             <span class="tabform__radionew"></span>
                                             <span class="tabform__radionum">1</span>
                                         </span>
                                         </label>
                                         <label class="tabform__radio">
-                                            <input type="radio" name="car_data[owner_number]" value="2">
+                                            <input type="radio" name="car_data[owner_number]" @if($application->owner_number == 2) checked @endif value="2">
                                             <span class="d-flex">
                                             <span class="tabform__radionew"></span>
                                             <span class="tabform__radionum">2</span>
                                         </span>
                                         </label>
                                         <label class="tabform__radio">
-                                            <input type="radio" name="car_data[owner_number]" value="3">
+                                            <input type="radio" name="car_data[owner_number]" @if($application->owner_number == 3) checked @endif value="3">
                                             <span class="d-flex">
                                             <span class="tabform__radionew"></span>
                                             <span class="tabform__radionum">3 и более</span>
@@ -361,11 +500,10 @@
                             </div>
                             <div class="tabform__item w-100">
                                 <h2>Состояние авто</h2>
-
                                 <div class="d-flex">
                                     <div class="cart-4">
                                         <label class="tabform__checkbox medium-radio">
-                                            <input type="checkbox" name="car_data[condition_engine]" checked>
+                                            <input type="checkbox" name="car_data[condition_engine]" @if(is_null($application->condition_engine)) checked @endif value="">
                                             <span class="d-flex">
                                             <span class="tabform__checkboxnew"></span> <span>Двигатель в
                                                 порядке</span>
@@ -373,69 +511,82 @@
                                         </label>
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_engine][]" value="Дымность двигателя
-                                            (густой, белый, сизый,
-                                            черный)">
-                                                <span class="tabform__checkboxnew"></span> Дымность двигателя
-                                                (густой, белый, сизый,
-                                                черный)
+                                                <input type="checkbox" name="car_data[condition_engine][]"
+                                                       @if(in_array('Дымность двигателя (густой, белый, сизый, черный)', $application->condition_engine)) checked @endif
+                                                       value="Дымность двигателя (густой, белый, сизый, черный)">
+                                                <span class="tabform__checkboxnew"></span> Дымность двигателя (густой, белый, сизый, черный)
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный стук и шум
-                                            при работе двигателя">
-                                                <span class="tabform__checkboxnew"></span> Повышенный стук и шум
-                                                при работе двигателя
+                                                <input type="checkbox" name="car_data[condition_engine][]"
+                                                       @if(in_array('Повышенный стук и шум при работе двигателя', $application->condition_engine)) checked @endif
+                                                       value="Повышенный стук и шум при работе двигателя">
+                                                <span class="tabform__checkboxnew"></span> Повышенный стук и шум при работе двигателя
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный шум при работе выхлопной системы">
+                                                <input type="checkbox" name="car_data[condition_engine][]"
+                                                       @if(in_array('Повышенный шум при работе выхлопной системы', $application->condition_engine)) checked @endif
+                                                       value="Повышенный шум при работе выхлопной системы">
                                                 <span class="tabform__checkboxnew"></span> Повышенный шум при работе выхлопной системы
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_engine][]" value="Подтекание при осмотре подкапотного пространства">
+                                                <input type="checkbox" name="car_data[condition_engine][]"
+                                                       @if(in_array('Подтекание при осмотре подкапотного пространства', $application->condition_engine)) checked @endif
+                                                       value="Подтекание при осмотре подкапотного пространства">
                                                 <span class="tabform__checkboxnew"></span> Подтекание при осмотре подкапотного пространства
                                             </label>
                                         </div>
                                     </div>
                                     <div class="cart-4">
                                         <label class="tabform__checkbox medium-radio">
-                                            <input type="checkbox" name="car_data[condition_transmission]" checked>
+                                            <input type="checkbox" name="car_data[condition_transmission]" @if(is_null($application->condition_transmission)) checked @endif value="">
                                             <span class="d-flex">
                                             <span class="tabform__checkboxnew"></span> <span>КПП в порядке</span>
                                         </span>
                                         </label>
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_transmission][]" value="Рывки и толчки авто при переключении">
+                                                <input type="checkbox" name="car_data[condition_transmission][]"
+                                                       @if(in_array('Рывки и толчки авто при переключении', $application->condition_transmission)) checked @endif
+                                                       value="Рывки и толчки авто при переключении">
                                                 <span class="tabform__checkboxnew"></span> Рывки и толчки авто при переключении
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_transmission][]" value="Повышенный шум при переключении">
+                                                <input type="checkbox" name="car_data[condition_transmission][]"
+                                                       @if(in_array('Повышенный шум при переключении', $application->condition_transmission)) checked @endif
+                                                       value="Повышенный шум при переключении">
                                                 <span class="tabform__checkboxnew"></span> Повышенный шум при переключении
                                             </label>
                                         </div>
                                     </div>
                                     <div class="cart-4">
                                         <label class="tabform__checkbox medium-radio">
-                                            <input type="checkbox" name="car_data[condition_electric]" checked>
+                                            <input type="checkbox" name="car_data[condition_electric]"
+                                                   @if(is_null($application->condition_electric)) checked @endif
+                                                   value="">
                                             <span class="d-flex">
-                                            <span class="tabform__checkboxnew"></span> <span>Электрика в
-                                                порядке</span>
+                                            <span class="tabform__checkboxnew"></span> <span>Электрика в порядке</span>
                                         </span>
                                         </label>
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_electric][]" value="Ошибки на панели приборов при заведенном ДВС">
+                                                <input type="checkbox" name="car_data[condition_electric][]"
+                                                       @if(in_array('Ошибки на панели приборов при заведенном ДВС', $application->condition_electric)) checked @endif
+                                                       value="Ошибки на панели приборов при заведенном ДВС">
                                                 <span class="tabform__checkboxnew"></span> Ошибки на панели приборов при заведенном ДВС
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_electric][]" value="Неправильные команды электроники">
+                                                <input type="checkbox" name="car_data[condition_electric][]"
+                                                       @if(in_array('Неправильные команды электроники', $application->condition_electric)) checked @endif
+                                                       value="Неправильные команды электроники">
                                                 <span class="tabform__checkboxnew"></span> Неправильные команды электроники
                                             </label>
                                         </div>
                                     </div>
                                     <div class="cart-4">
                                         <label class="tabform__checkbox medium-radio">
-                                            <input type="checkbox" name="car_data[condition_gear]" checked>
+                                            <input type="checkbox" name="car_data[condition_gear]"
+                                                   @if(is_null($application->condition_gear)) checked @endif
+                                                   value="">
                                             <span class="d-flex">
                                             <span class="tabform__checkboxnew"></span> <span>Ходовая в
                                                 порядке</span>
@@ -443,12 +594,16 @@
                                         </label>
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_gear][]" value="Посторонний звук со стороны ходовой">
-                                                <span class="tabform__checkboxnew"></span> Ошибки на панели приборов при заведенном ДВС
+                                                <input type="checkbox" name="car_data[condition_gear][]"
+                                                       @if(in_array('Посторонний звук со стороны ходовой', $application->condition_gear)) checked @endif
+                                                       value="Посторонний звук со стороны ходовой">
+                                                <span class="tabform__checkboxnew"></span> Посторонний звук со стороны ходовой
                                             </label>
                                             <label class="tabform__checkbox">
-                                                <input type="checkbox" name="car_data[condition_gear][]" value="Посторонние звуки при вращении рулевого колеса">
-                                                <span class="tabform__checkboxnew"></span> Неправильные команды электроники
+                                                <input type="checkbox" name="car_data[condition_gear][]"
+                                                       @if(in_array('Посторонние звуки при вращении рулевого колеса', $application->condition_gear)) checked @endif
+                                                       value="Посторонние звуки при вращении рулевого колеса">
+                                                <span class="tabform__checkboxnew"></span> Посторонние звуки при вращении рулевого колеса
                                             </label>
                                         </div>
                                     </div>
@@ -476,4 +631,7 @@
         </div>
 
     </div>
+    @push('scripts')
+    const carDataApplication = @json($dataApplication);
+    @endpush
 </section>

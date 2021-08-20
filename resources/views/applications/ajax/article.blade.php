@@ -96,7 +96,7 @@
                 </li>
                 <li class="newcart__desitem">
                     <span>Сумма простоя:</span>
-                    <strong>1,000.00 (2 дн.)</strong>
+                    <strong>{{ $application->parked_price_regular }} ({{ $application->parked_days_regular }} дн.)</strong>
                 </li>
             </ul>
         </div>
