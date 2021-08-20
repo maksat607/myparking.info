@@ -512,25 +512,25 @@
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_engine][]"
-                                                       @if(in_array('Дымность двигателя (густой, белый, сизый, черный)', $application->condition_engine)) checked @endif
+                                                       @if($application->condition_engine && in_array('Дымность двигателя (густой, белый, сизый, черный)', $application->condition_engine)) checked @endif
                                                        value="Дымность двигателя (густой, белый, сизый, черный)">
                                                 <span class="tabform__checkboxnew"></span> Дымность двигателя (густой, белый, сизый, черный)
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_engine][]"
-                                                       @if(in_array('Повышенный стук и шум при работе двигателя', $application->condition_engine)) checked @endif
+                                                       @if($application->condition_engine && in_array('Повышенный стук и шум при работе двигателя', $application->condition_engine)) checked @endif
                                                        value="Повышенный стук и шум при работе двигателя">
                                                 <span class="tabform__checkboxnew"></span> Повышенный стук и шум при работе двигателя
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_engine][]"
-                                                       @if(in_array('Повышенный шум при работе выхлопной системы', $application->condition_engine)) checked @endif
+                                                       @if($application->condition_engine && in_array('Повышенный шум при работе выхлопной системы', $application->condition_engine)) checked @endif
                                                        value="Повышенный шум при работе выхлопной системы">
                                                 <span class="tabform__checkboxnew"></span> Повышенный шум при работе выхлопной системы
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_engine][]"
-                                                       @if(in_array('Подтекание при осмотре подкапотного пространства', $application->condition_engine)) checked @endif
+                                                       @if($application->condition_engine && in_array('Подтекание при осмотре подкапотного пространства', $application->condition_engine)) checked @endif
                                                        value="Подтекание при осмотре подкапотного пространства">
                                                 <span class="tabform__checkboxnew"></span> Подтекание при осмотре подкапотного пространства
                                             </label>
@@ -546,13 +546,13 @@
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_transmission][]"
-                                                       @if(in_array('Рывки и толчки авто при переключении', $application->condition_transmission)) checked @endif
+                                                       @if($application->condition_transmission && in_array('Рывки и толчки авто при переключении', $application->condition_transmission)) checked @endif
                                                        value="Рывки и толчки авто при переключении">
                                                 <span class="tabform__checkboxnew"></span> Рывки и толчки авто при переключении
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_transmission][]"
-                                                       @if(in_array('Повышенный шум при переключении', $application->condition_transmission)) checked @endif
+                                                       @if($application->condition_transmission && in_array('Повышенный шум при переключении', $application->condition_transmission)) checked @endif
                                                        value="Повышенный шум при переключении">
                                                 <span class="tabform__checkboxnew"></span> Повышенный шум при переключении
                                             </label>
@@ -570,13 +570,13 @@
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_electric][]"
-                                                       @if(in_array('Ошибки на панели приборов при заведенном ДВС', $application->condition_electric)) checked @endif
+                                                       @if($application->condition_electric && in_array('Ошибки на панели приборов при заведенном ДВС', $application->condition_electric)) checked @endif
                                                        value="Ошибки на панели приборов при заведенном ДВС">
                                                 <span class="tabform__checkboxnew"></span> Ошибки на панели приборов при заведенном ДВС
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_electric][]"
-                                                       @if(in_array('Неправильные команды электроники', $application->condition_electric)) checked @endif
+                                                       @if($application->condition_electric && in_array('Неправильные команды электроники', $application->condition_electric)) checked @endif
                                                        value="Неправильные команды электроники">
                                                 <span class="tabform__checkboxnew"></span> Неправильные команды электроники
                                             </label>
@@ -595,13 +595,13 @@
                                         <div class="tabform__checkboxgroup">
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_gear][]"
-                                                       @if(in_array('Посторонний звук со стороны ходовой', $application->condition_gear)) checked @endif
+                                                       @if($application->condition_gear && in_array('Посторонний звук со стороны ходовой', $application->condition_gear)) checked @endif
                                                        value="Посторонний звук со стороны ходовой">
                                                 <span class="tabform__checkboxnew"></span> Посторонний звук со стороны ходовой
                                             </label>
                                             <label class="tabform__checkbox">
                                                 <input type="checkbox" name="car_data[condition_gear][]"
-                                                       @if(in_array('Посторонние звуки при вращении рулевого колеса', $application->condition_gear)) checked @endif
+                                                       @if($application->condition_gear && in_array('Посторонние звуки при вращении рулевого колеса', $application->condition_gear)) checked @endif
                                                        value="Посторонние звуки при вращении рулевого колеса">
                                                 <span class="tabform__checkboxnew"></span> Посторонние звуки при вращении рулевого колеса
                                             </label>

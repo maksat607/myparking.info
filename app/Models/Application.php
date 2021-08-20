@@ -22,6 +22,7 @@ class Application extends Model
     ];
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
     protected $appends = ['formated_created_at', 'formated_updated_at', 'formated_arriving_at', 'formated_arrived_at', 'formated_issued_at', 'vin_array'];
+    
     protected $casts = [
         'condition_engine' => 'array',
         'condition_electric' => 'array',

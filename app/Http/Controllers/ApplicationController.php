@@ -147,10 +147,10 @@ class ApplicationController extends AppController
         $applicationDataArray = get_object_vars(new ApplicationData());
         $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
 
-        $applicationData['condition_gear'] = json_encode($applicationData['condition_gear']);
+        /*$applicationData['condition_gear'] = json_encode($applicationData['condition_gear']);
         $applicationData['condition_engine'] = json_encode($applicationData['condition_engine']);
         $applicationData['condition_electric'] = json_encode($applicationData['condition_electric']);
-        $applicationData['condition_transmission'] = json_encode($applicationData['condition_transmission']);
+        $applicationData['condition_transmission'] = json_encode($applicationData['condition_transmission']);*/
 //        $applicationData['services'] = json_encode($applicationData['services']);
 //        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
 //        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
@@ -302,10 +302,10 @@ class ApplicationController extends AppController
 
 //        $exterior_damage = $application->exterior_damage;
 //        $interior_damage = $application->interior_damage;
-        $condition_engine = $application->condition_engine;
-        $condition_electric = $application->condition_electric;
-        $condition_gear = $application->condition_gear;
-        $condition_transmission = $application->condition_transmission;
+//        $condition_engine = $application->condition_engine;
+//        $condition_electric = $application->condition_electric;
+//        $condition_gear = $application->condition_gear;
+//        $condition_transmission = $application->condition_transmission;
 
         $title = __('Update a Request');
         return view('applications.edit', compact(
@@ -362,6 +362,16 @@ class ApplicationController extends AppController
             $application->arrived_at = Carbon::now()->format('Y-m-d H:i:s');
             $application->status()->associate($status);
             $application->acceptions()->delete();
+            
+            /*$pricing = Pricing::where([
+                ['partner_id', $application->partner_id],
+                ['car_type_id', $application->car_type_id]
+            ])
+            ->select('discount_price', 'regular_price', 'free_days')
+            ->first();
+
+            $application->pricing = $pricing;
+            $application->currentParkingCost = $application->currentParkingCost;*/
 
             if($application->save()) {
                 $htmlRender = view('applications.ajax.article', compact('application'))->render();
@@ -381,6 +391,16 @@ class ApplicationController extends AppController
         if($application->exists) {
             $application->status()->associate($status);
             $application->acceptions()->delete();
+            
+            $pricing = Pricing::where([
+                ['partner_id', $application->partner_id],
+                ['car_type_id', $application->car_type_id]
+            ])
+            ->select('discount_price', 'regular_price', 'free_days')
+            ->first();
+
+            $application['pricing'] = $pricing;
+            $application->currentParkingCost = $application->currentParkingCost;
 
             if($application->save()) {
                 $htmlRender = view('applications.ajax.article', compact('application'))->render();

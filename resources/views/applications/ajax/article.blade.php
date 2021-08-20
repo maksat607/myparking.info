@@ -7,9 +7,9 @@
 
 </div>
 <div class="newcart__topbtn">
-    <button class="newcart__edit">
+    <a class="newcart__edit" href="{{ route('applications.edit', ['application' => $application->id]) }}">
         редактировать
-    </button>
+    </a>
     <button class="newcart__delete">
         удалить
     </button>
