@@ -39,10 +39,11 @@ class AttachmentController extends Controller
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
         $this->validate($request, [
-            $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp'
+            $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
+
         if (is_null($files)) {
             return [];
         }

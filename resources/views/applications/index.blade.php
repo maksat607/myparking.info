@@ -82,12 +82,23 @@
 
                 </div>
                 <div class="newcart__topbtn">
+                    @can('application_update')
                     <a class="newcart__edit" href="{{ route('applications.edit', ['application' => $application->id]) }}">
                         редактировать
                     </a>
-                    <button class="newcart__delete">
+                    @endcan
+                    @can('application_delete')
+                    <a class="newcart__delete" href="#"
+                       onclick="if( confirm('Delete it?') ) { event.preventDefault();
+                           document.getElementById('deleteApp{{ $application->id }}').submit(); return true }">
                         удалить
-                    </button>
+                    </a>
+                    <form id="deleteApp{{ $application->id }}" method="POST"
+                          action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                    @endcan
                 </div>
                 <h3 class="newcart__title">{{ $application->car_title }}</h3>
                 <div class="newcart__type s-between">
@@ -177,15 +188,29 @@
                     </div>
                 </div>
                 @endif
-                <a href="#" class="newcart__moreinfo have-comments">
+                <a href="#" class="newcart__moreinfo have-comments" data-app-id="{{ $application->id }}">
                     Подробное описание
                 </a>
+
                 @if($application->acceptions)
-                <div class="newcart__confirmbtn">
-                    <button class="newcart__accept issue" data-app-id="{{ $application->id }}">Принять</button>
-                    <button class="newcart__deny deny" data-app-id="{{ $application->id }}">Отказать</button>
-                </div>
+                    @can('application_to_accepted')
+                    <div class="newcart__confirmbtn">
+                        <button class="newcart__accept issue" data-app-id="{{ $application->id }}">Принять</button>
+                        <button class="newcart__deny deny" data-app-id="{{ $application->id }}">Отказать</button>
+                    </div>
+                    @endcan
+                @elseif($application->status->code == 'storage')
+                    <div class="newcart__confirmbtn">
+                        @can('application_to_issue')
+                        <button class="newcart__bluebtn">Выдача</button>
+                        @endcan
+                        @can('application_to_inspection')
+                        <button class="newcart__bluebtn">Осмотр</button>
+                        @endcan
+                        <button class="newcart__bluebtn">Скачать акт</button>
+                    </div>
                 @endif
+
             </article>
             @endforeach
             {{--<article class="newcart__item">
@@ -648,302 +673,7 @@
     <div class="newpopup__main">
         <div class="newpopup__close"></div>
         <div class="newpopup__top d-flex">
-            <img src="./image/amg.jpg" alt="" class="newpopup__img">
-            <div class="newpopup__left">
-                <h3 class="newcart__title">Mercedes-Benz E-klasse MG 2019 <span class="newcart__repeat">Повтор</span></h3>
-                <ul class="newpopup__ul">
-                    <li>
-                            <span>
-                                <span>Партнёр:</span>
-                            </span>
-                        <span>
-                                <span>Росгосстрах СПб ПАО СК</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span>VIN:</span>
-                            </span>
-                        <span>
-                                <span>Z94G2811BJR094175</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span>Гос. номер:</span>
-                            </span>
-                        <span>
-                                <span>а211во198</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span> Номер Убытка/Договора:</span>
-                            </span>
-                        <span>
-                                <span>002AT-20/0200285, 002AS21-004489</span>
-                            </span>
-                    </li>
-                </ul>
-            </div>
-            <div class="newpopup__right">
-                <ul class="newpopup__statusinfo">
-                    <li>
-                            <span>
-                                <span>Статус:</span>
-                            </span>
-                        <span>
-                                <span class="statusgreen">Хранение</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span>Хранение</span>
-                            </span>
-                        <span>
-                                <span>25.02.2021</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span>Дата выдачи:</span>
-                            </span>
-                        <span>
-                                <span>Не указана</span>
-                            </span>
-                    </li>
-                    <li>
-                            <span>
-                                <span>Сумма перестоя:</span>
-                            </span>
-                        <span>
-                                <span>1,000.00 (2 дн.)</span>
-                            </span>
-                    </li>
-                </ul>
-            </div>
-            <div class="newpopup__list d-flex">
-                <div class="newpopup__item">
-                    <div class="newpopup__data dsactive">
-                        <h3>Системные данные</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>Стоянка:</span>
-                                    </span>
-                                <span>
-                                        <span>Лужнецкая ТТК</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Принял:</span>
-                                    </span>
-                                <span>
-                                        <span>storage.spb</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Выдал:</span>
-                                    </span>
-                                <span>
-                                        <span>storage.spb</span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="newpopup__data dsactive">
-                        <h3>Административные данные</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>ФИО доставщика:</span>
-                                    </span>
-                                <span>
-                                        <span>Иванов Иван Иванович</span>
-                                    </span>
-                            </li>
-                            <li>
-                                <span><span>Телефон доставщика:</span></span>
-                                <span>
-                                        <span>+7 (999) 999-99-99</span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="newpopup__data dsactive">
-                        <h3>Комментарий</h3>
-                        <div class="newpopup__ul newpopup__coments">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad, placeat? Blanditiis
-                            laudantium, amet, sunt rerum consequatur impedit doloremque, officiis hic est quod autem
-                            neque omnis officia earum reprehenderit facere ab.
-                        </div>
-                    </div>
-                </div>
-                <div class="newpopup__item">
-                    <div class="newpopup__data dsactive">
-                        <h3>Об автомобиле</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>ПТС:</span>
-                                    </span>
-                                <span>
-                                        <span>78 УТ 611693</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Тип ПТС:</span>
-                                    </span>
-                                <span>
-                                        <span>Оригинал</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>СТС:</span>
-                                    </span>
-                                <span>
-                                        <span>78 29 975903</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Пробег:</span>
-                                    </span>
-                                <span>
-                                        <span>25 000</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Кол-во владельцев:</span>
-                                    </span>
-                                <span>
-                                        <span>3 и более</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Кол-во ключей:</span>
-                                    </span>
-                                <span>
-                                        <span>2</span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="newpopup__data dsactive">
-                        <h3>Техническое состояние</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>Электроника:</span>
-                                    </span>
-                                <span>
-                                        <span>Неправильные команды электроники</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Трансмиссия:</span>
-                                    </span>
-                                <span>
-                                        <span>Повышенный шум при переключении</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Двигатель:</span>
-                                    </span>
-                                <span>
-                                        <span>
-                                            Дымность двигателя (густой белый, сизый, черный), Повышенный стук и шум
-                                            при работе двигателя
-                                        </span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="newpopup__item">
-                    <div class="newpopup__data dsactive">
-                        <h3>Повреждения кузова</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>Переднее левое крыло:</span>
-                                    </span>
-                                <span>
-                                        <span>На замену, Скол/царапина</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Переднее правое крыло:</span>
-                                    </span>
-                                <span>
-                                        <span>Вмятина, на замену</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Дверь багажника:</span>
-                                    </span>
-                                <span>
-                                        <span>
-                                            Следы ремонта, Вмятина
-                                        </span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="newpopup__data dsactive">
-                        <h3>Повреждения салона</h3>
-                        <ul class="newpopup__ul">
-                            <li>
-                                    <span>
-                                        <span>Торпедо:</span>
-                                    </span>
-                                <span>
-                                        <span>Потёртость</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Пол:</span>
-                                    </span>
-                                <span>
-                                        <span>Порез, Прожог, Грязь</span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Переднее правое
-                                            сидение:</span>
-                                    </span>
-                                <span>
-                                        <span>
-                                            Грязь, Потёртость
-                                        </span>
-                                    </span>
-                            </li>
-                            <li>
-                                    <span>
-                                        <span>Заднее сидение:</span>
-                                    </span>
-                                <span>
-                                        <span>
-                                            Порез
-                                        </span>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

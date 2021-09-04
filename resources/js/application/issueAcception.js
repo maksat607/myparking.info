@@ -18,7 +18,7 @@ const issueAcception = {
         axios.get(`${APP_URL}/application/acceptions/${self.application_id}`)
             .then(response => {
                 if(response.data.id) {
-                    self.setHtml(response.data.id, response.data.html,);
+                    self.setHtml(response.data.id, response.data.html);
                 }
             }).catch(error => {
             console.log('error:', error);

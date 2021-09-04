@@ -12,6 +12,7 @@ $(function() {
     require('./duplicate-field-value/duplicate-field-value');
     require('./inputmask/inputmask');
     require('./application/issueAcception');
+    require('./application/modalAjaxContent');
     require('./common');
 });
 

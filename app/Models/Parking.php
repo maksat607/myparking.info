@@ -45,7 +45,7 @@ class Parking extends Model
             $childrenIds[] = auth()->user()->id;
             $childrenWithOwnerId = $childrenIds;
             return $query->whereIn('user_id', $childrenWithOwnerId);
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $query->where('user_id', auth()->user()->id);
         }
         return $query;
@@ -60,7 +60,7 @@ class Parking extends Model
             $childrenWithOwnerId = $childrenIds;
             return $query->where('id', $id)
                 ->whereIn('user_id', $childrenWithOwnerId);
-        } elseif (auth()->user()->hasRole(['Moderator', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $query->where('id', $id)
                 ->where('user_id', auth()->user()->id);
         }

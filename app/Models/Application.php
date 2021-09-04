@@ -21,14 +21,22 @@ class Application extends Model
 
     ];
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
-    protected $appends = ['formated_created_at', 'formated_updated_at', 'formated_arriving_at', 'formated_arrived_at', 'formated_issued_at', 'vin_array'];
-    
+    protected $appends = [
+        'formated_created_at',
+        'formated_updated_at',
+        'formated_arriving_at',
+        'formated_arrived_at',
+        'formated_issued_at',
+        'vin_array',
+    ];
+
     protected $casts = [
         'condition_engine' => 'array',
         'condition_electric' => 'array',
         'condition_gear' => 'array',
         'condition_transmission' => 'array',
     ];
+
 
     public function attachments()
     {
@@ -49,6 +57,11 @@ class Application extends Model
     {
         return $this->belongsTo(Status::class);
     }
+
+    /*public function client()
+    {
+        return $this->belongsTo(Client:class);
+    }*/
 
     public function carType()
     {
@@ -97,11 +110,6 @@ class Application extends Model
     public function issue()
     {
         return $this->issueAcceptions()->where('is_issue', true);
-    }
-
-    public function getFormatedCreatedAtAttribute($value)
-    {
-        return isset($this->created_at) && !is_null($this->created_at) ? $this->created_at->format('d-m-Y') : null;
     }
 
     public function getCurrentParkingCostAttribute($value)
@@ -166,6 +174,11 @@ class Application extends Model
         return explode(',', $this->vin);
     }
 
+    public function getFormatedCreatedAtAttribute($value)
+    {
+        return isset($this->created_at) && !is_null($this->created_at) ? $this->created_at->format('d-m-Y') : 'Не указана';
+    }
+
     public function getFormatedUpdatedAtAttribute($value)
     {
         return isset($this->updated_at) && !is_null($this->updated_at) ? $this->updated_at->format('d.m.Y') : 'Не указана';
@@ -184,5 +197,20 @@ class Application extends Model
     public function getFormatedIssuedAtAttribute($value)
     {
         return isset($this->issued_at) && !is_null($this->issued_at) ? $this->issued_at->format('d.m.Y') : 'Не указана';
+    }
+
+    public function scopeApplications($query)
+    {
+        if(auth()->user()->hasRole(['Admin'])) {
+            $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
+            $childrenIds[] = auth()->user()->id;
+            $childrenWithOwnerId = $childrenIds;
+            return $query->whereIn('user_id', $childrenWithOwnerId);
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
+            return $query
+                ->where('user_id', auth()->user()->owner->id)
+                ->where('parking_id', auth()->user()->parkings()->get()->modelKeys());
+        }
+        return $query;
     }
 }

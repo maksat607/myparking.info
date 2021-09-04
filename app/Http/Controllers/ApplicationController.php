@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ApplicationController extends AppController
 {
@@ -31,6 +32,11 @@ class ApplicationController extends AppController
     {
         $this->AttachmentController = $AttachmentController;
 //        $this->exporter = $exporter;
+
+        $this->middleware(['permission:application_view'])->only('index', 'show');
+        $this->middleware(['permission:application_create'])->only('create', 'store');
+        $this->middleware(['permission:application_update'])->only('edit', 'update');
+        $this->middleware(['permission:application_delete'])->only('destroy');
     }
 
     /**
@@ -44,7 +50,7 @@ class ApplicationController extends AppController
         $status_name = ($status_id) ? Status::findOrFail($status_id)->name : 'Все';
 
         $applications = Application::
-            where('user_id', auth()->id())
+            applications()
             ->when($status_id, function($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
@@ -59,7 +65,10 @@ class ApplicationController extends AppController
             ->with('carType')
             ->with('partner')
             ->with('issueAcceptions')
-            ->paginate(16);
+            ->with('acceptions')
+            ->with('issue')
+            ->orderBy('id', 'desc')
+            ->get();
 
         foreach ($applications as $key => $item) {
             $pricing = Pricing::where([
@@ -71,6 +80,7 @@ class ApplicationController extends AppController
 
             $applications[$key]['pricing'] = $pricing;
             $item->currentParkingCost = $item->currentParkingCost;
+
         }
 
         $title = __($status_name);
@@ -80,7 +90,7 @@ class ApplicationController extends AppController
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function create()
     {
@@ -114,7 +124,7 @@ class ApplicationController extends AppController
         $applicationRequest = $request->app_data;
 
         Validator::make($carRequest, [
-            'vin_array.*' => [
+            'vin_array' => [
                     'required_without:license_plate',
                     'unique:applications,vin'
                 ],
@@ -240,7 +250,7 @@ class ApplicationController extends AppController
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
@@ -340,7 +350,112 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
-        //
+        $carRequest = $request->car_data;
+        $applicationRequest = $request->app_data;
+
+        if(auth()->user()->hasRole(['SuperAdmin'])) {
+            $application = Application::findOrFail($id);
+        } else {
+            $application = auth()->user()->applications->find($id);
+        }
+
+        Validator::make($carRequest, [
+            'vin_array' => [
+                'required_without:license_plate',
+                Rule::unique('applications', 'vin')->ignore($application->id)
+            ],
+            'license_plate' => [Rule::unique('applications', 'license_plate')->ignore($application->id)],
+            'car_type_id' => ['integer', 'required'],
+            'car_mark_id' => ['integer', 'required'],
+            'car_model_id' => ['integer', 'required'],
+            'year' => ['integer', 'required'],
+            'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
+            'preloaded.*' => ['nullable', 'sometimes', 'exists:attachments,id']
+        ])->validate();
+
+        Validator::make($applicationRequest, [
+            'external_id' => ['required'],
+            'partner_id' => ['integer', 'required', 'exists:partners,id'],
+            'parking_id' => ['integer', 'required', 'exists:parkings,id'],
+        ])->validate();
+
+        $applicationDataArray = get_object_vars(new ApplicationData());
+        $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
+
+        $applicationData['vin'] = $applicationData['vin_array'];
+        unset($applicationData['car_series_body']);
+
+
+        foreach ($applicationData as $key => $value) {
+            if ( $value === '' || $value === null || $value === 'null') {
+                unset($applicationData[$key]);
+            }
+        }
+/*        if (isset($applicationData['status_id'])) {
+            $applicationData['status_id'] = 1;
+        } else {
+            $applicationData['status_id'] = 7;
+        }*/
+
+        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
+            $searchFilters = [];
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0 ) {
+                $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
+            }
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0 ) {
+                $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
+            }
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0 ) {
+                $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
+            }
+            $carTitleData = DB::table('car_types')
+                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
+                ->leftJoin('car_marks',  'car_types.id', '=', 'car_marks.car_type_id')
+                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
+                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
+                ->where( $searchFilters )
+                ->first();
+
+            $applicationData['car_title'] = '';
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) ) {
+                $applicationData['car_title'] .= "{$carTitleData->car_mark}";
+            }
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) ) {
+                $applicationData['car_title'] .= " {$carTitleData->car_model}";
+            }
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) ) {
+                $applicationData['car_title'] .= " {$carTitleData->car_generation}";
+            }
+            if (isset($applicationData['year']) ) {
+                $applicationData['car_title'] .= " {$applicationData['year']}";
+            }
+        }
+
+        $isUpdate = $application->update($applicationData);
+      /*  if ($applicationData['status_id'] != 1) {
+            $application->issueAcceptions()->create([
+                'is_issue' => false
+            ]);
+        }*/
+
+//        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
+
+        if($request->has('preloaded')) {
+            $attachmentsDelete = $application->attachments()->whereNotIn('id', $request->preloaded)->get();
+            $attachmentsDelete->each(function ($item, $key) {
+                $this->AttachmentController->delete($item);
+            });
+
+        }
+
+        $attachments = $this->AttachmentController->storeToModel($request,'images');
+
+        if (count($attachments) > 0) {
+            $application->attachments()->saveMany($attachments);
+        }
+        return ($isUpdate)
+            ? redirect()->route('applications.edit', ['application' => $application->id])->with('success', __('Saved.'))
+            : redirect()->back()->with('error', __('Error'));
     }
 
     /**
@@ -351,7 +466,16 @@ class ApplicationController extends AppController
      */
     public function destroy($id)
     {
-        //
+        $application = Application::findOrFail($id);
+//        $application->client()->delete();
+//        $application->viewRequests()->delete();
+        $application->attachments->each(function ($item, $key) {
+            $this->AttachmentController->delete($item);
+        });
+        $result = Application::destroy($application->id);
+        return ( $result )
+            ? redirect()->route('applications.index', ['application' => $application->id])->with('success', __('Deleted.'))
+            : redirect()->back()->with('error', __('Error'));
     }
 
     public function acceptions($application_id)
@@ -363,7 +487,7 @@ class ApplicationController extends AppController
             $application->arrived_at = Carbon::now()->format('Y-m-d H:i:s');
             $application->status()->associate($status);
             $application->acceptions()->delete();
-            
+
             /*$pricing = Pricing::where([
                 ['partner_id', $application->partner_id],
                 ['car_type_id', $application->car_type_id]
@@ -392,7 +516,7 @@ class ApplicationController extends AppController
         if($application->exists) {
             $application->status()->associate($status);
             $application->acceptions()->delete();
-            
+
             $pricing = Pricing::where([
                 ['partner_id', $application->partner_id],
                 ['car_type_id', $application->car_type_id]
@@ -408,6 +532,39 @@ class ApplicationController extends AppController
 
                 return response()->json(['success' => true, 'id'=>$application->id, 'html'=>$htmlRender]);
             }
+
+        }
+        return null;
+    }
+
+    public function getModelContent($application_id)
+    {
+        $application = Application::where('id', $application_id)
+            ->with('parking')
+            ->with('issuedBy')
+            ->with('acceptedBy')
+            ->with('status')
+            ->with('attachments')
+            ->with('carType')
+            ->with('partner')
+            ->with('issueAcceptions')
+            ->with('acceptions')
+            ->with('issue')->first();
+
+        if(!empty($application)) {
+
+            $pricing = Pricing::where([
+                ['partner_id', $application->partner_id],
+                ['car_type_id', $application->car_type_id]
+            ])
+                ->select('discount_price', 'regular_price', 'free_days')
+                ->first();
+
+            $application['pricing'] = $pricing;
+            $application->currentParkingCost = $application->currentParkingCost;
+
+            $htmlRender = view('applications.ajax.modal', compact('application'))->render();
+            return response()->json(['success' => true, 'html'=>$htmlRender]);
 
         }
         return null;

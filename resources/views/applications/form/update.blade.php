@@ -22,8 +22,9 @@
                     <button class="tabform__btn" data-id="tabform__more">Подробно</button>
                 </div>
             </div>
-            <form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('applications.update', ['application' => $application->id]) }}" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="contentWrapper">
                     <div class="tabform__content active" id="tabform__request">
                         <div class="tabform-flex">
@@ -620,11 +621,7 @@
                     <div id="hiddenInputs"></div>
                 </div>
                 <div class="tabform__footer">
-                    <label class="tabform__checkbox">
-                        <input type="checkbox" name="app_data[status_id]">
-                        <span class="tabform__checkboxnew"></span> Черновик
-                    </label>
-                    <button class="tabform__footerbtn bgpink">Создать</button>
+                    <button class="tabform__footerbtn bgpink">Обновить</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>
                 </div>
             </form>

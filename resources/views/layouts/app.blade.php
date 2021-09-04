@@ -159,7 +159,9 @@
                 </a>
                 <div class="mob-menu-btn"><span></span></div>
                 <div class="header__nav s-between">
-                    <a href="{{ route('applications.create') }}" class="btn blue-btn">Добавить заявку</a>
+                    @can('application_create')
+                    <a href="{{ route('applications.create') }}" class="btn blue-btn">{{ __('Add application') }}</a>
+                    @endcan
                     <ul class="nav s-between">
                         @guest
                             @if (Route::has('login'))
@@ -199,7 +201,7 @@
                             </li>
                             <li class="nav__dd-item">
                                 <a class="nav__dd-link" href="{{ route('applications.index') }}">
-                                    {{ __('Application') }}
+                                    {{ __('Applications') }}
                                 </a>
                             </li>
                             @hasanyrole('Admin')

@@ -149,6 +149,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('application.acceptions');
     Route::get('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
         ->name('application.deny');
+    Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
+        ->name('application.get.model.content');
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])->name( 'attachment.destroy');

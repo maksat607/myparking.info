@@ -45,6 +45,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'partner_type_view',
             'partner_type_create',
             'partner_type_update',
+            'application_view',
+            'application_create',
+            'application_update',
+            'application_delete',
+            'application_to_accepted',
+            'application_to_issue',
+            'application_to_inspection',
+            'application_issue',
         ];
 
         $permissions = collect($arrayOfPermissionNames)->map(function ($permission) {

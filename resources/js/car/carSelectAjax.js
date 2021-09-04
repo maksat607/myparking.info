@@ -11,12 +11,12 @@ const carSelectAjax = {
         if(typeof carDataApplication == 'undefined' || carDataApplication == null) {
             $.when(`#types .select-item.active a`).then((response) => {
                 $(`${response}`).trigger('click', {self:this});
-                return this.promiseReadyDom('#marks');
             });
         } else {
             this.modelId = carDataApplication.modelId;
             this.year = carDataApplication.year;
             this.modificationId = carDataApplication.modificationId;
+            this.addHiddenInput();
         }
 
         $(`#types .select-item a`).on('click', {self:this}, this.getMarks);
@@ -34,26 +34,22 @@ const carSelectAjax = {
             self.setActive(this);
             self.addHiddenInput();
         });
+
+        $(`body`).on('click', `.tabform__btn`, {self:this}, function(e) {
+            let self = e.data.self;
+            self.scrollActive($(`.select:visible`));
+        })
     },
     scrollActive(selects) {
-        $.when(selects).then(response => {
-            if(selects.is(':visible')) {
-                selects.each(function(index, element){
-                    // console.log($('ul', element))
-
-                    /*$('ul.select-list', element).animate({
-                        scrollTop: $(`.select-item.active a`, element).offset().top,
-                    }, 100);*/
-                    let topEl = $(`.select-item.active`, $(element)).position().top;
-                    $('ul.select-list', $(element)).scrollTop( 400 );
-                    console.log($(topEl));
-                });
-            }
+        selects.each(function(index, element){
+            $.when(element).then(response => {
+                let topEl = $(`.select-item.active`, element).position().top;
+                if(topEl !== 0) {
+                    $('ul.select-list', $(element)).scrollTop( topEl );
+                }
+            });
         });
 
-        /*selects.each(function(){});
-        let top = activeEl.position().top;
-        console.log(activeEl.offset(), '1233445');*/
     },
     async getMarks(e) {
         e.preventDefault();
