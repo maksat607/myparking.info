@@ -35,7 +35,7 @@ class ApplicationController extends AppController
 
         $this->middleware(['permission:application_view'])->only('index', 'show');
         $this->middleware(['permission:application_create'])->only('create', 'store');
-        $this->middleware(['permission:application_update'])->only('edit', 'update');
+//        $this->middleware(['permission:application_update'])->only('edit', 'update');
         $this->middleware(['permission:application_delete'])->only('destroy');
     }
 
@@ -66,7 +66,7 @@ class ApplicationController extends AppController
             ->with('partner')
             ->with('issueAcceptions')
             ->with('acceptions')
-            ->with('issue')
+            ->with('issuance')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -261,9 +261,8 @@ class ApplicationController extends AppController
         $partners = Partner::all();
         $parkings = Parking::parkings()->get();
         $colors = Color::getColors();
-        $application = Application::findOrFail($id);
 
-//        dump($application);
+        $application = Application::application($id)->firstOrFail();
 
         $carMarks = null;
         $carModels = null;
@@ -354,7 +353,7 @@ class ApplicationController extends AppController
         $applicationRequest = $request->app_data;
 
         if(auth()->user()->hasRole(['SuperAdmin'])) {
-            $application = Application::findOrFail($id);
+            $application = Application::application($id)->firstOrFail();
         } else {
             $application = auth()->user()->applications->find($id);
         }
@@ -466,7 +465,7 @@ class ApplicationController extends AppController
      */
     public function destroy($id)
     {
-        $application = Application::findOrFail($id);
+        $application = Application::application($id)->firstOrFail();
 //        $application->client()->delete();
 //        $application->viewRequests()->delete();
         $application->attachments->each(function ($item, $key) {
@@ -480,7 +479,7 @@ class ApplicationController extends AppController
 
     public function acceptions($application_id)
     {
-        $application = Application::find($application_id);
+        $application = Application::application($application_id)->firstOrFail();
         $status = Status::find(2);
 
         if($application->exists) {
@@ -510,7 +509,7 @@ class ApplicationController extends AppController
 
     public function deny($application_id)
     {
-        $application = Application::find($application_id);
+        $application = Application::application($application_id)->firstOrFail();
         $status = Status::find(6);
 
         if($application->exists) {

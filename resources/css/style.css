@@ -807,6 +807,7 @@ button {
     flex-basis: 120px;
     padding: 10px 5px;
     font-size: 18px;
+    text-align: center;
     color: #fff;
     border-radius: 5px;
     margin-top: 20px;

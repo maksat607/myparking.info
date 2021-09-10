@@ -37,6 +37,8 @@ class Application extends Model
         'condition_transmission' => 'array',
     ];
 
+    protected $with = ['issueAcceptions', 'status', 'acceptions'];
+
 
     public function attachments()
     {
@@ -85,7 +87,7 @@ class Application extends Model
 
     public function createdUser()
     {
-        return $this->belongsTo(User::class, 'created_user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function carMark()
@@ -107,7 +109,7 @@ class Application extends Model
     {
         return $this->issueAcceptions()->where('is_issue', false);
     }
-    public function issue()
+    public function issuance()
     {
         return $this->issueAcceptions()->where('is_issue', true);
     }
@@ -201,16 +203,37 @@ class Application extends Model
 
     public function scopeApplications($query)
     {
-        if(auth()->user()->hasRole(['Admin'])) {
-            $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
-            $childrenIds[] = auth()->user()->id;
-            $childrenWithOwnerId = $childrenIds;
+        $authUser = auth()->user();
+        if($authUser->hasRole(['Admin'])) {
+            $childrenWithOwnerId = $authUser->children()->without('owner')->get()->modelKeys();
+            $childrenWithOwnerId[] = $authUser->id;
             return $query->whereIn('user_id', $childrenWithOwnerId);
-        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
+        } elseif ($authUser->hasRole(['Manager', 'Operator'])) {
+            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
+            $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
-                ->where('user_id', auth()->user()->owner->id)
-                ->where('parking_id', auth()->user()->parkings()->get()->modelKeys());
+                ->whereIn('user_id', $operatorWithOwnerId)
+                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
         }
         return $query;
+    }
+    public function scopeApplication($query, $id)
+    {
+        $authUser = auth()->user();
+        if($authUser->hasRole(['Admin'])) {
+            $childrenIds = $authUser->children()->without('owner')->get()->modelKeys();
+            $childrenIds[] = $authUser->id;
+            $childrenWithOwnerId = $childrenIds;
+            return $query->where('id', $id)
+                ->whereIn('user_id', $childrenWithOwnerId);
+        } elseif ($authUser->hasRole(['Manager', 'Operator'])) {
+            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
+            $operatorWithOwnerId[] = $authUser->owner->id;
+            return $query
+                ->where('id', $id)
+                ->whereIn('user_id', $operatorWithOwnerId)
+                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+        }
+        return $query->where('id', $id);
     }
 }

@@ -137,7 +137,7 @@
                         </ul>
                     </div>
                 </div>
-                @elseif($application->issue)
+                {{--@elseif($application->issuance) --}}{{-- Исправить заявку --}}{{--
                     <div class="newcart__dd">
                         <div class="newcart__btn"><span class="newcart__btntitle">Заявка:</span>
                             <span class="newcart__status pink">Выдача</span></div>
@@ -163,7 +163,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    </div>--}}
                     {{-- TODO: заявка на осмотр --}}
                 @endif
                 @if(!$application->acceptions && $application->status->code != 'pending')
@@ -205,7 +205,7 @@
                         <button class="newcart__bluebtn">Выдача</button>
                         @endcan
                         @can('application_to_inspection')
-                        <button class="newcart__bluebtn">Осмотр</button>
+                        <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="newcart__bluebtn">Осмотр</a>
                         @endcan
                         <button class="newcart__bluebtn">Скачать акт</button>
                     </div>

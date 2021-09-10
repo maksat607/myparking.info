@@ -73,7 +73,7 @@
                                 <div class="tabform__group d-flex">
                                     <div class="tabform__inputwrap">
                                         <label>Партнёр</label>
-                                        <select name="app_data[partner_id]" class="partner_id @error('license_plate') is-invalid @enderror">
+                                        <select name="app_data[partner_id]" class="partner_id @error('partner_id') is-invalid @enderror">
                                             <option selected hidden value="">{{ __('Select a partner..') }}</option>
                                             @foreach($partners as $partner)
                                                 <option value="{{ $partner->id }}">{{ $partner->name }}</option>

@@ -1,9 +1,16 @@
+let dataDefault = null;
+if(typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
+    dataDefault = dateDataViewRequest;
+} else if(typeof dateDataApplication !== 'undefined' && dateDataApplication) {
+    dataDefault = dateDataApplication;
+}
+
 $('.date').flatpickr({
     altInput: true,
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
-    minDate: (typeof dateDataApplication !== 'undefined' && dateDataApplication) ? dateDataApplication : "today",
-    defaultDate: (typeof dateDataApplication !== 'undefined' && dateDataApplication) ? dateDataApplication : "today",
+    minDate: (dataDefault) ? dataDefault : "today",
+    defaultDate: (dataDefault) ? dataDefault : "today",
     disable: [
         function(date) {
             return (date.getDay() === 0 || date.getDay() === 6);

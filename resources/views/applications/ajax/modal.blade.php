@@ -43,7 +43,7 @@
                 <span>Статус:</span>
             </span>
             <span>
-                <span class="statusgreen {{ $application->status->getColorClass() }}">{{$application->status->name}}</span>
+                <span class="status{{ $application->status->getColorClass() }}">{{$application->status->name}}</span>
             </span>
         </li>
         <li>

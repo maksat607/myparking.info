@@ -12,6 +12,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserChildrenController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ViewRequestController;
 use App\Models\Partner;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -154,4 +155,18 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])->name( 'attachment.destroy');
+
+    /*View Request*/
+    Route::get('view-requests', [ViewRequestController::class, 'index'])
+        ->name( 'view_requests.index');
+    Route::get('applications/{application}/view-requests/create', [ViewRequestController::class, 'create'])
+        ->name( 'view_requests.create');
+    Route::post('applications/{application}/view-requests', [ViewRequestController::class, 'store'])
+        ->name( 'view_requests.store');
+    Route::get('view-requests/{view_request}/edit', [ViewRequestController::class, 'edit'])
+        ->name( 'view_requests.edit');
+    Route::put('view-requests/{view_request}', [ViewRequestController::class, 'update'])
+        ->name( 'view_requests.update');
+    Route::delete('view-requests/{view_request}', [ViewRequestController::class, 'destroy'])
+        ->name( 'view_requests.destroy');
 });
