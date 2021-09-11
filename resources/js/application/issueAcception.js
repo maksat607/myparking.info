@@ -12,6 +12,8 @@ const issueAcception = {
             self.application_id = $(this).data('app-id');
             self.deny(e, self);
         });
+
+        $(`#issuanceDocument, #issuanceDocumentInput`).on('change', {self:this}, this.issuanceDocType)
     },
     acceptions(e, self) {
         if(!self.application_id) return null;
@@ -24,6 +26,22 @@ const issueAcception = {
             console.log('error:', error);
         });
 
+    },
+    issuanceDocType(e) {
+        let self = e.data.self;
+        let docType = $(this).val();
+        let docTypeId = $(this).attr('id');
+        if(docTypeId === 'issuanceDocument') {
+            $(`#issuanceDocumentInput`).val(docType);
+        } else if(docTypeId === 'issuanceDocumentInput' && docType) {
+            $(`#issuanceDocument`).prop('disabled', true);
+            let newOption = new Option(docType, docType, true, true);
+            $(`#issuanceDocument`).append(newOption);
+        } else {
+            $(`#issuanceDocument`).prop('disabled', false);
+            $(`#issuanceDocument`).find(':last').remove();
+            $(`#issuanceDocument`).val('').trigger('change');
+        }
     },
     deny(e, self) {
         if(!self.application_id) return null;

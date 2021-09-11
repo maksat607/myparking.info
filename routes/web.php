@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\IssueRequestController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\PartnerController;
@@ -169,4 +170,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name( 'view_requests.update');
     Route::delete('view-requests/{view_request}', [ViewRequestController::class, 'destroy'])
         ->name( 'view_requests.destroy');
+
+    /*IssueRequest*/
+    Route::get('issue-requests', [IssueRequestController::class, 'index'])
+        ->name( 'issue_requests.index');
+    Route::get('applications/{application}/issue-requests/create', [IssueRequestController::class, 'create'])
+        ->name( 'issue_requests.create');
+    Route::post('applications/{application}/issue-requests', [IssueRequestController::class, 'store'])
+        ->name( 'issue_requests.store');
 });

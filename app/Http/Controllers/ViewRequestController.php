@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
-class ViewRequestController extends Controller
+class ViewRequestController extends AppController
 {
     protected $AttachmentController;
     public function __construct(AttachmentController $AttachmentController)
@@ -70,6 +70,9 @@ class ViewRequestController extends Controller
         }
 
         $application = Application::application($id)->firstOrFail();
+        if($application->status->code != 'storage') {
+            return redirect()->back()->with('warning', __('The car is not yet in storage'));
+        }
 
         $viewRequest['created_user_id'] = auth()->user()->id;
         $viewRequest['user_id'] = auth()->user()->id;
