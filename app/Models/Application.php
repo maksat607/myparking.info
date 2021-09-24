@@ -113,6 +113,10 @@ class Application extends Model
     {
         return $this->issueAcceptions()->where('is_issue', true);
     }
+    public function viewRequests()
+    {
+        return $this->hasMany(ViewRequest::class);
+    }
 
     public function getCurrentParkingCostAttribute($value)
     {

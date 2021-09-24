@@ -7,16 +7,16 @@
         <nav class="newtopbar__nav">
             <ul class="newtopbar__list s-between">
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Все</a>
+                    <a href="{{ route('applications.index') }}" class="newtopbar__link">Все</a>
                 </li>
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Хранение</a>
+                    <a href="{{ route('applications.index', ['status_id' => 2]) }}" class="newtopbar__link">Хранение</a>
                 </li>
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Черновик</a>
+                    <a href="{{ route('applications.index', ['status_id' => 1]) }}" class="newtopbar__link">Черновик</a>
                 </li>
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Постановка</a>
+                    <a href="{{ route('application.accepting.request') }}" class="newtopbar__link">Постановка</a>
                 </li>
                 <li class="newtopbar__item{{ request()->routeIs('view_requests.index') ? ' active' : '' }}">
                     <a href="{{ route('view_requests.index') }}" class="newtopbar__link">Осмотр</a>
@@ -25,10 +25,10 @@
                     <a href="{{ route('issue_requests.index') }}" class="newtopbar__link">Выдача</a>
                 </li>
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Выдано</a>
+                    <a href="{{ route('applications.index', ['status_id' => 3]) }}" class="newtopbar__link">Выдано</a>
                 </li>
                 <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Отклонено</a>
+                    <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="newtopbar__link">Отклонено</a>
                 </li>
                 <li class="newtopbar__item">
                     <a href="#" class="newtopbar__link">Дубли</a>

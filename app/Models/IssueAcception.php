@@ -10,11 +10,12 @@ class IssueAcception extends Model
     use HasFactory;
 
     protected $table = 'issue_acceptions';
+    protected $dates = ['arriving_at'];
     protected $guarded = [];
 
     public function client()
     {
-        return $this->hasOne(Client::class);
+        return $this->belongsTo(Client::class);
     }
 
     public function application()
@@ -22,7 +23,12 @@ class IssueAcception extends Model
         return $this->belongsTo(Application::class);
     }
 
-    public function scopeIssuance($query)
+    public function getFormatedArrivingAtAttribute()
+    {
+        return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : null;
+    }
+
+    public function scopeIssuances($query)
     {
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
@@ -33,8 +39,25 @@ class IssueAcception extends Model
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
+                ->whereIn('user_id', $operatorWithOwnerId);
+        }
+    }
+
+    public function scopeIssuance($query, $id)
+    {
+        $authUser = auth()->user();
+        if($authUser->hasRole(['Admin'])) {
+            $childrenWithOwnerId = $authUser->children()->without('owner')->get()->modelKeys();
+            $childrenWithOwnerId[] = $authUser->id;
+            return $query
+                ->whereIn('user_id', $childrenWithOwnerId)
+                ->where('id', $id);
+        } elseif ($authUser->hasRole(['Manager', 'Operator'])) {
+            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
+            $operatorWithOwnerId[] = $authUser->owner->id;
+            return $query
                 ->whereIn('user_id', $operatorWithOwnerId)
-                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+                ->where('id', $id);
         }
     }
 }

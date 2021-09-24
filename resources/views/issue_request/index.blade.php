@@ -33,30 +33,31 @@
                             <td>{{ $issueRequest->application->car_title }}</td>
                             <td>{{ $issueRequest->application->vin }}</td>
                             <td>{{ $issueRequest->application->license_plate }}</td>
-                            @if($issueRequest->application->acceptions)
-                                <td class="statuspink">Постановка</td>
-                                {{--@elseif($issueRequest->application->issuance)
-                                <td class="statuspink">Выдача</td>--}}
-                            @endif
                             <td class="statuspink">Выдача</td>
                             <td class="status{{ $issueRequest->application->status->getColorClass() }}">{{$issueRequest->application->status->name}}</td>
                             <td>
                                 <button class="newcart__btnpop"></button>
                                 <div class="newcart__setting">
-                                    <a href="">Выдача</a>
+                                    @if($issueRequest->application->status->code == 'storage')
+                                        @can('application_issue')
+                                            <a href="{{ route('application.issuance.create', ['application' => $issueRequest->application->id]) }}">Выдать</a>
+                                        @endcan
+                                        @can('application_to_inspection')
+                                            <a href="{{ route('view_requests.create', ['application' => $issueRequest->application->id]) }}" >Осмотр</a>
+                                        @endcan
+                                    @endif
                                     <a href="">Скачать акт</a>
-                                    <a href="">Подробное описание</a>
-                                    <a href="{{ route('view_requests.edit', [
-                                                    'view_request' => $issueRequest->id,
+                                    <a href="{{ route('issue_requests.edit', [
+                                                    'issue_request' => $issueRequest->id,
                                                     ]) }}">Редактировать</a>
                                     <a href="#" class="newcart__del"
                                        onclick="if( confirm('Delete it?') ) {
                                            event.preventDefault();
-                                           document.getElementById('deleteissueRequests{{ $issueRequest->id }}').submit(); return true }">Удалить</a>
+                                           document.getElementById('deleteIssueRequests{{ $issueRequest->id }}').submit(); return true }">Удалить</a>
 
-                                    <form id="deleteissueRequests{{ $issueRequest->id }}"
+                                    <form id="deleteIssueRequests{{ $issueRequest->id }}"
                                           method="POST"
-                                          action="{{ route('view_requests.destroy', ['view_request' => $issueRequest->id]) }}">
+                                          action="{{ route('issue_requests.destroy', ['issue_request' => $issueRequest->id]) }}">
                                         @csrf
                                         @method('DELETE')
                                     </form>

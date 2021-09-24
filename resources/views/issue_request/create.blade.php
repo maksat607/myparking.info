@@ -65,6 +65,28 @@
                     <div class="tabform__inputwrap">
                         <input type="text" id="issuanceDocumentInput" name="client[issuance_document]" placeholder="Иной документ" value="{{ old('client.issuance_document_other') }}">
                     </div>
+                    <div class="tabform__inputwrap">
+                        <label>Дата выдачи</label>
+                        <input type="text" name="issue_request[arriving_at]" class="date @error('arriving_at') is-invalid @enderror">
+                        @error('arriving_at')
+                        <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="tabform__inputwrap">
+                        <label>Промежуток</label>
+                        <select name="issue_request[arriving_interval]" class="@error('arriving_interval') is-invalid @enderror">
+                            <option selected hidden value="">{{ __('Select a time interval..') }}</option>
+                            <option value="10:00 - 14:00">10:00 - 14:00</option>
+                            <option value="14:00 - 18:00">14:00 - 18:00</option>
+                        </select>
+                        @error('arriving_interval')
+                        <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
                     <div class="tabform__inputwrap w-100">
                         <label>Персональные данные</label>
                         <label class="tabform__radio">
@@ -98,7 +120,7 @@
                                 </span>
                         </label>
                         <label class="tabform__radio">
-                            <input type="radio" name="client[preferred_contact_method] value="{{ $preferredContactMethodOptions[1] }}">
+                            <input type="radio" name="client[preferred_contact_method]" value="{{ $preferredContactMethodOptions[1] }}">
                             <span class="d-flex">
                                     <span class="tabform__radionew"></span>
                                     <span class="tabform__radionum">Электронная почта</span>

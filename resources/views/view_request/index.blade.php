@@ -43,9 +43,12 @@
                         <td>
                             <button class="newcart__btnpop"></button>
                             <div class="newcart__setting">
-                                <a href="">Выдача</a>
+                                @if($viewRequest->application->status->code == 'storage')
+                                    @can('application_issue')
+                                        <a href="{{ route('application.issuance.create', ['application' => $viewRequest->application->id]) }}" >Выдать</a>
+                                    @endcan
+                                @endif
                                 <a href="">Скачать акт</a>
-                                <a href="">Подробное описание</a>
                                 <a href="{{ route('view_requests.edit', [
                                                     'view_request' => $viewRequest->id,
                                                     ]) }}">Редактировать</a>
