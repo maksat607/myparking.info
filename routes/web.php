@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcceptingRequestController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CarController;
@@ -147,10 +148,14 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::resource('applications', ApplicationController::class)->except('index');
     Route::get('/application/check-duplicate', [ApplicationController::class, 'checkDuplicate'])
         ->name('application.check-duplicate');
-    Route::get('/application/acceptions/{application_id}', [ApplicationController::class, 'acceptions'])
-        ->name('application.acceptions');
+    Route::get('/application/accepting-request', [AcceptingRequestController::class, 'index'])
+        ->name('application.accepting.request');
     Route::get('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
         ->name('application.deny');
+    Route::get('/application/{application}/issuance/create', [ApplicationController::class, 'issuanceCreate'])
+        ->name('application.issuance.create');
+    Route::post('/application/{application}/issuance', [ApplicationController::class, 'issuance'])
+        ->name('application.issuance');
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->name('application.get.model.content');
 
@@ -178,4 +183,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name( 'issue_requests.create');
     Route::post('applications/{application}/issue-requests', [IssueRequestController::class, 'store'])
         ->name( 'issue_requests.store');
+    Route::get('issue-requests/{issue_request}/edit', [IssueRequestController::class, 'edit'])
+        ->name( 'issue_requests.edit');
+    Route::put('issue-requests/{issue_request}', [IssueRequestController::class, 'update'])
+        ->name( 'issue_requests.update');
+    Route::delete('issue-requests/{issue_request}', [IssueRequestController::class, 'destroy'])
+        ->name( 'issue_requests.destroy');
 });

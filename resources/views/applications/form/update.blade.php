@@ -621,6 +621,10 @@
                     <div id="hiddenInputs"></div>
                 </div>
                 <div class="tabform__footer">
+                    <label class="tabform__checkbox">
+                        <input type="checkbox" name="app_data[accept]">
+                        <span class="tabform__checkboxnew"></span> Принять
+                    </label>
                     <button class="tabform__footerbtn bgpink">Обновить</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>
                 </div>

@@ -13,12 +13,14 @@ use App\Models\CarModel;
 use App\Models\CarModification;
 use App\Models\CarSeries;
 use App\Models\CarType;
+use App\Models\Client;
 use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -67,6 +69,7 @@ class ApplicationController extends AppController
             ->with('issueAcceptions')
             ->with('acceptions')
             ->with('issuance')
+            ->with('viewRequests')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -84,7 +87,11 @@ class ApplicationController extends AppController
         }
 
         $title = __($status_name);
-        return view('applications.index', compact('title', 'applications', 'statuses'));
+        if($status_id) {
+            return view('applications.index_status', compact('title', 'applications', 'statuses'));
+        } else {
+            return view('applications.index', compact('title', 'applications', 'statuses'));
+        }
     }
 
     /**
@@ -218,7 +225,8 @@ class ApplicationController extends AppController
         $application = auth()->user()->applications()->create($applicationData);
         if ($applicationData['status_id'] != 1) {
             $application->issueAcceptions()->create([
-                'is_issue' => false
+                'is_issue' => false,
+                'user_id' => auth()->id()
             ]);
         }
 
@@ -390,11 +398,6 @@ class ApplicationController extends AppController
                 unset($applicationData[$key]);
             }
         }
-/*        if (isset($applicationData['status_id'])) {
-            $applicationData['status_id'] = 1;
-        } else {
-            $applicationData['status_id'] = 7;
-        }*/
 
         if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
             $searchFilters = [];
@@ -430,6 +433,12 @@ class ApplicationController extends AppController
             }
         }
 
+        if (isset($applicationData['accept'])) {
+            $applicationData['status_id'] = 2;
+            $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
+            $application->acceptions()->delete();
+        }
+
         $isUpdate = $application->update($applicationData);
       /*  if ($applicationData['status_id'] != 1) {
             $application->issueAcceptions()->create([
@@ -452,6 +461,7 @@ class ApplicationController extends AppController
         if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
         }
+
         return ($isUpdate)
             ? redirect()->route('applications.edit', ['application' => $application->id])->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
@@ -475,36 +485,6 @@ class ApplicationController extends AppController
         return ( $result )
             ? redirect()->route('applications.index', ['application' => $application->id])->with('success', __('Deleted.'))
             : redirect()->back()->with('error', __('Error'));
-    }
-
-    public function acceptions($application_id)
-    {
-        $application = Application::application($application_id)->firstOrFail();
-        $status = Status::find(2);
-
-        if($application->exists) {
-            $application->arrived_at = Carbon::now()->format('Y-m-d H:i:s');
-            $application->status()->associate($status);
-            $application->acceptions()->delete();
-
-            /*$pricing = Pricing::where([
-                ['partner_id', $application->partner_id],
-                ['car_type_id', $application->car_type_id]
-            ])
-            ->select('discount_price', 'regular_price', 'free_days')
-            ->first();
-
-            $application->pricing = $pricing;
-            $application->currentParkingCost = $application->currentParkingCost;*/
-
-            if($application->save()) {
-                $htmlRender = view('applications.ajax.article', compact('application'))->render();
-
-                return response()->json(['success' => true, 'id'=>$application->id, 'html'=>$htmlRender]);
-            }
-
-        }
-        return null;
     }
 
     public function deny($application_id)
@@ -536,6 +516,71 @@ class ApplicationController extends AppController
         return null;
     }
 
+    public function issuanceCreate($application_id)
+    {
+        $application = Application::application($application_id)->firstOrFail();
+        $client = null;
+
+        if($application->issuance) {
+            $client = $application->issuance->client;
+        }
+
+        $documentOptions = Client::issuanceDocumentOptions();
+        $individualLegalOptions = Client::issuanceIndividualLegalOptions();
+        $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
+
+        $title = __('Application for issuance');
+        return view('applications.issuance', compact(
+            'title',
+                    'application',
+                    'client',
+                    'documentOptions',
+                    'individualLegalOptions',
+                    'preferredContactMethodOptions'
+        ));
+    }
+
+    public function issuance(Request $request, $application_id)
+    {
+        $clientData = $request->client;
+
+        Validator::make($clientData, [
+            'issuance_document' => ['string', 'nullable'],
+            'lastname' => ['string', 'nullable'],
+            'firstname' => ['string', 'nullable'],
+            'middlename' => ['string', 'nullable'],
+            'phone' => ['numeric', 'nullable'],
+            'email' => ['email', 'nullable'],
+        ])->validate();
+
+
+        foreach ($clientData as $key => $value) {
+            if ( is_null($value) || $value == 'null') {
+                unset($clientData[$key]);
+            }
+        }
+
+        $application = Application::application($application_id)->firstOrFail();
+
+        if(!$application->issuance) {
+            $client = Client::create($clientData);
+        } else {
+            $client = $application->issuance->client;
+        }
+
+        if($client->exists) {
+            $application->update([
+                'status_id' => 3,
+                'client_id' => $client->id,
+                'issued_at' => Date::now()
+            ]);
+            $application->issuance()->delete();
+            return redirect()->route('applications.index')->with('success', __('Saved.'));
+        } else {
+            return redirect()->back()->with('error', __('Error'));
+        }
+    }
+
     public function getModelContent($application_id)
     {
         $application = Application::where('id', $application_id)
@@ -548,7 +593,7 @@ class ApplicationController extends AppController
             ->with('partner')
             ->with('issueAcceptions')
             ->with('acceptions')
-            ->with('issue')->first();
+            ->with('issuance')->first();
 
         if(!empty($application)) {
 
@@ -672,7 +717,7 @@ class ApplicationController extends AppController
                 ->groupBy('car_model_id')
                 ->first();
 
-            return isset($carYears->year_begin) ? $carYears : ['year_begin' => 1950, 'year_end' => Carbon::now()->year];
+            return isset($carYears->year_begin) ? $carYears : (object)['year_begin' => 1950, 'year_end' => Carbon::now()->year];
         }
 
     }

@@ -43,17 +43,17 @@ class ViewRequest extends Model
 
     public function getFormatedCreatedAtAttribute()
     {
-        return isset($this->created_at) ? $this->created_at->format('d-m-Y') : null;
+        return isset($this->created_at) ? $this->created_at->format('d-m-Y') : 'Не указана';
     }
 
     public function getFormatedArrivingAtAttribute()
     {
-        return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : null;
+        return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : 'Не указана';
     }
 
     public function getFormatedFinishedAtAttribute()
     {
-        return isset($this->finished_at) ? $this->finished_at->format('d-m-Y') : null;
+        return isset($this->finished_at) ? $this->finished_at->format('d-m-Y') : 'Не указана';
     }
 
     public static function getStatuses($end = 0, $start = 0)

@@ -3,6 +3,8 @@ if(typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
     dataDefault = dateDataViewRequest;
 } else if(typeof dateDataApplication !== 'undefined' && dateDataApplication) {
     dataDefault = dateDataApplication;
+} else if(typeof dateDataIssue !== 'undefined' && dateDataIssue) {
+    dataDefault = dateDataIssue;
 }
 
 function getDate(){
