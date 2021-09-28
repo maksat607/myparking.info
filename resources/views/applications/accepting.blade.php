@@ -34,7 +34,7 @@
                             <td>{{ $acceptingRequest->application->vin }}</td>
                             <td>{{ $acceptingRequest->application->license_plate }}</td>
                             @if($acceptingRequest->application->acceptions)
-                                <td class="statuspink">Постановка</td>
+                                <td class="statusblue">Постановка</td>
                             @endif
                             <td class="status{{ $acceptingRequest->application->status->getColorClass() }}">{{$acceptingRequest->application->status->name}}</td>
                             <td>

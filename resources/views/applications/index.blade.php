@@ -158,7 +158,8 @@
                     <div class="newcart__confirmbtn">
                         <a href="{{ route('applications.edit', ['application' => $application->id]) }}"
                            class="newcart__accept issue">Принять</a>
-                        <button class="newcart__deny deny" data-app-id="{{ $application->id }}">Отказать</button>
+                        <a href="{{ route('application.deny', ['application_id' => $application->id]) }}"
+                           class="newcart__deny">Отказать</a>
                     </div>
                     @endcan
                 @elseif($application->status->code == 'storage')

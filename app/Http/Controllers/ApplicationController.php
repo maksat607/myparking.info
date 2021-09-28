@@ -496,21 +496,9 @@ class ApplicationController extends AppController
             $application->status()->associate($status);
             $application->acceptions()->delete();
 
-            $pricing = Pricing::where([
-                ['partner_id', $application->partner_id],
-                ['car_type_id', $application->car_type_id]
-            ])
-            ->select('discount_price', 'regular_price', 'free_days')
-            ->first();
-
-            $application['pricing'] = $pricing;
-            $application->currentParkingCost = $application->currentParkingCost;
-
-            if($application->save()) {
-                $htmlRender = view('applications.ajax.article', compact('application'))->render();
-
-                return response()->json(['success' => true, 'id'=>$application->id, 'html'=>$htmlRender]);
-            }
+            return ($application->save())
+                ? redirect()->back()->with('success', __('Saved.'))
+                : redirect()->back()->with('error', __('Error'));
 
         }
         return null;
