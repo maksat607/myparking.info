@@ -37,7 +37,7 @@ class ApplicationController extends AppController
 
         $this->middleware(['permission:application_view'])->only('index', 'show');
         $this->middleware(['permission:application_create'])->only('create', 'store');
-//        $this->middleware(['permission:application_update'])->only('edit', 'update');
+        $this->middleware(['permission:application_update'])->only('edit', 'update');
         $this->middleware(['permission:application_delete'])->only('destroy');
     }
 
@@ -105,8 +105,13 @@ class ApplicationController extends AppController
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
-        $partners = Partner::all();
-        $parkings = Parking::parkings()->get();
+        if(auth()->user()->partner) {
+            $partners = auth()->user()->partner()->get();
+            $parkings = auth()->user()->partnerParkings;
+        } else {
+            $partners = Partner::all();
+            $parkings = Parking::parkings()->get();
+        }
         $colors = Color::getColors();
 
 
@@ -360,11 +365,7 @@ class ApplicationController extends AppController
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
-        if(auth()->user()->hasRole(['SuperAdmin'])) {
-            $application = Application::application($id)->firstOrFail();
-        } else {
-            $application = auth()->user()->applications->find($id);
-        }
+        $application = Application::application($id)->firstOrFail();
 
         Validator::make($carRequest, [
             'vin_array' => [

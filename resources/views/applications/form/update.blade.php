@@ -621,10 +621,12 @@
                     <div id="hiddenInputs"></div>
                 </div>
                 <div class="tabform__footer">
+                    @can('application_to_accepted')
                     <label class="tabform__checkbox">
                         <input type="checkbox" name="app_data[accept]">
                         <span class="tabform__checkboxnew"></span> Принять
                     </label>
+                    @endcan
                     <button class="tabform__footerbtn bgpink">Обновить</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>
                 </div>

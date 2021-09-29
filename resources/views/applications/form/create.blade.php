@@ -76,7 +76,11 @@
                                         <select name="app_data[partner_id]" class="partner_id @error('partner_id') is-invalid @enderror">
                                             <option selected hidden value="">{{ __('Select a partner..') }}</option>
                                             @foreach($partners as $partner)
-                                                <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                @if($loop->count == 1)
+                                                    <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                @else
+                                                    <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>

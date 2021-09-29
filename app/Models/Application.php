@@ -208,16 +208,21 @@ class Application extends Model
     public function scopeApplications($query)
     {
         $authUser = auth()->user();
-        if($authUser->hasRole(['Admin'])) {
+        if($authUser->hasRole(['Admin', 'Partner'])) {
             $childrenWithOwnerId = $authUser->children()->without('owner')->get()->modelKeys();
             $childrenWithOwnerId[] = $authUser->id;
             return $query->whereIn('user_id', $childrenWithOwnerId);
-        } elseif ($authUser->hasRole(['Manager', 'Operator'])) {
-            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
+        } elseif ($authUser->hasRole(['Manager'])) {
+//            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
+//            $operatorWithOwnerId[] = $authUser->owner->id;
+            return $query
+//                ->whereIn('user_id', $operatorWithOwnerId)
+                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+        } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
+            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
-                ->whereIn('user_id', $operatorWithOwnerId)
-                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+                ->whereIn('user_id', $operatorWithOwnerId);
         }
         return $query;
     }
@@ -230,13 +235,15 @@ class Application extends Model
             $childrenWithOwnerId = $childrenIds;
             return $query->where('id', $id)
                 ->whereIn('user_id', $childrenWithOwnerId);
-        } elseif ($authUser->hasRole(['Manager', 'Operator'])) {
-            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
-            $operatorWithOwnerId[] = $authUser->owner->id;
+        } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->where('id', $id)
-                ->whereIn('user_id', $operatorWithOwnerId)
                 ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+        } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
+            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
+            $operatorWithOwnerId[] = $authUser->owner->id;
+            return $query
+                ->whereIn('user_id', $operatorWithOwnerId);
         }
         return $query->where('id', $id);
     }
