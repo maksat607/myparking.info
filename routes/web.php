@@ -152,6 +152,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('application.accepting.request');
     Route::get('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
         ->name('application.deny');
+    Route::get('/application/favorite/{application}', [ApplicationController::class, 'toggleFavorite'])
+        ->name('application.favorite');
     Route::get('/application/{application}/issuance/create', [ApplicationController::class, 'issuanceCreate'])
         ->name('application.issuance.create');
     Route::post('/application/{application}/issuance', [ApplicationController::class, 'issuance'])

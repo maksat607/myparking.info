@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
@@ -15,12 +16,17 @@ class IssueRequestController extends AppController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, ApplicationFilters $filters)
     {
-        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
+//        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
+        $applications = Application::applications()->filter($filters)->whereHas('issuance')->get();
 
         $title = __('Issue Requests');
-        return view('issue_request.index', compact('title', 'issueRequests'));
+        if($request->get('direction') == 'row') {
+            return view('applications.index_status', compact('title', 'applications'));
+        } else {
+            return view('applications.index', compact('title', 'applications'));
+        }
     }
     /**
      * Show the form for creating a new resource.

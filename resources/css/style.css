@@ -464,10 +464,10 @@ button {
 }
 
 .newfilter__save {
-    background: #D4D4D4;
+    /*background: #D4D4D4;
     background-image: url(../img/save-icon.png);
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center;*/
     margin-right: auto;
     margin-left: 24px;
 }
@@ -538,23 +538,23 @@ button {
     position: relative;
 }
 
-.newcart__save::after {
-    content: "";
+.newcart__save > .favorite {
     position: absolute;
-    top: -1px;
-    left: 10px;
+    top: 10px;
+    left: 20px;
     width: 22px;
     height: 33px;
+    cursor: pointer;
     background-image: url('../img/pink-save-icon.png');
 }
 
-.newcart__nosave::after {
-    content: "";
+.newcart__nosave > .favorite {
     position: absolute;
-    top: -1px;
-    left: 10px;
+    top: 10px;
+    left: 20px;
     width: 24px;
     height: 33px;
+    cursor: pointer;
     background-image: url('../img/no-save-icon.png');
     background-repeat: no-repeat;
 }
@@ -2061,6 +2061,79 @@ button {
     -moz-animation: fadeIn .9s;
     -o-animation: fadeIn .9s;
     -ms-animation: fadeIn .9s;
+}
+
+.btn-radio{
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor:pointer;
+    margin: 0;
+    display: inline-block;
+    border: 0;
+    otline: none;
+    border-color: transparent;
+}
+.btn-radio:before{
+    content: "";
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #D4D4D4;
+    transition: all 0.4s;
+}
+
+.btn-radio:checked:before{
+    background-color: #3991DA;
+}
+.btn-radio--row{
+    margin-right: 9px;
+}
+
+.btn-radio--row:before{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='42' height='44' viewBox='0 0 42 44'%3E%3Cdefs%3E%3Cfilter id='Прямоугольник_28' x='0' y='0' width='42' height='23' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_29' x='0' y='7' width='42' height='23' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-2'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-2'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_30' x='0' y='14' width='42' height='23' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-3'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-3'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_31' x='0' y='21' width='42' height='23' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-4'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-4'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3C/defs%3E%3Cg id='Сгруппировать_171' data-name='Сгруппировать 171' transform='translate(-1507 -91)'%3E%3Cg transform='matrix(1, 0, 0, 1, 1507, 91)' filter='url(%23Прямоугольник_28)'%3E%3Crect id='Прямоугольник_28-2' data-name='Прямоугольник 28' width='24' height='5' transform='translate(9 6)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1507, 91)' filter='url(%23Прямоугольник_29)'%3E%3Crect id='Прямоугольник_29-2' data-name='Прямоугольник 29' width='24' height='5' transform='translate(9 13)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1507, 91)' filter='url(%23Прямоугольник_30)'%3E%3Crect id='Прямоугольник_30-2' data-name='Прямоугольник 30' width='24' height='5' transform='translate(9 20)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1507, 91)' filter='url(%23Прямоугольник_31)'%3E%3Crect id='Прямоугольник_31-2' data-name='Прямоугольник 31' width='24' height='5' transform='translate(9 27)' fill='%23fff'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+    background-position: center 1px, center;
+}
+
+.btn-radio--col:before{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='44' height='46' viewBox='0 0 44 46'%3E%3Cdefs%3E%3Cfilter id='Прямоугольник_24' x='0' y='0' width='30' height='31' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_27' x='0' y='15' width='30' height='31' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-2'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-2'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_25' x='14' y='0' width='30' height='31' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-3'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-3'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3Cfilter id='Прямоугольник_26' x='14' y='15' width='30' height='31' filterUnits='userSpaceOnUse'%3E%3CfeOffset dy='3' input='SourceAlpha'/%3E%3CfeGaussianBlur stdDeviation='3' result='blur-4'/%3E%3CfeFlood flood-opacity='0.161'/%3E%3CfeComposite operator='in' in2='blur-4'/%3E%3CfeComposite in='SourceGraphic'/%3E%3C/filter%3E%3C/defs%3E%3Cg id='Сгруппировать_172' data-name='Сгруппировать 172' transform='translate(-1570 -90)'%3E%3Cg transform='matrix(1, 0, 0, 1, 1570, 90)' filter='url(%23Прямоугольник_24)'%3E%3Crect id='Прямоугольник_24-2' data-name='Прямоугольник 24' width='12' height='13' transform='translate(9 6)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1570, 90)' filter='url(%23Прямоугольник_27)'%3E%3Crect id='Прямоугольник_27-2' data-name='Прямоугольник 27' width='12' height='13' transform='translate(9 21)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1570, 90)' filter='url(%23Прямоугольник_25)'%3E%3Crect id='Прямоугольник_25-2' data-name='Прямоугольник 25' width='12' height='13' transform='translate(23 6)' fill='%23fff'/%3E%3C/g%3E%3Cg transform='matrix(1, 0, 0, 1, 1570, 90)' filter='url(%23Прямоугольник_26)'%3E%3Crect id='Прямоугольник_26-2' data-name='Прямоугольник 26' width='12' height='13' transform='translate(23 21)' fill='%23fff'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+    background-position: center 0px, center;
+}
+
+.checkbox-chosen{
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor:pointer;
+    /*margin: 0;*/
+    display: inline-block;
+    border: 0;
+    border-color: transparent;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+    -o-appearance:none;
+}
+
+.checkbox-chosen:before{
+    content: "";
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #D4D4D4;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='23.106' viewBox='0 0 17 23.106'%3E%3Cg id='Сгруппировать_171' data-name='Сгруппировать 171' transform='translate(-12 -9)'%3E%3Cpath id='Контур_11' data-name='Контур 11' d='M1343.374,265.485v20l7.5-6.117,7.5,6.117v-20Z' transform='translate(-1330.374 -255.485)' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E%0A");
+    transition: all 0.4s;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.checkbox-chosen:checked:before{
+    background-color: #3991DA;
 }
 
 @keyframes fadeIn {

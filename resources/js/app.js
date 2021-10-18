@@ -13,6 +13,8 @@ $(function() {
     require('./inputmask/inputmask');
     require('./application/issueAcception');
     require('./application/modalAjaxContent');
+    require('./application-filter/applicationFilter');
+    require('./application/favorite');
     require('./common');
 });
 

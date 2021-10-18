@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\ViewRequest;
 use Illuminate\Http\Request;
@@ -21,12 +22,17 @@ class ViewRequestController extends AppController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, ApplicationFilters $filters)
     {
-        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
+//        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
+        $applications = Application::applications()->filter($filters)->whereHas('viewRequests')->get();
 
         $title = __('View Requests');
-        return view('view_request.index', compact('title', 'viewRequests'));
+        if($request->get('direction') == 'row') {
+            return view('applications.index_status', compact('title', 'applications'));
+        } else {
+            return view('applications.index', compact('title', 'applications'));
+        }
     }
 
     /**

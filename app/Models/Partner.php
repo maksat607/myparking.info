@@ -34,4 +34,14 @@ class Partner extends Model
     {
         return $this->hasMany(Pricing::class, 'partner_id', 'id');
     }
+
+    public function scopePartners($query)
+    {
+        if (auth()->user()->hasRole(['Partner'])) {
+            return $query->where('id', auth()->user()->partner->id);
+        } elseif (auth()->user()->hasRole(['PartnerOperator'])) {
+            return $query->where('id', auth()->user()->owner->partner->id);
+        }
+        return $query;
+    }
 }

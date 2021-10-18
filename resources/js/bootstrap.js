@@ -69,3 +69,7 @@ require('inputmask/dist/jquery.inputmask.min');
  * **/
 require('../slick/slick');
 
+/**
+ * Toastr
+ * **/
+window.toastr = require('toastr');

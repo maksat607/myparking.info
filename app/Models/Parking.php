@@ -47,6 +47,10 @@ class Parking extends Model
             return $query->whereIn('user_id', $childrenWithOwnerId);
         } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $query->where('user_id', auth()->user()->id);
+        } elseif (auth()->user()->hasRole(['Partner'])) {
+            return $query->whereIn('id', auth()->user()->partnerParkings->modelKeys());
+        } elseif (auth()->user()->hasRole(['PartnerOperator'])) {
+            return $query->whereIn('id', auth()->user()->owner->partnerParkings->modelKeys());
         }
         return $query;
 
@@ -66,4 +70,17 @@ class Parking extends Model
         }
         return $query->where('id', $id);
     }
+
+    /*public function scopeParkingsFilter($query)
+    {
+        if(auth()->user()->hasRole(['Admin'])) {
+            $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
+            $childrenIds[] = auth()->user()->id;
+            $childrenWithOwnerId = $childrenIds;
+            return $query->whereIn('user_id', $childrenWithOwnerId);
+        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
+            return $query->where('user_id', auth()->user()->id);
+        }
+        return $query;
+    }*/
 }

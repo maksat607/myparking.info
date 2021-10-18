@@ -122,4 +122,12 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $query;
     }
+
+    public function usersFilter()
+    {
+        if(auth()->user()->hasRole(['SuperAdmin'])) {
+            return static::all();
+        }
+        return auth()->user();
+    }
 }

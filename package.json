@@ -10,7 +10,7 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "axios": "^0.21",
+        "axios": "^0.21.4",
         "bootstrap": "^4.0.0",
         "jquery": "^3.2",
         "laravel-mix": "^6.0.25",
@@ -27,6 +27,7 @@
         "flatpickr": "^4.6.9",
         "font-awesome": "^4.7.0",
         "inputmask": "^5.0.6",
-        "select2": "^4.1.0-rc.0"
+        "select2": "^4.1.0-rc.0",
+        "toastr": "^2.1.4"
     }
 }

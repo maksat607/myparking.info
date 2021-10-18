@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Color;
+use App\Filter\ApplicationFilters;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
 use App\Models\ApplicationData;
@@ -18,6 +19,7 @@ use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
+use Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -46,13 +48,14 @@ class ApplicationController extends AppController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $status_id = null)
+    public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
         $status_name = ($status_id) ? Status::findOrFail($status_id)->name : 'Все';
 
         $applications = Application::
             applications()
+            ->filter($filters)
             ->when($status_id, function($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
@@ -87,10 +90,10 @@ class ApplicationController extends AppController
         }
 
         $title = __($status_name);
-        if($status_id) {
-            return view('applications.index_status', compact('title', 'applications', 'statuses'));
+        if($request->get('direction') == 'row') {
+            return view('applications.index_status', compact('title', 'applications'));
         } else {
-            return view('applications.index', compact('title', 'applications', 'statuses'));
+            return view('applications.index', compact('title', 'applications'));
         }
     }
 
@@ -833,5 +836,25 @@ class ApplicationController extends AppController
         else {
             return (object)['name' => 'Год Не Указан', 'id' => 0];
         }
+    }
+
+    public function toggleFavorite(Request $request, Application $application)
+    {
+        $application->favorite = !$application->favorite;
+        $application->save();
+
+        return ( $application->favorite === true )
+            ? response()->json([
+                'favorite' => $application->favorite,
+                'message'=>__('Added to favorite'),
+                'class' => 'newcart__save',
+                'remove_class' => 'newcart__nosave'
+            ])
+            : response()->json([
+                'favorite' => $application->favorite,
+                'message'=>__('Removed from favorite'),
+                'class' => 'newcart__nosave',
+                'remove_class' => 'newcart__save'
+            ]);
     }
 }

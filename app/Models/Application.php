@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Filter\QueryFilter;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +37,7 @@ class Application extends Model
         'condition_electric' => 'array',
         'condition_gear' => 'array',
         'condition_transmission' => 'array',
+        'favorite' => 'boolean'
     ];
 
     protected $with = ['issueAcceptions', 'status', 'acceptions'];
@@ -226,6 +229,7 @@ class Application extends Model
         }
         return $query;
     }
+
     public function scopeApplication($query, $id)
     {
         $authUser = auth()->user();
@@ -246,5 +250,10 @@ class Application extends Model
                 ->whereIn('user_id', $operatorWithOwnerId);
         }
         return $query->where('id', $id);
+    }
+
+    public function scopeFilter(Builder $builder, QueryFilter $filters)
+    {
+        return $filters->apply($builder);
     }
 }

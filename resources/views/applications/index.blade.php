@@ -7,13 +7,15 @@
         <div class="newcart__list d-flex">
             @foreach($applications as $application)
             <article class="newcart__item" id="application_{{ $application->id }}">
-                <div class="newcart__img newcart__save lazy">
-                    @foreach($application->attachments as $attachment)
-                    <div class="newcart__imgwrap">
-                        <img src="{{ $attachment->thumbnail_url }}" alt="">
+                <div class="newcart__wrapp @if($application->favorite) newcart__save @else newcart__nosave @endif">
+                    <div class="newcart__img lazy">
+                        @foreach($application->attachments as $attachment)
+                        <div class="newcart__imgwrap">
+                            <img src="{{ $attachment->thumbnail_url }}" alt="">
+                        </div>
+                        @endforeach
                     </div>
-                    @endforeach
-
+                    <div class="favorite" data-app-id="{{ $application->id }}"></div>
                 </div>
                 <div class="newcart__topbtn">
                     @can('application_update')
