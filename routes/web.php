@@ -145,7 +145,11 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/applications/{status_id?}', [ApplicationController::class, 'index'])
         ->where('status_id', '[0-9]+')
         ->name('applications.index');
-    Route::resource('applications', ApplicationController::class)->except('index');
+    Route::get('/applications/create/{application?}', [ApplicationController::class, 'create'])
+        ->name('applications.create');
+    Route::get('/applications/duplicate', [ApplicationController::class, 'duplicate'])
+        ->name('applications.duplicate');
+    Route::resource('applications', ApplicationController::class)->except(['index', 'create']);
     Route::get('/application/check-duplicate', [ApplicationController::class, 'checkDuplicate'])
         ->name('application.check-duplicate');
     Route::get('/application/accepting-request', [AcceptingRequestController::class, 'index'])

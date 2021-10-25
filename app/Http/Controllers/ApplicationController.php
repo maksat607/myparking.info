@@ -102,9 +102,9 @@ class ApplicationController extends AppController
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(Application $application)
     {
-        $carList = CarType::where('is_active', 1)
+        $carTypes = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
@@ -119,12 +119,27 @@ class ApplicationController extends AppController
 
 
         $title = __('Create a Request');
-        return view('applications.create', compact(
-            'title',
-                 'carList',
+
+        if ($application->exists) {
+            $updateData = array_merge(
+                $this->applicationUpdateData($application),
+                compact(
+                    'title',
+                    'carTypes',
                     'partners',
                     'parkings',
-                    'colors'));
+                    'colors')
+            );
+            return view('applications.duplicate_create', $updateData);
+        } else {
+            return view('applications.create', compact(
+                'title',
+                'carTypes',
+                'partners',
+                'parkings',
+                'colors'));
+        }
+
     }
 
     /**
@@ -138,18 +153,30 @@ class ApplicationController extends AppController
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
-        Validator::make($carRequest, [
+        $validator = Validator::make($carRequest, [
             'vin_array' => [
+                    'exclude_if:returned,1',
                     'required_without:license_plate',
-                    'unique:applications,vin'
+                    'unique:applications,vin',
                 ],
-            'license_plate' => ['unique:applications,license_plate'],
+            'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate'],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
             'car_model_id' => ['integer', 'required'],
             'year' => ['integer', 'required'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
-        ])->validate();
+        ]);
+
+        $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
+            $count = Application::where('vin', $carRequest['vin_array'])->count();
+            if ($count < 1) {
+                $fail('There is no such duplicate!');
+            }
+        }, function ($input) {
+            return $input->returned == 1;
+        });
+
+        $validator->validate();
 
         Validator::make($applicationRequest, [
             'external_id' => ['required'],
@@ -247,7 +274,7 @@ class ApplicationController extends AppController
         }
 
         return ($application->exists)
-            ? redirect()->route('applications.create')->with('success', __('Saved.'))
+            ? redirect()->route('applications.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
     }
 
@@ -280,51 +307,8 @@ class ApplicationController extends AppController
 
         $application = Application::application($id)->firstOrFail();
 
-        $carMarks = null;
-        $carModels = null;
-        $carYears = null;
-        $carGenerations = null;
-        $carSeriess = null;
-        $carModifications = null;
-        $carEngines = null;
-        $carTransmissions = null;
-        $carGears = null;
-        if($application->car_type_id){
-            $carMarks = $this->getCarMarkList($application->car_type_id);
-        }
-        if($application->car_mark_id){
-            $carModels = $this->getCarModelList($application->car_mark_id);
-        }
-        if($application->car_model_id){
-            $carYears = $this->filteredItems($this->getCarYearList($application->car_model_id));
-        }
-        if($application->year){
-            $carGenerations = $this->getCarGenerationList($application->car_model_id, $application->year);
-        }
-        if($application->car_generation_id){
-            $carSeriess = $this->getCarSeriesList($application->car_model_id, $application->car_generation_id);
+        extract($this->applicationUpdateData($application));
 
-        }
-        if($application->car_series_id){
-            $carModifications = $this->getCarModificationList($application->car_model_id, $application->car_series_id, $application->year);
-        }
-        if($application->car_modification_id){
-            $carEngines = $this->getCarEngineList($application->car_modification_id);
-        }
-        if($application->car_engine_id){
-            $carTransmissions = $this->getCarTransmissionList($application->car_modification_id);
-        }
-        if($application->car_gear_id){
-            $carGears = $this->getCarGearList($application->car_modification_id);
-        }
-
-        $attachments = $application->attachments()->select('id', 'url as src')->get()->toArray();
-        $dataApplication = [
-            'modelId' => $application->car_model_id,
-            'car_mark_id' => $application->car_mark_id,
-            'modificationId' => $application->car_modification_id,
-            'year' => $application->year
-        ];
 
 //        $exterior_damage = $application->exterior_damage;
 //        $interior_damage = $application->interior_damage;
@@ -372,10 +356,14 @@ class ApplicationController extends AppController
 
         Validator::make($carRequest, [
             'vin_array' => [
+                'exclude_if:returned,1',
                 'required_without:license_plate',
                 Rule::unique('applications', 'vin')->ignore($application->id)
             ],
-            'license_plate' => [Rule::unique('applications', 'license_plate')->ignore($application->id)],
+            'license_plate' => [
+                'exclude_if:returned,1',
+                Rule::unique('applications', 'license_plate')->ignore($application->id)
+            ],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
             'car_model_id' => ['integer', 'required'],
@@ -466,9 +454,12 @@ class ApplicationController extends AppController
             $application->attachments()->saveMany($attachments);
         }
 
-        return ($isUpdate)
-            ? redirect()->route('applications.edit', ['application' => $application->id])->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ($isUpdate) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('applications.index', ['application' => $application->id]);
+        }
+
+        return redirect()->back()->with('error', __('Error'));
     }
 
     /**
@@ -613,7 +604,7 @@ class ApplicationController extends AppController
                 ->join('statuses', 'statuses.id', '=', 'applications.status_id')
                 ->where([
                     ['license_plate', 'like', '%' . $request->license_plate . '%'],
-                    ['applications.id', '<>', $request->id],
+//                    ['applications.id', '<>', $request->id],
                     ['applications.user_id', '=', auth()->id()]
                 ])
                 ->get()->toArray()
@@ -633,7 +624,7 @@ class ApplicationController extends AppController
             if ($searchVin) {
                 $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                     ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-                    ->where('applications.id', '<>', $request->id)
+//                    ->where('applications.id', '<>', $request->id)
                     ->where('applications.user_id', '=', auth()->id())
                     ->where(function($query) use( $vinArray ) {
                         foreach ($vinArray as $singleVin) {
@@ -856,5 +847,209 @@ class ApplicationController extends AppController
                 'class' => 'newcart__nosave',
                 'remove_class' => 'newcart__save'
             ]);
+    }
+
+    /**
+     * Display a listing of the duplicate resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function duplicate(Request $request, ApplicationFilters $filters)
+    {
+        $duplicateIDs = null;
+        $groupBy = $request->get('group-by', 'vin');
+        if ( $groupBy === 'license_plate' ) {
+            $groupBy = 'license_plate';
+            $duplicateIDs = DB::select( DB::raw(
+                "SELECT GROUP_CONCAT(ids) as tmp FROM (
+                    SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids
+                    FROM `applications`
+                    WHERE license_plate IS NOT NULL AND license_plate NOT LIKE '%Нет учета%'
+                    group by license_plate
+                    having cnt > 1 )
+                T1") )[0];
+        }
+        else if ( $groupBy === 'vin' ) {
+            $duplicateIDs = DB::select( DB::raw(
+                "SELECT GROUP_CONCAT(ids) as tmp FROM (
+                    SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids, GROUP_CONCAT(`returned`) as returned_values
+                    FROM `applications`
+                    WHERE vin IS NOT NULL AND vin <> ''
+                    group by vin having cnt > 1 )
+                as T1
+                where T1.returned_values like '%0%'") )[0];
+        }
+
+        if (isset($duplicateIDs->tmp)) {
+            $applicationQuery = Application::
+                applications()
+                ->filter($filters)
+                ->whereIn('id', explode(',' , $duplicateIDs->tmp))
+                ->with('parking')
+                ->with('issuedBy')
+                ->with('acceptedBy')
+                ->with('status')
+                ->with('attachments')
+                ->with('carType')
+                ->with('partner')
+                ->with('issueAcceptions')
+                ->with('acceptions')
+                ->with('issuance')
+                ->with('viewRequests')
+                ->orderBy('id', 'desc');
+
+            $applications = $applicationQuery->paginate( config('app.paginate_by', '25') )->onEachSide(2);
+            foreach ($applications as $key => $item) {
+                $pricing = Pricing::where([
+                    ['partner_id', $item->partner_id],
+                    ['car_type_id', $item->car_type_id]
+                ])
+                    ->select('discount_price', 'regular_price', 'free_days')
+                    ->first();
+
+                $applications[$key]['pricing'] = $pricing;
+                $item->currentParkingCost = $item->currentParkingCost;
+            }
+        }
+
+        $title = __('Duplicate');
+        if($request->get('direction') == 'row') {
+            return view('applications.index_status', compact('title', 'applications'));
+        } else {
+            return view('applications.index', compact('title', 'applications'));
+        }
+
+    }
+    /**
+     * Display a listing of the duplicate resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDuplicatesByID(Request $request, Application $application)
+    {
+        $duplicateIDs = null;
+        $vinDuplicates = DB::table('applications')
+            ->selectRaw('GROUP_CONCAT(id) as ids')
+            ->where('vin', $application->vin)
+            ->groupBy('vin');
+
+        $duplicates = DB::table('applications')
+            ->selectRaw('GROUP_CONCAT(id) as ids')
+            ->where('license_plate', $application->license_plate)
+            ->groupBy('license_plate')
+            ->union($vinDuplicates)
+            ->get()->toArray();
+
+        $ids = isset($duplicates[0]->ids) ? explode(',', $duplicates[0]->ids) : [];
+        $ids = isset($duplicates[1]->ids) ? array_unique(array_merge($ids, explode(',', $duplicates[1]->ids))) : $ids;
+
+        //print_r($ids);
+        $items = $application->getDuplicates()
+            ->with('parking')
+            ->with('partner')
+            ->with('status')
+            ->with('attachments')
+            ->get();
+
+        return response()->json( [
+            'items'=> $items,
+        ]);
+
+    }
+    /**
+     * Display a listing of the duplicate resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function mergeDuplicate(Request $request, Application $application)
+    {
+        $applicationData = $request->application;
+        foreach ($applicationData as $key => $value) {
+            if ( $value === '' || $value === null || $value === 'null') {
+                unset($applicationData[$key]);
+            }
+        }
+        $application->update($applicationData);
+        $ids = $application->getDuplicates()->pluck('id')->toArray();
+
+        if (($key = array_search( $application->id, $ids)) !== false) {
+            unset($ids[$key]);
+        }
+
+        Attachment::whereIn('attachable_id', $ids)
+            ->where('attachable_type', 'App\Application')
+            ->update(['attachable_id' => $application->id]);
+
+        Application::destroy($ids);
+
+        return response()->json([
+            ['message'=>__('Applications merged'), 'class' => 'is-success']
+        ]);
+
+    }
+
+    protected function applicationUpdateData($application)
+    {
+        $carMarks = null;
+        $carModels = null;
+        $carYears = null;
+        $carGenerations = null;
+        $carSeriess = null;
+        $carModifications = null;
+        $carEngines = null;
+        $carTransmissions = null;
+        $carGears = null;
+
+        if($application->car_type_id){
+            $carMarks = $this->getCarMarkList($application->car_type_id);
+        }
+        if($application->car_mark_id){
+            $carModels = $this->getCarModelList($application->car_mark_id);
+        }
+        if($application->car_model_id){
+            $carYears = $this->filteredItems($this->getCarYearList($application->car_model_id));
+        }
+        if($application->year){
+            $carGenerations = $this->getCarGenerationList($application->car_model_id, $application->year);
+        }
+        if($application->car_generation_id){
+            $carSeriess = $this->getCarSeriesList($application->car_model_id, $application->car_generation_id);
+
+        }
+        if($application->car_series_id){
+            $carModifications = $this->getCarModificationList($application->car_model_id, $application->car_series_id, $application->year);
+        }
+        if($application->car_modification_id){
+            $carEngines = $this->getCarEngineList($application->car_modification_id);
+        }
+        if($application->car_engine_id){
+            $carTransmissions = $this->getCarTransmissionList($application->car_modification_id);
+        }
+        if($application->car_gear_id){
+            $carGears = $this->getCarGearList($application->car_modification_id);
+        }
+
+        $attachments = $application->attachments()->select('id', 'url as src')->get()->toArray();
+        $dataApplication = [
+            'modelId' => $application->car_model_id,
+            'car_mark_id' => $application->car_mark_id,
+            'modificationId' => $application->car_modification_id,
+            'year' => $application->year
+        ];
+
+        return compact(
+            'application',
+            'attachments',
+            'dataApplication',
+            'carMarks',
+            'carModels',
+            'carYears',
+            'carGenerations',
+            'carSeriess',
+            'carModifications',
+            'carEngines',
+            'carTransmissions',
+            'carGears'
+        );
     }
 }

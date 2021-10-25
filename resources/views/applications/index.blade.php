@@ -38,7 +38,10 @@
                 </div>
                 <h3 class="newcart__title">{{ $application->car_title }}</h3>
                 <div class="newcart__type s-between">
-                    {{ $application->carType->name }} <span class="newcart__repeat">Повтор</span>
+                    {{ $application->carType->name }}
+                    @if($application->returned)
+                    <span class="newcart__repeat">Повтор</span>
+                    @endif
                 </div>
                 <div class="newcart__vin s-between">
                     Vin: <span class="newcart__vinnum">{{ $application->vin }}</span>

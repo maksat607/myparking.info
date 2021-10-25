@@ -37,7 +37,8 @@ class Application extends Model
         'condition_electric' => 'array',
         'condition_gear' => 'array',
         'condition_transmission' => 'array',
-        'favorite' => 'boolean'
+        'favorite' => 'boolean',
+        'returned' => 'boolean'
     ];
 
     protected $with = ['issueAcceptions', 'status', 'acceptions'];
@@ -174,8 +175,10 @@ class Application extends Model
             ->union($vinDuplicates)
             ->get()->toArray();
 
+
         $ids = isset($duplicates[0]->ids) ? explode(',', $duplicates[0]->ids) : [];
         $ids = isset($duplicates[1]->ids) ? array_unique(array_merge($ids, explode(',', $duplicates[1]->ids))) : $ids;
+
         return Application::whereIn('id', $ids);
     }
     public function getVinArrayAttribute()

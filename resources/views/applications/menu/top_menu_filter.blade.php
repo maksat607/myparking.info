@@ -6,32 +6,34 @@
         </div>
         <nav class="newtopbar__nav">
             <ul class="newtopbar__list s-between">
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{
+                    (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
+                }}">
                     <a href="{{ route('applications.index') }}" class="newtopbar__link">Все</a>
                 </li>
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 2]) }}" class="newtopbar__link">Хранение</a>
                 </li>
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 1]) }}" class="newtopbar__link">Черновик</a>
                 </li>
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{ (request()->routeIs('application.accepting.request')) ? ' active' : '' }}">
                     <a href="{{ route('application.accepting.request') }}" class="newtopbar__link">Постановка</a>
                 </li>
-                <li class="newtopbar__item{{ request()->routeIs('view_requests.index') ? ' active' : '' }}">
+                <li class="newtopbar__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
                     <a href="{{ route('view_requests.index') }}" class="newtopbar__link">Осмотр</a>
                 </li>
-                <li class="newtopbar__item{{ request()->routeIs('issue_requests.index') ? ' active' : '' }}">
+                <li class="newtopbar__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
                     <a href="{{ route('issue_requests.index') }}" class="newtopbar__link">Выдача</a>
                 </li>
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 3]) }}" class="newtopbar__link">Выдано</a>
                 </li>
-                <li class="newtopbar__item">
+                <li class="newtopbar__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="newtopbar__link">Отклонено</a>
                 </li>
-                <li class="newtopbar__item">
-                    <a href="#" class="newtopbar__link">Дубли</a>
+                <li class="newtopbar__item{{ request()->routeIs('applications.duplicate') ? ' active' : '' }}">
+                    <a href="{{ route('applications.duplicate') }}" class="newtopbar__link">Дубли</a>
                 </li>
             </ul>
         </nav>
@@ -85,5 +87,30 @@
                 name="direction" value="column" class="btn-radio btn-radio--col">
             </div>
         </div>
+        @if(request()->routeIs('applications.duplicate'))
+            <div id="groupByDuplicate">
+                <div class="wrapper">
+                    <div class="group_radio">
+                        <label for="vin">
+                            <input type="radio" name="group-by" value="vin" id="vin"
+                                @if(request()->get('group-by') == 'vin' || request()->get('group-by') == '')
+                                    checked
+                                @endif
+                            >
+                            <span>{{ __('By vin') }}</span>
+                        </label>
+                        <label for="licensePlate">
+                            <input type="radio" name="group-by" value="license_plate" id="licensePlate"
+                                @if(request()->get('group-by') == 'license_plate')
+                                    checked
+                                @endif
+                            >
+                            <span>{{ __('By state number') }}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        @endif
     </form>
 </div>
+

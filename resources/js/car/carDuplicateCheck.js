@@ -33,28 +33,29 @@ const checkDuplicate = {
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
                 this.setHtml();
+                this.setCheckboxReturned();
             }).catch(error => {
                 console.log('error:', error);
             });
         }
     },
     setHtml() {
-        let vinsHtml = null;
-        let licensePlate = null;
+        let vinsHtml = '';
+        let licensePlate = '';
         if(this.vinDuplicates.length) {
             this.vinDuplicates.forEach((element) => {
-                vinsHtml = `<a href="${APP_URL}/applications/${element.id}/edit">`;
+                vinsHtml += `<a href="${APP_URL}/applications/create/${element.id}">`;
                     vinsHtml += `<span class="tag">${element.vin}</span>`
-                    vinsHtml += `<span class="tag is-danger">${this.statusLabels[element.status_code]}</span>`
+                    vinsHtml += `<span class="tag bgpink">${this.statusLabels[element.status_code]}</span>`
                 vinsHtml += `</a>`;
             });
         }
 
         if(this.licensePlateDuplicates.length) {
             this.licensePlateDuplicates.forEach((element) => {
-                licensePlate = `<a href="${APP_URL}/applications/${element.id}/edit">`;
+                licensePlate += `<a href="${APP_URL}/applications/create/${element.id}">`;
                     licensePlate += `<span class="tag">${element.license_plate}</span>`
-                    licensePlate += `<span class="tag is-danger">${this.statusLabels[element.status_code]}</span>`
+                    licensePlate += `<span class="tag bgpink">${this.statusLabels[element.status_code]}</span>`
                 licensePlate += `</a>`;
             });
         }
@@ -62,6 +63,21 @@ const checkDuplicate = {
         $(`#vinDuplicates`).html(vinsHtml);
         $(`#licensePlateDuplicates`).html(licensePlate);
         this.addDanderClass();
+    },
+    setCheckboxReturned() {
+        let checkbox = '';
+        if(this.vinDuplicates.length || this.licensePlateDuplicates.length) {
+            checkbox += `<label class="tabform__checkbox" id="returned">`;
+                checkbox += `<input type="checkbox" name="car_data[returned]" value="1">`;
+                checkbox += `<span class="tabform__checkboxnew"></span> Повтор`;
+            checkbox += `</label>`;
+
+            if($(`#returned`).length === 0){
+                $(`#statusId`).after(checkbox);
+            }
+        } else {
+            $(`#returned`).remove();
+        }
     },
     addDanderClass() {
         if(this.vinDuplicates.length) {

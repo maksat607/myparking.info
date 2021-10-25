@@ -34,12 +34,12 @@
                                     <div class="tabform__inputwrap">
                                         <label>VIN / Номер кузова</label>
                                         <input type="text" id="vin"
-                                               class="vin @error('vin') is-invalid @enderror"
+                                               class="vin @error('vin_array') is-invalid @enderror"
                                                name="car_data[vin_array]"
                                                value="{{ $application->vin }}"
                                                placeholder="XTA210600C000001">
+                                        <div id="vinDuplicates"></div>
                                     </div>
-                                    <div id="vinDuplicates"></div>
                                     <div class="tabform__inputwrap">
                                         <label>Гос. номер</label>
                                         <input type="text" id="license_plate"
@@ -47,8 +47,8 @@
                                                name="car_data[license_plate]"
                                                value="{{ $application->license_plate }}"
                                                placeholder="A001AA177">
+                                        <div id="licensePlateDuplicates"></div>
                                     </div>
-                                    <div id="licensePlateDuplicates"></div>
                                     <div class="tabform__inputwrap w-100">
                                         <label>Номер убытка или лизингового договора</label>
                                         <input type="text" name="app_data[external_id]"
@@ -622,10 +622,11 @@
                 </div>
                 <div class="tabform__footer">
                     @can('application_to_accepted')
-                    <label class="tabform__checkbox">
+                    <label class="tabform__checkbox" id="statusId">
                         <input type="checkbox" name="app_data[accept]">
                         <span class="tabform__checkboxnew"></span> Принять
                     </label>
+
                     @endcan
                     <button class="tabform__footerbtn bgpink">Обновить</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>

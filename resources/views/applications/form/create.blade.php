@@ -33,12 +33,12 @@
                                     <div class="tabform__inputwrap">
                                         <label>VIN / Номер кузова</label>
                                         <input type="text" id="vin"
-                                               class="vin @error('vin') is-invalid @enderror"
+                                               class="vin @error('vin_array') is-invalid @enderror"
                                                name="car_data[vin_array]"
                                                value="{{ old('car_data.vin_array') }}"
                                                placeholder="XTA210600C000001">
+                                        <div id="vinDuplicates"></div>
                                     </div>
-                                    <div id="vinDuplicates"></div>
                                     <div class="tabform__inputwrap">
                                         <label>Гос. номер</label>
                                         <input type="text" id="license_plate"
@@ -46,8 +46,8 @@
                                                name="car_data[license_plate]"
                                                value="{{ old('car_data.license_plate') }}"
                                                placeholder="A001AA177">
+                                        <div id="licensePlateDuplicates"></div>
                                     </div>
-                                    <div id="licensePlateDuplicates"></div>
                                     <div class="tabform__inputwrap w-100">
                                         <label>Номер убытка или лизингового договора</label>
                                         <input type="text" name="app_data[external_id]"
@@ -120,7 +120,7 @@
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
                                             <ul class="select-list tabform__ul">
-                                                @foreach($carList as $car)
+                                                @foreach($carTypes as $car)
                                                     @if ($loop->first)
                                                         <li class="select-item tabform__li active">
                                                             <a href="" data-name-id="car_type_id" data-id="{{ $car->id }}">{{ $car->name }}</a>
@@ -469,10 +469,11 @@
                     <div id="hiddenInputs"></div>
                 </div>
                 <div class="tabform__footer">
-                    <label class="tabform__checkbox">
+                    <label class="tabform__checkbox" id="statusId">
                         <input type="checkbox" name="app_data[status_id]">
                         <span class="tabform__checkboxnew"></span> Черновик
                     </label>
+
                     <button class="tabform__footerbtn bgpink">Создать</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>
                 </div>
