@@ -88,6 +88,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $applications->links() }}
         </div>
     </section>
 @endsection

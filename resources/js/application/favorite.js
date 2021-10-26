@@ -12,11 +12,8 @@ const favorite = {
     setFavorite() {
         axios.get(`${APP_URL}/application/favorite/${this.application_id}`)
             .then(response => {
-                if(response.data.favorite) {
-                    toastr.success(response.data.message);
-                    this.parent.removeClass(response.data.remove_class).addClass(response.data.class);
-                } else {
-                    toastr.warning(response.data.message);
+                if(response.data.message) {
+                    toastr.info(response.data.message);
                     this.parent.removeClass(response.data.remove_class).addClass(response.data.class);
                 }
                 if(this.isFilter()) {

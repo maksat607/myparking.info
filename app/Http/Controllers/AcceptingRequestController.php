@@ -17,7 +17,10 @@ class AcceptingRequestController extends Controller
     public function index(Request $request, ApplicationFilters $filters)
     {
 //        $acceptingRequests = IssueAcception::issuances()->where('is_issue', false)->with(['application'])->get();
-        $applications = Application::applications()->filter($filters)->whereHas('acceptions')->get();
+        $applications = Application::applications()->filter($filters)
+            ->whereHas('acceptions')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString();
 
         $title = __('Accepting Requests');
         if($request->get('direction') == 'row') {

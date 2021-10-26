@@ -25,7 +25,10 @@ class ViewRequestController extends AppController
     public function index(Request $request, ApplicationFilters $filters)
     {
 //        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
-        $applications = Application::applications()->filter($filters)->whereHas('viewRequests')->get();
+        $applications = Application::applications()->filter($filters)
+            ->whereHas('viewRequests')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString();
 
         $title = __('View Requests');
         if($request->get('direction') == 'row') {

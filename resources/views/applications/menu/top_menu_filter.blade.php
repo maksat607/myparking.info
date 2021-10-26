@@ -63,15 +63,16 @@
                         @endif
                     @endforeach
                 </select>
+
                 <select name="user" class="newfilter__select">
                     <option selected hidden value="">Выберите исполнителя</option>
                     <option @if(request()->get('user') == $user->id) selected @endif
                             value="{{ $user->id }}">{{ $user->name }}</option>
-                    @foreach($user->children as $children)
-                        @if(request()->get('user') == $children->id)
-                            <option selected value="{{ $children->id }}">{{ $children->name }}</option>
+                    @foreach($user->kids as $kid)
+                        @if(request()->get('user') == $kid->id)
+                            <option selected value="{{ $kid->id }}">{{ $kid->name }}</option>
                         @else
-                            <<option value="{{ $children->id }}">{{ $children->name }}</option>
+                            <<option value="{{ $kid->id }}">{{ $kid->name }}</option>
                         @endif
                     @endforeach
                 </select>

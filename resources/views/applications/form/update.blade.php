@@ -621,13 +621,14 @@
                     <div id="hiddenInputs"></div>
                 </div>
                 <div class="tabform__footer">
-                    @can('application_to_accepted')
-                    <label class="tabform__checkbox" id="statusId">
-                        <input type="checkbox" name="app_data[accept]">
-                        <span class="tabform__checkboxnew"></span> Принять
-                    </label>
-
-                    @endcan
+                    @if($application->acceptions)
+                        @can('application_to_accepted')
+                            <label class="tabform__checkbox" id="statusId">
+                                <input type="checkbox" name="app_data[accept]">
+                                <span class="tabform__checkboxnew"></span> Принять
+                            </label>
+                        @endcan
+                    @endif
                     <button class="tabform__footerbtn bgpink">Обновить</button>
                     <button class="tabform__footerbtn bggreen">Отменить</button>
                 </div>

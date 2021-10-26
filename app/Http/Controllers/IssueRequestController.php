@@ -19,7 +19,10 @@ class IssueRequestController extends AppController
     public function index(Request $request, ApplicationFilters $filters)
     {
 //        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
-        $applications = Application::applications()->filter($filters)->whereHas('issuance')->get();
+        $applications = Application::applications()->filter($filters)
+            ->whereHas('issuance')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString();
 
         $title = __('Issue Requests');
         if($request->get('direction') == 'row') {

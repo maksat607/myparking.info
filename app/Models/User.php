@@ -125,9 +125,23 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function usersFilter()
     {
-        if(auth()->user()->hasRole(['SuperAdmin'])) {
-            return static::all();
+        $auth = auth()->user();
+        if($auth->hasRole(['SuperAdmin'])) {
+            $users = static::where('id', '<>', auth()->id())->get();
+            $auth->kids = $users;
+            return $auth;
         }
-        return auth()->user();
+        $auth->kids = $auth->children;
+        return $auth;
+    }
+
+    public function getParentUser()
+    {
+        if (auth()->user()->hasRole(['Manager', 'Operator', 'PertnerOperator'])) {
+            return auth()->user()->parent_id;
+        } elseif (auth()->user()->hasRole(['Admin', 'Partner'])) {
+            return auth()->user()->id;
+        }
+        return null;
     }
 }

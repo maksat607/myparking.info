@@ -197,5 +197,9 @@ return [
         'status'                => 'Статус',
         'reg_number'            => 'Рег. Номер',
         'inn'                   => 'ИНН',
+        'vin_array'             => 'Vin',
+        'license_plate'         => 'Гос. номер',
+        'car_mark_id'           => 'Марка',
+        'car_model_id'          => 'Модель',
     ],
 ];

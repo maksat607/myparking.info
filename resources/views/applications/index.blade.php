@@ -189,6 +189,7 @@
             </article>
             @endforeach
         </div>
+        {{ $applications->links() }}
     </div>
 </section>
 <div class="newpopup">

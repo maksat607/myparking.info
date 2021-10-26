@@ -134,6 +134,12 @@ return [
     |
     */
 
+    /*
+     * Pagination
+     */
+
+    'paginate_by' => 16,
+
     'providers' => [
 
         /*

@@ -74,7 +74,7 @@ class ApplicationController extends AppController
             ->with('issuance')
             ->with('viewRequests')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(config('app.paginate_by', '25'))->withQueryString();
 
         foreach ($applications as $key => $item) {
             $pricing = Pricing::where([
@@ -104,6 +104,7 @@ class ApplicationController extends AppController
      */
     public function create(Application $application)
     {
+
         $carTypes = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -273,9 +274,12 @@ class ApplicationController extends AppController
             $application->attachments()->saveMany($attachments);
         }
 
-        return ($application->exists)
-            ? redirect()->route('applications.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ($application->exists) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('applications.index')->with('success', __('Saved.'));
+        }
+        Toastr::error(__('Error'));
+        return redirect()->back()->with('error', __('Error'));
     }
 
     /**
@@ -429,9 +433,11 @@ class ApplicationController extends AppController
             $applicationData['status_id'] = 2;
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
             $application->acceptions()->delete();
+            $application->associate(auth()->user());
         }
-
+        dd($application);
         $isUpdate = $application->update($applicationData);
+
       /*  if ($applicationData['status_id'] != 1) {
             $application->issueAcceptions()->create([
                 'is_issue' => false
@@ -459,6 +465,7 @@ class ApplicationController extends AppController
             return redirect()->route('applications.index', ['application' => $application->id]);
         }
 
+        Toastr::error(__('Error'));
         return redirect()->back()->with('error', __('Error'));
     }
 
@@ -604,9 +611,10 @@ class ApplicationController extends AppController
                 ->join('statuses', 'statuses.id', '=', 'applications.status_id')
                 ->where([
                     ['license_plate', 'like', '%' . $request->license_plate . '%'],
-//                    ['applications.id', '<>', $request->id],
-                    ['applications.user_id', '=', auth()->id()]
                 ])
+                ->when(auth()->user()->getParentUser(), function ($query) {
+                    return $query->where('applications.user_id', auth()->user()->getParentUser());
+                })
                 ->get()->toArray()
             : [];
         $vinDuplicates = [];
@@ -624,8 +632,9 @@ class ApplicationController extends AppController
             if ($searchVin) {
                 $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                     ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-//                    ->where('applications.id', '<>', $request->id)
-                    ->where('applications.user_id', '=', auth()->id())
+                    ->when(auth()->user()->getParentUser(), function ($query) {
+                        return $query->where('applications.user_id', auth()->user()->getParentUser());
+                    })
                     ->where(function($query) use( $vinArray ) {
                         foreach ($vinArray as $singleVin) {
                             $query->orWhere('vin', 'like', '%' .$singleVin . '%');
@@ -898,7 +907,7 @@ class ApplicationController extends AppController
                 ->with('viewRequests')
                 ->orderBy('id', 'desc');
 
-            $applications = $applicationQuery->paginate( config('app.paginate_by', '25') )->onEachSide(2);
+            $applications = $applicationQuery->paginate( config('app.paginate_by', '25') )->withQueryString();
             foreach ($applications as $key => $item) {
                 $pricing = Pricing::where([
                     ['partner_id', $item->partner_id],

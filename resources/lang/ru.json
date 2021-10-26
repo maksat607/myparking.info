@@ -257,6 +257,17 @@
     "The brand of the car...": "Марка авто...",
     "The car model...": "Модель авто...",
     "The year of the car...": "Год авто...",
+    "Generation...": "Поколение...",
+    "Series...": "Кузов...",
+    "Modifications...": "Модификация...",
+    "Engines...": "Двигатель...",
+    "Transmission...": "КПП...",
+    "Gear...": "Привод...",
     "Applications": "Заявки",
-    "Add application": "Добавить заявку"
+    "Add application": "Добавить заявку",
+    "Create a Request": "Создать заявку",
+    "Update a Request": "Обновить заявку",
+    "Select a partner..": "Выберите партнера..",
+    "Select a parking..": "Выберите парковку..",
+    "Select a time interval..": "Выберите интервал времени.."
 }
