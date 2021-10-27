@@ -51,6 +51,7 @@
                             </li>
                         </ul>
                     </div>
+
                     <div class="tabform__item">
                         <h2>Данные для выдачи</h2>
                         <div class="tabform__group d-flex flex-end">
@@ -58,10 +59,10 @@
                                 <label>Основание выдачи</label>
                                 <select id="issuanceDocument">
                                     <option selected hidden value="">{{ __('Select a document type..') }}</option>
+                                    @if($client && !empty($client->issuance_document) && !in_array($client->issuance_document, $documentOptions))
+                                        <option selected value="{{ $client->issuance_document }}">{{ $client->issuance_document }}</option>
+                                    @endif
                                     @foreach($documentOptions as $document)
-                                        @if($client && !empty($client->issuance_document) && $client->issuance_document != $document)
-                                            <option selected value="{{ $client->issuance_document }}">{{ $client->issuance_document }}</option>
-                                        @endif
                                         <option @if($client && $client->issuance_document == $document) selected @endif value="{{ $document }}">{{ $document }}</option>
                                     @endforeach
                                 </select>

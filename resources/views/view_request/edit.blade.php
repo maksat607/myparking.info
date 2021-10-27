@@ -52,7 +52,7 @@
                         </ul>
                     </div>
                     <div class="tabform__item">
-                        <h2>Состояние кузова</h2>
+                        <h2>Данные для осмотра</h2>
                         <div class="tabform__group d-flex">
                             <div class="tabform__inputwrap">
                                 <label>ФИО</label>

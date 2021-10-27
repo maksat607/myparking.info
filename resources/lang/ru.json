@@ -273,5 +273,7 @@
     "Select a document type..": "Выберите тип документа..",
     "Issue a car": "Выдать авто",
     "Application for issue": "Заявка на выдачу",
-    "Application for inspection": "Заявка на осмотр"
+    "Application for inspection": "Заявка на осмотр",
+    "Editing an application for issuance": "Редактирование заявки на выдачу",
+    "Editing an inspection request": "Редактирование заявки на осмотр"
 }

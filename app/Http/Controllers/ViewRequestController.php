@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\ViewRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Toastr;
 
 class ViewRequestController extends AppController
 {
@@ -24,7 +26,14 @@ class ViewRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
+        $viewRequests = ViewRequest::viewRequests()
+            ->with(['application'])
+            ->whereHas('application', function(Builder $query) use ($filters){
+                $query->filter($filters);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString();
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )

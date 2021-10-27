@@ -6,8 +6,10 @@ use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Toastr;
 
 class IssueRequestController extends AppController
 {
@@ -18,7 +20,17 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
+        $issueRequests = IssueAcception::issuances()
+            ->with(['application'])
+            ->where('is_issue', true)
+            ->whereHas('application', function(Builder $query) use ($filters){
+                $query->filter($filters);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString();
+
+//        dd($issueRequests);
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('issuance')
             ->paginate( config('app.paginate_by', '25') )
@@ -137,7 +149,7 @@ class IssueRequestController extends AppController
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
         $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
 
-        $title = __('Application for inspection');
+        $title = __('Editing an application for issuance');
         return view('issue_request.edit', compact(
             'title', 'issueRequest', 'client', 'application', 'documentOptions',
             'individualLegalOptions', 'preferredContactMethodOptions'
