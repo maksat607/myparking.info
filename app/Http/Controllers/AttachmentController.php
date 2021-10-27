@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-class AttachmentController extends Controller
+class AttachmentController extends AppController
 {
     /**
      * Display a listing of the resource.

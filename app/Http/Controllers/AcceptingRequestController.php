@@ -7,7 +7,7 @@ use App\Models\Application;
 use App\Models\IssueAcception;
 use Illuminate\Http\Request;
 
-class AcceptingRequestController extends Controller
+class AcceptingRequestController extends AppController
 {
     /**
      * Display a listing of the resource.

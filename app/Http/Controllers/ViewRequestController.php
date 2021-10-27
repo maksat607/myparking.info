@@ -24,18 +24,18 @@ class ViewRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-//        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
-        $applications = Application::applications()->filter($filters)
+        $viewRequests = ViewRequest::viewRequests()->with(['application'])->get();
+        /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();
+            ->withQueryString();*/
 
         $title = __('View Requests');
-        if($request->get('direction') == 'row') {
+        /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
-        } else {
-            return view('applications.index', compact('title', 'applications'));
-        }
+        } else {*/
+            return view('view_request.index', compact('title', 'viewRequests'));
+        /*}*/
     }
 
     /**
@@ -96,9 +96,13 @@ class ViewRequestController extends AppController
             $viewRequest->attachments()->saveMany($attachments);
         }
 
-        return ($viewRequestResult->exists)
-            ? redirect()->route('view_requests.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ($viewRequestResult->exists) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('view_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 
     /**
@@ -157,9 +161,14 @@ class ViewRequestController extends AppController
         if (count($attachments) > 0) {
             $viewRequest->attachments()->saveMany($attachments);
         }
-        return ($result)
-            ? redirect()->route('view_requests.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+
+        if ($result) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('view_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 
     /**
@@ -176,8 +185,13 @@ class ViewRequestController extends AppController
             $this->AttachmentController->delete($item);
         });
         $result = ViewRequest::destroy($viewRequest->id);
-        return ( $result )
-            ? redirect()->route('view_requests.index')->with('success', __('Deleted.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ( $result ) {
+            Toastr::success(__('Deleted.'));
+            return redirect()->route('view_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
+
     }
 }

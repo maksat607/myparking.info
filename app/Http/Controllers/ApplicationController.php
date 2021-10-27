@@ -433,9 +433,9 @@ class ApplicationController extends AppController
             $applicationData['status_id'] = 2;
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
             $application->acceptions()->delete();
-            $application->associate(auth()->user());
+            $application->acceptedBy()->associate(auth()->user());
         }
-        dd($application);
+
         $isUpdate = $application->update($applicationData);
 
       /*  if ($applicationData['status_id'] != 1) {
@@ -484,9 +484,13 @@ class ApplicationController extends AppController
             $this->AttachmentController->delete($item);
         });
         $result = Application::destroy($application->id);
-        return ( $result )
-            ? redirect()->route('applications.index', ['application' => $application->id])->with('success', __('Deleted.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ( $result ) {
+            Toastr::success(__('Deleted.'));
+            return redirect()->route('applications.index', ['application' => $application->id]);
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 
     public function deny($application_id)
@@ -519,7 +523,7 @@ class ApplicationController extends AppController
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
         $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
 
-        $title = __('Application for issuance');
+        $title = __('Issue a car');
         return view('applications.issuance', compact(
             'title',
                     'application',
@@ -559,15 +563,18 @@ class ApplicationController extends AppController
         }
 
         if($client->exists) {
+            $application->issuedBy()->associate(auth()->user());
             $application->update([
                 'status_id' => 3,
                 'client_id' => $client->id,
                 'issued_at' => Date::now()
             ]);
             $application->issuance()->delete();
-            return redirect()->route('applications.index')->with('success', __('Saved.'));
+            Toastr::success(__('Saved.'));
+            return redirect()->route('applications.index');
         } else {
-            return redirect()->back()->with('error', __('Error'));
+            Toastr::error(__('Error'));
+            return redirect()->back();
         }
     }
 

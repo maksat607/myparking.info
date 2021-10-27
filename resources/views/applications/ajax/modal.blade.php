@@ -89,17 +89,29 @@
                     <span>
                         <span>Принял:</span>
                     </span>
-                    <span>
-                        <span>storage.spb</span>
-                    </span>
+                    @if($application->acceptedBy)
+                        <span>
+                            <span>{{ $application->acceptedBy->name }}</span>
+                        </span>
+                    @else
+                        <span>
+                            <span>Не указан</span>
+                        </span>
+                    @endif
                 </li>
                 <li>
                     <span>
                         <span>Выдал:</span>
                     </span>
+                    @if($application->issuedBy)
                     <span>
-                        <span>storage.spb</span>
+                        <span>{{ $application->issuedBy->name }}</span>
                     </span>
+                    @else
+                        <span>
+                            <span>Не указан</span>
+                        </span>
+                    @endif
                 </li>
             </ul>
         </div>

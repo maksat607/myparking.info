@@ -18,18 +18,18 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-//        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
-        $applications = Application::applications()->filter($filters)
+        $issueRequests = IssueAcception::issuances()->with(['application'])->where('is_issue', true)->get();
+        /*$applications = Application::applications()->filter($filters)
             ->whereHas('issuance')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();
+            ->withQueryString();*/
 
         $title = __('Issue Requests');
-        if($request->get('direction') == 'row') {
+        /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
-        } else {
-            return view('applications.index', compact('title', 'applications'));
-        }
+        } else {*/
+            return view('issue_request.index', compact('title', 'issueRequests'));
+        /*}*/
     }
     /**
      * Show the form for creating a new resource.
@@ -108,9 +108,13 @@ class IssueRequestController extends AppController
 
         }
 
-        return ($isIssue->exists)
-            ? redirect()->route('issue_requests.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ($isIssue->exists) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('issue_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 
     /**
@@ -178,9 +182,13 @@ class IssueRequestController extends AppController
         $issueRequest->client()->update($clientData);
         $result = $issueRequest->update($issueData);
 
-        return ($result)
-            ? redirect()->route('issue_requests.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ($result) {
+            Toastr::success(__('Saved.'));
+            return redirect()->route('issue_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 
     /**
@@ -195,8 +203,12 @@ class IssueRequestController extends AppController
 
         $result = $issueRequest->delete();
 
-        return ( $result )
-            ? redirect()->route('issue_requests.index')->with('success', __('Deleted.'))
-            : redirect()->back()->with('error', __('Error'));
+        if ( $result ) {
+            Toastr::success(__('Deleted.'));
+            return redirect()->route('issue_requests.index');
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
     }
 }

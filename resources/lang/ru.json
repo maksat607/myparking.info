@@ -269,5 +269,9 @@
     "Update a Request": "Обновить заявку",
     "Select a partner..": "Выберите партнера..",
     "Select a parking..": "Выберите парковку..",
-    "Select a time interval..": "Выберите интервал времени.."
+    "Select a time interval..": "Выберите интервал времени..",
+    "Select a document type..": "Выберите тип документа..",
+    "Issue a car": "Выдать авто",
+    "Application for issue": "Заявка на выдачу",
+    "Application for inspection": "Заявка на осмотр"
 }
