@@ -11,7 +11,11 @@
             <div class="wrapper">
                 <div class="contentWrapper d-flex flex-start">
                     <div class="tabform__item tabform__item--carinfo d-flex">
-                        <img src="{{ $application->attachments->first()->thumbnail_url }}" alt="" class="newpopup__img">
+                        @if($application->attachments->isNotEmpty())
+                            <img src="{{ $application->attachments->first()->thumbnail_url }}" alt="" class="newpopup__img">
+                        @else
+                            <img src="{{ $application->default_attachment->thumbnail_url }}" alt="" class="newpopup__img">
+                        @endif
                         <div class="newpopup__left">
                             <h3 class="newcart__title">{{ $application->car_title }}</h3>
                             <span class="newcart__repeat">Повтор</span>
@@ -79,7 +83,7 @@
                                 </span>
                                 @enderror
                                 @push('scripts')
-                                    const dateDataIssue = '{{ $issueRequest->arriving_at->format('d-m-Y') }}';
+                                    const dateDataIssue = '{{ ($issueRequest->arriving_at) ? $issueRequest->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
                                 @endpush
                             </div>
                             <div class="tabform__inputwrap">

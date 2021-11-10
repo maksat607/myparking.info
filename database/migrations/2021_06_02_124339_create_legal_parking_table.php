@@ -16,8 +16,12 @@ class CreateLegalParkingTable extends Migration
         Schema::create('legal_parking', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('legal_id')->nullable()->constrained('legals');
-            $table->foreignId('parking_id')->nullable()->constrained('parkings');
+            $table->foreignId('legal_id')->nullable()
+                ->constrained('legals')
+                ->onDelete('cascade');;
+            $table->foreignId('parking_id')->nullable()
+                ->constrained('parkings')
+                ->onDelete('cascade');
         });
     }
 

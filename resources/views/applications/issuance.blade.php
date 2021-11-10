@@ -20,9 +20,9 @@
                         <span>
                             <span>Партнёр:</span>
                         </span>
-                                <span>
-                            <span>{{ $application->partner->name }}</span>
-                        </span>
+                            <span>
+                                <span>{{ $application->partner->name }}</span>
+                            </span>
                             </li>
                             <li>
                         <span>

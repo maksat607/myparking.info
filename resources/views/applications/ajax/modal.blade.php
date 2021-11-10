@@ -1,4 +1,8 @@
-<img src="{{ $application->attachments->first()->thumbnail_url }}" alt="" class="newpopup__img">
+@if($application->attachments->isNotEmpty())
+    <img src="{{ $application->attachments->first()->thumbnail_url }}" alt="" class="newpopup__img">
+@else
+    <img src="{{ $application->default_attachment->thumbnail_url }}" alt="" class="newpopup__img">
+@endif
 <div class="newpopup__left">
     <h3 class="newcart__title">{{ $application->car_title }} <span class="newcart__repeat">Повтор</span></h3>
     <ul class="newpopup__ul">

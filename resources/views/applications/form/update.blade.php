@@ -96,7 +96,7 @@
                                                placeholder="Выберите дату..">
                                     </div>
                                     @push('scripts')
-                                        const dateDataApplication = '{{ $application->arriving_at->format('d-m-Y') }}';
+                                        const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
                                     @endpush
                                     <div class="tabform__inputwrap">
                                         <label>Промежуток</label>
@@ -215,7 +215,7 @@
                                         <textarea class="form-control" id="autoDesc"
                                                   rows="4"
                                                   name="car_data[car_title]"
-                                                  value="{{ old('car_data.car_title') }}"
+                                                  value="{{ $application->car_title }}"
                                         ></textarea>
                                     </div>
                                 </div>

@@ -33,6 +33,11 @@ class Parking extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'manager_parking', 'parking_id', 'manager_id' );
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

@@ -8,6 +8,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ParkingController extends AppController
 {
@@ -41,7 +42,7 @@ class ParkingController extends AppController
     {
         $title = __('Create new Parking');
         $user = auth()->user();
-        $children = $user->children()->without('owner')->get();
+        $children = $user->children()->role('Manager')->without('owner')->get();
         $legals = ($user->owner)
             ? $user->owner->legals()->without('owner')->get()
             : $user->legals()->without('owner')->get();
@@ -63,7 +64,7 @@ class ParkingController extends AppController
             'address' => ['nullable', 'string', 'max:100'],
             'timezone' => ['nullable', 'string', 'max:100'],
             'legals' => ['required', 'array'],
-            'user' => ['exists:users,id', 'filled'],
+            'users' => ['filled', Rule::exists('users', 'id')],
         ])->validate();
 
         $parkingData = [
@@ -76,22 +77,26 @@ class ParkingController extends AppController
             $parkingData['timezone'] = $request->timezone;
         }
 
+        if (!$request->has('users')) {
+            $request->merge([
+                'users' => [auth()->id()],
+            ]);
+        }
+
         try {
             DB::beginTransaction();
 
-            $user = ($request->has('user')) ? User::findOrFail($request->user) : auth()->user();
-
-            $parking = $user->parkings()->create($parkingData);
-            $parking->legals()->attach($request->legals);
-
+            $parking = auth()->user()->parkings()->create($parkingData);
+            $parking->legals()->sync($request->legals);
+            $parking->managers()->sync($request->users);
 
             DB::commit();
 
             return redirect()->route('parkings.index')->with('success', __('Saved.'));
 
         } catch (QueryException $e) {
-            DB::rollBack();
             dd($e->getMessage());
+            DB::rollBack();
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
         }
     }
@@ -123,10 +128,16 @@ class ParkingController extends AppController
         $this->authorize('updateParking', $parking);
         $user = (!is_null($parking->owner->owner)) ? $parking->owner->owner : $parking->owner;
         $legals = $user->legals()->without('owner')->get();
-        $children = $user->children()->without('owner')->get();
+//        $children = $user->children()->role('Manager')->without('owner')->get();
+        $users = User::where('parent_id', $user->id)
+            ->orWhere('id', $user->id)
+            ->role(['Manager', 'Admin'])
+            ->without('owner')
+            ->orderBy('id', 'ASC')
+            ->get();
         $title = __('Edit parking :Parking', ['parking' => $parking->title]);
 
-        return view('parkings.edit', compact('parking', 'legals', 'user', 'children', 'title'));
+        return view('parkings.edit', compact('parking', 'legals', 'users', 'title'));
     }
 
     /**
@@ -144,15 +155,13 @@ class ParkingController extends AppController
             'address' => ['nullable', 'string', 'max:100'],
             'timezone' => ['nullable', 'string', 'max:100'],
             'legals' => ['required', 'array'],
-            'user' => ['exists:users,id', 'filled'],
+            'users' => ['filled', Rule::exists('users', 'id')],
         ])->validate();
 
         try {
             DB::beginTransaction();
 
-            $user = ($request->has('user')) ? User::findOrFail($request->user) : auth()->user();
-
-            $parking = $parking = Parking::parking($id)->with('legals')->firstOrFail();
+            $parking = Parking::parking($id)->with('legals')->firstOrFail();
             $this->authorize('updateParking', $parking);
 
             $parking->title = $request->title;
@@ -163,12 +172,9 @@ class ParkingController extends AppController
                 $parking->timezone = $request->timezone;
             }
 
-
-            $parking->owner()->associate($user);
-
-            $parking->save();
-            $parking->legals()->detach();
-            $parking->legals()->attach($request->legals);
+            $parking->legals()->sync($request->legals);
+            $parking->managers()->sync($request->users);
+            $parking->push();
 
             DB::commit();
 

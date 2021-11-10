@@ -18,7 +18,7 @@ class ApplicationFilters extends QueryFilter
 
     public function user($id)
     {
-        return $this->builder->where('user_id', $id);
+        return $this->builder->where('accepted_by', $id);
     }
 
     public function search($keyword)

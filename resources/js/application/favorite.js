@@ -13,7 +13,7 @@ const favorite = {
         axios.get(`${APP_URL}/application/favorite/${this.application_id}`)
             .then(response => {
                 if(response.data.message) {
-                    toastr.info(response.data.message);
+                    toastr.info(response.data.message, null, {"progressBar": true});
                     this.parent.removeClass(response.data.remove_class).addClass(response.data.class);
                 }
                 if(this.isFilter()) {

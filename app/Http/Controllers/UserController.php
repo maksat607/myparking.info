@@ -198,6 +198,7 @@ class UserController extends AppController
             return redirect()->back()->with('warning', __('You are not allowed to delete it.'));
         }
         $user->roles()->detach();
+        $user->legals()->delete();
 
         return ($user->delete())
             ? redirect()->back()->with('success', __('Saved.'))

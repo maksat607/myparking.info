@@ -88,16 +88,15 @@
         <label for="user" class="col-md-4 col-form-label text-md-right">{{ __('User') }}</label>
 
         <div class="col-md-6">
-            <select class="custom-select @error('user') is-invalid @enderror" name="user" id="user" required>
-                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                @foreach($children as $child)
+            <select class="custom-select multiple @error('users') is-invalid @enderror" name="users[]" id="users" multiple required>
+                @foreach($users as $user)
                     <option
-                        value="{{ $child->id }}"
-                        @if(isset($parking) && $child->id === $parking->user_id) selected @endif
-                    >{{ $child->name }}</option>
+                        value="{{ $user->id }}"
+                        @if(isset($parking) && $parking->managers->contains('id', $user->id)) selected @endif
+                    >{{ $user->name }}</option>
                 @endforeach
             </select>
-            @error('user')
+            @error('users')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>

@@ -122,6 +122,11 @@ class Application extends Model
         return $this->hasMany(ViewRequest::class);
     }
 
+    public function getDefaultAttachmentAttribute()
+    {
+        return (object)['thumbnail_url' => asset('no-image.png')];
+    }
+
     public function getCurrentParkingCostAttribute($value)
     {
         $endDate = Carbon::now();
@@ -216,6 +221,7 @@ class Application extends Model
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->whereIn('parking_id', $parkingsIds);
@@ -227,7 +233,7 @@ class Application extends Model
                 ->whereIn('user_id', $childrenWithOwnerId);
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
-                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+                ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
         } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
@@ -242,6 +248,7 @@ class Application extends Model
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->where('id', $id)
@@ -256,7 +263,7 @@ class Application extends Model
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->where('id', $id)
-                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
+                ->where('parking_id', $authUser->managerParkings()->get()->modelKeys());
         } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;

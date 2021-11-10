@@ -55,7 +55,7 @@ class ApplicationController extends AppController
 
         $applications = Application::
             applications()
-            ->filter($filters)
+                ->filter($filters)
             ->when($status_id, function($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
@@ -159,8 +159,9 @@ class ApplicationController extends AppController
                     'exclude_if:returned,1',
                     'required_without:license_plate',
                     'unique:applications,vin',
+                    'nullable'
                 ],
-            'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate'],
+            'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
             'car_model_id' => ['integer', 'required'],
@@ -362,11 +363,13 @@ class ApplicationController extends AppController
             'vin_array' => [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                Rule::unique('applications', 'vin')->ignore($application->id)
+                Rule::unique('applications', 'vin')->ignore($application->id),
+                'nullable'
             ],
             'license_plate' => [
                 'exclude_if:returned,1',
-                Rule::unique('applications', 'license_plate')->ignore($application->id)
+                Rule::unique('applications', 'license_plate')->ignore($application->id),
+                'nullable'
             ],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],

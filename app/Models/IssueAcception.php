@@ -41,6 +41,7 @@ class IssueAcception extends Model
             return $query
                 ->whereIn('user_id', $operatorWithOwnerId);
         }
+        return $query;
     }
 
     public function scopeIssuance($query, $id)

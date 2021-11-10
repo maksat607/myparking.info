@@ -9,11 +9,18 @@
             <article class="newcart__item" id="application_{{ $application->id }}">
                 <div class="newcart__wrapp @if($application->favorite) newcart__save @else newcart__nosave @endif">
                     <div class="newcart__img lazy">
-                        @foreach($application->attachments as $attachment)
-                        <div class="newcart__imgwrap">
-                            <img src="{{ $attachment->thumbnail_url }}" alt="">
-                        </div>
-                        @endforeach
+                        @if($application->attachments->isNotEmpty())
+                            @foreach($application->attachments as $attachment)
+                            <div class="newcart__imgwrap">
+                                <img src="{{ $attachment->thumbnail_url }}" alt="">
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="newcart__imgwrap">
+                                <img src="{{ $application->default_attachment->thumbnail_url }}" alt="">
+                            </div>
+                        @endif
+
                     </div>
                     <div class="favorite" data-app-id="{{ $application->id }}"></div>
                 </div>

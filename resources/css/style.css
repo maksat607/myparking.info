@@ -566,6 +566,8 @@ button {
 .newcart__img img {
     max-width: 100%;
     display: block;
+    height: 250px;
+    object-fit: cover;
 }
 
 .newcart__topbtn {

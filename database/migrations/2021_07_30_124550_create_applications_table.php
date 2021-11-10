@@ -21,7 +21,7 @@ class CreateApplicationsTable extends Migration
             $table->string('license_plate')->nullable()->comment('Госномер');
             $table->string('sts')->nullable()->comment('Свидетельство о регистрации');
             $table->string('pts')->nullable()->comment('Паспорт транспортного средства');
-            
+
             $table->integer('year')->nullable();
             $table->integer('milage')->nullable();
             $table->integer('owner_number')->nullable();
@@ -49,7 +49,7 @@ class CreateApplicationsTable extends Migration
             $table->foreignId('car_gear_id')->nullable();
 
             $table->string('internal_id')->nullable()->unique();
-            $table->string('external_id')->nullable()->unique();
+            $table->string('external_id')->nullable();
             $table->string('arriving_method')->nullable()->default('0');
             $table->foreignId('tow_truck_payment_id')->nullable();
             $table->foreignId('parking_id')->nullable();
