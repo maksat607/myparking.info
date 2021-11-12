@@ -15,8 +15,8 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">@lang('Name')</th>
-                                <th scope="col">@lang('Reg. Number')</th>
                                 <th scope="col">@lang('INN')</th>
+                                <th scope="col">@lang('Reg. Number')</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
@@ -26,7 +26,7 @@
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>
                                         <a
-                                            href="{{ route('legals.show', ['legal' => $legal->id]) }}">{{ $legal->name }}</a>
+                                            href="{{ route('legals.edit', ['legal' => $legal->id]) }}">{{ $legal->name }}</a>
                                     </td>
                                     <td>{{ $legal->reg_number }}</td>
                                     <td>{{ $legal->inn }}</td>

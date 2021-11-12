@@ -212,4 +212,13 @@ class UserController extends AppController
             $request->request->add(['role' => $role]);
         }
     }
+
+    public function allUserParking($id)
+    {
+        $user = User::user($id)->firstOrFail();
+        $managerParkings = $user->managerParkings;
+        $title = __('Parking lots of the user :User', ['user'=>$user->name]);
+
+        return view('users.parking.index', compact('managerParkings', 'title'));
+    }
 }

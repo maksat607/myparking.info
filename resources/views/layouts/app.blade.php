@@ -50,21 +50,73 @@
                                     <a class="nav__link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
-                        @else
-                            @canany(['user_view', 'user_create', 'user_update', 'user_delete'])
-                                <li class="nav__item">
-                                    <a class="nav__link" href="{{ route('users.index') }}">{{ __('Users') }}</a>
-                                </li>
-                            @endcanany
-                            @can('permission_update')
-                                <li class="nav__item">
-                                    <a class="nav__link"
-                                        href="{{ route('permissions.index') }}">{{ __('Permissions') }}</a>
-                                </li>
-                            @endcan
                         @endguest
                     </ul>
                     @auth
+                    <div class="header__user-info nav__dd">
+                        <i class="fa fa-cog" aria-hidden="true"></i>
+                        <span>{{ __('Settings') }}</span> <span class="arrow-d"></span>
+                        <ul class="nav__dd-list">
+                            <li class="nav__dd-item">
+                                <a class="nav__dd-link" href="{{ route('applications.index') }}">
+                                    {{ __('Applications') }}
+                                </a>
+                            </li>
+                            @hasanyrole('Admin')
+                            @canany(['legal_view', 'legal_create', 'legal_update', 'legal_delete'])
+                                <li class="nav__dd-item">
+                                    <a class="nav__dd-link" href="{{ route('legals.index') }}">
+                                        {{ __('Legal entities') }}
+                                    </a>
+                                </li>
+                            @endcanany
+                            @endhasanyrole
+
+                            @hasanyrole('SuperAdmin|Admin')
+                                <li class="nav__dd-item">
+                                    <a class="nav__dd-link" href="{{ route('parkings.index') }}" >
+                                        {{ __('Parking lots') }}
+                                    </a>
+                                </li>
+                                @canany(['partner_view', 'partner_create', 'partner_update'])
+                                    <li class="nav__dd-item">
+                                        <a class="nav__dd-link" href="{{ route('partners.index') }}" >
+                                            {{ __('Partners') }}
+                                        </a>
+                                    </li>
+                                @endcanany
+                                @canany(['partner_type_view', 'partner_type_create', 'partner_type_update'])
+                                    <li class="nav__dd-item">
+                                        <a class="nav__dd-link" href="{{ route('partner-types.index') }}" >
+                                            {{ __('Partner types') }}
+                                        </a>
+                                    </li>
+                                @endcanany
+                            @endhasanyrole
+
+                            @hasanyrole('Partner')
+                                <li class="nav__dd-item">
+                                    <a class="nav__dd-link" href="{{ route('partner.parkings') }}" >
+                                        {{ __('Parking lots') }}
+                                    </a>
+                                </li>
+                            @endhasanyrole
+
+                            @canany(['user_view', 'user_create', 'user_update', 'user_delete'])
+
+                                <li class="nav__dd-item">
+                                    <a class="nav__dd-link" href="{{ route('users.index') }}">{{ __('Users') }}</a>
+                                </li>
+                            @endcanany
+                            @can('permission_update')
+                                <li class="nav__dd-item">
+                                    <a class="nav__dd-link"
+                                       href="{{ route('permissions.index') }}">{{ __('Permissions') }}</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </div>
+
                     <div class="header__user-info nav__dd">
                         <i class="fa fa-user" aria-hidden="true"></i>
                         <span>{{ Auth::user()->name }}</span> <span class="arrow-d"></span>
@@ -74,50 +126,7 @@
                                     {{ __('Profile') }}
                                 </a>
                             </li>
-                            <li class="nav__dd-item">
-                                <a class="nav__dd-link" href="{{ route('applications.index') }}">
-                                    {{ __('Applications') }}
-                                </a>
-                            </li>
-                            @hasanyrole('Admin')
-                                @canany(['legal_view', 'legal_create', 'legal_update', 'legal_delete'])
-                                    <li class="nav__dd-item">
-                                        <a class="nav__dd-link" href="{{ route('legals.index') }}">
-                                            {{ __('Legal entities') }}
-                                        </a>
-                                    </li>
-                                @endcanany
-                            @endhasanyrole
 
-                            @hasanyrole('SuperAdmin|Admin')
-                            <li class="nav__dd-item">
-                                <a class="nav__dd-link" href="{{ route('parkings.index') }}" >
-                                    {{ __('Parking lots') }}
-                                </a>
-                            </li>
-                            @canany(['partner_view', 'partner_create', 'partner_update'])
-                                <li class="nav__dd-item">
-                                    <a class="nav__dd-link" href="{{ route('partners.index') }}" >
-                                        {{ __('Partners') }}
-                                    </a>
-                                </li>
-                            @endcanany
-                            @canany(['partner_type_view', 'partner_type_create', 'partner_type_update'])
-                                <li class="nav__dd-item">
-                                    <a class="nav__dd-link" href="{{ route('partner-types.index') }}" >
-                                        {{ __('Partner types') }}
-                                    </a>
-                                </li>
-                            @endcanany
-                            @endhasanyrole
-
-                            @hasanyrole('Partner')
-                            <li class="nav__dd-item">
-                                <a class="nav__dd-link" href="{{ route('partner.parkings') }}" >
-                                    {{ __('Parking lots') }}
-                                </a>
-                            </li>
-                            @endhasanyrole
                             <li class="nav__dd-item">
                                 <a class="nav__dd-link" href="{{ route('logout') }}"
                                onclick="event.preventDefault();

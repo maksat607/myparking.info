@@ -46,8 +46,14 @@ class ParkingController extends AppController
         $legals = ($user->owner)
             ? $user->owner->legals()->without('owner')->get()
             : $user->legals()->without('owner')->get();
+        $users = User::where('parent_id', $user->id)
+            ->orWhere('id', $user->id)
+            ->role(['Manager', 'Admin'])
+            ->without('owner')
+            ->orderBy('name', 'ASC')
+            ->get();
 
-        return view('parkings.create', compact('user', 'children', 'legals', 'title'));
+        return view('parkings.create', compact('users', 'children', 'legals', 'title'));
     }
 
     /**
@@ -133,7 +139,7 @@ class ParkingController extends AppController
             ->orWhere('id', $user->id)
             ->role(['Manager', 'Admin'])
             ->without('owner')
-            ->orderBy('id', 'ASC')
+            ->orderBy('name', 'ASC')
             ->get();
         $title = __('Edit parking :Parking', ['parking' => $parking->title]);
 

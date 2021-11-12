@@ -222,7 +222,7 @@
     "Legal entities": "Юр.лица",
     "Create new legal entity": "Создание нового юр.лица",
     "Title": "Заголовок",
-    "Reg. Number": "Рег. Номер",
+    "Reg. Number": "ОГРН",
     "INN": "ИНН",
     "Legal entities have not yet been created. Create at least one record.": "Юр. лиц пока не создано. Создайте минимум одну запись.",
     "View legal entity: :Legal": "Просмотр юридического лица: :Legal",
@@ -273,7 +273,7 @@
     "Select a document type..": "Выберите тип документа..",
     "Issue a car": "Выдать авто",
     "Application for issue": "Заявка на выдачу",
-    "Application for inspection": "Заявка на осмотр",
+    "Application for inspection": "Осмотр",
     "Editing an application for issuance": "Редактирование заявки на выдачу",
     "Editing an inspection request": "Редактирование заявки на осмотр"
 }

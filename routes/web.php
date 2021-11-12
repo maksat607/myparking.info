@@ -60,13 +60,13 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 
 Route::get('/', function () {
-    /*if(Auth::check()) {
-        return redirect('/home');
-    }*/
+    if(Auth::check()) {
+        return redirect('/applications');
+    }
     return view('welcome');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('check_legal')->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('check_legal')->name('home');
 
 
 /*Auth Group*/
@@ -74,6 +74,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Users*/
     Route::resource('users', UserController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/users/{user}/parking/all', [UserController::class, 'allUserParking'])->name('user.parking.all');
+
     Route::resource('users.children', UserChildrenController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
 
@@ -99,6 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Parkings*/
     Route::resource('parkings', ParkingController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
+
 
     /*PartnerTypes*/
     Route::resource('partner-types', PartnerTypeController::class)

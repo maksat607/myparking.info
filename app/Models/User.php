@@ -136,7 +136,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $auth->kids = $users;
             return $auth;
         }
-        $auth->kids = $auth->children;
+        $auth->kids = $auth->children()->orderBy('name', 'ASC')->get();
         return $auth;
     }
 

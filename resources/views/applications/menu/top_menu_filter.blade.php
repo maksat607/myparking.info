@@ -6,11 +6,6 @@
         </div>
         <nav class="newtopbar__nav">
             <ul class="newtopbar__list s-between">
-                <li class="newtopbar__item{{
-                    (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
-                }}">
-                    <a href="{{ route('applications.index') }}" class="newtopbar__link">Все</a>
-                </li>
                 <li class="newtopbar__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 2]) }}" class="newtopbar__link">Хранение</a>
                 </li>
@@ -31,6 +26,11 @@
                 </li>
                 <li class="newtopbar__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="newtopbar__link">Отклонено</a>
+                </li>
+                <li class="newtopbar__item{{
+                    (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
+                }}">
+                    <a href="{{ route('applications.index') }}" class="newtopbar__link">Все</a>
                 </li>
                 <li class="newtopbar__item{{ request()->routeIs('applications.duplicate') ? ' active' : '' }}">
                     <a href="{{ route('applications.duplicate') }}" class="newtopbar__link">Дубли</a>

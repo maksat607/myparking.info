@@ -23,7 +23,11 @@ class ApplicationFilters extends QueryFilter
 
     public function search($keyword)
     {
-        return $this->builder->where('car_title', 'like', '%'.$keyword.'%');
+        return $this->builder
+            ->where('car_title', 'like', '%'.$keyword.'%')
+            ->orWhere('vin', 'like', '%'.$keyword.'%')
+            ->orWhere('license_plate', 'like', '%'.$keyword.'%')
+            ;
     }
 
     public function favorite()

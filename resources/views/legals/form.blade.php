@@ -17,6 +17,22 @@
     </div>
 
     <div class="form-group row">
+        <label for="inn" class="col-md-4 col-form-label text-md-right">{{ __('INN') }}</label>
+
+        <div class="col-md-6">
+            <input id="inn" type="text" class="form-control @error('inn') is-invalid @enderror" name="inn"
+                   value="@if(isset($legal)){{ $legal->inn }}@else{{ old('inn') }}@endif"
+                   required >
+
+            @error('inn')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+    </div>
+
+    <div class="form-group row">
         <label for="reg_number" class="col-md-4 col-form-label text-md-right">{{ __('Reg. Number') }}</label>
 
         <div class="col-md-6">
@@ -32,21 +48,7 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <label for="inn" class="col-md-4 col-form-label text-md-right">{{ __('INN') }}</label>
 
-        <div class="col-md-6">
-            <input id="inn" type="text" class="form-control @error('inn') is-invalid @enderror" name="inn"
-                   value="@if(isset($legal)){{ $legal->inn }}@else{{ old('inn') }}@endif"
-                   required >
-
-            @error('inn')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
-        </div>
-    </div>
 
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">

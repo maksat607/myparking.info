@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="form-group row">
+{{--    <div class="form-group row">
         <label for="timezone" class="col-md-4 col-form-label text-md-right">{{ __('TimeZone') }}</label>
 
         <div class="col-md-6">
@@ -61,7 +61,7 @@
             </span>
             @enderror
         </div>
-    </div>
+    </div>--}}
 
     <div class="form-group row">
         <label for="legals" class="col-md-4 col-form-label text-md-right">{{ __('Legal entities') }}</label>
@@ -85,7 +85,7 @@
     </div>
     @hasanyrole('SuperAdmin|Admin')
     <div class="form-group row">
-        <label for="user" class="col-md-4 col-form-label text-md-right">{{ __('User') }}</label>
+        <label for="user" class="col-md-4 col-form-label text-md-right">{{ __('Users') }}</label>
 
         <div class="col-md-6">
             <select class="custom-select multiple @error('users') is-invalid @enderror" name="users[]" id="users" multiple required>

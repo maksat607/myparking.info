@@ -161,7 +161,10 @@
                     </div>
                 </div>
                 @endif
-                <a href="#" class="newcart__moreinfo have-comments" data-app-id="{{ $application->id }}">
+                <a href="#" class="newcart__moreinfo @if($application->car_additional) have-comments @endif"
+                   data-app-id="{{ $application->id }}"
+                   title="{{ Str::words($application->car_additional, 10, '...') }}"
+                >
                     Подробное описание
                 </a>
 

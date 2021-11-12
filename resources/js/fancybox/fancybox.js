@@ -7,6 +7,7 @@ if(uploaded) {
                 $.fancybox.open({
                     src: $(this).data('src')
                 });
+                // $(mutation.target).append();
             });
         });
 

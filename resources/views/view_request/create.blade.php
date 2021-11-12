@@ -66,7 +66,7 @@
                                placeholder="А-Приори">
                     </div>
                     <div class="tabform__inputwrap">
-                        <label>Дата постановки</label>
+                        <label>Дата осмотра</label>
                         <input type="text" name="view_request[arriving_at]" class="date @error('arriving_at') is-invalid @enderror">
                         @error('arriving_at')
                         <span class="invalid-feedback" role="alert">

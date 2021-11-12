@@ -17,8 +17,8 @@ class ApplicationFilterComposer
 
     public function __construct(Partner $partners, Parking $parkings, User $user)
     {
-        $this->partners = $partners->partners()->get();
-        $this->parkings = $parkings->parkings()->get();
+        $this->partners = $partners->partners()->orderBy('name', 'ASC')->get();
+        $this->parkings = $parkings->parkings()->orderBy('title', 'ASC')->get();
         $this->user = $user->usersFilter();
     }
 

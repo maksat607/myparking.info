@@ -102,7 +102,7 @@ class ViewRequestController extends AppController
         $attachments = $this->AttachmentController->storeToModel($request,'images');
 
         if (count($attachments) > 0) {
-            $viewRequest->attachments()->saveMany($attachments);
+            $viewRequestResult->attachments()->saveMany($attachments);
         }
 
         if ($viewRequestResult->exists) {
