@@ -128,7 +128,7 @@
 			$(this).addClass("show");
 		}
 	});
-	$('.newtopbar__mobtitletab').html($('.tabform__btn.active').text().trim());
+	/*$('.newtopbar__mobtitletab').html($('.tabform__btn.active').text().trim());
 
 	$(".newtopbar .tabform__btn").click(function () {
 
@@ -139,7 +139,7 @@
 
 		$('.tabform__content').removeClass('active');
 		$('#' + tabid).addClass('active');
-	});
+	});*/
 
 	$(".modal-dd-btn").click(function () {
 		$(this).parent().find(".modal-dd").slideDown(500);
@@ -168,3 +168,52 @@
 	$(".header__user-info.nav__dd").click(function () {
 		$(this).toggleClass("active");
 	});
+
+	$(`.delete`).on('click', confirmDelete);
+	$(`body`).on('click', `#deletePopup button, #deletePopup .delete-popup__close`, function(event){
+        event.preventDefault();
+        let deletionId = $(this).data('deletion-id');
+        if(deletionId) {
+            $(`#${deletionId}`).submit();
+        } else {
+            closeDeletePopup(this)
+        }
+    });
+
+	function closeDeletePopup(self) {
+        $(self).parents(`#deletePopup`)
+            .addClass('hide')
+            .delay(500).queue(function(){
+            $(this).remove().dequeue();
+        });
+    }
+
+
+    function confirmDelete(event) {
+        event.preventDefault();
+        let deletionId = $(this).data('deletion-id'),
+            message = $(this).data('message') ? $(this).data('message') : 'Удалить выбранный элемент?';
+
+
+        let popupHtml = `<div id="deletePopup" class="delete-popup hide">`;
+                popupHtml += `<div class="delete-popup__main">`;
+                    popupHtml += `<div class="delete-popup__close"></div>`;
+                    popupHtml += `<div class="delete-popup__top">`;
+                        popupHtml += `<div class="delete-popup__body">`;
+                            popupHtml += message;
+                        popupHtml += `</div>`;
+                    popupHtml += `</div>`;
+                    popupHtml += `<div class="delete-popup__bottom">`;
+                        popupHtml += `<button class="bggreen" type="button" data-deletion-id="${deletionId}">Да</button>`;
+                        popupHtml += `<button class="bgpink" type="button">Нет</button>`;
+                    popupHtml += `</div>`;
+                popupHtml += `</div>`;
+            popupHtml += `</div>`;
+
+        $(`#deletePopup`, `body`).remove()
+        $(`body`).append(popupHtml);
+        $(`#deletePopup`, `body`).delay(500).queue(function(){
+            $(this).removeClass("hide").dequeue();
+        });
+    }
+

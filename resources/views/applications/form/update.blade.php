@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="tabform__inputwrap w-100">
                                         <label>Номер убытка или лизингового договора</label>
-                                        <input type="text" name="app_data[external_id]"
+                                        <input type="text" id="external_id" name="app_data[external_id]"
                                                value="{{ $application->external_id }}"
                                                placeholder="002AT-20/0200285, 002AS21-004489">
                                     </div>
@@ -115,7 +115,7 @@
                             <div class="tabform__item w-100">
                                 <h2>Марка и модель авто</h2>
                                 <div class="tabform__cartlist d-flex">
-                                    <div class="tabform__cart select first-cart" id="types">
+                                    <div class="tabform__cart select first-cart car_type_id" id="types">
                                         <h3>{{ __('The type of car...') }} <span class="mob-arrow"></span></h3>
                                         <div class="tabform__mob-dd">
                                             <input type="text" placeholder="Поиск" class="select-search">
@@ -139,7 +139,7 @@
                                         </div>
                                     </div>
                                     <div id="selectGroup">
-                                        <div class="tabform__cart select" id="marks">
+                                        <div class="tabform__cart select car_mark_id" id="marks">
                                             <h3>{{ __('The brand of the car...') }} <span class="mob-arrow"></span></h3>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -163,7 +163,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="tabform__cart select" id="models">
+                                        <div class="tabform__cart select car_model_id" id="models">
                                             <h3>{{ __('The car model...') }} <span class="mob-arrow"></span></h3>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -186,7 +186,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="tabform__cart select" id="years">
+                                        <div class="tabform__cart select year" id="years">
                                             <h3>{{ __('The year of the car...') }} <span class="mob-arrow"></span></h3>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -629,8 +629,10 @@
                             </label>
                         @endcan
                     @endif
-                    <button class="tabform__footerbtn bgpink">Обновить</button>
-                    <button class="tabform__footerbtn bggreen">Отменить</button>
+                        <button class="tabform__footerbtn bgpink" type="button" id="tabPrev">Назад</button>
+                        <button class="tabform__footerbtn bggreen" type="button" id="tabNext">Далее</button>
+                    <button class="tabform__footerbtn bgpink" id="save">Обновить</button>
+                    <button class="tabform__footerbtn bggreen" type="button" >Отменить</button>
                 </div>
             </form>
         </div>

@@ -201,7 +201,7 @@ class UserController extends AppController
         $user->legals()->delete();
 
         return ($user->delete())
-            ? redirect()->back()->with('success', __('Saved.'))
+            ? redirect()->back()->with('success', __('Deleted.'))
             : redirect()->back()->with('error', __('Error'));
 
     }

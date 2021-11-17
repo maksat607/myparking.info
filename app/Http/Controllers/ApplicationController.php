@@ -489,7 +489,7 @@ class ApplicationController extends AppController
         $result = Application::destroy($application->id);
         if ( $result ) {
             Toastr::success(__('Deleted.'));
-            return redirect()->route('applications.index', ['application' => $application->id]);
+            return redirect()->back();
         }
 
         Toastr::error(__('Error'));

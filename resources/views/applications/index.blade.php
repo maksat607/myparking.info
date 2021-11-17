@@ -31,9 +31,10 @@
                     </a>
                     @endcan
                     @can('application_delete')
-                    <a class="newcart__delete" href="#"
-                       onclick="if( confirm('Delete it?') ) { event.preventDefault();
-                           document.getElementById('deleteApp{{ $application->id }}').submit(); return true }">
+                    {{-- TODO: Сделать удаление с попапом --}}
+                    <a class="newcart__delete delete" href="#"
+                       data-deletion-id="deleteApp{{ $application->id }}"
+                       data-message="Уверены что хотите удалить выбранный элемент?">
                         удалить
                     </a>
                     <form id="deleteApp{{ $application->id }}" method="POST"

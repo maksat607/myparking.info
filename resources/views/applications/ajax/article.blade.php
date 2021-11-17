@@ -78,7 +78,6 @@
             </ul>
         </div>
     </div>
-    {{-- TODO: заявка на осмотр --}}
 @endif
 @if(!$application->acceptions && $application->status->code != 'pending')
     <div class="newcart__dd">

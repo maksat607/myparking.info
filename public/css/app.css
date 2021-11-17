@@ -1558,6 +1558,7 @@ button {
     position: relative;
     width: 120px;
     font-size: 18px;
+    color: #cccccc;
 }
 
 .tabform__btn.active {
@@ -1574,9 +1575,8 @@ button {
     left: 0;
     transition: all 0.4s;
 }
-
-.tabform__btn.active:after,
-.tabform__btn:hover:after {
+/*.tabform__btn:hover:after*/
+.tabform__btn.active:after {
     width: 100%;
     background: #3991DA;
     color: #3991DA;
@@ -2333,7 +2333,7 @@ button {
 .mob-menu-btn {
     display: none;
 }
-/*\f196*/
+
 .has-files .uploaded::after {
     content: "";
     display: inline-block;
@@ -2346,7 +2346,7 @@ button {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 50%;
-    cursor: default;
+    cursor: pointer;
 }
 
 .has-files .uploaded-image {
@@ -2571,6 +2571,82 @@ input.is-invalid {
 .group_radio > label:focus input:checked  + span,
 .group_radio > label:active input:checked  + span {
     color: #fff;
+}
+
+/*Modal Delete*/
+.delete-popup {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity .2s linear;
+    z-index: 999;
+}
+.delete-popup.hide {
+    opacity: 0;
+}
+.delete-popup__main {
+    position: relative;
+    width: 20%;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.delete-popup__close:before, .delete-popup__close:after {
+    content: "";
+    width: 16px;
+    height: 1px;
+    background: #A1A1A1;
+    position: absolute;
+    top: 48%;
+    left: 0%;
+}
+.delete-popup__close:before {
+    transform: rotate(45deg);
+}
+.delete-popup__close:after {
+    transform: rotate(-45deg);
+}
+.delete-popup__close {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 9;
+    cursor: pointer;
+}
+.delete-popup__top,
+.delete-popup__bottom {
+    width: 100%;
+}
+.delete-popup__bottom {
+    display: flex;
+    justify-content: space-around;
+}
+.delete-popup__body {
+    font-size: 22px;
+    line-height: 28px;
+    padding-right: 16px;
+    text-align: center;
+    padding-bottom: 25px;
+}
+.delete-popup__bottom > button {
+    padding: 9px 26px;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.is-invalid {
+    border: 1px solid #EF446A !important;
 }
 
 @keyframes fadeIn {

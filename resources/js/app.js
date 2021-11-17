@@ -15,7 +15,7 @@ $(function() {
     require('./application/modalAjaxContent');
     require('./application-filter/applicationFilter');
     require('./application/favorite');
+    require('./application/stepTabAndValidete');
     require('./common');
 });
-
 

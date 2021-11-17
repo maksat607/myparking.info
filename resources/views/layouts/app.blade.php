@@ -15,6 +15,11 @@
         const APP_URL = {!! json_encode(url('/')) !!};
     </script>
 
+    <script>
+        //TODO: Функция сообщения удаления (доработать)
+
+    </script>
+
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
