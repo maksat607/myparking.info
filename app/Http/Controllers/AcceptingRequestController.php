@@ -19,6 +19,7 @@ class AcceptingRequestController extends AppController
 //        $acceptingRequests = IssueAcception::issuances()->where('is_issue', false)->with(['application'])->get();
         $applications = Application::applications()->filter($filters)
             ->whereHas('acceptions')
+            ->orderBy('created_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
             ->withQueryString();
 

@@ -40,3 +40,15 @@ $('.date').flatpickr({
         }
     ],
 });
+
+$('.date-manager').flatpickr({
+    altInput: true,
+    altFormat: "d/m/Y",
+    dateFormat: "d-m-Y",
+    defaultDate: getDate(),
+    disable: [
+        function(date) {
+            return (date.getDay() === 0 || date.getDay() === 6);
+        }
+    ],
+});

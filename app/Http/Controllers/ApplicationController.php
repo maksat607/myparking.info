@@ -51,7 +51,9 @@ class ApplicationController extends AppController
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
-        $status_name = ($status_id) ? Status::findOrFail($status_id)->name : 'Все';
+        $status = ($status_id) ? Status::findOrFail($status_id) : null;
+        $status_name = ($status) ? $status->name : 'Все';
+        $status_sort = ($status) ? $status->status_sort : 'arrived_at';
 
         $applications = Application::
             applications()
@@ -73,7 +75,7 @@ class ApplicationController extends AppController
             ->with('acceptions')
             ->with('issuance')
             ->with('viewRequests')
-            ->orderBy('id', 'desc')
+            ->orderBy($status_sort, 'desc')
             ->paginate(config('app.paginate_by', '25'))->withQueryString();
 
         foreach ($applications as $key => $item) {
@@ -550,6 +552,9 @@ class ApplicationController extends AppController
             'email' => ['email', 'nullable'],
         ])->validate();
 
+        Validator::make($request->app_data, [
+            'issued_at' => ['date'],
+        ])->validate();
 
         foreach ($clientData as $key => $value) {
             if ( is_null($value) || $value == 'null') {
@@ -570,10 +575,10 @@ class ApplicationController extends AppController
             $application->update([
                 'status_id' => 3,
                 'client_id' => $client->id,
-                'issued_at' => Date::now()
+                'issued_at' => $request->app_data['issued_at']
             ]);
             $application->issuance()->delete();
-            Toastr::success(__('Saved.'));
+            Toastr::success(__('Issued.'));
             return redirect()->route('applications.index');
         } else {
             Toastr::error(__('Error'));
@@ -915,7 +920,7 @@ class ApplicationController extends AppController
                 ->with('acceptions')
                 ->with('issuance')
                 ->with('viewRequests')
-                ->orderBy('id', 'desc');
+                ->orderBy('arrived_at', 'desc');
 
             $applications = $applicationQuery->paginate( config('app.paginate_by', '25') )->withQueryString();
             foreach ($applications as $key => $item) {

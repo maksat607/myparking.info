@@ -50,9 +50,11 @@ class Parking extends Model
             $childrenIds[] = auth()->user()->id;
             $childrenWithOwnerId = $childrenIds;
             return $query->whereIn('user_id', $childrenWithOwnerId);
-        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
+        } elseif (auth()->user()->hasRole(['Manager'])) {
+            return $query->whereIn('id', auth()->user()->managerParkings->modelKeys());
+        } elseif(auth()->user()->hasRole(['Operator'])) {
             return $query->where('user_id', auth()->user()->id);
-        } elseif (auth()->user()->hasRole(['Partner'])) {
+        }elseif (auth()->user()->hasRole(['Partner'])) {
             return $query->whereIn('id', auth()->user()->partnerParkings->modelKeys());
         } elseif (auth()->user()->hasRole(['PartnerOperator'])) {
             return $query->whereIn('id', auth()->user()->owner->partnerParkings->modelKeys());

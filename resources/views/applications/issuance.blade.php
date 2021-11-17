@@ -66,7 +66,13 @@
                                 </select>
                             </div>
                             <div class="tabform__inputwrap">
-                                <input type="text" id="issuanceDocumentInput" name="client[issuance_document]" placeholder="Иной документ" value="@if($client){{ $client->issuance_document }}@endif">
+                                <input type="text" id="issuanceDocumentInput" name="client[issuance_document]"
+                                       placeholder="Иной документ" value="@if($client){{ $client->issuance_document }}@endif">
+                            </div>
+
+                            <div class="tabform__inputwrap">
+                                <label>Дата выдачи</label>
+                                <input type="text" name="app_data[issued_at]" class="date-manager @error('arriving_at') is-invalid @enderror">
                             </div>
 
                             <div class="tabform__inputwrap w-100">
