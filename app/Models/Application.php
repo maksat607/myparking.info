@@ -234,7 +234,13 @@ class Application extends Model
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
-        } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
+        } elseif($authUser->hasRole(['Operator'])) {
+            /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;*/
+            $parkingsIds = Parking::where('user_id', $authUser->owner->id)->pluck('id')->toArray();
+            return $query
+                ->whereIn('parking_id', $parkingsIds);
+        } elseif ($authUser->hasRole(['PartnerOperator'])) {
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
@@ -264,7 +270,14 @@ class Application extends Model
             return $query
                 ->where('id', $id)
                 ->where('parking_id', $authUser->managerParkings()->get()->modelKeys());
-        } elseif ($authUser->hasRole(['Operator', 'PartnerOperator'])) {
+        } elseif($authUser->hasRole(['Operator'])) {
+            /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;*/
+            $parkingsIds = Parking::where('user_id', $authUser->owner->id)->pluck('id')->toArray();
+            return $query
+                ->where('id', $id)
+                ->whereIn('parking_id', $parkingsIds);
+        } elseif ($authUser->hasRole(['PartnerOperator'])) {
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
             return $query

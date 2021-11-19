@@ -46,6 +46,9 @@ class Status extends Model
         return false;
     }
     public function getStatusSortAttribute() {
+        if ($this->id == 2) {
+            return 'arrived_at';
+        }
         if ($this->id == 3) {
             return 'issued_at';
         }
@@ -53,7 +56,7 @@ class Status extends Model
             return 'created_at';
         }
 
-        return 'arrived_at';
+        return 'arriving_at';
     }
     public function getColorClass() {
         $color = 'blue';

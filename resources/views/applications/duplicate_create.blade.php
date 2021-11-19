@@ -104,7 +104,7 @@
                                                    placeholder="Выберите дату..">
                                         </div>
                                         @push('scripts')
-                                            const dateDataApplication = '{{ $application->arriving_at->format('d-m-Y') }}';
+                                            const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
                                         @endpush
                                         <div class="tabform__inputwrap">
                                             <label>Промежуток</label>
@@ -114,6 +114,31 @@
                                                 <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
                                             </select>
                                         </div>
+                                        @hasrole('Admin')
+                                        <div class="tabform__inputwrap">
+                                            <label>Дата выдачи</label>
+                                            <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"
+                                                   placeholder="Выберите дату..">
+                                        </div>
+                                        <div class="tabform__inputwrap">
+                                            <label>Кто выдал</label>
+                                            <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
+                                                <option selected hidden value="">{{ __('Select a manager..') }}</option>
+                                                @foreach($managers as $manager)
+                                                    <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="tabform__inputwrap">
+                                            <label>Статус</label>
+                                            <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
+                                                <option selected hidden value="">{{ __('Select a status..') }}</option>
+                                                @foreach($statuses as $statuse)
+                                                    <option value="{{ $statuse->id }}">{{ $statuse->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @endhasrole
                                     </div>
                                 </div>
                             </div>

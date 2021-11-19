@@ -51,9 +51,10 @@ class ApplicationController extends AppController
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
+
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
         $status_name = ($status) ? $status->name : 'Все';
-        $status_sort = ($status) ? $status->status_sort : 'arrived_at';
+        $status_sort = ($status) ? $status->status_sort : 'arriving_at';
 
         $applications = Application::
             applications()
@@ -120,6 +121,9 @@ class ApplicationController extends AppController
         }
         $colors = Color::getColors();
 
+        $managers = auth()->user()->children()->role('Manager')->orderBy('name', 'asc')->get();
+        $statuses = Status::query()->orderBy('name', 'asc')->get();
+
 
         $title = __('Create a Request');
 
@@ -131,6 +135,8 @@ class ApplicationController extends AppController
                     'carTypes',
                     'partners',
                     'parkings',
+                    'managers',
+                    'statuses',
                     'colors')
             );
             return view('applications.duplicate_create', $updateData);
@@ -140,6 +146,8 @@ class ApplicationController extends AppController
                 'carTypes',
                 'partners',
                 'parkings',
+                'managers',
+                'statuses',
                 'colors'));
         }
 
@@ -218,6 +226,7 @@ class ApplicationController extends AppController
 
         foreach ($applicationData as $key => $value) {
             if ( $value === '' || $value === null || $value === 'null') {
+                if($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
         }
@@ -226,6 +235,12 @@ class ApplicationController extends AppController
         } else {
             $applicationData['status_id'] = 7;
         }
+        if(auth()->user()->hasRole('Admin')) {
+            if(isset($applicationData['status_admin'])) {
+                $applicationData['status_id'] = $applicationData['status_admin'];
+            }
+        }
+
 
         if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
             $searchFilters = [];
@@ -314,6 +329,9 @@ class ApplicationController extends AppController
 
         $application = Application::application($id)->firstOrFail();
 
+        $managers = auth()->user()->children()->role('Manager')->orderBy('name', 'asc')->get();
+        $statuses = Status::query()->orderBy('name', 'asc')->get();
+
         extract($this->applicationUpdateData($application));
 
 
@@ -329,6 +347,8 @@ class ApplicationController extends AppController
             'title',
             'partners',
             'parkings',
+            'managers',
+            'statuses',
             'colors',
             'application',
             'attachments',
@@ -394,8 +414,9 @@ class ApplicationController extends AppController
         unset($applicationData['car_series_body']);
 
 
-        foreach ($applicationData as $key => $value) {
+       foreach ($applicationData as $key => $value) {
             if ( $value === '' || $value === null || $value === 'null') {
+                if($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
         }
@@ -439,6 +460,12 @@ class ApplicationController extends AppController
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
             $application->acceptions()->delete();
             $application->acceptedBy()->associate(auth()->user());
+        }
+
+        if(auth()->user()->hasRole('Admin') && !isset($applicationData['accept'])) {
+            if(isset($applicationData['status_admin'])) {
+                $applicationData['status_id'] = $applicationData['status_admin'];
+            }
         }
 
         $isUpdate = $application->update($applicationData);

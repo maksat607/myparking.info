@@ -23,7 +23,7 @@ class ViewRequest extends Model
 
     public function application()
     {
-        return $this->belongsTo(Application::class);
+        return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
     public function createdBy()
@@ -102,6 +102,6 @@ class ViewRequest extends Model
                 ->whereIn('user_id', $operatorWithOwnerId)
                ->where('parking_id', $authUser->parkings()->get()->modelKeys());
         }*/
-        return $query;
+        return $query->where('id', $id);
     }
 }

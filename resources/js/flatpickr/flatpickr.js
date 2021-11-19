@@ -1,10 +1,15 @@
 let dataDefault = null;
+let dataIssuedDefault = null;
 if(typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
     dataDefault = dateDataViewRequest;
 } else if(typeof dateDataApplication !== 'undefined' && dateDataApplication) {
     dataDefault = dateDataApplication;
 } else if(typeof dateDataIssue !== 'undefined' && dateDataIssue) {
     dataDefault = dateDataIssue;
+}
+
+if(typeof dateDataIssuedApplication !== 'undefined' && dateDataIssuedApplication) {
+    dataIssuedDefault = dateDataIssuedApplication;
 }
 
 function getDate(){
@@ -52,3 +57,16 @@ $('.date-manager').flatpickr({
         }
     ],
 });
+
+let dateAdmin = $('.date-admin').flatpickr({
+    altInput: true,
+    altFormat: "d/m/Y",
+    dateFormat: "d-m-Y",
+    defaultDate: dataIssuedDefault,
+    disable: [
+        function(date) {
+            return (date.getDay() === 0 || date.getDay() === 6);
+        }
+    ],
+});
+$(`#dataClear`).on('click', dateAdmin.clear);

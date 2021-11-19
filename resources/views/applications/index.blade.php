@@ -31,7 +31,6 @@
                     </a>
                     @endcan
                     @can('application_delete')
-                    {{-- TODO: Сделать удаление с попапом --}}
                     <a class="newcart__delete delete" href="#"
                        data-deletion-id="deleteApp{{ $application->id }}"
                        data-message="Уверены что хотите удалить выбранный элемент?">

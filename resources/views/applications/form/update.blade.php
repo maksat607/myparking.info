@@ -106,6 +106,42 @@
                                             <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
                                         </select>
                                     </div>
+                                    @hasrole('Admin')
+                                    <div class="tabform__inputwrap">
+                                        <label>Дата выдачи</label>
+                                        <div class="input-group flatpickr">
+                                            <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"
+                                               placeholder="Выберите дату.." data-input>
+                                            <div class="input-group-append">
+                                                <button id="dataClear" class="btn btn-danger" type="button" data-clear>
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        @push('scripts')
+                                            const dateDataIssuedApplication = '{{ ($application->issued_at) ? $application->issued_at->format('d-m-Y') : null }}';
+                                        @endpush
+                                    </div>
+                                    <div class="tabform__inputwrap">
+                                        <label>Кто выдал</label>
+                                        <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
+                                            <option selected hidden value="">{{ __('Select a manager..') }}</option>
+                                            @foreach($managers as $manager)
+                                                <option @if($application->issued_by == $manager->id) selected @endif value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="tabform__inputwrap">
+                                        <label>Статус</label>
+                                        <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
+                                            <option selected hidden value="">{{ __('Select a status..') }}</option>
+                                            @foreach($statuses as $status)
+                                                <option @if($application->status_id == $status->id) selected @endif value="{{ $status->id }}">{{ $status->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endhasrole
                                 </div>
                             </div>
                         </div>

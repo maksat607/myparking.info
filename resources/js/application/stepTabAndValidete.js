@@ -101,7 +101,10 @@ const validate = {
 
         });
         this.removeError();
-        if(this.filtered.length > 1) {
+        if(this.filtered.length == 1 && (this.filtered.includes('#vin') || this.filtered.includes('#license_plate'))) {
+            this.filtered = [];
+        }
+        if(this.filtered.length > 0 && (this.filtered.indexOf()) ) {
             this.vinLicense();
             this.addError();
             return true

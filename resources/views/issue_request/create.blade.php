@@ -17,7 +17,9 @@
                 @endif
                 <div class="newpopup__left">
                     <h3 class="newcart__title">{{ $application->car_title }}</h3>
-                    <span class="newcart__repeat">Повтор</span>
+                    @if($application->returned)
+                        <span class="newcart__repeat">Повтор</span>
+                    @endif
                 </div>
                 <ul class="newpopup__ul">
                     <li>

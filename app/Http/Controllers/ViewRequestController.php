@@ -124,6 +124,7 @@ class ViewRequestController extends AppController
     {
         $viewRequest = ViewRequest::viewRequest($view_request_id)->firstOrFail();
         $application = $viewRequest->application;
+
         if($application->status->code != 'storage') {
             return redirect()->back()->with('warning', __('The car is not yet in storage'));
         }
