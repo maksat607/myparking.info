@@ -21,9 +21,11 @@
                 <li class="newtopbar__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
                     <a href="{{ route('issue_requests.index') }}" class="newtopbar__link">Выдача</a>
                 </li>
+                @unlessrole('Operator')
                 <li class="newtopbar__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 3]) }}" class="newtopbar__link">Выдано</a>
                 </li>
+                @endunlessrole
                 <li class="newtopbar__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
                     <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="newtopbar__link">Отклонено</a>
                 </li>

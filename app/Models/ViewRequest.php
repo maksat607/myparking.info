@@ -9,7 +9,7 @@ class ViewRequest extends Model
 {
     protected $fillable = ['client_name', 'organization_name', 'comment', 'arriving_at', 'arriving_interval', 'finished_at', 'status_id', 'application_id', 'created_user_id', 'user_id', 'reviewed_by'];
     protected $dates = ['arriving_at', 'finished_at'];
-    protected $appends = ['status_name', 'formated_created_at', 'formated_arriving_at', 'formated_finished_at'];
+    protected $appends = ['status_name', 'formated_created_at', 'formated_arriving_at', 'formated_finished_at', 'formated_arriving_interval'];
     protected static $statusLabels = [
         '1'=> 'В ожидании',
         '2'=> 'Осмотрено',
@@ -54,6 +54,10 @@ class ViewRequest extends Model
     public function getFormatedFinishedAtAttribute()
     {
         return isset($this->finished_at) ? $this->finished_at->format('d-m-Y') : 'Не указана';
+    }
+    public function getFormatedArrivingIntervalAttribute()
+    {
+        return isset($this->arriving_interval) ? $this->arriving_interval : 'Не указан';
     }
 
     public static function getStatuses($end = 0, $start = 0)

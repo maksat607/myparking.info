@@ -11,6 +11,7 @@ class IssueAcception extends Model
 
     protected $table = 'issue_acceptions';
     protected $dates = ['arriving_at'];
+    protected $appends = ['formated_arriving_at', 'formated_arriving_interval'];
     protected $guarded = [];
 
     public function client()
@@ -25,7 +26,11 @@ class IssueAcception extends Model
 
     public function getFormatedArrivingAtAttribute()
     {
-        return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : null;
+        return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : 'Не указана';
+    }
+    public function getFormatedArrivingIntervalAttribute()
+    {
+        return isset($this->arriving_interval) ? $this->arriving_interval : 'Не указан';
     }
 
     public function scopeIssuances($query)

@@ -15,7 +15,8 @@
                         </th>
                         <th>VIN <i class="fa fa-filter" aria-hidden="true"></i></th>
                         <th>Гос. номер <i class="fa fa-filter" aria-hidden="true"></i></th>
-                        <th class="active">Заявка <i class="fa fa-filter" aria-hidden="true"></i>
+                        <th>Дата приезда <i class="fa fa-filter" aria-hidden="true"></i></th>
+                        <th>Промежуток времени <i class="fa fa-filter" aria-hidden="true"></i></th>
                             <div class="newcart__tablefilter">
                                 <select name="" id="">
                                     <option value="1">1</option>
@@ -33,7 +34,8 @@
                             <td>{{ $issueRequest->application->car_title }}</td>
                             <td>{{ $issueRequest->application->vin }}</td>
                             <td>{{ $issueRequest->application->license_plate }}</td>
-                            <td class="statuspink">Выдача</td>
+                            <td>{{ $issueRequest->formated_arriving_at }}</td>
+                            <td>{{ $issueRequest->formated_arriving_interval }}</td>
                             <td class="status{{ $issueRequest->application->status->getColorClass() }}">{{$issueRequest->application->status->name}}</td>
                             <td>
                                 <button class="newcart__btnpop"></button>
