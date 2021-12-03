@@ -188,6 +188,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Brian2694\Toastr\ToastrServiceProvider::class,
+        App\Providers\ExportServiceProvider::class,
     ],
 
     /*

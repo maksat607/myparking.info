@@ -54,6 +54,32 @@
                     </ul>
                     @auth
                     <div class="header__user-info nav__dd">
+                                <i class="fa fa-file-text" aria-hidden="true"></i>
+                                <span>{{ __('Report') }}</span> <span class="arrow-d"></span>
+                                <ul class="nav__dd-list">
+                                    @unlessrole('Partner|PartnerOperator')
+                                    <li class="nav__dd-item">
+                                        <a class="nav__dd-link" href="{{ route('report.report-by-partner') }}">
+                                            {{ __('Partner Report') }}
+                                        </a>
+                                    </li>
+                                    @endunlessrole
+                                    @hasanyrole('SuperAdmin|Admin|Manager')
+                                    <li class="nav__dd-item">
+                                        <a class="nav__dd-link" href="{{ route('report.report-by-employee') }}">
+                                            {{ __('Employee Report') }}
+                                        </a>
+                                    </li>
+                                    <li class="nav__dd-item">
+                                        <a class="nav__dd-link" href="{{ route('report.report-all-partner') }}">
+                                            {{ __('All Partners Report') }}
+                                        </a>
+                                    </li>
+                                    @endhasanyrole
+                                </ul>
+                            </div>
+
+                    <div class="header__user-info nav__dd">
                         <i class="fa fa-cog" aria-hidden="true"></i>
                         <span>{{ __('Settings') }}</span> <span class="arrow-d"></span>
                         <ul class="nav__dd-list">

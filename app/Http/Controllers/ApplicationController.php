@@ -19,6 +19,7 @@ use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
+use App\Models\User;
 use Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -121,7 +122,8 @@ class ApplicationController extends AppController
         }
         $colors = Color::getColors();
 
-        $managers = auth()->user()->children()->role('Manager')->orderBy('name', 'asc')->get();
+        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+        $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
         $statuses = Status::query()->orderBy('name', 'asc')->get();
 
 
@@ -241,6 +243,11 @@ class ApplicationController extends AppController
             }
         }
 
+        if(auth()->user()->hasRole('Manager')) {
+            $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
+            $applicationData['status_id'] = 2;
+        }
+
 
         if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
             $searchFilters = [];
@@ -277,7 +284,7 @@ class ApplicationController extends AppController
         }
 
         $application = auth()->user()->applications()->create($applicationData);
-        if ($applicationData['status_id'] != 1) {
+        if ($applicationData['status_id'] != 1 && !auth()->user()->hasRole('Manager')) {
             $application->issueAcceptions()->create([
                 'is_issue' => false,
                 'user_id' => auth()->id()
@@ -329,7 +336,8 @@ class ApplicationController extends AppController
 
         $application = Application::application($id)->firstOrFail();
 
-        $managers = auth()->user()->children()->role('Manager')->orderBy('name', 'asc')->get();
+        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+        $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
         $statuses = Status::query()->orderBy('name', 'asc')->get();
 
         extract($this->applicationUpdateData($application));
@@ -654,8 +662,8 @@ class ApplicationController extends AppController
                 ->where([
                     ['license_plate', 'like', '%' . $request->license_plate . '%'],
                 ])
-                ->when(auth()->user()->getParentUser(), function ($query) {
-                    return $query->where('applications.user_id', auth()->user()->getParentUser());
+                ->when(auth()->user()->getUserOwnerId(), function ($query) {
+                    return $query->where('applications.accepted_by', auth()->user()->getUserOwnerId());
                 })
                 ->get()->toArray()
             : [];
@@ -672,10 +680,11 @@ class ApplicationController extends AppController
                 }
             }
             if ($searchVin) {
+
                 $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                     ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-                    ->when(auth()->user()->getParentUser(), function ($query) {
-                        return $query->where('applications.user_id', auth()->user()->getParentUser());
+                    ->when(auth()->user()->getUserOwnerId(), function ($query) {
+                        return $query->where('applications.accepted_by', auth()->user()->getUserOwnerId());
                     })
                     ->where(function($query) use( $vinArray ) {
                         foreach ($vinArray as $singleVin) {

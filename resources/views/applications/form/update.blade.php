@@ -106,7 +106,8 @@
                                             <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
                                         </select>
                                     </div>
-                                    @hasrole('Admin')
+                                    @hasanyrole('Admin|Manager')
+                                    @if(auth()->user()->hasRole('Admin') || (auth()->user()->hasRole('Manager') && $application->status_id == 3))
                                     <div class="tabform__inputwrap">
                                         <label>Дата выдачи</label>
                                         <div class="input-group flatpickr">
@@ -132,6 +133,8 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    @endif
+                                    @hasrole('Admin')
                                     <div class="tabform__inputwrap">
                                         <label>Статус</label>
                                         <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
@@ -142,6 +145,7 @@
                                         </select>
                                     </div>
                                     @endhasrole
+                                    @endhasanyrole
                                 </div>
                             </div>
                         </div>

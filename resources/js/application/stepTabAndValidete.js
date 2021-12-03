@@ -30,6 +30,7 @@ const stepTab = {
         self.showHideSave(self.activeTab().index());
 
         self.scrollActive($(`.select:visible`));
+        self.scrollTopTab();
 
     },
     prevNext(self) {
@@ -74,6 +75,13 @@ const stepTab = {
         });
 
     },
+    scrollTopTab() {
+        let topTab = $(`#app`).offset().top;
+        console.log(topTab)
+        $(`html, body`).stop().animate({
+            scrollTop: topTab
+        }, 500);
+    }
 }
 
 const validate = {

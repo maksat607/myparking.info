@@ -5,6 +5,8 @@
         <div class="profile__wrap">
             <h3>{{ $title }}</h3>
             <form method="POST" action="{{ route('profile.update') }}">
+                @csrf
+                @method('PUT')
                 <div class="d-flex">
                     <div class="item50">
                         <span class="input-title">{{ __('Name') }}</span>

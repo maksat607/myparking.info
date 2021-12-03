@@ -278,5 +278,9 @@
     "Editing an inspection request": "Редактирование заявки на осмотр",
     "Settings": "Настройки",
     "No parking lots": "Нет парковки",
-    "Issued": "Выдано"
+    "Issued": "Выдано",
+    "Partner Report": "Отчёт по партнёрам",
+    "Employee Report": "Отчёт по сотрудникам",
+    "All Partners Report": "Отчёт по всем партнёрам",
+    "Report": "Выгрузки"
 }

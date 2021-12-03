@@ -12,6 +12,7 @@ use App\Http\Controllers\PartnerTypeController;
 use App\Http\Controllers\PartnerUserController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserChildrenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewRequestController;
@@ -236,4 +237,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::delete('issue-requests/{issue_request}', [IssueRequestController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name( 'issue_requests.destroy');
+
+    /*Report*/
+    Route::get('/csv-by-partner', [ReportController::class, 'csvByPartner'])->name( 'report.csv-by-partner');
+    Route::get('/report-by-partner', [ReportController::class, 'reportByPartner'])->name( 'report.report-by-partner');
+    Route::get('/csv-by-employee', [ReportController::class, 'csvByEmployee'])->name( 'report.csv-by-employee');
+    Route::get('/report-by-employee', [ReportController::class, 'reportByEmployee'])->name( 'report.report-by-employee');
+    Route::get('/csv-all-partner', [ReportController::class, 'csvAllPartner'])->name( 'report.csv-all-partner');
+    Route::get('/report-all-partner', [ReportController::class, 'reportAllPartner'])->name( 'report.report-all-partner');
 });

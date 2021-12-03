@@ -14,7 +14,7 @@ const checkDuplicate = {
         'cancelled-by-us': 'ОН'
     },
     init() {
-        $(`#vin, #license_plate`).on('change', {self:this}, function(e){
+        $(`#vin, #license_plate`).on('input', {self:this}, function(e){
             let self = e.data.self;
             self.vin = $(`#vin`).val().split(',');
             self.licensePlate = $(`#license_plate`).val();

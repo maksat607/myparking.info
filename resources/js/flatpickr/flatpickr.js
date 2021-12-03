@@ -1,5 +1,7 @@
 let dataDefault = null;
 let dataIssuedDefault = null;
+let dataReportRangeDefault = null;
+
 if(typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
     dataDefault = dateDataViewRequest;
 } else if(typeof dateDataApplication !== 'undefined' && dateDataApplication) {
@@ -12,7 +14,17 @@ if(typeof dateDataIssuedApplication !== 'undefined' && dateDataIssuedApplication
     dataIssuedDefault = dateDataIssuedApplication;
 }
 
-function getDate(){
+if(typeof dateReportRange !== 'undefined' && dateReportRange) {
+    dataReportRangeDefault = parseDateRange(dateReportRange);
+}
+
+function parseDateRange(dateReportRangeDefault)
+{
+    return dateReportRangeDefault.split(' — ');
+}
+
+function getDate()
+{
     if(dataDefault) return dataDefault;
 
     let today = new Date();
@@ -33,6 +45,22 @@ function getDate(){
     return todayFormat;
 }
 
+function getOneMonthDate()
+{
+    let today = new Date();
+/*    let beforeDay = new Date();
+    beforeDay.setDate(beforeDay.getDate() -30);*/
+    let day = String(today.getDate()).padStart(2, '0');
+    // let lastDay = String(today.getDate()).padStart(2, '0');
+    let beforeMonth = String(today.getMonth()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0');
+    let year = String(today.getFullYear());
+    return [
+        `${day}/${beforeMonth}/${year}`,
+        `${day}/${month}/${year}`
+    ];
+}
+
 $('.date').flatpickr({
     altInput: true,
     altFormat: "d/m/Y",
@@ -51,11 +79,6 @@ $('.date-manager').flatpickr({
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
     defaultDate: getDate(),
-    disable: [
-        function(date) {
-            return (date.getDay() === 0 || date.getDay() === 6);
-        }
-    ],
 });
 
 let dateAdmin = $('.date-admin').flatpickr({
@@ -63,10 +86,14 @@ let dateAdmin = $('.date-admin').flatpickr({
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
     defaultDate: dataIssuedDefault,
-    disable: [
-        function(date) {
-            return (date.getDay() === 0 || date.getDay() === 6);
-        }
-    ],
 });
 $(`#dataClear`).on('click', dateAdmin.clear);
+
+$('.date-range').flatpickr({
+    mode: "range",
+    altInput: true,
+    altFormat: "d/m/Y",
+    dateFormat: "d-m-Y",
+    defaultDate: (dataReportRangeDefault) ? dataReportRangeDefault : getOneMonthDate()
+});
+
