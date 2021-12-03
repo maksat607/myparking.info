@@ -192,7 +192,9 @@
                         @can('application_to_inspection')
                         <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="newcart__bluebtn">Осмотр</a>
                         @endcan
-                        <button class="newcart__bluebtn">Скачать акт</button>
+                        @hasanyrole('Admin|Manager')
+                        <a href="{{ route('application.generate-act', ['application' => $application->id]) }}" class="newcart__bluebtn">Скачать акт</a>
+                        @endhasanyrole
                     </div>
                 @endif
 

@@ -33,10 +33,10 @@ class ApplicationController extends AppController
 {
     protected $AttachmentController;
     private $exporter;
-    public function __construct(AttachmentController $AttachmentController)
+    public function __construct(ExportInterface $exporter, AttachmentController $AttachmentController)
     {
         $this->AttachmentController = $AttachmentController;
-//        $this->exporter = $exporter;
+        $this->exporter = $exporter;
 
         $this->middleware(['permission:application_view'])->only('index', 'show');
         $this->middleware(['permission:application_create'])->only('create', 'store');
@@ -316,6 +316,14 @@ class ApplicationController extends AppController
     public function show($id)
     {
         //
+    }
+
+    public function generateAct(Request $request, Application $application)
+    {
+
+        return $this->exporter->export([
+            'application'=>$application
+        ]);
     }
 
     /**

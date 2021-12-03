@@ -192,6 +192,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
+    Route::get('/generate-act/{application}', [ApplicationController::class, 'generateAct'])->name('application.generate-act');
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])
@@ -245,4 +246,5 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/report-by-employee', [ReportController::class, 'reportByEmployee'])->name( 'report.report-by-employee');
     Route::get('/csv-all-partner', [ReportController::class, 'csvAllPartner'])->name( 'report.csv-all-partner');
     Route::get('/report-all-partner', [ReportController::class, 'reportAllPartner'])->name( 'report.report-all-partner');
+
 });
