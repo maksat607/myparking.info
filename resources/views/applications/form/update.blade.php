@@ -672,7 +672,7 @@
                         <button class="tabform__footerbtn bgpink" type="button" id="tabPrev">Назад</button>
                         <button class="tabform__footerbtn bggreen" type="button" id="tabNext">Далее</button>
                     <button class="tabform__footerbtn bgpink" id="save">Обновить</button>
-                    <button class="tabform__footerbtn bggreen" type="button" >Отменить</button>
+                    <a href="{{ route('applications.index') }}" class="tabform__footerbtn bggreen" >Отменить</a>
                 </div>
             </form>
         </div>

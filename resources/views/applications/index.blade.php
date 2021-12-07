@@ -12,7 +12,9 @@
                         @if($application->attachments->isNotEmpty())
                             @foreach($application->attachments as $attachment)
                             <div class="newcart__imgwrap">
-                                <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                <a href="{{ $attachment->url }}">
+                                    <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                </a>
                             </div>
                             @endforeach
                         @else

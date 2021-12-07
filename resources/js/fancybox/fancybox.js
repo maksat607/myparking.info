@@ -27,3 +27,20 @@ if(uploaded) {
         });
     });
 }
+
+$(`.newcart__img a`).on('click', function(e){
+    e.preventDefault();
+    let parentSlider = $(this).parents(`.newcart__img`);
+    let parentSlide = $(this).parents(`.slick-slide`);
+    let gallery = $(`.slick-slide:not(.slick-cloned) a`, parentSlider);
+    let totalSlides = parentSlider.slick("getSlick").slideCount,
+        dataIndex = parentSlide.data('slick-index');
+
+    $.fancybox.open(gallery, {
+        beforeClose : function( instance, current, e ) {
+            parentSlider.slick("slickGoTo", current.index)
+            console.log(current);
+        }
+    }, dataIndex);
+
+});

@@ -64,7 +64,9 @@
                                         @endcan
                                     @endif
 
+                                    @hasanyrole('Admin|Manager')
                                     <a href="">Скачать акт</a>
+                                    @endhasanyrole
 
                                     <a href="{{ route('applications.edit', [
                                                     'application' => $application->id,
