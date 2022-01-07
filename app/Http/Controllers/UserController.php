@@ -88,7 +88,7 @@ class UserController extends AppController
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'status' => $request->status,
+            'status' => $request->input('status', 0),
         ];
 
         if(isNotAdminRole($request->role)) {
@@ -167,7 +167,7 @@ class UserController extends AppController
         if(!is_null($request->password)) {
             $user->password = Hash::make($request->password);
         }
-        $user->status = $request->status;
+        $user->status = $request->input('status', 0);;
 
         if(isNotAdminRole($request->role)) {
             $userData['parent_id'] = auth()->id();
@@ -180,7 +180,7 @@ class UserController extends AppController
         $user->assignRole($request->role);
 
         return ($user->save())
-            ? redirect()->route('users.index')->with('success', __('Saved.'))
+            ? redirect()->route('users.index')->with('success', __('Updated.'))
             : redirect()->back()->with('error', __('Error'));
     }
 

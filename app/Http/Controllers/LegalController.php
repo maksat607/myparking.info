@@ -126,12 +126,16 @@ class LegalController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'reg_number' => ['required', 'string', 'min:5', 'max:255', 'unique:legals'],
             'inn' => ['required', 'string', 'min:5', 'unique:legals'],
+            'kpp' => ['required', 'string', 'min:5', 'unique:legals'],
+            'status' => ['boolean'],
         ])->validate();
 
         $legalData = [
             'name' => $request->name,
             'reg_number' => $request->reg_number,
             'inn' => $request->inn,
+            'kpp' => $request->kpp,
+            'status' => $request->input('status', 0),
         ];
 
         $newLegal = Auth::user()->legals()->create($legalData);
@@ -188,15 +192,19 @@ class LegalController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'reg_number' => ['required', 'string', 'min:5', 'max:255', Rule::unique('legals')->ignore($legal->id)],
             'inn' => ['required', 'string', 'min:5', Rule::unique('legals')->ignore($legal->id)],
+            'kpp' => ['required', 'string', 'min:5', Rule::unique('legals')->ignore($legal->id)],
+            'status' => ['boolean'],
         ])->validate();
 
 
         $legal->name = $request->name;
         $legal->reg_number = $request->reg_number;
         $legal->inn = $request->inn;
+        $legal->kpp = $request->kpp;
+        $legal->status = $request->input('status', 0);
 
         return ($legal->save())
-            ? redirect()->back()->with('success', __('Saved.'))
+            ? redirect()->route('legals.index')->with('success', __('Updated.'))
             : redirect()->back()->with('error', __('Error'));
     }
 

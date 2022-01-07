@@ -18,6 +18,12 @@ class Legal extends Model
         'name',
         'reg_number',
         'inn',
+        'kpp',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     public function owner()

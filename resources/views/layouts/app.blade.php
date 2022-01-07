@@ -26,8 +26,153 @@
 </head>
 
 <body>
+    <header class="header" id="app">
+        <div class="container header__wrap">
+            <a href="/">
+                <img src="{{ asset('img/logo.svg') }}" alt="" class="logo">
+            </a>
+            <nav class="nav">
+                <ul class="nav__list">
+                    @auth
+                    <li class="nav__item{{ (request()->routeIs('applications.create')) ? ' active' : '' }}">
+                        @can('application_create')
+                            <a href="{{ route('applications.create') }}" class="nav__link">{{ __('Add a car') }}</a>
+                        @endcan
+                    </li>
+                    <li class="nav__item{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">
+                        <a class="nav__link" href="{{ route('applications.index') }}">
+                            {{ __('Applications') }}
+                        </a>
+                    </li>
+                    <li class="nav__item nav__item-dd">
+                        <a href="" class="nav__link">Таблицы</a>
+                        <ul class="nav__item-dd-list">
+                            @hasanyrole('Admin')
+                            @canany(['legal_view', 'legal_create', 'legal_update', 'legal_delete'])
+                                <li class="{{ (request()->routeIs('legals.index')) ? 'active' : '' }}">
+                                    <a href="{{ route('legals.index') }}">
+                                        {{ __('Legal entities') }}
+                                    </a>
+                                </li>
+                            @endcanany
+                            @endhasanyrole
+                            @hasanyrole('SuperAdmin|Admin')
+                            <li class="{{ (request()->routeIs('parkings.index')) ? 'active' : '' }}">
+                                <a href="{{ route('parkings.index') }}" >
+                                    {{ __('Parking lots') }}
+                                </a>
+                            </li>
+                            @canany(['partner_view', 'partner_create', 'partner_update'])
+                                <li class="{{ (request()->routeIs('partners.index')) ? 'active' : '' }}">
+                                    <a href="{{ route('partners.index') }}" >
+                                        {{ __('Partners') }}
+                                    </a>
+                                </li>
+                            @endcanany
+                            @endhasanyrole
+                            @hasanyrole('Partner')
+                            <li class="{{ (request()->routeIs('partner.parkings')) ? 'active' : '' }}">
+                                <a href="{{ route('partner.parkings') }}" >
+                                    {{ __('Parking lots') }}
+                                </a>
+                            </li>
+                            @endhasanyrole
+                            @canany(['user_view', 'user_create', 'user_update', 'user_delete'])
+
+                                <li class="{{ (request()->routeIs('users.index')) ? 'active' : '' }}">
+                                    <a href="{{ route('users.index') }}">{{ __('Users') }}</a>
+                                </li>
+                            @endcanany
+                        </ul>
+                    </li>
+                    <li class="nav__item nav__item-dd">
+                        <a href="" class="nav__link">{{ __('Report') }}</a>
+                        <ul class="nav__item-dd-list">
+                            @unlessrole('Partner|PartnerOperator')
+                            <li>
+                                <a href="{{ route('report.report-by-partner') }}">
+                                    {{ __('Partner Report') }}
+                                </a>
+                            </li>
+                            @endunlessrole
+                            @hasanyrole('SuperAdmin|Admin|Manager')
+                            <li>
+                                <a href="{{ route('report.report-by-employee') }}">
+                                    {{ __('Employee Report') }}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('report.report-all-partner') }}">
+                                    {{ __('All Partners Report') }}
+                                </a>
+                            </li>
+                            @endhasanyrole
+
+                        </ul>
+                    </li>
+                    @hasanyrole('SuperAdmin')
+                    <li class="nav__item nav__item-dd">
+                        <a href="" class="nav__link">Настройки</a>
+                        <ul class="nav__item-dd-list">
+
+                            @canany(['partner_type_view', 'partner_type_create', 'partner_type_update'])
+                                <li>
+                                    <a href="{{ route('partner-types.index') }}" >
+                                        {{ __('Partner types') }}
+                                    </a>
+                                </li>
+                            @endcanany
+                            @can('permission_update')
+                                <li>
+                                    <a href="{{ route('permissions.index') }}">{{ __('Permissions') }}</a>
+                                </li>
+                            @endcan
+
+                        </ul>
+                    </li>
+                    @endhasanyrole
+                    @endauth
+                </ul>
+            </nav>
+            @auth
+            <div class="header__user ml-auto d-flex align-items-center">
+                <div class="header__user-icon">
+                    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 5.83366C13.0545 5.83366 10.6667 8.22147 10.6667 11.167C10.6667 14.1125 13.0545 16.5003 16 16.5003C18.9455 16.5003 21.3333 14.1125 21.3333 11.167C21.3333 8.22147 18.9455 5.83366 16 5.83366ZM8 11.167C8 6.74871 11.5817 3.16699 16 3.16699C20.4183 3.16699 24 6.74871 24 11.167C24 15.5853 20.4183 19.167 16 19.167C11.5817 19.167 8 15.5853 8 11.167ZM10.6667 24.5003C8.45753 24.5003 6.66667 26.2912 6.66667 28.5003C6.66667 29.2367 6.06971 29.8337 5.33333 29.8337C4.59695 29.8337 4 29.2367 4 28.5003C4 24.8184 6.98477 21.8337 10.6667 21.8337H21.3333C25.0152 21.8337 28 24.8184 28 28.5003C28 29.2367 27.403 29.8337 26.6667 29.8337C25.9303 29.8337 25.3333 29.2367 25.3333 28.5003C25.3333 26.2912 23.5425 24.5003 21.3333 24.5003H10.6667Z"
+                              fill="#011A3F" />
+                    </svg>
+                </div>
+                <div class="header__user-info">
+                    <div class="header__user-pos">{{ Auth::user()->getRole() }}</div>
+                    <div class="header__user-name">
+                        {{ Auth::user()->name }} <span class="icon icon-arrow-d"></span>
+                        <div class="header__user-dd">
+                            <div>
+                                <a href="{{ route('profile.edit') }}">
+                                    {{ __('Profile') }}
+                                </a>
+                            </div>
+                            <div>
+                                <a href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endauth
+        </div>
+    </header>
     <div id="app">
-        <header class="header">
+
+        {{--<header class="header">
             <div class="wrapper d-flex">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <img src="{{ url('/') }}/img/logo-ap.png" alt="{{ config('app.name', 'Laravel') }}" class="header__logo">
@@ -169,7 +314,7 @@
                     @endauth
                 </div>
             </div>
-        </header>
+        </header>--}}
         <main class="py-4">
             @if (session('success'))
                 <x-alert type="success" :message="session('success')" />
@@ -185,15 +330,8 @@
         </main>
     </div>
 
-    <footer class="footer">
-        <div class="wrapper s-between">
-            <img src="./img/logo-ap-footer.png" alt="" class="footer__logo">
-            <span>© 2021 parkingscars.ru</span>
-        </div>
-    </footer>
-
     <script type="text/javascript">
-    @stack('scripts')
+        @stack('scripts')
     </script>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>

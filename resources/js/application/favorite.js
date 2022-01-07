@@ -4,8 +4,8 @@ const favorite = {
     init() {
         $(`.favorite`).on('click', {self:this}, function(e){
             let self = e.data.self
-            self.parent = $(this).parent();
             self.application_id = $(this).data('app-id');
+            self.parent = $(this).parents(`#application_${self.application_id}`);
             self.setFavorite();
         });
     },
@@ -20,8 +20,8 @@ const favorite = {
                     this.parent.parent('.newcart__item').remove();
                 }
             }).catch(error => {
-            console.log('error:', error);
-        });
+                console.log('error:', error);
+            });
     },
     isFilter() {
         const urlSearchParams = new URLSearchParams(window.location.search);

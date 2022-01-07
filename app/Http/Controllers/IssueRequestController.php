@@ -20,7 +20,7 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        $issueRequests = IssueAcception::issuances()
+        /*$issueRequests = IssueAcception::issuances()
             ->with(['application'])
             ->where('is_issue', true)
             ->whereHas('application', function(Builder $query) use ($filters){
@@ -28,20 +28,29 @@ class IssueRequestController extends AppController
             })
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();
+            ->withQueryString();*/
 
-//        dd($issueRequests);
-        /*$applications = Application::applications()->filter($filters)
+        $applications = Application::applications()
+            ->with(['attachments', 'partner', 'parking', 'acceptions', 'issuance', 'viewRequests'])
+            ->filter($filters)
             ->whereHas('issuance')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();*/
+            ->withQueryString();
 
         $title = __('Issue Requests');
         /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
-        } else {*/
+        } else {
             return view('issue_request.index', compact('title', 'issueRequests'));
-        /*}*/
+        }*/
+        switch ($request->get('direction', 'column')) {
+            case 'table':
+                return view('applications.index_table', compact('title', 'applications'));
+            case 'row':
+                return view('applications.index_row', compact('title', 'applications'));
+            default:
+                return view('applications.index', compact('title', 'applications'));
+        }
     }
     /**
      * Show the form for creating a new resource.

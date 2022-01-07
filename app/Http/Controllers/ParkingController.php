@@ -71,12 +71,14 @@ class ParkingController extends AppController
             'timezone' => ['nullable', 'string', 'max:100'],
             'legals' => ['required', 'array'],
             'users' => ['filled', Rule::exists('users', 'id')],
+            'status' => ['boolean'],
         ])->validate();
 
         $parkingData = [
             'title' => $request->title,
             'code' => $request->code,
             'address' => $request->address,
+            'status' => $request->input('status', 0),
         ];
 
         if(!is_null($request->timezone)) {
@@ -101,7 +103,6 @@ class ParkingController extends AppController
             return redirect()->route('parkings.index')->with('success', __('Saved.'));
 
         } catch (QueryException $e) {
-            dd($e->getMessage());
             DB::rollBack();
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
         }
@@ -162,6 +163,7 @@ class ParkingController extends AppController
             'timezone' => ['nullable', 'string', 'max:100'],
             'legals' => ['required', 'array'],
             'users' => ['filled', Rule::exists('users', 'id')],
+            'status' => ['boolean'],
         ])->validate();
 
         try {
@@ -173,6 +175,7 @@ class ParkingController extends AppController
             $parking->title = $request->title;
             $parking->code = $request->code;
             $parking->address = $request->address;
+            $parking->status = $request->input('status', 0);
 
             if(!is_null($request->timezone)) {
                 $parking->timezone = $request->timezone;

@@ -27,11 +27,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Paginator::useBootstrapThree();
+        Paginator::useBootstrap();
+//        Paginator::useBootstrapThree();
         View::composer(
             [
                 'applications.index',
-                'applications.index_status',
+                'applications.index_table',
+                'applications.index_row',
                 'applications.accepting',
                 'view_request.index',
                 'issue_request.index',

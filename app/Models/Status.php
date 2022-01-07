@@ -59,11 +59,11 @@ class Status extends Model
         return 'arriving_at';
     }
     public function getColorClass() {
-        $color = 'blue';
+        $color = 'status-primary';
         if($this->code == 'storage') {
-            $color = 'green';
+            $color = 'status-success';
         } elseif ($this->code != 'storage' && $this->code != 'draft') {
-            $color = 'pink';
+            $color = 'status-danger';
         }
         return $color;
     }

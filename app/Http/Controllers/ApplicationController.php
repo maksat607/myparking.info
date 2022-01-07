@@ -94,10 +94,13 @@ class ApplicationController extends AppController
         }
 
         $title = __($status_name);
-        if($request->get('direction') == 'row') {
-            return view('applications.index_status', compact('title', 'applications'));
-        } else {
-            return view('applications.index', compact('title', 'applications'));
+        switch ($request->get('direction', 'column')) {
+            case 'table':
+                return view('applications.index_table', compact('title', 'applications'));
+            case 'row':
+                return view('applications.index_row', compact('title', 'applications'));
+            default:
+                return view('applications.index', compact('title', 'applications'));
         }
     }
 
@@ -906,14 +909,14 @@ class ApplicationController extends AppController
             ? response()->json([
                 'favorite' => $application->favorite,
                 'message'=>__('Added to favorite'),
-                'class' => 'newcart__save',
-                'remove_class' => 'newcart__nosave'
+                'class' => 'select-favorite',
+                'remove_class' => ''
             ])
             : response()->json([
                 'favorite' => $application->favorite,
                 'message'=>__('Removed from favorite'),
-                'class' => 'newcart__nosave',
-                'remove_class' => 'newcart__save'
+                'class' => '',
+                'remove_class' => 'select-favorite'
             ]);
     }
 

@@ -1,8 +1,9 @@
 // Variables
-@import 'variables';
+//@import 'variables';
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
 
 // Image-uploader
 @import "../css/image-uploader.min.css";
@@ -15,21 +16,22 @@
 @import "../slick/slick-theme.css";
 
 // Main
-@import '../css/style.css';
-
-// Main
 //@import "./main";
 
 // Select2.js
-@import "~select2/src/scss/core";
-@import "~@ttskch/select2-bootstrap4-theme/src/select2-bootstrap4";
+@import "~select2/dist/css/select2.min.css";
+//@import "~@ttskch/select2-bootstrap4-theme/src/select2-bootstrap4";
 
 // Flatpickr.js
 @import "~flatpickr/dist/flatpickr.min.css";
 
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+//@import url('https://fonts.googleapis.com/css?family=Nunito');
 @import '~font-awesome/scss/font-awesome';
 
 // Toastr
 @import "~toastr/toastr";
+
+// Main
+//@import '../css/style.css';
+@import '../css/style.v2.css';

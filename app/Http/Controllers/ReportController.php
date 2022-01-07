@@ -186,7 +186,6 @@ class ReportController extends Controller
             $endTime = $now;
         }
 
-
         $applicationQuery = Application
             ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'arriving_at'])
             ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
@@ -199,9 +198,9 @@ class ReportController extends Controller
             })
             ->whereNotNull('arrived_at');
 
+        $status_id = $request->query('status_id', 'arrived');
 
-
-        if($request->query('status_id', 'arrived') == "arrived") {
+        if($status_id == "arrived") {
             //arrived at filter
             $applicationQuery->where('arrived_at', '<=', $endTime->format('Y-m-d H:i:s'));
             $applicationQuery->where(function ($query) use ($startTime, $endTime) {
@@ -212,7 +211,7 @@ class ReportController extends Controller
                             ->where('issued_at', '>=', $startTime->format('Y-m-d H:i:s'));
                     });
             });
-        } elseif ($request->status_id == "issued") {
+        } elseif ($status_id == "issued") {
 
             /*$applicationQuery->whereBetween('issued_at', [
                 $startTime->format('Y-m-d H:i:s'),
@@ -389,6 +388,7 @@ class ReportController extends Controller
             $total['issued'] += $item['issued'];
             $total['total_days'] += $item['total_days'];
         }
+
 
         $applications[] = $total;
 

@@ -1,5 +1,8 @@
 $('select').select2({
-    theme: 'bootstrap4',
+    // theme: 'bootstrap4',
+    minimumResultsForSearch: Infinity,
+    dropdownCssClass: 'page-select-dd',
+    // placeholder: '',
 });
 
 $('select.multiple').select2();
