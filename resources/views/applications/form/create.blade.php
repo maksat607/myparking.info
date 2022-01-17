@@ -279,11 +279,11 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="tabform__cartlist d-flex">
-                                        <div class="tabform__cart select first-cart car_type_id" id="types">
-                                            <h3>{{ __('The type of car...') }} <span class="mob-arrow"></span></h3>
-                                            <div class="tabform__mob-dd">
+                                        <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model" id="types">
+                                            <legend class="legend">{{ __('The type of car...') }} <span class="mob-arrow"></span></legend>
+                                            <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul">
+                                                <ul class="select-list tabform__ul type-list">
                                                     @foreach($carTypes as $car)
                                                         @if ($loop->first)
                                                             <li class="select-item tabform__li active">
@@ -297,37 +297,35 @@
                                                     @endforeach
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div id="selectGroup">
-                                            <div class="tabform__cart select car_mark_id" id="marks">
-                                                <h3>{{ __('The brand of the car...') }} <span class="mob-arrow"></span></h3>
-                                                <div class="tabform__mob-dd">
-                                                    <input type="text" placeholder="Поиск" class="select-search">
-                                                    <ul class="tabform__ul select-list" data-placeholder="Выберите тип авто">
-                                                        {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
-                                                    </ul>
-                                                </div>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto" id="marks" data-id="selectGroup">
+                                            <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
+                                            <div class="tabform__mob-dd type-card">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="tabform__ul select-list type-list" data-placeholder="Выберите тип авто">
+                                                    {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                </ul>
                                             </div>
-                                            <div class="tabform__cart select car_model_id" id="models">
-                                                <h3>{{ __('The car model...') }} <span class="mob-arrow"></span></h3>
-                                                <div class="tabform__mob-dd">
-                                                    <input type="text" placeholder="Поиск" class="select-search">
-                                                    <ul class="select-list tabform__ul" data-placeholder="Выберите марку авто">
-                                                        <li class="placeholder statuspink">Выберите марку авто</li>
-                                                    </ul>
-                                                </div>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select car_model_id fieldset new-style-model" id="models" data-id="selectGroup">
+                                            <legend class="legend">{{ __('The car model...') }} <span class="mob-arrow"></span></legend>
+                                            <div class="tabform__mob-dd type-card">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите марку авто">
+                                                    <li class="placeholder statuspink">Выберите марку авто</li>
+                                                </ul>
                                             </div>
-                                            <div class="tabform__cart select year" id="years">
-                                                <h3>{{ __('The year of the car...') }} <span class="mob-arrow"></span></h3>
-                                                <div class="tabform__mob-dd">
-                                                    <input type="text" placeholder="Поиск" class="select-search">
-                                                    <ul class="select-list tabform__ul" data-placeholder="Выберите модель авто">
-                                                        <li class="placeholder statuspink">Выберите модель авто</li>
-                                                    </ul>
-                                                </div>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select year fieldset new-style-model ml-auto" id="years" data-id="selectGroup">
+                                            <legend class="legend">{{ __('The year of the car...') }} <span class="mob-arrow"></span></legend>
+                                            <div class="tabform__mob-dd type-card">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите модель авто">
+                                                    <li class="placeholder statuspink">Выберите модель авто</li>
+                                                </ul>
                                             </div>
-                                        </div>
-                                        <div id="textArea" class="d-none">
+                                        </fieldset>
+                                        <div id="textArea" class="d-none ml-auto">
                                             <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
                                             <textarea class="form-control" id="autoDesc"
                                                       rows="4"
@@ -382,75 +380,79 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="tabform__cartlist d-flex">
-                                        <div class="tabform__cart select cart-3" id="generations">
-                                            <h3>{{ __('Generation...') }} <span class="mob-arrow"></span></h3>
+                                    <div class="tabform__cartlist tabform__cartlist-col-3 d-flex">
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="generations">
+                                            <legend class="legend">{{ __('Generation...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите поколение авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите поколение авто">
                                                     <li class="placeholder statuspink">Выберите поколение авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__cart select cart-3" id="series">
-                                            <h3>{{ __('Series...') }} <span class="mob-arrow"></span></h3>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="series">
+                                            <legend class="legend">{{ __('Series...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите кузов авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите кузов авто">
                                                     <li class="placeholder statuspink">Выберите кузов авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__cart select cart-3" id="modifications">
-                                            <h3>{{ __('Modifications...') }} <span class="mob-arrow"></span></h3>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="modifications">
+                                            <legend class="legend">{{ __('Modifications...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите модификацию авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите модификацию авто">
                                                     <li class="placeholder statuspink">Выберите модификацию авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__cart select cart-3" id="engines">
-                                            <h3>{{ __('Engines...') }} <span class="mob-arrow"></span></h3>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="engines">
+                                            <legend class="legend">{{ __('Engines...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите двигатель авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите двигатель авто">
                                                     <li class="placeholder statuspink">Выберите двигатель авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__cart select cart-3" id="transmissions">
-                                            <h3>{{ __('Transmission...') }} <span class="mob-arrow"></span></h3>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="transmissions">
+                                            <legend class="legend">{{ __('Transmission...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите КПП авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите КПП авто">
                                                     <li class="placeholder statuspink">Выберите КПП авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__cart select cart-3" id="gears">
-                                            <h3>{{ __('Gear...') }} <span class="mob-arrow"></span></h3>
+                                        </fieldset>
+                                        <fieldset class="tabform__cart select cart-3 fieldset" id="gears">
+                                            <legend class="legend">{{ __('Gear...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
-                                                <ul class="select-list tabform__ul" data-placeholder="Выберите привод авто">
+                                                <ul class="select-list tabform__ul type-list" data-placeholder="Выберите привод авто">
                                                     <li class="placeholder statuspink">Выберите привод авто</li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="tabform__inputwrap cart-3">
-                                            <label>Цвет</label>
-                                            <select name="car_data[color]" id="color">
+                                        </fieldset>
+                                        <label class="field-style tabform__cart select cart-3">
+                                            <span>Цвет</span>
+                                            <select name="car_data[color]" id="color2">
+                                                <option></option>
                                                 @foreach($colors as $color)
                                                     <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                        <div class="tabform__inputwrap cart-3">
-                                            <label>Пробег</label>
-                                            <input type="text" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="50000">
-                                        </div>
-                                        <div class="tabform__inputwrap cart-3">
-                                            <label>Количество владельцев</label>
+                                        </label>
+                                        
+
+                                        <label class="field-style mileage cart-3">
+                                            <span>Пробег</span>
+                                            <input type="number" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="50000">
+                                            <span class="mileage-type">км</span>
+                                        </label>
+                                        <fieldset class="tabform__inputwrap cart-3 fieldset">
+                                            <legend class="legend">Количество владельцев</legend>
                                             <label class="tabform__radio">
                                                 <input type="radio" name="car_data[owner_number]" value="1">
                                                 <span class="d-flex">
@@ -472,7 +474,7 @@
                                             <span class="tabform__radionum">3 и более</span>
                                         </span>
                                             </label>
-                                        </div>
+                                        </fieldset>
                                     </div>
                                     {{--<fieldset class="fieldset">
                                         <legend class="legend">Поколение</legend>

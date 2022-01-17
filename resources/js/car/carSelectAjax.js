@@ -326,14 +326,14 @@ const carSelectAjax = {
     toggleTextArea() {
         let self = this;
         if(self.excluded.includes(self.dataId)) {
-            $(`#selectGroup`).addClass(`d-none`);
+            $(`.new-style-model[data-id="selectGroup"]`).addClass(`d-none`);
             $(`#textArea`).removeClass(`d-none`);
             self.resetLists(['#types']);
             self.addHiddenInput();
             return true;
         }
 
-        $(`#selectGroup`).removeClass(`d-none`);
+        $(`.new-style-model[data-id="selectGroup"]`).removeClass(`d-none`);
         $(`#textArea`).addClass(`d-none`);
         return false;
 
