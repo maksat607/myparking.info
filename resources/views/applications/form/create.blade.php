@@ -1,3 +1,5 @@
+<form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
+    @csrf
 <div class="container page-head-wrap">
 
     @if ($errors->any())
@@ -159,6 +161,44 @@
                                         </select>
                                     </label>
                                 </div>
+                                @hasrole('Admin')
+                                <div class="col-6 mt-3">
+                                    <label class="field-style">
+                                        <span>Дата выдачи</span>
+                                        <div class="input-group flatpickr">
+                                            <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"
+                                                   placeholder="Выберите дату.." data-input>
+                                            <div class="input-group-append">
+                                                <button id="dataClear" class="btn btn-danger" type="button" data-clear>
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <label class="field-style">
+                                        <span>Кто выдал</span>
+                                        <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
+                                            <option selected hidden value="">{{ __('Select a manager..') }}</option>
+                                            @foreach($managers as $manager)
+                                                <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label class="field-style">
+                                        <span>Статус</span>
+                                        <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
+                                            <option selected hidden value="">{{ __('Select a status..') }}</option>
+                                            @foreach($statuses as $statuse)
+                                                <option value="{{ $statuse->id }}">{{ $statuse->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </label>
+                                </div>
+                                @endhasrole
                             </div>
 
                         </div>
@@ -238,7 +278,65 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <fieldset class="fieldset">
+                                    <div class="tabform__cartlist d-flex">
+                                        <div class="tabform__cart select first-cart car_type_id" id="types">
+                                            <h3>{{ __('The type of car...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul">
+                                                    @foreach($carTypes as $car)
+                                                        @if ($loop->first)
+                                                            <li class="select-item tabform__li active">
+                                                                <a href="" data-name-id="car_type_id" data-id="{{ $car->id }}">{{ $car->name }}</a>
+                                                            </li>
+                                                        @else
+                                                            <li class="select-item tabform__li">
+                                                                <a href="" data-name-id="car_type_id" data-id="{{ $car->id }}">{{ $car->name }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div id="selectGroup">
+                                            <div class="tabform__cart select car_mark_id" id="marks">
+                                                <h3>{{ __('The brand of the car...') }} <span class="mob-arrow"></span></h3>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="tabform__ul select-list" data-placeholder="Выберите тип авто">
+                                                        {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="tabform__cart select car_model_id" id="models">
+                                                <h3>{{ __('The car model...') }} <span class="mob-arrow"></span></h3>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul" data-placeholder="Выберите марку авто">
+                                                        <li class="placeholder statuspink">Выберите марку авто</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="tabform__cart select year" id="years">
+                                                <h3>{{ __('The year of the car...') }} <span class="mob-arrow"></span></h3>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul" data-placeholder="Выберите модель авто">
+                                                        <li class="placeholder statuspink">Выберите модель авто</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="textArea" class="d-none">
+                                            <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
+                                            <textarea class="form-control" id="autoDesc"
+                                                      rows="4"
+                                                      name="car_data[car_title]"
+                                                      value="{{ old('car_data.car_title') }}"
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                    {{--<fieldset class="fieldset">
                                         <legend class="legend">Тип автомобиля</legend>
                                         <div class="d-flex">
                                             <div class="type-card">
@@ -274,7 +372,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </fieldset>
+                                    </fieldset>--}}
                                 </div>
                             </div>
                         </div>
@@ -284,7 +382,99 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <fieldset class="fieldset">
+                                    <div class="tabform__cartlist d-flex">
+                                        <div class="tabform__cart select cart-3" id="generations">
+                                            <h3>{{ __('Generation...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите поколение авто">
+                                                    <li class="placeholder statuspink">Выберите поколение авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__cart select cart-3" id="series">
+                                            <h3>{{ __('Series...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите кузов авто">
+                                                    <li class="placeholder statuspink">Выберите кузов авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__cart select cart-3" id="modifications">
+                                            <h3>{{ __('Modifications...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите модификацию авто">
+                                                    <li class="placeholder statuspink">Выберите модификацию авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__cart select cart-3" id="engines">
+                                            <h3>{{ __('Engines...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите двигатель авто">
+                                                    <li class="placeholder statuspink">Выберите двигатель авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__cart select cart-3" id="transmissions">
+                                            <h3>{{ __('Transmission...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите КПП авто">
+                                                    <li class="placeholder statuspink">Выберите КПП авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__cart select cart-3" id="gears">
+                                            <h3>{{ __('Gear...') }} <span class="mob-arrow"></span></h3>
+                                            <div class="tabform__mob-dd">
+                                                <input type="text" placeholder="Поиск" class="select-search">
+                                                <ul class="select-list tabform__ul" data-placeholder="Выберите привод авто">
+                                                    <li class="placeholder statuspink">Выберите привод авто</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tabform__inputwrap cart-3">
+                                            <label>Цвет</label>
+                                            <select name="car_data[color]" id="color">
+                                                @foreach($colors as $color)
+                                                    <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="tabform__inputwrap cart-3">
+                                            <label>Пробег</label>
+                                            <input type="text" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="50000">
+                                        </div>
+                                        <div class="tabform__inputwrap cart-3">
+                                            <label>Количество владельцев</label>
+                                            <label class="tabform__radio">
+                                                <input type="radio" name="car_data[owner_number]" value="1">
+                                                <span class="d-flex">
+                                            <span class="tabform__radionew"></span>
+                                            <span class="tabform__radionum">1</span>
+                                        </span>
+                                            </label>
+                                            <label class="tabform__radio">
+                                                <input type="radio" name="car_data[owner_number]" value="2">
+                                                <span class="d-flex">
+                                            <span class="tabform__radionew"></span>
+                                            <span class="tabform__radionum">2</span>
+                                        </span>
+                                            </label>
+                                            <label class="tabform__radio">
+                                                <input type="radio" name="car_data[owner_number]" value="3">
+                                                <span class="d-flex">
+                                            <span class="tabform__radionew"></span>
+                                            <span class="tabform__radionum">3 и более</span>
+                                        </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {{--<fieldset class="fieldset">
                                         <legend class="legend">Поколение</legend>
                                         <div class="d-flex">
                                             <div class="type-card">
@@ -324,7 +514,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </fieldset>
+                                    </fieldset>--}}
                                 </div>
                             </div>
                         </div>
@@ -336,26 +526,26 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>VIN</span>
-                                        <input type="text" placeholder="Не указан" value="XTA210600C0000001">
+                                        <input class="vin" type="text" placeholder="Не указан" value="XTA210600C0000001">
                                     </label>
-                                    <label class="field-style mt-3">
+                                    {{--<label class="field-style mt-3">
                                         <span>VIN</span>
                                         <input type="text" placeholder="Не указан" value="XTA210600C0000001">
                                         <button type="button" class="add"></button>
-                                    </label>
+                                    </label>--}}
                                 </div>
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Гос. номер</span>
-                                        <input type="text" placeholder="Не указан" value="А001АА177">
+                                        <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">
                                     </label>
-                                    <div class="mt-2">
+                                    {{--<div class="mt-2">
                                         <label class="switch-radio-wrap">
                                             <input type="checkbox">
                                             <span class="switcher-radio"></span>
                                             <span>Нет учёта</span>
                                         </label>
-                                    </div>
+                                    </div>--}}
                                 </div>
                             </div>
                         </div>
@@ -367,11 +557,13 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>СТС</span>
-                                        <input type="text" placeholder="Не указан">
+                                        <input type="text" name="car_data[sts]"
+                                               value="{{ old('car_data.sts') }}"
+                                               id="sts" placeholder="Не указан">
                                     </label>
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
-                                            <input type="checkbox">
+                                            <input type="checkbox" name="car_data[sts_provided]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Принят на хранение</span>
                                         </label>
@@ -381,7 +573,7 @@
                                     <label class="field-style">
                                         <span>ПТС</span>
                                         <div class="d-flex two-field">
-                                            <input type="text" placeholder="Не указан">
+                                            <input name="car_data[pts_type]" value="Оригинал" type="text" placeholder="Не указан">
                                             <select name="" id="" class="page-select">
                                                 <option></option>
                                                 <option value="1">Электронный</option>
@@ -393,7 +585,7 @@
                                     </label>
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
-                                            <input type="checkbox">
+                                            <input type="checkbox" name="car_data[pts_provided]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Принят на хранение</span>
                                         </label>
@@ -410,21 +602,21 @@
                                     <div class="inner-page__item-title">Кол-во владельцев</div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="owners">
+                                            <input type="radio" name="car_data[owner_number]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Первый</span>
                                         </label>
                                     </div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="owners">
+                                            <input type="radio" name="car_data[owner_number]" value="2">
                                             <span class="switcher-radio"></span>
                                             <span>Второй</span>
                                         </label>
                                     </div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="owners">
+                                            <input type="radio" name="car_data[owner_number]" value="3">
                                             <span class="switcher-radio"></span>
                                             <span>Третий и более</span>
                                         </label>
@@ -436,28 +628,28 @@
                                     <div class="row">
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="owners">
+                                                <input type="radio" name="car_data[car_key_quantity]" checked value="0">
                                                 <span class="switcher-radio"></span>
                                                 <span>0</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="owners">
+                                                <input type="radio" name="car_data[car_key_quantity]" value="1">
                                                 <span class="switcher-radio"></span>
                                                 <span>1</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="owners">
+                                                <input type="radio" name="car_data[car_key_quantity]" value="2">
                                                 <span class="switcher-radio"></span>
                                                 <span>2</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="owners">
+                                                <input type="radio" name="car_data[car_key_quantity]" value="3">
                                                 <span class="switcher-radio"></span>
                                                 <span>3</span>
                                             </label>
@@ -470,19 +662,18 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Цвет</span>
-                                        <select name="" id="" class="page-select">
+                                        <select name="car_data[color]" id="color" class="page-select">
                                             <option></option>
-                                            <option value="1">Красный</option>
-                                            <option value="2">Синий</option>
-                                            <option value="3">Желтый</option>
-                                            <option value="4">Черный</option>
+                                            @foreach($colors as $color)
+                                                <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                            @endforeach
                                         </select>
                                     </label>
                                 </div>
                                 <div class="col-6">
                                     <label class="field-style mileage">
                                         <span>Пробег</span>
-                                        <input type="number" placeholder="Не указан">
+                                        <input type="number" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="Не указан">
                                         <span class="mileage-type">км</span>
                                     </label>
                                 </div>
@@ -499,25 +690,25 @@
                                         <div class="d-flex">
                                             <div class="type-card parts-list tab-checkbox" id="tab-checkbox" role="tablist">
                                                 <label class="switch-radio-wrap d-flex">
-                                                    <input type="checkbox" checked>
+                                                    <input type="checkbox" name="car_data[condition_engine]" value="" checked>
                                                     <span class="switcher-radio ml-auto"></span>
                                                     <span class="part-title"><a data-toggle="tab" href="#tab-tex1">Двигатель</a></span>
                                                     <span class="condition">Исправен</span>
                                                 </label>
                                                 <label class="switch-radio-wrap d-flex">
-                                                    <input type="checkbox" checked>
+                                                    <input type="checkbox" name="car_data[condition_transmission]" value="" checked>
                                                     <span class="switcher-radio ml-auto"></span>
                                                     <span class="part-title"><a data-toggle="tab" href="#tab-tex2">КПП</a></span>
                                                     <span class="condition">Исправен</span>
                                                 </label>
                                                 <label class="switch-radio-wrap d-flex">
-                                                    <input type="checkbox" checked>
+                                                    <input type="checkbox" name="car_data[condition_electric]" value="" checked>
                                                     <span class="switcher-radio ml-auto"></span>
                                                     <span class="part-title"><a data-toggle="tab" href="#tab-tex3">Электрика</a></span>
                                                     <span class="condition">Исправен</span>
                                                 </label>
                                                 <label class="switch-radio-wrap d-flex">
-                                                    <input type="checkbox" checked>
+                                                    <input type="checkbox" name="car_data[condition_gear]" checked value="">
                                                     <span class="switcher-radio ml-auto"></span>
                                                     <span class="part-title"><a data-toggle="tab" href="#tab-tex4">Ходовая</a></span>
                                                     <span class="condition">Исправен</span>
@@ -529,52 +720,60 @@
                                                 </div>
                                                 <div class="tab-pane fade" id="tab-tex1">
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox" checked>
+                                                        <input type="checkbox" name="car_data[condition_engine][]" value="Дымность двигателя (густой, белый, сизый, черный)">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Рывки и толчки авто при
-                                                                переключении</span>
+                                                        <span class="check-box-text">Дымность двигателя (густой, белый, сизый, черный)</span>
                                                     </label>
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox">
+                                                        <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный стук и шум при работе двигателя">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Повышенный шум при переключении
-                                                            </span>
+                                                        <span class="check-box-text">Повышенный стук и шум при работе двигателя</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex mb-3">
+                                                        <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный шум при работе выхлопной системы">
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="check-box-text">Повышенный шум при работе выхлопной системы</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex mb-3">
+                                                        <input type="checkbox" name="car_data[condition_engine][]" value="Подтекание при осмотре подкапотного пространства">
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="check-box-text">Подтекание при осмотре подкапотного пространства</span>
                                                     </label>
                                                 </div>
                                                 <div class="tab-pane fade" id="tab-tex2">
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox" checked>
+                                                        <input type="checkbox" name="car_data[condition_transmission][]" value="Рывки и толчки авто при переключении">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Рывки и толчки авто при
-                                                                переключении</span>
+                                                        <span class="check-box-text">Рывки и толчки авто при переключении</span>
                                                     </label>
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox">
+                                                        <input type="checkbox" name="car_data[condition_transmission][]" value="Повышенный шум при переключении">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Повышенный шум при переключении
-                                                            </span>
+                                                        <span class="check-box-text">Повышенный шум при переключении</span>
                                                     </label>
                                                 </div>
                                                 <div class="tab-pane fade" id="tab-tex3">
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox" checked>
+                                                        <input type="checkbox" name="car_data[condition_electric][]" value="Ошибки на панели приборов при заведенном ДВС">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Рывки и толчки авто при
-                                                                переключении</span>
+                                                        <span class="check-box-text">Ошибки на панели приборов при заведенном ДВС</span>
                                                     </label>
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox">
+                                                        <input type="checkbox" name="car_data[condition_electric][]" value="Неправильные команды электроники">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Повышенный шум при переключении
-                                                            </span>
+                                                        <span class="check-box-text">Неправильные команды электроники</span>
                                                     </label>
                                                 </div>
                                                 <div class="tab-pane fade" id="tab-tex4">
                                                     <label class="switch-radio-wrap d-flex mb-3">
-                                                        <input type="checkbox">
+                                                        <input type="checkbox" name="car_data[condition_gear][]" value="Посторонний звук со стороны ходовой">
                                                         <span class="switcher-radio ml-auto"></span>
-                                                        <span class="check-box-text">Повышенный шум при переключении
-                                                            </span>
+                                                        <span class="check-box-text">Посторонний звук со стороны ходовой</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex mb-3">
+                                                        <input type="checkbox" name="car_data[condition_gear][]" value="Посторонние звуки при вращении рулевого колеса">
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="check-box-text">Посторонние звуки при вращении рулевого колеса</span>
                                                     </label>
                                                 </div>
                                             </div>
@@ -582,7 +781,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="row mt-5">
+                            {{--<div class="row mt-5">
                                 <div class="col-12">
                                     <fieldset class="fieldset">
                                         <legend class="legend">Повреждения</legend>
@@ -605,7 +804,7 @@
                                         </div>
                                     </fieldset>
                                 </div>
-                            </div>
+                            </div>--}}
                         </div>
                         <div class="inner-page__item">
                             <div class="inner-item-title">
@@ -649,9 +848,12 @@
                             </div>
                             <div class="field-style">
                                 <span>Описание</span>
-                                <textarea name="" id="" placeholder="Не указан"></textarea>
+                                <textarea name="car_data[car_additional]"
+                                          value="{{ old('car_data.car_additional') }}"
+                                          id="car_additional" placeholder="Не указан"></textarea>
                             </div>
                         </div>
+                        <div id="hiddenInputs"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="sidebar">
@@ -819,13 +1021,13 @@
         </div>
     </div>
 </div>
+</form>
 
 
 
 
 
-
-<section class="tabform">
+{{--<section class="tabform">
     <div class="wrapper">
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -999,7 +1201,7 @@
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
                                                 <ul class="tabform__ul select-list" data-placeholder="Выберите тип авто">
-                                                    {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                    --}}{{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}{{--
                                                 </ul>
                                             </div>
                                         </div>
@@ -1342,4 +1544,4 @@
         </div>
 
     </div>
-</section>
+</section>--}}
