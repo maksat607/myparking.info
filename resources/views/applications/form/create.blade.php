@@ -782,30 +782,8 @@
                                     </svg>
                                 </div>
 
-                                <div class="page-file-item">
-                                    <img src="./assets/image/car.jpg" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <img src="./assets/image/car.jpg" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <img src="./assets/image/car.jpg" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-
                             </div>
-                            <input type="file" id="uploader" name="images[]" multiple>
+                            <input type="file" id="uploader" name="images[]" class="d-none" multiple>
                         </div>
                         <div class="inner-page__item">
                             <div class="inner-item-title">
