@@ -3301,7 +3301,7 @@ span.serch-overlap {
 .new-style-model:nth-last-child(2){
     margin-bottom: 0;
 }
-
+.tabform__cartlist .cart-3 .type-list li a,
 .new-style-model .type-list li a{
     display: block;
     font-size: 16px;
@@ -3312,17 +3312,18 @@ span.serch-overlap {
     cursor: pointer;
     transition: all 0.3s;
 }
-
+.tabform__cartlist .cart-3 .type-list li.active a,
 .new-style-model .type-list li.active a{
     font-weight: 500;
     color: #011A3F;
 }
 
+.tabform__cartlist .cart-3 .type-list li:hover,
 .new-style-model .type-list li:hover {
     background: #DDE2EB;
 
 }
-
+.tabform__cartlist .cart-3 .type-list li a:hover,
 .new-style-model .type-list li a:hover{
     text-decoration: none;
 }
