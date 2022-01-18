@@ -435,46 +435,6 @@
                                                 </ul>
                                             </div>
                                         </fieldset>
-                                        <label class="field-style tabform__cart select cart-3">
-                                            <span>Цвет</span>
-                                            <select name="car_data[color]" id="color2">
-                                                <option></option>
-                                                @foreach($colors as $color)
-                                                    <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
-                                                @endforeach
-                                            </select>
-                                        </label>
-                                        
-
-                                        <label class="field-style mileage cart-3">
-                                            <span>Пробег</span>
-                                            <input type="number" name="car_data[milage]" value="{{ old('car_data.milage') }}" placeholder="50000">
-                                            <span class="mileage-type">км</span>
-                                        </label>
-                                        <fieldset class="tabform__inputwrap cart-3 fieldset">
-                                            <legend class="legend">Количество владельцев</legend>
-                                            <label class="tabform__radio">
-                                                <input type="radio" name="car_data[owner_number]" value="1">
-                                                <span class="d-flex">
-                                            <span class="tabform__radionew"></span>
-                                            <span class="tabform__radionum">1</span>
-                                        </span>
-                                            </label>
-                                            <label class="tabform__radio">
-                                                <input type="radio" name="car_data[owner_number]" value="2">
-                                                <span class="d-flex">
-                                            <span class="tabform__radionew"></span>
-                                            <span class="tabform__radionum">2</span>
-                                        </span>
-                                            </label>
-                                            <label class="tabform__radio">
-                                                <input type="radio" name="car_data[owner_number]" value="3">
-                                                <span class="d-flex">
-                                            <span class="tabform__radionew"></span>
-                                            <span class="tabform__radionum">3 и более</span>
-                                        </span>
-                                            </label>
-                                        </fieldset>
                                     </div>
                                     {{--<fieldset class="fieldset">
                                         <legend class="legend">Поколение</legend>
