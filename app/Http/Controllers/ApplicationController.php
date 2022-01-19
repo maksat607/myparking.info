@@ -166,7 +166,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-        dd($request->file('images'));
+//        dd($request->file('images'));
 
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;

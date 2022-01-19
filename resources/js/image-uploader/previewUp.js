@@ -1,11 +1,16 @@
 let dt = new DataTransfer();
 let files = [];
 
-$(`#images`).on('click', `.page-add-file`, function () {
+$(`body`).on('click', `.page-add-file`, function () {
+    console.log(this);
     $(`#uploader`).trigger('click');
 });
 
-$(`#uploader`).on('change', function () {
+/*window.onbeforeunload = function() {
+    return "Есть несохранённые изменения. Всё равно уходим?";
+};*/
+
+/*$(`#uploader`).on('change', function () {
     for (let i = 0; i < this.files.length; i++) {
         let file = this.files.item(i);
         dt.items.add(file);
@@ -51,4 +56,4 @@ $(`#images`).on('click', `.page-file__delete`, function () {
     parent.remove();
     writeHtml(dt.files);
     updateBlopFiles(dt.files);
-} );
+} );*/

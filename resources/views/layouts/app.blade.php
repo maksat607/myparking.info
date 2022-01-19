@@ -22,6 +22,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @livewireStyles
 
 </head>
 
@@ -336,6 +337,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     {!! Toastr::message() !!}
+    @livewireScripts
 </body>
 
 </html>

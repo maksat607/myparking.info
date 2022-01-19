@@ -1,16 +1,16 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
     @csrf
-<div class="container page-head-wrap">
+    <div class="container page-head-wrap">
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <div class="page-head">
         <div class="page-head__top d-flex align-items-center">
@@ -768,7 +768,7 @@
                                 </div>
                             </div>--}}
                         </div>
-                        <div class="inner-page__item">
+                        {{--<div class="inner-page__item">
                             <div class="inner-item-title">
                                 Фотографии
                             </div>
@@ -784,7 +784,8 @@
 
                             </div>
                             <input type="file" id="uploader" name="images[]" class="d-none" multiple>
-                        </div>
+                        </div>--}}
+                        @livewire('attachment')
                         <div class="inner-page__item">
                             <div class="inner-item-title">
                                 Дополнительно
