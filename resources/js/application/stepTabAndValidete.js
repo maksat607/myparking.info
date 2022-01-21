@@ -16,7 +16,7 @@ const stepTab = {
         let self = event.data.self;
 
         let activeBtn = self.activeTab();
-        // if(validate.filters(activeBtn.index()) && ($(this).attr('id') == 'tabNext')) return;
+        if(validate.filters(activeBtn.index()) && ($(this).attr('id') == 'tabNext')) return;
         self.buttons.removeClass('active');
 
         let btnNext = self.buttons.eq(activeBtn.index() + self.prevNext(this));
