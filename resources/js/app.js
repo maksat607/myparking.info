@@ -17,6 +17,7 @@ $(function() {
     require('./application-filter/applicationFilter');
     require('./application/favorite');
     require('./application/stepTabAndValidete');
+    require('./application/ptsType');
     require('./common');
     require('./custom.v2');
 });

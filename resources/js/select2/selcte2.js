@@ -2,6 +2,7 @@ $('select').select2({
     // theme: 'bootstrap4',
     minimumResultsForSearch: Infinity,
     dropdownCssClass: 'page-select-dd',
+    width: 'resolve',
     // placeholder: '',
 });
 

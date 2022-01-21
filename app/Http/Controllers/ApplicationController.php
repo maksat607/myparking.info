@@ -111,7 +111,6 @@ class ApplicationController extends AppController
      */
     public function create(Application $application)
     {
-
         $carTypes = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -127,7 +126,7 @@ class ApplicationController extends AppController
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::query()->orderBy('name', 'asc')->get();
+        $statuses = Status::statuses()->get();
 
 
         $title = __('Create a Request');
@@ -166,24 +165,30 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-        dd($request->file('images'));
 
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
+        $statuses = [1, 7];
+        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+            $statuses = [1, 2, 3, 4, 5, 6, 7];
+        }
+
+
 
         $validator = Validator::make($carRequest, [
             'vin_array' => [
-                    'exclude_if:returned,1',
-                    'required_without:license_plate',
-                    'unique:applications,vin',
-                    'nullable'
-                ],
+                'exclude_if:returned,1',
+                'required_without:license_plate',
+                'unique:applications,vin',
+                'nullable'
+            ],
             'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
             'car_model_id' => ['integer', 'required'],
             'year' => ['integer', 'required'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
+            'status_id' => ['exists:statuses,id', Rule::in($statuses)]
         ]);
 
         $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
@@ -202,6 +207,7 @@ class ApplicationController extends AppController
             'partner_id' => ['integer', 'required', 'exists:partners,id'],
             'parking_id' => ['integer', 'required', 'exists:parkings,id'],
         ])->validate();
+
 
         /*if ($carValidator->fails() || $applicationValidator->fails()) {
             return response()->json(['errors'=>['car'=>$carValidator->errors(), 'application'=>$applicationValidator->errors()]], 422);
@@ -230,14 +236,16 @@ class ApplicationController extends AppController
         $applicationData['vin'] = $applicationData['vin_array'];
         unset($applicationData['car_series_body']);
 
-
         foreach ($applicationData as $key => $value) {
             if ( $value === '' || $value === null || $value === 'null') {
                 if($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
         }
-        if (isset($applicationData['status_id'])) {
+
+
+
+/*        if (isset($applicationData['status_id'])) {
             $applicationData['status_id'] = 1;
         } else {
             $applicationData['status_id'] = 7;
@@ -246,11 +254,10 @@ class ApplicationController extends AppController
             if(isset($applicationData['status_admin'])) {
                 $applicationData['status_id'] = $applicationData['status_admin'];
             }
-        }
+        }*/
 
-        if(auth()->user()->hasRole('Manager')) {
+        if(!in_array($applicationData['status_id'], [1, 7])) {
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
-            $applicationData['status_id'] = 2;
         }
 
 
@@ -289,7 +296,7 @@ class ApplicationController extends AppController
         }
 
         $application = auth()->user()->applications()->create($applicationData);
-        if ($applicationData['status_id'] != 1 && !auth()->user()->hasRole('Manager')) {
+        if ($application->status_id == 7) {
             $application->issueAcceptions()->create([
                 'is_issue' => false,
                 'user_id' => auth()->id()
@@ -314,7 +321,7 @@ class ApplicationController extends AppController
 
     /**
      * Display the specified resource.
-     *
+     *status_id
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -669,19 +676,28 @@ class ApplicationController extends AppController
 
     public function checkDuplicate(Request $request)
     {
+
         $licensePlateDuplicates = ( isset($request->license_plate) && strlen($request->license_plate) >= 3)
             ? Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                 ->join('statuses', 'statuses.id', '=', 'applications.status_id')
                 ->where([
                     ['license_plate', 'like', '%' . $request->license_plate . '%'],
                 ])
-                ->when(auth()->user()->getUserOwnerId(), function ($query) {
-                    return $query->where('applications.accepted_by', auth()->user()->getUserOwnerId());
+                ->when(auth()->user()->getUsersAdmin(), function ($query) {
+//                    return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
+                    $query->where(function ($query) {
+                        $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhere(function ($query){
+                                $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
+                                    ->where('applications.status_id', 7);
+                            });
+                    });
                 })
                 ->get()->toArray()
             : [];
         $vinDuplicates = [];
         if (is_array($request->vin) && count($request->vin) > 0 ) {
+
             $searchVin = false;
             $vinArray = $request->vin;
             foreach ($vinArray as $key => $singleVin) {
@@ -696,8 +712,15 @@ class ApplicationController extends AppController
 
                 $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                     ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-                    ->when(auth()->user()->getUserOwnerId(), function ($query) {
-                        return $query->where('applications.accepted_by', auth()->user()->getUserOwnerId());
+                    ->when(auth()->user()->getUsersAdmin(), function ($query) {
+//                        return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
+                        $query->where(function ($query) {
+                            $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhere(function ($query){
+                                    $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
+                                        ->where('applications.status_id', 7);
+                                });
+                        });
                     })
                     ->where(function($query) use( $vinArray ) {
                         foreach ($vinArray as $singleVin) {
@@ -705,6 +728,7 @@ class ApplicationController extends AppController
                         }
                     });
                 $vinDuplicates = $vinQuery->get()->toArray();
+
             }
 
         }

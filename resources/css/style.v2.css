@@ -1718,9 +1718,19 @@ span.car-show-info {
     color: #EB5757;
 }
 
+.invalid .select2-container--default .select2-selection--single,
+.invalid .select2-container--default .select2-selection--multiple{
+    border-color: #EB5757;
+}
+
 .invalid input,
 .invalid select,
 .invalid textarea {
+    color: #EB5757;
+    border-color: #EB5757;
+}
+
+.fieldset.invalid {
     color: #EB5757;
     border-color: #EB5757;
 }

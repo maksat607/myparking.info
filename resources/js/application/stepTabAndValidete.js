@@ -1,10 +1,12 @@
 const stepTab = {
     buttons: null,
     init() {
-        this.buttons = $(`.newtopbar .buttonWrapper button`);
+        this.buttons = $(`.tabs a`);
         this.showHidePrev(this.activeTab().index());
         this.showHideNext(this.activeTab().index());
         this.showHideSave(this.activeTab().index());
+
+        $(`#appStore`).on('submit', this.submit);
 
         $(`#tabNext, #tabPrev`).on('click', {self:this}, this.slide);
 
@@ -14,7 +16,7 @@ const stepTab = {
         let self = event.data.self;
 
         let activeBtn = self.activeTab();
-        if(validate.filters(activeBtn) && ($(this).attr('id') == 'tabNext')) return;
+        // if(validate.filters(activeBtn.index()) && ($(this).attr('id') == 'tabNext')) return;
         self.buttons.removeClass('active');
 
         let btnNext = self.buttons.eq(activeBtn.index() + self.prevNext(this));
@@ -22,8 +24,8 @@ const stepTab = {
 
         let activeTab = btnNext.data('id');
 
-        $(`.tabform__content`).removeClass('active');
-        $(`#${activeTab}`).addClass('active');
+        $(`.tab-pane`).removeClass('show active');
+        $(`#${activeTab}`).addClass('show active');
 
         self.showHidePrev(self.activeTab().index());
         self.showHideNext(self.activeTab().index());
@@ -77,24 +79,29 @@ const stepTab = {
     },
     scrollTopTab() {
         let topTab = $(`#app`).offset().top;
-        console.log(topTab)
         $(`html, body`).stop().animate({
             scrollTop: topTab
         }, 500);
+    },
+    submit(event) {
+        return !validate.filters(2);
     }
 }
 
 const validate = {
     filterable: null,
     filtered: [],
-    filters(activeTab) {
-        switch (activeTab.index()) {
+    filters(activeTabIndex) {
+        switch (activeTabIndex) {
             case 0:
                 this.filtered = [];
                 return this.filterApp();
             case 1:
                 this.filtered = [];
                 return this.filterCar();
+            case 2:
+                this.filtered = [];
+                return this.filterSubmit();
             default:
                 return true;
         }
@@ -103,16 +110,16 @@ const validate = {
         this.filterable = $(`#vin, #license_plate, #external_id, #partner_id, #parking_id, #arriving_interval`);
         this.filterable.each((index, element) => {
 
-            if($(element).val() == '' ) {
+            if(!Boolean($(element).val())) {
                 this.filtered.push(`#${$(element).attr('id')}`);
             }
-
         });
         this.removeError();
+
         if(this.filtered.length == 1 && (this.filtered.includes('#vin') || this.filtered.includes('#license_plate'))) {
             this.filtered = [];
         }
-        if(this.filtered.length > 0 && (this.filtered.indexOf()) ) {
+        if(this.filtered.length > 0) {
             this.vinLicense();
             this.addError();
             return true
@@ -121,20 +128,22 @@ const validate = {
     },
     filterCar() {
         let els = ['car_type_id', 'car_mark_id', 'car_model_id', 'year'];
-
+        this.filtered = [];
         els.forEach((value) => {
-
             if(!$(`#${value}`).val()) {
                 this.filtered.push(`.${value}`);
             }
-
         });
+
         this.removeErrorCar(els);
         if(this.filtered.length > 0) {
-            this.addError();
+            this.addCar();
             return true
         }
         return false;
+    },
+    filterSubmit() {
+        return (this.filterApp() || this.filterCar());
     },
     vinLicense() {
         if(!this.filtered.includes('#vin') && this.filtered.includes('#license_plate')) {
@@ -145,16 +154,24 @@ const validate = {
         }
     },
     addError() {
-        $(this.filtered.join()).addClass('is-invalid');
+        $(this.filtered.join()).parents('label').addClass('invalid');
+    },
+    addCar() {
+        $(this.filtered.join()).addClass('invalid');
     },
     removeError() {
         this.filterable.on('change', function () {
-            $(this).removeClass('is-invalid');
+            console.log(['#vin', '#license_plate'].includes($(this).attr('id')))
+            if(['#vin', '#license_plate'].includes(`#${$(this).attr('id')}`)) {
+                $('#vin, #license_plate').parents('label').removeClass('invalid');
+            } else {
+                $(this).parents('label').removeClass('invalid');
+            }
         });
     },
     removeErrorCar(els) {
         $(els.join(', .')).on('click', function () {
-            $(this).removeClass('is-invalid');
+            $(this).removeClass('invalid');
         });
     }
 }

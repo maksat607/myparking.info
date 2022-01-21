@@ -4,6 +4,7 @@ const checkDuplicate = {
     licensePlate: null,
     vinDuplicates: null,
     licensePlateDuplicates: null,
+    allDuplicates: null,
     statusLabels : {
         'storage': 'Х',
         'issued': 'В',
@@ -12,6 +13,15 @@ const checkDuplicate = {
         'denied-for-storage': 'ОХ',
         'cancelled-by-partner':'ОП',
         'cancelled-by-us': 'ОН'
+    },
+    statusClass : {
+        'storage': 'conformity-success',
+        'issued': 'conformity-dark',
+        'draft': 'conformity-warning',
+        'pending': 'conformity-primary',
+        'denied-for-storage': 'conformity-orange',
+        /*'cancelled-by-partner':'ОП',
+        'cancelled-by-us': 'ОН'*/
     },
     init() {
         $(`#vin, #license_plate`).on('input', {self:this}, function(e){
@@ -40,28 +50,49 @@ const checkDuplicate = {
         }
     },
     setHtml() {
+        let allHtml = '';
         let vinsHtml = '';
         let licensePlate = '';
-        if(this.vinDuplicates.length) {
+        let arrMerge = [...this.vinDuplicates, ...this.licensePlateDuplicates];
+        let set = new Set();
+        this.allDuplicates = arrMerge.filter((item,index)=>{
+            if (!set.has(item.id)) {
+                set.add(item.id);
+                return true;
+            }
+            return false;
+        }, set)
+
+        if(this.allDuplicates) {
+            this.allDuplicates.forEach((element) => {
+                allHtml += `<a href="${APP_URL}/applications/create/${element.id}" class="conformity-link">`;
+                allHtml += `<span class="conformity__info">${element.vin}</span>`;
+                allHtml += `<span class="${this.statusClass[element.status_code]} conformity__icon">${this.statusLabels[element.status_code]}</span>`;
+                allHtml += `</a>`;
+            });
+        }
+
+/*        if(this.vinDuplicates.length) {
             this.vinDuplicates.forEach((element) => {
-                vinsHtml += `<a href="${APP_URL}/applications/create/${element.id}">`;
-                    vinsHtml += `<span class="tag">${element.vin}</span>`
-                    vinsHtml += `<span class="tag bgpink">${this.statusLabels[element.status_code]}</span>`
+                vinsHtml += `<a href="${APP_URL}/applications/create/${element.id}" class="conformity-link">`;
+                    vinsHtml += `<span class="conformity__info">${element.vin}</span>`;
+                    vinsHtml += `<span class="${this.statusClass[element.status_code]} conformity__icon">${this.statusLabels[element.status_code]}</span>`;
                 vinsHtml += `</a>`;
             });
         }
 
         if(this.licensePlateDuplicates.length) {
             this.licensePlateDuplicates.forEach((element) => {
-                licensePlate += `<a href="${APP_URL}/applications/create/${element.id}">`;
-                    licensePlate += `<span class="tag">${element.license_plate}</span>`
-                    licensePlate += `<span class="tag bgpink">${this.statusLabels[element.status_code]}</span>`
+                licensePlate += `<a href="${APP_URL}/applications/create/${element.id}" class="conformity-link">`;
+                    licensePlate += `<span class="conformity__info">${element.vin}</span>`;
+                    licensePlate += `<span class="${this.statusClass[element.status_code]} conformity__icon">${this.statusLabels[element.status_code]}</span>`;
                 licensePlate += `</a>`;
             });
-        }
+        }*/
 
-        $(`#vinDuplicates`).html(vinsHtml);
-        $(`#licensePlateDuplicates`).html(licensePlate);
+        $(`#allDuplicates`).html(allHtml);
+        /*$(`#vinDuplicates`).html(vinsHtml);
+        $(`#licensePlateDuplicates`).html(licensePlate);*/
         this.addDanderClass();
     },
     setCheckboxReturned() {
@@ -81,15 +112,15 @@ const checkDuplicate = {
     },
     addDanderClass() {
         if(this.vinDuplicates.length) {
-            $(`#vin`).addClass('is-invalid');
+            $(`#vin`).addClass('invalid');
         } else {
-            $(`#vin`).removeClass('is-invalid');
+            $(`#vin`).removeClass('invalid');
         }
 
         if(this.licensePlateDuplicates.length) {
-            $(`#license_plate`).addClass('is-invalid');
+            $(`#license_plate`).addClass('invalid');
         } else {
-            $(`#license_plate`).removeClass('is-invalid');
+            $(`#license_plate`).removeClass('invalid');
         }
     }
 }

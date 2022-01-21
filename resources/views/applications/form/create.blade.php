@@ -1,4 +1,4 @@
-<form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
+<form id="appStore" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
     @csrf
 <div class="container page-head-wrap">
 
@@ -19,14 +19,19 @@
             <div class="ml-auto d-flex">
                 <label class="field-style">
                     <span class="field-style-title">Статус</span>
-                    <select class="custom-select" name="state">
-                        <option value="1">Хранение</option>
-                        <option value="2">Осмотр</option>
-                        <option value="3">Выдача</option>
-                        <option value="4">Черновик</option>
+                    <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
+                        @foreach($statuses as $status)
+                            @if($status->code == 'storage')
+                                <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
+                                @continue
+                            @endif
+                            <option value="{{ $status->id }}">{{ $status->name }}</option>
+                        @endforeach
                     </select>
                 </label>
-                <button class="btn btn-white">Создать заявку</button>
+                <button class="btn btn-white mr-2" type="button" id="tabPrev">Назад</button>
+                <button class="btn btn-white" type="button" id="tabNext">Далее</button>
+                <button class="btn btn-white" id="save">Создать заявку</button>
             </div>
         </div>
     </div>
@@ -36,18 +41,18 @@
     <div class="inner-page">
         <div class="row no-gutters position-relative">
             <div class="col-md-8 block-nav">
-                <div class="nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="block-nav__item" id="v-pills-settings-tab" data-toggle="pill"
-                       href="#v-pills-1"
+                <div class="nav tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="block-nav__item active" id="v-pills-settings-tab" data-id="v-pills-1"
+                       href="#"
                        role="tab"
                        aria-controls="v-pills-settings" aria-selected="false">Заявка</a>
-                    <a class="block-nav__item active" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-2"
+                    <a class="block-nav__item" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
                        role="tab"
                        aria-controls="v-pills-settings" aria-selected="false">Авто</a>
                 </div>
             </div>
             <div class="tab-content tab-content-main col-md-12">
-                <div class="row no-gutters tab-pane fade" id="v-pills-1">
+                <div class="row no-gutters tab-pane fade show active" id="v-pills-1">
                     <div class="col-md-8 main-col">
                         <div class="inner-page__item">
                             <div class="inner-item-title">
@@ -64,6 +69,7 @@
                                                placeholder="Не указан">
                                     </label>
                                 </div>
+
                                 <div class="col-6">
                                     <label class="field-style @error('license_plate') invalid @enderror">
                                         <span>Гос. номер</span>
@@ -74,6 +80,18 @@
                                                placeholder="Не указан">
 {{--                                        <span class="invalid__item">Неверный формат</span>--}}
                                     </label>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <div id="vinDuplicates" class="conformity">
+                                    </div>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <div id="licensePlateDuplicates" class="conformity">
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <div id="allDuplicates" class="conformity">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +165,7 @@
                             <div class="row">
                                 <div class="col-6">
                                     <label class="field-style">
-                                        <span>Дата осмотра</span>
+                                        <span>Дата поставки</span>
                                         <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -155,7 +173,7 @@
                                     <label class="field-style">
                                         <span>Промежуток времени</span>
                                         <select id="arriving_interval" name="app_data[arriving_interval]">
-                                            <option selected hidden value="">{{ __('Select a time interval..') }}</option>
+                                            <option selected hidden disabled value="">{{ __('Select a time interval..') }}</option>
                                             <option value="10:00 - 14:00">10:00 - 14:00</option>
                                             <option value="14:00 - 18:00">14:00 - 18:00</option>
                                         </select>
@@ -187,7 +205,7 @@
                                         </select>
                                     </label>
                                 </div>
-                                <div class="col-12 mt-3">
+                                {{--<div class="col-12 mt-3">
                                     <label class="field-style">
                                         <span>Статус</span>
                                         <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
@@ -197,7 +215,7 @@
                                             @endforeach
                                         </select>
                                     </label>
-                                </div>
+                                </div>--}}
                                 @endhasrole
                             </div>
 
@@ -205,6 +223,35 @@
                     </div>
                     <div class="col-md-4">
                         <div class="sidebar">
+
+                            <div class="sidebar__title">
+                                Обозначения
+                            </div>
+                            <div class="sidebar__item">
+                                <ul class="conformity-status-list">
+                                    <li>
+                                        <span class="conformity-success conformity__icon">Х</span>
+                                        Авто на хранении
+                                    </li>
+                                    <li>
+                                        <span class="conformity-warning conformity__icon">зХ</span>
+                                        Заявка на хранение
+                                    </li>
+                                    <li>
+                                        <span class="conformity-orange conformity__icon">О</span>
+                                        Заявка на осмотр
+                                    </li>
+                                    <li>
+                                        <span class="conformity-primary conformity__icon">зВ</span>
+                                        Заявка на выдачу
+                                    </li>
+                                    <li>
+                                        <span class="conformity-dark conformity__icon">В</span>
+                                        Авто выдано
+                                    </li>
+                                </ul>
+                            </div>
+
                             <div class="sidebar__title">
                                 Чек-лист оформления
                             </div>
@@ -270,7 +317,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row no-gutters tab-pane fade show active" id="v-pills-2">
+                <div class="row no-gutters tab-pane fade" id="v-pills-2">
                     <div class="col-md-8 main-col">
                         <div class="inner-page__item">
                             <div class="inner-item-title">
@@ -279,7 +326,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="tabform__cartlist d-flex">
-                                        <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model" id="types">
+                                        <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model mt-0" id="types">
                                             <legend class="legend">{{ __('The type of car...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -298,7 +345,7 @@
                                                 </ul>
                                             </div>
                                         </fieldset>
-                                        <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto" id="marks" data-id="selectGroup">
+                                        <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto mt-0" id="marks" data-id="selectGroup">
                                             <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -535,13 +582,12 @@
                                     <label class="field-style">
                                         <span>ПТС</span>
                                         <div class="d-flex two-field">
-                                            <input name="car_data[pts_type]" value="Оригинал" type="text" placeholder="Не указан">
-                                            <select name="" id="" class="page-select">
-                                                <option></option>
-                                                <option value="1">Электронный</option>
-                                                <option value="2">Оригинал</option>
-                                                <option value="3">Дубликать</option>
-                                                <option value="4">Электронный</option>
+                                            <input id="pts_type_input" name="car_data[pts_type]" value="" type="text" placeholder="Не указан">
+                                            <select id="pts_type" class="page-select">
+                                                <option selected hidden disabled value="">{{ __('Select a pts type..') }}</option>
+                                                <option value="Электронный">Электронный</option>
+                                                <option value="Оригинал">Оригинал</option>
+                                                <option value="Дубликат">Дубликат</option>
                                             </select>
                                         </div>
                                     </label>
@@ -624,8 +670,8 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Цвет</span>
-                                        <select name="car_data[color]" id="color" class="page-select">
-                                            <option></option>
+                                        <select name="car_data[color]" id="color" class="page-select" style="width: 255px">
+                                            <option selected hidden disabled value="">{{ __('Select a color..') }}</option>
                                             @foreach($colors as $color)
                                                 <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
                                             @endforeach
@@ -781,6 +827,28 @@
                                               fill="#536E9B" />
                                     </svg>
                                 </div>
+
+                                {{--<div class="page-file-item">
+                                    <img src="" alt="">
+                                    <div class="page-file__option">
+                                        <button type="button" class="page-file__zoom"></button>
+                                        <button type="button" class="page-file__delete"></button>
+                                    </div>
+                                </div>
+                                <div class="page-file-item">
+                                    <img src="" alt="">
+                                    <div class="page-file__option">
+                                        <button type="button" class="page-file__zoom"></button>
+                                        <button type="button" class="page-file__delete"></button>
+                                    </div>
+                                </div>
+                                <div class="page-file-item">
+                                    <img src="" alt="">
+                                    <div class="page-file__option">
+                                        <button type="button" class="page-file__zoom"></button>
+                                        <button type="button" class="page-file__delete"></button>
+                                    </div>
+                                </div>--}}
 
                             </div>
                             <input type="file" id="uploader" name="images[]" class="d-none" multiple>

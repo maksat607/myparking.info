@@ -67,4 +67,14 @@ class Status extends Model
         }
         return $color;
     }
+
+    public function scopeStatuses($query)
+    {
+        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+            return $query->orderBy('name', 'asc');
+        } else {
+            return $query->whereIn('code', ['draft', 'pending'])->orderBy('name', 'asc');
+        }
+        return $query->orderBy('name', 'asc');
+    }
 }

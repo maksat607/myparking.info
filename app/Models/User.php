@@ -111,6 +111,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return isset(auth()->user()->owner) ? auth()->user()->owner->id : auth()->user()->id;
     }
 
+    public function getUsersAdmin()
+    {
+        return isset(auth()->user()->owner) ?
+            array_merge([auth()->user()->owner->id], auth()->user()->children->modelKeys()) :
+            array_merge([auth()->user()->id], auth()->user()->children->modelKeys());
+    }
+
     public function scopeUsers($query)
     {
         if(auth()->user()->hasRole('SuperAdmin')) {
