@@ -193,6 +193,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
     Route::get('/generate-act/{application}', [ApplicationController::class, 'generateAct'])->name('application.generate-act');
+    Route::get('/application/remove/attachment/{attachment}', [ApplicationController::class, 'removeAttachment']);
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])

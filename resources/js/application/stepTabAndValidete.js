@@ -68,9 +68,10 @@ const stepTab = {
         selects.each(function(index, element){
             $.when(element).then(response => {
                 if($(`.select-item.active`, element).length > 0) {
-                    let topEl = $(`.select-item.active`, element).position().top;
-                    if(topEl > 250) {
-                        $('ul.select-list', $(element)).scrollTop( topEl );
+                    let heightEl = $(`.select-item.active`, element).height();
+                    let topEl = $(`.select-item.active`, element).position().top - (heightEl + 9);
+                    if(topEl > 290) {
+                        $('ul.select-list', element).scrollTop( topEl );
                     }
                 }
             });

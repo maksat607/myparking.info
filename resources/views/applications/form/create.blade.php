@@ -21,7 +21,10 @@
                     <span class="field-style-title">Статус</span>
                     <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
                         @foreach($statuses as $status)
-                            @if($status->code == 'storage')
+                            @if(old('app_data.status_id') == $status->id)
+                                <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
+                                @continue
+                            @elseif($status->code == 'storage')
                                 <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
                                 @continue
                             @endif
@@ -131,6 +134,10 @@
                                             @foreach($partners as $partner)
                                                 @if($loop->count == 1)
                                                     <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    @continue
+                                                @elseif(old('app_data.partner_id') == $partner->id)
+                                                    <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    @continue
                                                 @else
                                                     <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                                                 @endif
@@ -144,14 +151,19 @@
                                         <select name="app_data[parking_id]" id="parking_id">
                                             <option selected hidden disabled value="">{{ __('Select a parking..') }}</option>
                                             @foreach($parkings as $parking)
-                                                <option value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                @if(old('app_data.parking_id') == $parking->id)
+                                                    <option selected value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                    @continue
+                                                @else
+                                                    <option value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </label>
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label class="field-style w-100">
-                                        <span>Партнёр*</span>
+                                        <span>Номер убытка или лизингового договора*</span>
                                         <input type="text" id="external_id" name="app_data[external_id]"
                                                value="{{ old('app_data.external_id') }}" placeholder="Не указан">
                                     </label>
@@ -174,8 +186,8 @@
                                         <span>Промежуток времени</span>
                                         <select id="arriving_interval" name="app_data[arriving_interval]">
                                             <option selected hidden disabled value="">{{ __('Select a time interval..') }}</option>
-                                            <option value="10:00 - 14:00">10:00 - 14:00</option>
-                                            <option value="14:00 - 18:00">14:00 - 18:00</option>
+                                            <option @if(old('app_data.arriving_interval') == '10:00 - 14:00'){{ 'selected' }}@endif value="10:00 - 14:00">10:00 - 14:00</option>
+                                            <option @if(old('app_data.arriving_interval') == '14:00 - 18:00'){{ 'selected' }}@endif value="14:00 - 18:00">14:00 - 18:00</option>
                                         </select>
                                     </label>
                                 </div>
@@ -200,7 +212,12 @@
                                         <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
                                             <option selected hidden value="">{{ __('Select a manager..') }}</option>
                                             @foreach($managers as $manager)
-                                                <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                                @if(old('app_data.issued_by') == $manager->id)
+                                                    <option selected value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                                    @continue
+                                                @else
+                                                    <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </label>
@@ -572,7 +589,7 @@
                                     </label>
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
-                                            <input type="checkbox" name="car_data[sts_provided]" value="1">
+                                            <input @if(old('car_data.sts_provided') == 1){{ 'checked' }}@endif type="checkbox" name="car_data[sts_provided]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Принят на хранение</span>
                                         </label>
@@ -582,7 +599,7 @@
                                     <label class="field-style">
                                         <span>ПТС</span>
                                         <div class="d-flex two-field">
-                                            <input id="pts_type_input" name="car_data[pts_type]" value="" type="text" placeholder="Не указан">
+                                            <input id="pts_type_input" name="car_data[pts_type]" value="{{ old('car_data.pts_type') }}" type="text" placeholder="Не указан">
                                             <select id="pts_type" class="page-select">
                                                 <option selected hidden disabled value="">{{ __('Select a pts type..') }}</option>
                                                 <option value="Электронный">Электронный</option>
@@ -593,7 +610,7 @@
                                     </label>
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
-                                            <input type="checkbox" name="car_data[pts_provided]" value="1">
+                                            <input @if(old('car_data.pts_provided') == 1){{ 'checked' }}@endif type="checkbox" name="car_data[pts_provided]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Принят на хранение</span>
                                         </label>
@@ -610,21 +627,21 @@
                                     <div class="inner-page__item-title">Кол-во владельцев</div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="car_data[owner_number]" value="1">
+                                            <input @if(old('car_data.owner_number') == 1){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="1">
                                             <span class="switcher-radio"></span>
                                             <span>Первый</span>
                                         </label>
                                     </div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="car_data[owner_number]" value="2">
+                                            <input @if(old('car_data.owner_number') == 2){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="2">
                                             <span class="switcher-radio"></span>
                                             <span>Второй</span>
                                         </label>
                                     </div>
                                     <div class="mt-2 mb-3">
                                         <label class="switch-radio-wrap">
-                                            <input type="radio" name="car_data[owner_number]" value="3">
+                                            <input @if(old('car_data.owner_number') == 3){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="3">
                                             <span class="switcher-radio"></span>
                                             <span>Третий и более</span>
                                         </label>
@@ -636,28 +653,28 @@
                                     <div class="row">
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="car_data[car_key_quantity]" checked value="0">
+                                                <input @if(is_null(old('car_data.car_key_quantity')) || old('car_data.car_key_quantity') == '0'){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="0">
                                                 <span class="switcher-radio"></span>
                                                 <span>0</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="car_data[car_key_quantity]" value="1">
+                                                <input @if(old('car_data.car_key_quantity') == 1){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="1">
                                                 <span class="switcher-radio"></span>
                                                 <span>1</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="car_data[car_key_quantity]" value="2">
+                                                <input @if(old('car_data.car_key_quantity') == 2){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="2">
                                                 <span class="switcher-radio"></span>
                                                 <span>2</span>
                                             </label>
                                         </div>
                                         <div class="col-5 mt-2 mb-3">
                                             <label class="switch-radio-wrap">
-                                                <input type="radio" name="car_data[car_key_quantity]" value="3">
+                                                <input @if(old('car_data.car_key_quantity') == 3){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="3">
                                                 <span class="switcher-radio"></span>
                                                 <span>3</span>
                                             </label>
@@ -673,7 +690,12 @@
                                         <select name="car_data[color]" id="color" class="page-select" style="width: 255px">
                                             <option selected hidden disabled value="">{{ __('Select a color..') }}</option>
                                             @foreach($colors as $color)
-                                                <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                @if(old('car_data.color') == $color['value'])
+                                                    <option selected value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                    @continue
+                                                @else
+                                                    <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </label>
@@ -860,8 +882,7 @@
                             <div class="field-style">
                                 <span>Описание</span>
                                 <textarea name="car_data[car_additional]"
-                                          value="{{ old('car_data.car_additional') }}"
-                                          id="car_additional" placeholder="Не указан"></textarea>
+                                          id="car_additional" placeholder="Не указан">{{ old('car_data.car_additional') }}</textarea>
                             </div>
                         </div>
                         <div id="hiddenInputs"></div>

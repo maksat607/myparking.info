@@ -99,6 +99,7 @@
                                             <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="text-success btn">Принять</a>
                                             <a href="{{ route('application.deny', ['application_id' => $application->id]) }}" class="text-danger btn">Отклонить</a>
                                         @endcan
+
                                     @elseif($application->status->code == 'storage')
                                     @hasanyrole('Admin|Manager')
                                         <a href="{{ route('application.generate-act', ['application' => $application->id]) }}" class="link">

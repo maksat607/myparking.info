@@ -1,4 +1,1204 @@
-<section class="tabform">
+<form id="appStore" method="POST" action="{{ route('applications.update', ['application' => $application->id]) }}" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
+    <div class="container page-head-wrap">
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="page-head">
+            <div class="page-head__top d-flex align-items-center">
+                <a href="#" class="page-head__cancel">Отменить</a>
+                <h1>{{ $title }}</h1>
+                <div class="ml-auto d-flex">
+                    <label class="field-style">
+                        <span class="field-style-title">Статус</span>
+                        <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
+                            @foreach($statuses as $status)
+                                @if($application->status_id == $status->id)
+                                    <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
+                                    @continue
+                                @endif
+                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <button class="btn btn-white mr-2" type="button" id="tabPrev">Назад</button>
+                    <button class="btn btn-white" type="button" id="tabNext">Далее</button>
+                    <button class="btn btn-white" id="save">Создать заявку</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="inner-page">
+            <div class="row no-gutters position-relative">
+                <div class="col-md-8 block-nav">
+                    <div class="nav tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <a class="block-nav__item active" id="v-pills-settings-tab" data-id="v-pills-1"
+                           href="#"
+                           role="tab"
+                           aria-controls="v-pills-settings" aria-selected="false">Заявка</a>
+                        <a class="block-nav__item" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
+                           role="tab"
+                           aria-controls="v-pills-settings" aria-selected="false">Авто</a>
+                    </div>
+                </div>
+                <div class="tab-content tab-content-main col-md-12">
+                    <div class="row no-gutters tab-pane fade show active" id="v-pills-1">
+                        <div class="col-md-8 main-col">
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Административная информация
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style @error('vin_array') invalid @enderror">
+                                            <span>VIN</span>
+                                            <input type="text" id="vin"
+                                                   class="vin"
+                                                   name="car_data[vin_array]"
+                                                   value="{{ $application->vin }}"
+                                                   placeholder="Не указан">
+                                        </label>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="field-style @error('license_plate') invalid @enderror">
+                                            <span>Гос. номер</span>
+                                            <input type="text" id="license_plate"
+                                                   class="license_plate"
+                                                   name="car_data[license_plate]"
+                                                   value="{{ $application->license_plate }}"
+                                                   placeholder="Не указан">
+                                            {{--                                        <span class="invalid__item">Неверный формат</span>--}}
+                                        </label>
+                                    </div>
+                                    <div class="col-6 mt-3">
+                                        <div id="vinDuplicates" class="conformity">
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mt-3">
+                                        <div id="licensePlateDuplicates" class="conformity">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div id="allDuplicates" class="conformity">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    О собственнике
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>ФИО собственника</span>
+                                            <input type="text" name="app_data[courier_fullname]"
+                                                   value="{{ $application->courier_fullname }}"
+                                                   placeholder="Не указан">
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Телефон собствениика</span>
+                                            <input type="text" name="app_data[courier_phone]"
+                                                   value="{{ $application->courier_phone }}"
+                                                   placeholder="+7 (___) ___-__-__">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Системная информация
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style @error('partner_id') invalid @enderror">
+                                            <span>Партнёр*</span>
+                                            <select name="app_data[partner_id]" id="partner_id" class="partner_id page-select">
+                                                <option selected hidden disabled value="">{{ __('Select a partner..') }}</option>
+                                                @foreach($partners as $partner)
+                                                    @if($loop->count == 1)
+                                                        <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                        @continue
+                                                    @elseif($application->partner_id == $partner->id)
+                                                        <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                        @continue
+                                                    @else
+                                                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Стоянка*</span>
+                                            <select name="app_data[parking_id]" id="parking_id">
+                                                <option selected hidden disabled value="">{{ __('Select a parking..') }}</option>
+                                                @foreach($parkings as $parking)
+                                                    @if($application->parking_id == $parking->id)
+                                                        <option selected value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                        @continue
+                                                    @else
+                                                        <option value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <label class="field-style w-100">
+                                            <span>Номер убытка или лизингового договора*</span>
+                                            <input type="text" id="external_id" name="app_data[external_id]"
+                                                   value="{{ $application->external_id }}" placeholder="Не указан">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Дата
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Дата поставки</span>
+                                            <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]" placeholder="Не указан">
+                                        </label>
+                                        @push('scripts')
+                                            const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                        @endpush
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Промежуток времени</span>
+                                            <select id="arriving_interval" name="app_data[arriving_interval]">
+                                                <option selected hidden disabled value="">{{ __('Select a time interval..') }}</option>
+                                                <option @if( $application->arriving_interval == "10:00 - 14:00" ) selected @endif value="10:00 - 14:00">10:00 - 14:00</option>
+                                                <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    @hasrole('Admin')
+                                    <div class="col-6 mt-3">
+                                        <label class="field-style">
+                                            <span>Дата выдачи</span>
+                                            <div class="input-group flatpickr">
+                                                <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"
+                                                       placeholder="Выберите дату.." data-input>
+                                                <div class="input-group-append">
+                                                    <button id="dataClear" class="btn btn-danger" type="button" data-clear>
+                                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        @push('scripts')
+                                            const dateDataIssuedApplication = '{{ ($application->issued_at) ? $application->issued_at->format('d-m-Y') : null }}';
+                                        @endpush
+                                    </div>
+                                    <div class="col-6 mt-3">
+                                        <label class="field-style">
+                                            <span>Кто выдал</span>
+                                            <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
+                                                <option selected hidden value="">{{ __('Select a manager..') }}</option>
+                                                @foreach($managers as $manager)
+                                                    <option @if($application->issued_by == $manager->id) selected @endif value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>
+                                    {{--<div class="col-12 mt-3">
+                                        <label class="field-style">
+                                            <span>Статус</span>
+                                            <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
+                                                <option selected hidden value="">{{ __('Select a status..') }}</option>
+                                                @foreach($statuses as $statuse)
+                                                    <option value="{{ $statuse->id }}">{{ $statuse->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>--}}
+                                    @endhasrole
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sidebar">
+
+                                <div class="sidebar__title">
+                                    Обозначения
+                                </div>
+                                <div class="sidebar__item">
+                                    <ul class="conformity-status-list">
+                                        <li>
+                                            <span class="conformity-success conformity__icon">Х</span>
+                                            Авто на хранении
+                                        </li>
+                                        <li>
+                                            <span class="conformity-warning conformity__icon">зХ</span>
+                                            Заявка на хранение
+                                        </li>
+                                        <li>
+                                            <span class="conformity-orange conformity__icon">О</span>
+                                            Заявка на осмотр
+                                        </li>
+                                        <li>
+                                            <span class="conformity-primary conformity__icon">зВ</span>
+                                            Заявка на выдачу
+                                        </li>
+                                        <li>
+                                            <span class="conformity-dark conformity__icon">В</span>
+                                            Авто выдано
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="sidebar__title">
+                                    Чек-лист оформления
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Административные данные
+                                    </div>
+                                    <div
+                                        class="check-valid sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">VIN / Номер кузова</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div
+                                        class="check-invalid sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Государственный номер</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        О собственнике
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">ФИО собственника</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Телефон собственника</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Системная информация
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Партнёр*</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Стоянка*</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Номер убытка / договора*</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Дата
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Дата постановки</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Промежуток времени</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters tab-pane fade" id="v-pills-2">
+                        <div class="col-md-8 main-col">
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Марка и модель
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="tabform__cartlist d-flex">
+                                            <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model mt-0" id="types">
+                                                <legend class="legend">{{ __('The type of car...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd type-card">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list">
+                                                        @foreach($carTypes as $carType)
+                                                            @if ($loop->first && empty($application->car_type_id))
+                                                                <li class="select-item tabform__li active">
+                                                                    <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
+                                                                </li>
+                                                            @elseif($application->car_type_id === $carType->id)
+                                                                <li class="select-item tabform__li active">
+                                                                    <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
+                                                                </li>
+                                                            @else
+                                                                <li class="select-item tabform__li">
+                                                                    <a href="" data-name-id="car_type_id" data-id="{{ $carType->id }}">{{ $carType->name }}</a>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto mt-0" id="marks" data-id="selectGroup">
+                                                <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd type-card">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="tabform__ul select-list type-list" data-placeholder="Выберите тип авто">
+                                                        {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                        @if(!$carMarks)
+                                                            <li class="placeholder statuspink">Выберите тип авто</li>
+                                                        @else
+                                                            @foreach($carMarks as $carMark)
+                                                                @if($application->car_mark_id === $carMark->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_mark_id" data-id="{{ $carMark->id }}">{{ $carMark->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_mark_id" data-id="{{ $carMark->id }}">{{ $carMark->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select car_model_id fieldset new-style-model" id="models" data-id="selectGroup">
+                                                <legend class="legend">{{ __('The car model...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd type-card">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите марку авто">
+                                                        @if(!$carModels)
+                                                            <li class="placeholder statuspink">Выберите марку авто</li>
+                                                        @else
+                                                            @foreach($carModels as $carModel)
+                                                                @if($application->car_model_id === $carModel->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_model_id" data-id="{{ $carModel->id }}">{{ $carModel->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_model_id" data-id="{{ $carModel->id }}">{{ $carModel->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select year fieldset new-style-model ml-auto" id="years" data-id="selectGroup">
+                                                <legend class="legend">{{ __('The year of the car...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd type-card">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите модель авто">
+                                                        @if(!$carYears)
+                                                            <li class="placeholder statuspink">Выберите модель авто</li>
+                                                        @else
+                                                            @foreach($carYears as $carYear)
+                                                                @if($application->year === $carYear->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="year" data-id="{{ $carYear->id }}">{{ $carYear->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="year" data-id="{{ $carYear->id }}">{{ $carYear->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <div id="textArea" class="d-none ml-auto">
+                                                <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
+                                                <textarea class="form-control" id="autoDesc"
+                                                          rows="4"
+                                                          name="car_data[car_title]"
+                                                          value="{{ $application->car_title }}"
+                                                ></textarea>
+                                            </div>
+                                        </div>
+                                        {{--<fieldset class="fieldset">
+                                            <legend class="legend">Тип автомобиля</legend>
+                                            <div class="d-flex">
+                                                <div class="type-card">
+                                                    <input type="text" placeholder="Поиск">
+                                                    <ul class="type-list">
+                                                        <li class="type-item active">Легковой автомобиль</li>
+                                                        <li class="type-item">Автобус</li>
+                                                        <li class="type-item">Автокраны</li>
+                                                        <li class="type-item">Автопогрузчики</li>
+                                                        <li class="type-item">Автопоезд/ТС на сцепке</li>
+                                                        <li class="type-item">Бульдозеры</li>
+                                                        <li class="type-item">Грузовик</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="type-card-info">
+                                                    <ul class="type-info">
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Тип автомобиля</span>
+                                                            <div>Легковой автомобиль</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Марка</span>
+                                                            <div>BMW</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Модель</span>
+                                                            <div>1 серия</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Год выпуска</span>
+                                                            <span>Не указан</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </fieldset>--}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Поколение и модификация
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="tabform__cartlist tabform__cartlist-col-3 d-flex">
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="generations">
+                                                <legend class="legend">{{ __('Generation...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите поколение авто">
+                                                        @if(!$carGenerations)
+                                                            <li class="placeholder statuspink">Выберите поколение авто</li>
+                                                        @else
+                                                            @foreach($carGenerations as $carGeneration)
+                                                                @if($application->car_generation_id === $carGeneration->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_generation_id" data-id="{{ $carGeneration->id }}">{{ $carGeneration->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_generation_id" data-id="{{ $carGeneration->id }}">{{ $carGeneration->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="series">
+                                                <legend class="legend">{{ __('Series...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите кузов авто">
+                                                        @if(!$carSeriess)
+                                                            <li class="placeholder statuspink">Выберите кузов авто</li>
+                                                        @else
+                                                            @foreach($carSeriess as $carSeries)
+                                                                @if($application->car_series_id === $carSeries->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_series_id" data-id="{{ $carSeries->id }}" data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_series_id" data-id="{{ $carSeries->id }}" data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="modifications">
+                                                <legend class="legend">{{ __('Modifications...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите модификацию авто">
+                                                        @if(!$carModifications)
+                                                            <li class="placeholder statuspink">Выберите модификацию авто</li>
+                                                        @else
+                                                            @foreach($carModifications as $carModification)
+                                                                @if($application->car_modification_id === $carModification->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_modification_id" data-id="{{ $carModification->id }}">{{ $carModification->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_modification_id" data-id="{{ $carModification->id }}">{{ $carModification->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="engines">
+                                                <legend class="legend">{{ __('Engines...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите двигатель авто">
+                                                        @if(!$carEngines)
+                                                            <li class="placeholder statuspink">Выберите двигатель авто</li>
+                                                        @else
+                                                            @foreach($carEngines as $carEngine)
+                                                                @if($application->car_engine_id === $carEngine->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_engine_id" data-id="{{ $carEngine->id }}">{{ $carEngine->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_engine_id" data-id="{{ $carEngine->id }}">{{ $carEngine->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="transmissions">
+                                                <legend class="legend">{{ __('Transmission...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите КПП авто">
+                                                        @if(!$carTransmissions)
+                                                            <li class="placeholder statuspink">Выберите КПП авто</li>
+                                                        @else
+                                                            @foreach($carTransmissions as $carTransmission)
+                                                                @if($application->car_transmission_id === $carTransmission->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_transmission_id" data-id="{{ $carTransmission->id }}">{{ $carTransmission->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_transmission_id" data-id="{{ $carTransmission->id }}">{{ $carTransmission->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset class="tabform__cart select cart-3 fieldset" id="gears">
+                                                <legend class="legend">{{ __('Gear...') }} <span class="mob-arrow"></span></legend>
+                                                <div class="tabform__mob-dd">
+                                                    <input type="text" placeholder="Поиск" class="select-search">
+                                                    <ul class="select-list tabform__ul type-list" data-placeholder="Выберите привод авто">
+                                                        @if(!$carGears)
+                                                            <li class="placeholder statuspink">Выберите привод авто</li>
+                                                        @else
+                                                            @foreach($carGears as $carGear)
+                                                                @if($application->car_gear_id === $carGear->id)
+                                                                    <li class="select-item tabform__li active">
+                                                                        <a href="" data-name-id="car_gear_id" data-id="{{ $carGear->id }}">{{ $carGear->name }}</a>
+                                                                    </li>
+                                                                @else
+                                                                    <li class="select-item tabform__li">
+                                                                        <a href="" data-name-id="car_gear_id" data-id="{{ $carGear->id }}">{{ $carGear->name }}</a>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        {{--<fieldset class="fieldset">
+                                            <legend class="legend">Поколение</legend>
+                                            <div class="d-flex">
+                                                <div class="type-card">
+                                                    <input type="text" placeholder="Поиск">
+                                                    <ul class="type-list">
+                                                        <li class="type-item active">F20/F21 [рестайлинг]</li>
+                                                        <li class="type-item">F52</li>
+                                                        <li class="type-item">F40</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="type-card-info">
+                                                    <ul class="type-info">
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Поколение</span>
+                                                            <div>F20/F21 [рестайлинг]</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Кузов</span>
+                                                            <div>Седан</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Модификация</span>
+                                                            <div>118i Steptronic (136 л.с.)</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Двигатель</span>
+                                                            <div>Бензиновый</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">КПП</span>
+                                                            <div>Автомат</div>
+                                                        </li>
+                                                        <li class="type-info-item">
+                                                            <span class="type-info-title">Привод</span>
+                                                            <div>Передний</div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </fieldset>--}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Административная информация
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>VIN</span>
+                                            <input class="vin" type="text" placeholder="Не указан" value="XTA210600C0000001">
+                                        </label>
+                                        {{--<label class="field-style mt-3">
+                                            <span>VIN</span>
+                                            <input type="text" placeholder="Не указан" value="XTA210600C0000001">
+                                            <button type="button" class="add"></button>
+                                        </label>--}}
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Гос. номер</span>
+                                            <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">
+                                        </label>
+                                        {{--<div class="mt-2">
+                                            <label class="switch-radio-wrap">
+                                                <input type="checkbox">
+                                                <span class="switcher-radio"></span>
+                                                <span>Нет учёта</span>
+                                            </label>
+                                        </div>--}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Документы
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>СТС</span>
+                                            <input type="text" name="car_data[sts]"
+                                                   value="{{ $application->sts }}"
+                                                   id="sts" placeholder="Не указан">
+                                        </label>
+                                        <div class="mt-2">
+                                            <label class="switch-radio-wrap">
+                                                <input @if($application->sts_provided == 1){{ 'checked' }}@endif type="checkbox" name="car_data[sts_provided]" value="1">
+                                                <span class="switcher-radio"></span>
+                                                <span>Принят на хранение</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>ПТС</span>
+                                            <div class="d-flex two-field">
+                                                <input id="pts_type_input" name="car_data[pts_type]" value="{{ $application->pts_type }}" type="text" placeholder="Не указан">
+                                                <select id="pts_type" class="page-select">
+                                                    <option selected hidden disabled value="">{{ __('Select a pts type..') }}</option>
+                                                    <option value="Электронный">Электронный</option>
+                                                    <option value="Оригинал">Оригинал</option>
+                                                    <option value="Дубликат">Дубликат</option>
+                                                </select>
+                                            </div>
+                                        </label>
+                                        <div class="mt-2">
+                                            <label class="switch-radio-wrap">
+                                                <input @if($application->pts_provided == 1){{ 'checked' }}@endif type="checkbox" name="car_data[pts_provided]" value="1">
+                                                <span class="switcher-radio"></span>
+                                                <span>Принят на хранение</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Информация об автомобиле
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="inner-page__item-title">Кол-во владельцев</div>
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if($application->owner_number == 1){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="1">
+                                                <span class="switcher-radio"></span>
+                                                <span>Первый</span>
+                                            </label>
+                                        </div>
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if($application->owner_number == 2){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="2">
+                                                <span class="switcher-radio"></span>
+                                                <span>Второй</span>
+                                            </label>
+                                        </div>
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if($application->owner_number == 3){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="3">
+                                                <span class="switcher-radio"></span>
+                                                <span>Третий и более</span>
+                                            </label>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="inner-page__item-title">Кол-во ключей</div>
+                                        <div class="row">
+                                            <div class="col-5 mt-2 mb-3">
+                                                <label class="switch-radio-wrap">
+                                                    <input @if(!$application->car_key_quantity){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="0">
+                                                    <span class="switcher-radio"></span>
+                                                    <span>0</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-5 mt-2 mb-3">
+                                                <label class="switch-radio-wrap">
+                                                    <input @if($application->car_key_quantity == 1){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="1">
+                                                    <span class="switcher-radio"></span>
+                                                    <span>1</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-5 mt-2 mb-3">
+                                                <label class="switch-radio-wrap">
+                                                    <input @if($application->car_key_quantity == 2){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="2">
+                                                    <span class="switcher-radio"></span>
+                                                    <span>2</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-5 mt-2 mb-3">
+                                                <label class="switch-radio-wrap">
+                                                    <input @if($application->car_key_quantity == 3){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="3">
+                                                    <span class="switcher-radio"></span>
+                                                    <span>3</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <label class="field-style">
+                                            <span>Цвет</span>
+                                            <select name="car_data[color]" id="color" class="page-select" style="width: 255px">
+                                                <option selected hidden disabled value="">{{ __('Select a color..') }}</option>
+                                                @foreach($colors as $color)
+                                                    @if($application->color == $color['value'])
+                                                        <option selected value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                        @continue
+                                                    @else
+                                                        <option value="{{ $color['value'] }}">{{ $color['label'] }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="field-style mileage">
+                                            <span>Пробег</span>
+                                            <input type="number" name="car_data[milage]" value="{{ $application->milage }}" placeholder="Не указан">
+                                            <span class="mileage-type">км</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Тех. состояние
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <fieldset class="fieldset">
+                                            <legend class="legend">Неисправности</legend>
+                                            <div class="d-flex">
+                                                <div class="type-card parts-list tab-checkbox" id="tab-checkbox" role="tablist">
+                                                    <label class="switch-radio-wrap d-flex">
+                                                        <input type="checkbox" name="car_data[condition_engine]" value="" @if(is_null($application->condition_engine)) checked @endif>
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="part-title"><a data-toggle="tab" href="#tab-tex1">Двигатель</a></span>
+                                                        <span class="condition">Исправен</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex">
+                                                        <input type="checkbox" name="car_data[condition_transmission]" value="" @if(is_null($application->condition_transmission)) checked @endif>
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="part-title"><a data-toggle="tab" href="#tab-tex2">КПП</a></span>
+                                                        <span class="condition">Исправен</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex">
+                                                        <input type="checkbox" name="car_data[condition_electric]" value="" @if(is_null($application->condition_electric)) checked @endif>
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="part-title"><a data-toggle="tab" href="#tab-tex3">Электрика</a></span>
+                                                        <span class="condition">Исправен</span>
+                                                    </label>
+                                                    <label class="switch-radio-wrap d-flex">
+                                                        <input type="checkbox" name="car_data[condition_gear]" value="" @if(is_null($application->condition_gear)) checked @endif>
+                                                        <span class="switcher-radio ml-auto"></span>
+                                                        <span class="part-title"><a data-toggle="tab" href="#tab-tex4">Ходовая</a></span>
+                                                        <span class="condition">Исправен</span>
+                                                    </label>
+                                                </div>
+                                                <div class="type-card-info tab-content">
+                                                    <div class="tab-pane fade show active" id="tab-info">
+                                                        Неисправностей не обнаружено
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab-tex1">
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_engine][]"
+                                                                   @if($application->condition_engine && in_array('Дымность двигателя (густой, белый, сизый, черный)', $application->condition_engine)) checked @endif
+                                                                   value="Дымность двигателя (густой, белый, сизый, черный)">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Дымность двигателя (густой, белый, сизый, черный)</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_engine][]"
+                                                                   @if($application->condition_engine && in_array('Повышенный стук и шум при работе двигателя', $application->condition_engine)) checked @endif
+                                                                   value="Повышенный стук и шум при работе двигателя">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Повышенный стук и шум при работе двигателя</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_engine][]"
+                                                                   @if($application->condition_engine && in_array('Повышенный шум при работе выхлопной системы', $application->condition_engine)) checked @endif
+                                                                   value="Повышенный шум при работе выхлопной системы">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Повышенный шум при работе выхлопной системы</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_engine][]"
+                                                                   @if($application->condition_engine && in_array('Подтекание при осмотре подкапотного пространства', $application->condition_engine)) checked @endif
+                                                                   value="Подтекание при осмотре подкапотного пространства">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Подтекание при осмотре подкапотного пространства</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab-tex2">
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_transmission][]"
+                                                                   @if($application->condition_transmission && in_array('Рывки и толчки авто при переключении', $application->condition_transmission)) checked @endif
+                                                                   value="Рывки и толчки авто при переключении">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Рывки и толчки авто при переключении</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_transmission][]"
+                                                                   @if($application->condition_transmission && in_array('Повышенный шум при переключении', $application->condition_transmission)) checked @endif
+                                                                   value="Повышенный шум при переключении">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Повышенный шум при переключении</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab-tex3">
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_electric][]"
+                                                                   @if($application->condition_electric && in_array('Ошибки на панели приборов при заведенном ДВС', $application->condition_electric)) checked @endif
+                                                                   value="Ошибки на панели приборов при заведенном ДВС">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Ошибки на панели приборов при заведенном ДВС</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_electric][]"
+                                                                   @if($application->condition_electric && in_array('Неправильные команды электроники', $application->condition_electric)) checked @endif
+                                                                   value="Неправильные команды электроники">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Неправильные команды электроники</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab-tex4">
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_gear][]"
+                                                                   @if($application->condition_gear && in_array('Посторонний звук со стороны ходовой', $application->condition_gear)) checked @endif
+                                                                   value="Посторонний звук со стороны ходовой">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Посторонний звук со стороны ходовой</span>
+                                                        </label>
+                                                        <label class="switch-radio-wrap d-flex mb-3">
+                                                            <input type="checkbox" name="car_data[condition_gear][]"
+                                                                   @if($application->condition_gear && in_array('Посторонние звуки при вращении рулевого колеса', $application->condition_gear)) checked @endif
+                                                                   value="Посторонние звуки при вращении рулевого колеса">
+                                                            <span class="switcher-radio ml-auto"></span>
+                                                            <span class="check-box-text">Посторонние звуки при вращении рулевого колеса</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                {{--<div class="row mt-5">
+                                    <div class="col-12">
+                                        <fieldset class="fieldset">
+                                            <legend class="legend">Повреждения</legend>
+                                            <div class="d-flex">
+                                                <div class="type-card parts-list">
+                                                    <div class="nav condition-nav" id="condition" role="tablist"
+                                                         aria-orientation="vertical">
+                                                        <a class="block-nav__item active" href="#condition-1"
+                                                           data-toggle="tab">Кузов</a>
+                                                        <a class="block-nav__item" href="#condition-2"
+                                                           data-toggle="tab">Салон</a>
+                                                    </div>
+                                                </div>
+                                                <div class="type-card-info tab-content">
+                                                    <div class="row no-gutters tab-pane fade show active"
+                                                         id="condition-1">Кузов</div>
+                                                    <div class="row no-gutters tab-pane fade" id="condition-2">Салон
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>--}}
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Фотографии
+                                </div>
+                                <div class="page-file-list" id="images">
+                                    <div class="page-add-file">
+                                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.6"
+                                                  d="M20.0013 6.6665C20.9218 6.6665 21.668 7.4127 21.668 8.33317V18.3332H31.668C32.5884 18.3332 33.3346 19.0794 33.3346 19.9998C33.3346 20.9203 32.5884 21.6665 31.668 21.6665H21.668V31.6665C21.668 32.587 20.9218 33.3332 20.0013 33.3332C19.0808 33.3332 18.3346 32.587 18.3346 31.6665V21.6665H8.33464C7.41416 21.6665 6.66797 20.9203 6.66797 19.9998C6.66797 19.0794 7.41416 18.3332 8.33464 18.3332H18.3346V8.33317C18.3346 7.4127 19.0808 6.6665 20.0013 6.6665Z"
+                                                  fill="#536E9B" />
+                                        </svg>
+                                    </div>
+
+                                    @foreach($attachments as $attachment)
+                                        <div class="page-file-item">
+                                            <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                            <div class="page-file__option">
+                                                <button type="button" class="page-file__zoom"></button>
+                                                <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+                                <input type="file" id="uploader" name="images[]" class="d-none" multiple>
+                            </div>
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Дополнительно
+                                </div>
+                                <div class="field-style">
+                                    <span>Описание</span>
+                                    <textarea name="car_data[car_additional]"
+                                              id="car_additional" placeholder="Не указан">{{ $application->car_additional }}</textarea>
+                                </div>
+                            </div>
+                            <div id="hiddenInputs"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sidebar">
+                                <div class="sidebar__title">
+                                    Чек-лист оформления
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Марка и модель
+                                    </div>
+                                    <div
+                                        class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Тип автомобиля</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div
+                                        class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Марка</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div
+                                        class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Модель</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div
+                                        class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Год выпуска</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Поколение и модификация
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Поколение</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Кузов</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Модификация</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Двигатель</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">КПП</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Привод</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Административная информация
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">VIN</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Гос. номер</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Документы
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">СТС</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">ПТС</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Информация об автомобиле
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Кол-во владельцев</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Кол-во ключей</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Пробег</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Цвет</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Тех. состояние
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Двигатель</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">КПП</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Электрика</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Ходовая</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Кузов</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Салон</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Фотографии
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Фотографии</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                                <div class="sidebar__item">
+                                    <div class="sidebar-item-title">
+                                        Дополнительно
+                                    </div>
+                                    <div class="sidebar__check-item d-flex align-items-center justify-content-between">
+                                        <span class="sidebar__check-name">Описание</span>
+                                        <span class="sidebar__icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+@push('scripts')
+    const carDataApplication = @json($dataApplication);
+@endpush
+
+
+
+{{--<section class="tabform">
     <div class="wrapper">
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -184,7 +1384,7 @@
                                             <div class="tabform__mob-dd">
                                                 <input type="text" placeholder="Поиск" class="select-search">
                                                 <ul class="tabform__ul select-list" data-placeholder="Выберите тип авто">
-                                                    {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
+                                                    --}}{{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}{{--
                                                     @if(!$carMarks)
                                                         <li class="placeholder statuspink">Выберите тип авто</li>
                                                     @else
@@ -681,4 +1881,4 @@
     @push('scripts')
     const carDataApplication = @json($dataApplication);
     @endpush
-</section>
+</section>--}}

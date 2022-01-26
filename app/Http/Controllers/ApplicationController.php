@@ -7,6 +7,7 @@ use App\Filter\ApplicationFilters;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
 use App\Models\ApplicationData;
+use App\Models\Attachment;
 use App\Models\CarCharacteristicValue;
 use App\Models\CarGeneration;
 use App\Models\CarMark;
@@ -358,7 +359,7 @@ class ApplicationController extends AppController
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::query()->orderBy('name', 'asc')->get();
+        $statuses = Status::statuses()->get();
 
         extract($this->applicationUpdateData($application));
 
@@ -407,6 +408,11 @@ class ApplicationController extends AppController
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
+        $statuses = [1, 7];
+        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+            $statuses = [1, 2, 3, 4, 5, 6, 7];
+        }
+
         $application = Application::application($id)->firstOrFail();
 
         Validator::make($carRequest, [
@@ -447,9 +453,9 @@ class ApplicationController extends AppController
                 if($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
-        }
+       }
 
-        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
+       if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
             $searchFilters = [];
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0 ) {
                 $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
@@ -481,20 +487,19 @@ class ApplicationController extends AppController
             if (isset($applicationData['year']) ) {
                 $applicationData['car_title'] .= " {$applicationData['year']}";
             }
-        }
+       }
 
-        if (isset($applicationData['accept'])) {
-            $applicationData['status_id'] = 2;
+        if($applicationData['status_id'] != 7) {
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
             $application->acceptions()->delete();
             $application->acceptedBy()->associate(auth()->user());
         }
 
-        if(auth()->user()->hasRole('Admin') && !isset($applicationData['accept'])) {
+/*        if(auth()->user()->hasRole('Admin') && !isset($applicationData['accept'])) {
             if(isset($applicationData['status_admin'])) {
                 $applicationData['status_id'] = $applicationData['status_admin'];
             }
-        }
+        }*/
 
         $isUpdate = $application->update($applicationData);
 
@@ -506,13 +511,6 @@ class ApplicationController extends AppController
 
 //        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
 
-        if($request->has('preloaded')) {
-            $attachmentsDelete = $application->attachments()->whereNotIn('id', $request->preloaded)->get();
-            $attachmentsDelete->each(function ($item, $key) {
-                $this->AttachmentController->delete($item);
-            });
-
-        }
 
         $attachments = $this->AttachmentController->storeToModel($request,'images');
 
@@ -527,6 +525,12 @@ class ApplicationController extends AppController
 
         Toastr::error(__('Error'));
         return redirect()->back()->with('error', __('Error'));
+    }
+
+
+    public function removeAttachment($attachment)
+    {
+        return Attachment::where('id', $attachment)->delete();
     }
 
     /**
@@ -1126,7 +1130,7 @@ class ApplicationController extends AppController
             $carGears = $this->getCarGearList($application->car_modification_id);
         }
 
-        $attachments = $application->attachments()->select('id', 'url as src')->get()->toArray();
+        $attachments = $application->attachments()->select('id', 'thumbnail_url', 'url')->get();
         $dataApplication = [
             'modelId' => $application->car_model_id,
             'car_mark_id' => $application->car_mark_id,

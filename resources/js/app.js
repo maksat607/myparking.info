@@ -1,9 +1,8 @@
 require('./bootstrap');
 
 $(function() {
-    require('./image-uploader/image-uploader');
-    require('./image-uploader/index');
     require('./image-uploader/previewUp');
+    require('./image-uploader/imadeDelete');
     require('./fancybox/fancybox');
     require('./select2/selcte2');
     require('./flatpickr/flatpickr');
