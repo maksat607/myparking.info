@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Application;
 use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\User;
+use App\Policies\ApplicationPolicy;
 use App\Policies\CheckPartnerUserPolicy;
 use App\Policies\ParkingPolicy;
 use App\Policies\UserPolicy;
@@ -26,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Parking::class => ParkingPolicy::class,
         Partner::class => CheckPartnerUserPolicy::class,
+        Application::class => ApplicationPolicy::class,
     ];
 
     /**

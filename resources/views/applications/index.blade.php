@@ -94,12 +94,40 @@
                             <div class="car-dd">
                                 <div class="car-close-dd"></div>
                                 <div class="car-dd-body">
-                                    @if($application->acceptions)
+                                    @if($application->acceptions && $user->hasRole(['SuperAdmin', 'Admin', 'Manager']))
                                         @can('application_to_accepted')
                                             <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="text-success btn">Принять</a>
                                             <a href="{{ route('application.deny', ['application_id' => $application->id]) }}" class="text-danger btn">Отклонить</a>
                                         @endcan
-
+                                    @elseif($application->acceptions && auth()->user()->hasRole(['Operator', 'Partner', 'PartnerOperator']))
+                                        @can('update', $application)
+                                            <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13.5774 1.91058C13.9028 1.58514 14.4305 1.58514 14.7559 1.91058L18.0893 5.24391C18.4147 5.56935 18.4147 6.09699 18.0893 6.42243L7.25592 17.2558C7.09964 17.412 6.88768 17.4998 6.66667 17.4998H3.33333C2.8731 17.4998 2.5 17.1267 2.5 16.6665V13.3332C2.5 13.1122 2.5878 12.9002 2.74408 12.7439L11.0772 4.41075L13.5774 1.91058ZM11.6667 6.17835L4.16667 13.6783V15.8332H6.32149L13.8215 8.33317L11.6667 6.17835ZM15 7.15466L16.3215 5.83317L14.1667 3.67835L12.8452 4.99984L15 7.15466Z"
+                                                          fill="#536E9B" />
+                                                </svg>
+                                            </a>
+                                        @endcan
+                                        @can('delete', $application)
+                                            <a href="#" class="link basket delete"
+                                               data-deletion-id="deleteApp{{ $application->id }}"
+                                               data-message="Уверены что хотите удалить выбранный элемент?"
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <g opacity="0.6">
+                                                        <path d="M5.83366 3.33317C5.83366 2.4127 6.57985 1.6665 7.50033 1.6665H12.5003C13.4208 1.6665 14.167 2.4127 14.167 3.33317V4.99984H15.8251C15.8302 4.99979 15.8354 4.99979 15.8405 4.99984H17.5003C17.9606 4.99984 18.3337 5.37293 18.3337 5.83317C18.3337 6.29341 17.9606 6.6665 17.5003 6.6665H16.6096L15.8868 16.7852C15.8245 17.6574 15.0988 18.3332 14.2244 18.3332H5.77626C4.90186 18.3332 4.17613 17.6574 4.11383 16.7852L3.39106 6.6665H2.50033C2.04009 6.6665 1.66699 6.29341 1.66699 5.83317C1.66699 5.37293 2.04009 4.99984 2.50033 4.99984H4.16011C4.16528 4.99979 4.17044 4.99979 4.17559 4.99984H5.83366V3.33317ZM7.50033 4.99984H12.5003V3.33317H7.50033V4.99984ZM5.06197 6.6665L5.77626 16.6665H14.2244L14.9387 6.6665H5.06197ZM8.33366 8.33317C8.7939 8.33317 9.16699 8.70627 9.16699 9.1665V14.1665C9.16699 14.6267 8.7939 14.9998 8.33366 14.9998C7.87342 14.9998 7.50033 14.6267 7.50033 14.1665V9.1665C7.50033 8.70627 7.87342 8.33317 8.33366 8.33317ZM11.667 8.33317C12.1272 8.33317 12.5003 8.70627 12.5003 9.1665V14.1665C12.5003 14.6267 12.1272 14.9998 11.667 14.9998C11.2068 14.9998 10.8337 14.6267 10.8337 14.1665V9.1665C10.8337 8.70627 11.2068 8.33317 11.667 8.33317Z"
+                                                              fill="#EB5757" />
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                            <form id="deleteApp{{ $application->id }}" method="POST"
+                                                  action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endcan
                                     @elseif($application->status->code == 'storage')
                                     @hasanyrole('Admin|Manager')
                                         <a href="{{ route('application.generate-act', ['application' => $application->id]) }}" class="link">
@@ -110,7 +138,7 @@
                                             </svg>
                                         </a>
                                     @endhasanyrole
-                                        @can('application_update')
+                                        @can('update', $application)
                                         <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
@@ -119,7 +147,7 @@
                                             </svg>
                                         </a>
                                         @endcan
-                                        @can('application_delete')
+                                        @can('delete', $application)
                                         <a href="#" class="link basket delete"
                                            data-deletion-id="deleteApp{{ $application->id }}"
                                            data-message="Уверены что хотите удалить выбранный элемент?"

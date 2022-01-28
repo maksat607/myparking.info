@@ -39,10 +39,11 @@ class ApplicationController extends AppController
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
 
-        $this->middleware(['permission:application_view'])->only('index', 'show');
+//        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
+/*        $this->middleware(['permission:application_view'])->only('index', 'show');
         $this->middleware(['permission:application_create'])->only('create', 'store');
         $this->middleware(['permission:application_update'])->only('edit', 'update');
-        $this->middleware(['permission:application_delete'])->only('destroy');
+        $this->middleware(['permission:application_delete'])->only('destroy');*/
     }
 
     /**
@@ -52,6 +53,8 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+        $this->authorize('viewAny', Application::class);
+
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
@@ -112,6 +115,7 @@ class ApplicationController extends AppController
      */
     public function create(Application $application)
     {
+        $this->authorize('create', Application::class);
         $carTypes = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -166,7 +170,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-
+        $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
         $statuses = [1, 7];
@@ -347,6 +351,10 @@ class ApplicationController extends AppController
      */
     public function edit($id)
     {
+        $application = Application::application($id)->firstOrFail();
+
+        $this->authorize('update', $application);
+
         $carTypes = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -355,11 +363,11 @@ class ApplicationController extends AppController
         $parkings = Parking::parkings()->get();
         $colors = Color::getColors();
 
-        $application = Application::application($id)->firstOrFail();
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::statuses()->get();
+
+        $statuses = Status::statuses($application->acceptions)->get();
 
         extract($this->applicationUpdateData($application));
 
@@ -405,6 +413,9 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
+        $application = Application::application($id)->firstOrFail();
+        $this->authorize('update', $application);
+
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
@@ -413,7 +424,6 @@ class ApplicationController extends AppController
             $statuses = [1, 2, 3, 4, 5, 6, 7];
         }
 
-        $application = Application::application($id)->firstOrFail();
 
         Validator::make($carRequest, [
             'vin_array' => [
@@ -542,6 +552,7 @@ class ApplicationController extends AppController
     public function destroy($id)
     {
         $application = Application::application($id)->firstOrFail();
+        $this->authorize('delete', $application);
 //        $application->client()->delete();
 //        $application->viewRequests()->delete();
         $application->attachments->each(function ($item, $key) {

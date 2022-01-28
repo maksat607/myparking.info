@@ -68,9 +68,12 @@ class Status extends Model
         return $color;
     }
 
-    public function scopeStatuses($query)
+    public function scopeStatuses($query, $acceptions = null)
     {
-        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+
+        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin']) && $acceptions) {
+            return $query->where('code', '<>', 'draft')->orderBy('name', 'asc');
+        } elseif (auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
             return $query->orderBy('name', 'asc');
         } else {
             return $query->whereIn('code', ['draft', 'pending'])->orderBy('name', 'asc');
