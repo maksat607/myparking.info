@@ -64,10 +64,10 @@ class Application extends Model
         return $this->belongsTo(Status::class);
     }
 
-    /*public function client()
+    public function client()
     {
-        return $this->belongsTo(Client:class);
-    }*/
+        return $this->belongsTo(Client::class);
+    }
 
     public function carType()
     {

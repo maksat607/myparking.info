@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    protected $fillable = [ 'lastname', 'middlename', 'passport',
+    protected $fillable = [ 'fio', 'firstname', 'lastname', 'middlename', 'passport',
         'address', 'phone', 'email', 'legal_type_id', 'preferred_contact_method',
         'organization_name', 'organization_address', 'organization_phone', 'inn', 'orgn', 'issuance_document'];
 
@@ -31,5 +31,19 @@ class Client extends Model
     public static function issuancePreferredContactMethodOptions()
     {
         return self::$issuancePreferredContactMethodOptions;
+    }
+    public function getFioAttribute()
+    {
+        $format = "%s %s %s";
+        $fio = sprintf($format, $this->lastname, $this->firstname, $this->middlename);
+        return trim($fio);
+    }
+
+    public function setFioAttribute($value)
+    {
+        list($f, $i, $o) = explode(" ", $value);
+        $this->attributes['lastname'] = !empty($f) ? $f : null;
+        $this->attributes['firstname'] = !empty($i) ? $i : null;
+        $this->attributes['middlename'] = !empty($o) ? $o : null;
     }
 }

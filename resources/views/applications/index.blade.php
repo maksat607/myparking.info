@@ -184,10 +184,10 @@
                                         @can('application_to_issue')
                                             @if($application->issuance)
                                                 <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
-                                                        {{ route('application.issuance.create', ['application' => $application->id]) }}
-                                                    @else
-                                                        {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
-                                                    @endif
+                                                                {{ route('application.issuance.create', ['application' => $application->id]) }}
+                                                            @else
+                                                                {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
+                                                            @endif
                                                         " class="link text-success">
                                                     <svg class="car-dd-icon" width="21" height="20" viewBox="0 0 21 20"
                                                          fill="none" xmlns="http://www.w3.org/2000/svg">

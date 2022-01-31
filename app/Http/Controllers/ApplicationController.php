@@ -594,18 +594,14 @@ class ApplicationController extends AppController
             $client = $application->issuance->client;
         }
 
-        $documentOptions = Client::issuanceDocumentOptions();
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
-        $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
 
         $title = __('Issue a car');
         return view('applications.issuance', compact(
             'title',
                     'application',
                     'client',
-                    'documentOptions',
                     'individualLegalOptions',
-                    'preferredContactMethodOptions'
         ));
     }
 
@@ -614,12 +610,10 @@ class ApplicationController extends AppController
         $clientData = $request->client;
 
         Validator::make($clientData, [
-            'issuance_document' => ['string', 'nullable'],
-            'lastname' => ['string', 'nullable'],
-            'firstname' => ['string', 'nullable'],
-            'middlename' => ['string', 'nullable'],
+            'inn' => ['string', 'nullable'],
+            'organization_name' => ['string', 'nullable'],
+            'fio' => ['string', 'nullable'],
             'phone' => ['numeric', 'nullable'],
-            'email' => ['email', 'nullable'],
         ])->validate();
 
         Validator::make($request->app_data, [
@@ -637,8 +631,9 @@ class ApplicationController extends AppController
         if(!$application->issuance) {
             $client = Client::create($clientData);
         } else {
-            $client = $application->issuance->client;
+            $client = tap($application->issuance->client)->update($clientData);
         }
+
 
         if($client->exists) {
             $application->issuedBy()->associate(auth()->user());
