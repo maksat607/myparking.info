@@ -2,7 +2,7 @@
 
 @section('content')
 
-    {{--<form method="POST" action="{{ route('issue_requests.store', ['application' => $application->id]) }}">
+    <form method="POST" action="{{ route('issue_requests.store', ['application' => $application->id]) }}">
         @csrf
         <div class="container page-head-wrap">
             <div class="page-head">
@@ -61,33 +61,25 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label class="field-style @error('issued_at') invalid @enderror">
+                                    <label class="field-style @error('arriving_at') invalid @enderror">
                                         <span>Дата выдачи</span>
-                                        <input type="text" name="app_data[issued_at]" class="date-manager">
+                                        <input type="text" name="issue_request[arriving_at]" class="date-manager">
                                     </label>
                                 </div>
                                 <div class="col-6">
-                                    @if(!auth()->user()->hasRole(['Admin', 'Manager']))
-                                        <label class="field-style @error('arriving_interval') invalid @enderror">
-                                            <span>Промежуток времени</span>
-                                            <select name="app_data[arriving_interval]" class="page-select">
-                                                <option selected hidden value="">{{ __('Select a time interval..') }}</option>
-                                                <option @if(old('app_data.arriving_interval') == '10:00 - 14:00'){{ 'selected' }}@endif value="10:00 - 14:00">10:00 - 14:00</option>
-                                                <option @if(old('app_data.arriving_interval') == '14:00 - 18:00'){{ 'selected' }}@endif value="14:00 - 18:00">14:00 - 18:00</option>
-                                            </select>
-                                        </label>
-                                        @error('arriving_interval')
-                                        <span class="invalid-feedback" role="alert">
+                                    <label class="field-style @error('arriving_interval') invalid @enderror">
+                                        <span>Промежуток времени</span>
+                                        <select name="issue_request[arriving_interval]" class="page-select">
+                                            <option selected hidden value="">{{ __('Select a time interval..') }}</option>
+                                            <option @if(old('app_data.arriving_interval') == '10:00 - 14:00'){{ 'selected' }}@endif value="10:00 - 14:00">10:00 - 14:00</option>
+                                            <option @if(old('app_data.arriving_interval') == '14:00 - 18:00'){{ 'selected' }}@endif value="14:00 - 18:00">14:00 - 18:00</option>
+                                        </select>
+                                    </label>
+                                    @error('arriving_interval')
+                                    <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                        @enderror
-
-                                    @elseif($application->issuance)
-                                        <label class="field-style @error('issued_at') invalid @enderror">
-                                            <span>Промежуток времени</span>
-                                            <input type="text" name="" disabled value="{{ $application->issuance->arriving_interval }}">
-                                        </label>
-                                    @endif
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -100,11 +92,12 @@
                                 <div class="col-6 mt-2 mb-5">
                                     <label class="switch-radio-wrap">
                                         <input type="radio" name="client[legal_type_id]"
-                                               value="1"
-                                               @if($client && $client->legal_type_id == array_keys($individualLegalOptions)[0])
-                                               checked
-                                               @elseif(is_null($client))
-                                               checked
+                                            value="1"
+                                            @if(
+                                                old('client.legal_type_id') == array_keys($individualLegalOptions)[0] ||
+                                                is_null(old('client.legal_type_id'))
+                                                )
+                                                checked
                                             @endif
                                         >
                                         <span class="switcher-radio"></span>
@@ -116,10 +109,10 @@
                                 <div class="col-6 mt-2 mb-5">
                                     <label class="switch-radio-wrap">
                                         <input type="radio" name="client[legal_type_id]"
-                                               value="2"
-                                               @if($client && $client->legal_type_id == array_keys($individualLegalOptions)[1])
+                                           value="2"
+                                           @if(old('client.legal_type_id') == array_keys($individualLegalOptions)[1])
                                                checked
-                                            @endif
+                                           @endif
                                         >
                                         <span class="switcher-radio"></span>
                                         <span>{{ $individualLegalOptions[2] }}</span>
@@ -129,7 +122,7 @@
                                     <label class="field-style">
                                         <span>Название организации</span>
                                         <input type="text"
-                                               value="@if($client && $client->organization_name){{ $client->organization_name }}@else{{ old('client.organization_name') }}@endif"
+                                               value="{{ old('client.organization_name') }}"
                                                name="client[organization_name]" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -137,7 +130,7 @@
                                     <label class="field-style">
                                         <span>ИНН</span>
                                         <input type="text"
-                                               value="@if($client && $client->inn){{ $client->inn }}@else{{ old('client.inn') }}@endif"
+                                               value="{{ old('client.inn') }}"
                                                name="client[inn]" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -145,7 +138,7 @@
                                     <label class="field-style">
                                         <span>ФИО доверенного лица</span>
                                         <input type="text"
-                                               value="@if($client && $client->inn){{ $client->fio }}@else{{ old('client.fio') }}@endif"
+                                               value="{{ old('client.fio') }}"
                                                name="client[fio]" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -153,7 +146,7 @@
                                     <label class="field-style">
                                         <span>Телефон доверенного лица</span>
                                         <input type="text"
-                                               value="@if($client && $client->phone){{ $client->phone }}@else{{ old('client.phone') }}@endif"
+                                               value="{{ old('client.phone') }}"
                                                name="client[phone]" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -255,11 +248,11 @@
             </div>
         </div>
 
-    </form>--}}
+    </form>
 
 
 
-<div class="wrapper">
+{{--<div class="wrapper">
     <h1>{{ $title }}</h1>
 </div>
 <form method="POST" action="{{ route('issue_requests.store', ['application' => $application->id]) }}">
@@ -407,5 +400,5 @@
         <button class="tabform__footerbtn bggreen">Отменить</button>
     </div>
 </div>
-</form>
+</form>--}}
 @endsection

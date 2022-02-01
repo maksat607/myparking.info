@@ -41,9 +41,9 @@ class Client extends Model
 
     public function setFioAttribute($value)
     {
-        list($f, $i, $o) = explode(" ", $value);
-        $this->attributes['lastname'] = !empty($f) ? $f : null;
-        $this->attributes['firstname'] = !empty($i) ? $i : null;
-        $this->attributes['middlename'] = !empty($o) ? $o : null;
+        list($f, $i, $o) = array_pad(explode(" ", $value),3, null);
+        $this->attributes['lastname'] = $f;
+        $this->attributes['firstname'] = $i;
+        $this->attributes['middlename'] = $o;
     }
 }

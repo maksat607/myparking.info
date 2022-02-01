@@ -68,14 +68,12 @@ class IssueRequestController extends AppController
             return redirect()->back()->with('warning', __('The application for issuing a car already exists'));
         }
 
-        $documentOptions = Client::issuanceDocumentOptions();
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
-        $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
 
         $title = __('Application for issue');
         return view('issue_request.create', compact(
-            'title', 'application', 'documentOptions',
-                    'individualLegalOptions', 'preferredContactMethodOptions'
+            'title', 'application',
+                    'individualLegalOptions',
         ));
     }
 
@@ -92,12 +90,10 @@ class IssueRequestController extends AppController
         $issueData = $request->issue_request;
 
         Validator::make($clientData, [
-            'issuance_document' => ['string', 'nullable'],
-            'lastname' => ['string', 'nullable'],
-            'firstname' => ['string', 'nullable'],
-            'middlename' => ['string', 'nullable'],
+            'inn' => ['string', 'nullable'],
+            'organization_name' => ['string', 'nullable'],
+            'fio' => ['string', 'nullable'],
             'phone' => ['numeric', 'nullable'],
-            'email' => ['email', 'nullable'],
         ])->validate();
 
         Validator::make($issueData, [
@@ -154,14 +150,11 @@ class IssueRequestController extends AppController
             return redirect()->back()->with('warning', __('The car is not yet in storage'));
         }
 
-        $documentOptions = Client::issuanceDocumentOptions();
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
-        $preferredContactMethodOptions = Client::issuancePreferredContactMethodOptions();
 
         $title = __('Editing an application for issuance');
         return view('issue_request.edit', compact(
-            'title', 'issueRequest', 'client', 'application', 'documentOptions',
-            'individualLegalOptions', 'preferredContactMethodOptions'
+            'title', 'issueRequest', 'client', 'application', 'individualLegalOptions'
         ));
     }
 
@@ -179,12 +172,10 @@ class IssueRequestController extends AppController
         $issueData = $request->issue_request;
 
         Validator::make($clientData, [
-            'issuance_document' => ['string', 'nullable'],
-            'lastname' => ['string', 'nullable'],
-            'firstname' => ['string', 'nullable'],
-            'middlename' => ['string', 'nullable'],
+            'inn' => ['string', 'nullable'],
+            'organization_name' => ['string', 'nullable'],
+            'fio' => ['string', 'nullable'],
             'phone' => ['numeric', 'nullable'],
-            'email' => ['email', 'nullable'],
         ])->validate();
 
         Validator::make($issueData, [
@@ -200,7 +191,7 @@ class IssueRequestController extends AppController
         }
         $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
 
-        $issueRequest->client()->update($clientData);
+        $issueRequest->client->update($clientData);
         $result = $issueRequest->update($issueData);
 
         if ($result) {

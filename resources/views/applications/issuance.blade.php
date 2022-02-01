@@ -10,7 +10,7 @@
                     <a href="#" class="page-head__cancel">Отменить</a>
                     <h1>{{ $title }}</h1>
                     <div class="ml-auto d-flex">
-                        <button class="btn btn-white">Создать заявку</button>
+                        <button class="btn btn-white">Выдать</button>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                                         <span>Дата выдачи</span>
                                         <input type="text" name="app_data[issued_at]" class="date-manager">
                                         @push('scripts')
-                                            const dateDataIssue = '{{ ($application->issuance->issued_at) ? $application->issuance->issued_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                            const dateDataIssue = '{{ ($application->issuance && $application->issuance->issued_at) ? $application->issuance->issued_at->format('d-m-Y') : now()->format('d-m-Y') }}';
                                         @endpush
                                     </label>
                                 </div>
