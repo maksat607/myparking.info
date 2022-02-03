@@ -60,12 +60,16 @@ class ApplicationPolicy
 
         if(
             $user->can('application_update') &&
-            $application->acceptions &&
+            ($application->acceptions ||
+                $application->status->code == 'draft' ||
+                $application->status->code == 'cancelled-by-us'
+            ) &&
             $user->hasRole(['Operator', 'Partner', 'PartnerOperator'])
         ) {
             return true;
         } elseif (
             $user->can('application_update') &&
+            $application->status->code != 'cancelled-by-us' &&
             $user->hasRole(['SuperAdmin', 'Admin', 'Manager'])
         ) {
             return true;
@@ -83,13 +87,16 @@ class ApplicationPolicy
     {
         if(
             $user->can('application_delete') &&
-            $application->acceptions &&
+            ($application->acceptions ||
+                $application->status->code == 'draft' ||
+                $application->status->code == 'cancelled-by-us'
+            ) &&
             $user->hasRole(['Operator', 'Partner', 'PartnerOperator'])
         ) {
             return true;
         } elseif (
             $user->can('application_delete') &&
-            is_null($application->acceptions) &&
+            $application->status->code != 'cancelled-by-us' &&
             $user->hasRole(['SuperAdmin', 'Admin', 'Manager'])
         ) {
             return true;

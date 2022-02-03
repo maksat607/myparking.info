@@ -1001,7 +1001,7 @@
                                     </div>
 
                                     @foreach($attachments as $attachment)
-                                        <div class="page-file-item">
+                                        <div class="page-file-item" data-src="{{ $attachment->url }}">
                                             <img src="{{ $attachment->thumbnail_url }}" alt="">
                                             <div class="page-file__option">
                                                 <button type="button" class="page-file__zoom"></button>

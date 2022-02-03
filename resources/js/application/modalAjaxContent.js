@@ -1,6 +1,6 @@
 const modalAjaxContent = {
     init() {
-        $(`.car-show-modal`).on('click', {self:this}, this.getModalContent);
+        $(`.car-show-modal, .car-show-info`).on('click', {self:this}, this.getModalContent);
     },
     getModalContent(e) {
         let self = e.data.self

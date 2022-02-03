@@ -85,20 +85,20 @@
                 <a class=" active" id="v-pills-tab1-tab" data-toggle="pill" href="#v-pills-tab1" role="tab"
                    aria-controls="v-pills-tab1" aria-selected="true">
                     Системные данные
-                    <span class="btn-systemic" id="btn-systemic">
-                                <span class="edit-systemic">
-                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.2197 1.71967C12.5126 1.42678 12.9874 1.42678 13.2803 1.71967L16.2803 4.71967C16.5732 5.01256 16.5732 5.48744 16.2803 5.78033L6.53033 15.5303C6.38968 15.671 6.19891 15.75 6 15.75H3C2.58579 15.75 2.25 15.4142 2.25 15V12C2.25 11.8011 2.32902 11.6103 2.46967 11.4697L9.96951 3.96983L12.2197 1.71967ZM10.5 5.56066L3.75 12.3107V14.25H5.68934L12.4393 7.5L10.5 5.56066ZM13.5 6.43934L14.6893 5.25L12.75 3.31066L11.5607 4.5L13.5 6.43934Z"
-                                              fill="#536E9B" />
-                                    </svg>
-                                </span>
-                                <span class="save-systemic">
-                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.25 1.75C0.25 0.921573 0.921573 0.25 1.75 0.25H4.75H9.25H10.4393C10.8372 0.25 11.2187 0.408035 11.5 0.68934L13.5303 2.71967C13.671 2.86032 13.75 3.05109 13.75 3.25V12.25C13.75 13.0784 13.0784 13.75 12.25 13.75H9.25H4.75H1.75C0.921573 13.75 0.25 13.0784 0.25 12.25V1.75ZM4.75 12.25H9.25V7.75H4.75V12.25ZM10.75 12.25H12.25V3.56066L10.75 2.06066V3.25C10.75 4.07843 10.0784 4.75 9.25 4.75H4.75C3.92157 4.75 3.25 4.07843 3.25 3.25V1.75H1.75V12.25H3.25V7.75C3.25 6.92157 3.92157 6.25 4.75 6.25H9.25C10.0784 6.25 10.75 6.92157 10.75 7.75V12.25ZM4.75 1.75V3.25H9.25V1.75H4.75Z" fill="#536E9B"/>
-                                        </svg>
-                                </span>
-                            </span>
+                    {{--<span class="btn-systemic" id="btn-systemic">
+                        <span class="edit-systemic">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.2197 1.71967C12.5126 1.42678 12.9874 1.42678 13.2803 1.71967L16.2803 4.71967C16.5732 5.01256 16.5732 5.48744 16.2803 5.78033L6.53033 15.5303C6.38968 15.671 6.19891 15.75 6 15.75H3C2.58579 15.75 2.25 15.4142 2.25 15V12C2.25 11.8011 2.32902 11.6103 2.46967 11.4697L9.96951 3.96983L12.2197 1.71967ZM10.5 5.56066L3.75 12.3107V14.25H5.68934L12.4393 7.5L10.5 5.56066ZM13.5 6.43934L14.6893 5.25L12.75 3.31066L11.5607 4.5L13.5 6.43934Z"
+                                      fill="#536E9B" />
+                            </svg>
+                        </span>
+                        <span class="save-systemic">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0.25 1.75C0.25 0.921573 0.921573 0.25 1.75 0.25H4.75H9.25H10.4393C10.8372 0.25 11.2187 0.408035 11.5 0.68934L13.5303 2.71967C13.671 2.86032 13.75 3.05109 13.75 3.25V12.25C13.75 13.0784 13.0784 13.75 12.25 13.75H9.25H4.75H1.75C0.921573 13.75 0.25 13.0784 0.25 12.25V1.75ZM4.75 12.25H9.25V7.75H4.75V12.25ZM10.75 12.25H12.25V3.56066L10.75 2.06066V3.25C10.75 4.07843 10.0784 4.75 9.25 4.75H4.75C3.92157 4.75 3.25 4.07843 3.25 3.25V1.75H1.75V12.25H3.25V7.75C3.25 6.92157 3.92157 6.25 4.75 6.25H9.25C10.0784 6.25 10.75 6.92157 10.75 7.75V12.25ZM4.75 1.75V3.25H9.25V1.75H4.75Z" fill="#536E9B"/>
+                                </svg>
+                        </span>
+                    </span>--}}
                 </a>
                 <a class="" id="v-pills-tab2-tab" data-toggle="pill" href="#v-pills-tab2" role="tab"
                    aria-controls="v-pills-tab2" aria-selected="false">Админ. данные</a>
@@ -210,7 +210,7 @@
                         </div>--}}
 
                         @foreach($application->attachments as $attachment)
-                            <div class="page-file-item">
+                            <div class="page-file-item" data-src="{{ $attachment->url }}">
                                 <img src="{{ $attachment->thumbnail_url }}" alt="">
                                 <div class="page-file__option">
                                     <button type="button" class="page-file__zoom"></button>
@@ -413,385 +413,111 @@
         </div>
     </div>
     <div class="modal-block__footer d-flex justify-content-between align-items-center">
+
         <div>
-            @if($application->acceptions)
-                @can('application_to_accepted')
-                    <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="text-success btn">Принять</a>
-                    <a href="{{ route('application.deny', ['application_id' => $application->id]) }}" class="text-danger btn">Отклонить</a>
+        @if($application->acceptions && auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager']))
+            @can('application_to_accepted')
+                <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="btn btn-success">Принять</a>
+                <a href="{{ route('application.deny', ['application_id' => $application->id]) }}" class="btn btn-danger">Отклонить</a>
+            @endcan
         </div>
-                @endcan
-            @elseif($application->status->code == 'storage')
-                @hasanyrole('Admin|Manager')
-                    <a href="{{ route('application.generate-act', ['application' => $application->id]) }}" class="link">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C12.5523 2 13 2.44772 13 3V13.5858L15.2929 11.2929C15.6834 10.9024 16.3166 10.9024 16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L7.29289 12.7071C6.90237 12.3166 6.90237 11.6834 7.29289 11.2929C7.68342 10.9024 8.31658 10.9024 8.70711 11.2929L11 13.5858V3C11 2.44772 11.4477 2 12 2ZM5 17C5.55228 17 6 17.4477 6 18V20H18V18C18 17.4477 18.4477 17 19 17C19.5523 17 20 17.4477 20 18V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V18C4 17.4477 4.44772 17 5 17Z"
-                                  fill="#536E9B"></path>
-                        </svg>
-                        Скачать акт
-                    </a>
-                @endhasanyrole
-                @can('application_update')
-                    <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
-                        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M13.2929 0.292893C13.6834 -0.0976311 14.3166 -0.0976311 14.7071 0.292893L18.7071 4.29289C19.0976 4.68342 19.0976 5.31658 18.7071 5.70711L5.70711 18.7071C5.51957 18.8946 5.26522 19 5 19H1C0.447715 19 0 18.5523 0 18V14C0 13.7348 0.105357 13.4804 0.292893 13.2929L10.2927 3.2931L13.2929 0.292893ZM11 5.41421L2 14.4142V17H4.58579L13.5858 8L11 5.41421ZM15 6.58579L16.5858 5L14 2.41421L12.4142 4L15 6.58579Z"
-                                  fill="#536E9B"></path>
-                        </svg>
-                    </a>
-                @endcan
-                @can('application_delete')
-                    <a href="#" class="link basket delete"
-                       data-deletion-id="deleteAppModel{{ $application->id }}"
-                       data-message="Уверены что хотите удалить выбранный элемент?"
-                    >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g opacity="0.6">
-                                <path d="M7 4C7 2.89543 7.89543 2 9 2H15C16.1046 2 17 2.89543 17 4V6H18.9897C18.9959 5.99994 19.0021 5.99994 19.0083 6H21C21.5523 6 22 6.44772 22 7C22 7.55228 21.5523 8 21 8H19.9311L19.0638 20.1425C18.989 21.1891 18.1182 22 17.0689 22H6.93112C5.88184 22 5.01096 21.1891 4.9362 20.1425L4.06888 8H3C2.44772 8 2 7.55228 2 7C2 6.44772 2.44772 6 3 6H4.99174C4.99795 5.99994 5.00414 5.99994 5.01032 6H7V4ZM9 6H15V4H9V6ZM6.07398 8L6.93112 20H17.0689L17.926 8H6.07398ZM10 10C10.5523 10 11 10.4477 11 11V17C11 17.5523 10.5523 18 10 18C9.44772 18 9 17.5523 9 17V11C9 10.4477 9.44772 10 10 10ZM14 10C14.5523 10 15 10.4477 15 11V17C15 17.5523 14.5523 18 14 18C13.4477 18 13 17.5523 13 17V11C13 10.4477 13.4477 10 14 10Z"
-                                      fill="#EB5757"></path>
-                            </g>
-                        </svg>
-                    </a>
-                    <form id="deleteAppModel{{ $application->id }}" method="POST"
-                          action="{{ route('applications.destroy', ['application' => $application->id]) }}">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-                @endcan
-
+        @elseif(
+                ($application->acceptions ||
+                    $application->status->code == 'draft' ||
+                    $application->status->code == 'cancelled-by-us'
+                ))
+            @can('update', $application)
+                <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.5774 1.91058C13.9028 1.58514 14.4305 1.58514 14.7559 1.91058L18.0893 5.24391C18.4147 5.56935 18.4147 6.09699 18.0893 6.42243L7.25592 17.2558C7.09964 17.412 6.88768 17.4998 6.66667 17.4998H3.33333C2.8731 17.4998 2.5 17.1267 2.5 16.6665V13.3332C2.5 13.1122 2.5878 12.9002 2.74408 12.7439L11.0772 4.41075L13.5774 1.91058ZM11.6667 6.17835L4.16667 13.6783V15.8332H6.32149L13.8215 8.33317L11.6667 6.17835ZM15 7.15466L16.3215 5.83317L14.1667 3.67835L12.8452 4.99984L15 7.15466Z"
+                              fill="#536E9B" />
+                    </svg>
+                </a>
+            @endcan
+            @can('delete', $application)
+                <a href="#" class="link basket delete"
+                   data-deletion-id="deleteApp{{ $application->id }}"
+                   data-message="Уверены что хотите удалить выбранный элемент?"
+                >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <g opacity="0.6">
+                            <path d="M5.83366 3.33317C5.83366 2.4127 6.57985 1.6665 7.50033 1.6665H12.5003C13.4208 1.6665 14.167 2.4127 14.167 3.33317V4.99984H15.8251C15.8302 4.99979 15.8354 4.99979 15.8405 4.99984H17.5003C17.9606 4.99984 18.3337 5.37293 18.3337 5.83317C18.3337 6.29341 17.9606 6.6665 17.5003 6.6665H16.6096L15.8868 16.7852C15.8245 17.6574 15.0988 18.3332 14.2244 18.3332H5.77626C4.90186 18.3332 4.17613 17.6574 4.11383 16.7852L3.39106 6.6665H2.50033C2.04009 6.6665 1.66699 6.29341 1.66699 5.83317C1.66699 5.37293 2.04009 4.99984 2.50033 4.99984H4.16011C4.16528 4.99979 4.17044 4.99979 4.17559 4.99984H5.83366V3.33317ZM7.50033 4.99984H12.5003V3.33317H7.50033V4.99984ZM5.06197 6.6665L5.77626 16.6665H14.2244L14.9387 6.6665H5.06197ZM8.33366 8.33317C8.7939 8.33317 9.16699 8.70627 9.16699 9.1665V14.1665C9.16699 14.6267 8.7939 14.9998 8.33366 14.9998C7.87342 14.9998 7.50033 14.6267 7.50033 14.1665V9.1665C7.50033 8.70627 7.87342 8.33317 8.33366 8.33317ZM11.667 8.33317C12.1272 8.33317 12.5003 8.70627 12.5003 9.1665V14.1665C12.5003 14.6267 12.1272 14.9998 11.667 14.9998C11.2068 14.9998 10.8337 14.6267 10.8337 14.1665V9.1665C10.8337 8.70627 11.2068 8.33317 11.667 8.33317Z"
+                                  fill="#EB5757" />
+                        </g>
+                    </svg>
+                </a>
+                <form id="deleteApp{{ $application->id }}" method="POST"
+                      action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            @endcan
         </div>
-                    <div class="d-flex">
-                        @can('application_to_inspection')
-                            <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Осмотр</a>
-                        @endcan
-                        @can('application_to_issue')
-                            @if($application->issuance)
-                                <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
-                                {{ route('application.issuance.create', ['application' => $application->id]) }}
-                                @else
-                                {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
-                                @endif" class="btn btn-success">Заявка на выдачу</a>
-                            @else
-                                <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
-                                {{ route('application.issuance.create', ['application' => $application->id]) }}
-                                @else
-                                {{ route('issue_requests.create', ['application' => $application->id]) }}
-                                @endif" class="btn btn-success">Выдача</a>
-                            @endif
-                        @endcan
-                    </div>
-            @endif
-    </div>
-</div>
-
-
-
-
-{{--@if($application->attachments->isNotEmpty())
-    <img src="{{ $application->attachments->first()->thumbnail_url }}" alt="" class="newpopup__img">
-@else
-    <img src="{{ $application->default_attachment->thumbnail_url }}" alt="" class="newpopup__img">
-@endif
-<div class="newpopup__left">
-    <h3 class="newcart__title">{{ $application->car_title }} <span class="newcart__repeat">Повтор</span></h3>
-    <ul class="newpopup__ul">
-        <li>
-            <span>
-                <span>Партнёр:</span>
-            </span>
-            <span>
-                <span>{{ $application->partner->name }}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span>VIN:</span>
-            </span>
-            <span>
-                <span>{{ $application->vin }}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span>Гос. номер:</span>
-            </span>
-            <span>
-                <span>{{ $application->license_plate }}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span> Номер Убытка/Договора:</span>
-            </span>
-            <span>
-                <span>{{ $application->external_id }}</span>
-            </span>
-        </li>
-    </ul>
-</div>
-<div class="newpopup__right">
-    <ul class="newpopup__statusinfo">
-        <li>
-            <span>
-                <span>Статус:</span>
-            </span>
-            <span>
-                <span class="status{{ $application->status->getColorClass() }}">{{$application->status->name}}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span>Хранение</span>
-            </span>
-            <span>
-                <span>{{ $application->formated_arrived_at }}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span>Дата выдачи:</span>
-            </span>
-            <span>
-                <span>{{ $application->formated_issued_at }}</span>
-            </span>
-        </li>
-        <li>
-            <span>
-                <span>Сумма перестоя:</span>
-            </span>
-            <span>
-                <span>{{ $application->parked_price_regular }} ({{ $application->parked_days_regular }} дн.)</span>
-            </span>
-        </li>
-    </ul>
-</div>
-<div class="newpopup__list d-flex">
-    <div class="newpopup__item">
-        <div class="newpopup__data dsactive">
-            <h3>Системные данные</h3>
-            <ul class="newpopup__ul">
-                <li>
-                    <span>
-                        <span>Стоянка:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->parking->title }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Принял:</span>
-                    </span>
-                    @if($application->acceptedBy)
-                        <span>
-                            <span>{{ $application->acceptedBy->name }}</span>
-                        </span>
+        @elseif($application->status->code == 'storage')
+            @hasanyrole('Admin|Manager')
+            <a href="{{ route('application.generate-act', ['application' => $application->id]) }}" class="link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C12.5523 2 13 2.44772 13 3V13.5858L15.2929 11.2929C15.6834 10.9024 16.3166 10.9024 16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L7.29289 12.7071C6.90237 12.3166 6.90237 11.6834 7.29289 11.2929C7.68342 10.9024 8.31658 10.9024 8.70711 11.2929L11 13.5858V3C11 2.44772 11.4477 2 12 2ZM5 17C5.55228 17 6 17.4477 6 18V20H18V18C18 17.4477 18.4477 17 19 17C19.5523 17 20 17.4477 20 18V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V18C4 17.4477 4.44772 17 5 17Z"
+                          fill="#536E9B" />
+                </svg>
+                Скачать акт
+            </a>
+            @endhasanyrole
+            @can('update', $application)
+                <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
+                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.2929 0.292893C13.6834 -0.0976311 14.3166 -0.0976311 14.7071 0.292893L18.7071 4.29289C19.0976 4.68342 19.0976 5.31658 18.7071 5.70711L5.70711 18.7071C5.51957 18.8946 5.26522 19 5 19H1C0.447715 19 0 18.5523 0 18V14C0 13.7348 0.105357 13.4804 0.292893 13.2929L10.2927 3.2931L13.2929 0.292893ZM11 5.41421L2 14.4142V17H4.58579L13.5858 8L11 5.41421ZM15 6.58579L16.5858 5L14 2.41421L12.4142 4L15 6.58579Z"
+                              fill="#536E9B" />
+                    </svg>
+                </a>
+            @endcan
+            @can('delete', $application)
+                <a href="#" class="link basket delete"
+                   data-deletion-id="deleteApp{{ $application->id }}"
+                   data-message="Уверены что хотите удалить выбранный элемент?"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <g opacity="0.6">
+                            <path d="M7 4C7 2.89543 7.89543 2 9 2H15C16.1046 2 17 2.89543 17 4V6H18.9897C18.9959 5.99994 19.0021 5.99994 19.0083 6H21C21.5523 6 22 6.44772 22 7C22 7.55228 21.5523 8 21 8H19.9311L19.0638 20.1425C18.989 21.1891 18.1182 22 17.0689 22H6.93112C5.88184 22 5.01096 21.1891 4.9362 20.1425L4.06888 8H3C2.44772 8 2 7.55228 2 7C2 6.44772 2.44772 6 3 6H4.99174C4.99795 5.99994 5.00414 5.99994 5.01032 6H7V4ZM9 6H15V4H9V6ZM6.07398 8L6.93112 20H17.0689L17.926 8H6.07398ZM10 10C10.5523 10 11 10.4477 11 11V17C11 17.5523 10.5523 18 10 18C9.44772 18 9 17.5523 9 17V11C9 10.4477 9.44772 10 10 10ZM14 10C14.5523 10 15 10.4477 15 11V17C15 17.5523 14.5523 18 14 18C13.4477 18 13 17.5523 13 17V11C13 10.4477 13.4477 10 14 10Z"
+                                  fill="#EB5757" />
+                        </g>
+                    </svg>
+                </a>
+                <form id="deleteApp{{ $application->id }}" method="POST"
+                      action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            @endcan
+        </div>
+            <div class="d-flex">
+            @can('application_to_inspection')
+                <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка на осмотр</a>
+            @endcan
+            @can('application_to_issue')
+                @if($application->issuance)
+                    <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                    {{ route('application.issuance.create', ['application' => $application->id]) }}
                     @else
-                        <span>
-                            <span>Не указан</span>
-                        </span>
-                    @endif
-                </li>
-                <li>
-                    <span>
-                        <span>Выдал:</span>
-                    </span>
-                    @if($application->issuedBy)
-                    <span>
-                        <span>{{ $application->issuedBy->name }}</span>
-                    </span>
+                    {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
+                    @endif" class="btn btn-success">Заявка на выдачу</a>
+                @else
+                    <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                    {{ route('application.issuance.create', ['application' => $application->id]) }}
                     @else
-                        <span>
-                            <span>Не указан</span>
-                        </span>
-                    @endif
-                </li>
-            </ul>
-        </div>
-        <div class="newpopup__data dsactive">
-            <h3>Административные данные</h3>
-            <ul class="newpopup__ul">
-                <li>
-                    <span>
-                        <span>ФИО доставщика:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->courier_fullname }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span><span>Телефон доставщика:</span></span>
-                    <span>
-                        <span>{{ $application->courier_phone }}</span>
-                    </span>
-                </li>
-            </ul>
-        </div>
-        <div class="newpopup__data dsactive">
-            <h3>Комментарий</h3>
-            <div class="newpopup__ul newpopup__coments">
-                {{ $application->car_additional }}
+                    {{ route('issue_requests.create', ['application' => $application->id]) }}
+                    @endif" class="btn btn-success">Заявка на выдачу</a>
+                @endif
+            @endcan
             </div>
-        </div>
-    </div>
-    <div class="newpopup__item">
-        <div class="newpopup__data dsactive">
-            <h3>Об автомобиле</h3>
-            <ul class="newpopup__ul">
-                <li>
-                    <span>
-                        <span>ПТС:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->pts }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Тип ПТС:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->pts_type }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>СТС:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->sts }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Пробег:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->milage }}</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Кол-во владельцев:</span>
-                    </span>
-                    <span>
-                        <span>@if($application->owner_number < 3) {{ $application->owner_number }} @else {{ $application->owner_number }} и более @endif</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Кол-во ключей:</span>
-                    </span>
-                    <span>
-                        <span>{{ $application->car_key_quantity }}</span>
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </div>
+        @endif
 
-    <div class="newpopup__item">
-        <div class="newpopup__data dsactive">
-            <h3>Техническое состояние</h3>
-            <ul class="newpopup__ul">
-                <li>
-                    <span>
-                        <span>Электроника:</span>
-                    </span>
-                    <span>
-                        <span>@if(!is_null($application->condition_electric)) {{ implode(', ', $application->condition_electric) }} @endif</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Трансмиссия:</span>
-                    </span>
-                    <span>
-                        <span>@if(!is_null($application->condition_transmission)) {{ implode(', ', $application->condition_transmission) }} @endif</span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <span>Двигатель:</span>
-                    </span>
-                    <span>
-                        <span>
-                            @if(!is_null($application->condition_engine)) {{ implode(', ', $application->condition_engine) }} @endif
-                        </span>
-                    </span>
-                </li>
-            </ul>
-        </div>
-        --}}{{--<div class="newpopup__data dsactive">
-            <h3>Повреждения кузова</h3>
-            <ul class="newpopup__ul">
-                <li>
-                                    <span>
-                                        <span>Переднее левое крыло:</span>
-                                    </span>
-                    <span>
-                                        <span>На замену, Скол/царапина</span>
-                                    </span>
-                </li>
-                <li>
-                                    <span>
-                                        <span>Переднее правое крыло:</span>
-                                    </span>
-                    <span>
-                                        <span>Вмятина, на замену</span>
-                                    </span>
-                </li>
-                <li>
-                                    <span>
-                                        <span>Дверь багажника:</span>
-                                    </span>
-                    <span>
-                                        <span>
-                                            Следы ремонта, Вмятина
-                                        </span>
-                                    </span>
-                </li>
-            </ul>
-        </div>
-        <div class="newpopup__data dsactive">
-            <h3>Повреждения салона</h3>
-            <ul class="newpopup__ul">
-                <li>
-                                    <span>
-                                        <span>Торпедо:</span>
-                                    </span>
-                    <span>
-                                        <span>Потёртость</span>
-                                    </span>
-                </li>
-                <li>
-                                    <span>
-                                        <span>Пол:</span>
-                                    </span>
-                    <span>
-                                        <span>Порез, Прожог, Грязь</span>
-                                    </span>
-                </li>
-                <li>
-                                    <span>
-                                        <span>Переднее правое
-                                            сидение:</span>
-                                    </span>
-                    <span>
-                                        <span>
-                                            Грязь, Потёртость
-                                        </span>
-                                    </span>
-                </li>
-                <li>
-                                    <span>
-                                        <span>Заднее сидение:</span>
-                                    </span>
-                    <span>
-                                        <span>
-                                            Порез
-                                        </span>
-                                    </span>
-                </li>
-            </ul>
-        </div>--}}{{--
+
     </div>
-</div>--}}
+</div>
+

@@ -1,4 +1,4 @@
-let uploaded = document.querySelector(`.uploaded`);
+/*let uploaded = document.querySelector(`.uploaded`);
 if(uploaded) {
     let mutationObserver = new MutationObserver(function (mutations) {
 
@@ -26,11 +26,11 @@ if(uploaded) {
             src: $(this).data('src')
         });
     });
-}
+}*/
 
-$(`.newcart__img a`).on('click', function(e){
+$(`body`).on('click', `.newcart__imgwrap a`, function(e){
     e.preventDefault();
-    let parentSlider = $(this).parents(`.newcart__img`);
+    let parentSlider = $(this).parents(`.car-slide`);
     let parentSlide = $(this).parents(`.slick-slide`);
     let gallery = $(`.slick-slide:not(.slick-cloned) a`, parentSlider);
     let totalSlides = parentSlider.slick("getSlick").slideCount,
@@ -39,8 +39,17 @@ $(`.newcart__img a`).on('click', function(e){
     $.fancybox.open(gallery, {
         beforeClose : function( instance, current, e ) {
             parentSlider.slick("slickGoTo", current.index)
-            console.log(current);
         }
     }, dataIndex);
+
+});
+
+$(`body`).on('click', `.page-file__zoom`, function(e){
+    e.preventDefault();
+    let gallery = $(`#images .page-file-item`);
+    let dataIndex = $(this).parents(`.page-file-item`).index() -1;
+
+    console.log(dataIndex)
+    $.fancybox.open(gallery, null, dataIndex);
 
 });

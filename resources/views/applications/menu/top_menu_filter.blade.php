@@ -14,8 +14,8 @@
         <li class="page-nav__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 1]) }}" class="page-nav__link">Черновики</a>
         </li>
-        <li class="page-nav__item{{ (request()->routeIs('application.accepting.request')) ? ' active' : '' }}">
-            <a href="{{ route('application.accepting.request') }}" class="page-nav__link">Постановка</a>
+        <li class="page-nav__item{{ (request()->route('status_id') == 7) ? ' active' : '' }}">
+            <a href="{{ route('applications.index', ['status_id' => 7]) }}" class="page-nav__link">Постановка</a>
         </li>
         <li class="page-nav__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
             <a href="{{ route('issue_requests.index') }}" class="page-nav__link">Выдача</a>
@@ -31,9 +31,11 @@
         <li class="page-nav__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="page-nav__link">Отклонено</a>
         </li>
+        @unlessrole('Operator')
         <li class="page-nav__item{{ request()->routeIs('applications.duplicate') ? ' active' : '' }}">
             <a href="{{ route('applications.duplicate') }}" class="page-nav__link">Дубли</a>
         </li>
+        @endunlessrole
         <li class="page-nav__item{{
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">

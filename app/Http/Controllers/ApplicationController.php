@@ -513,6 +513,13 @@ class ApplicationController extends AppController
 
         $isUpdate = $application->update($applicationData);
 
+        if ($application->status_id == 7) {
+            $application->issueAcceptions()->create([
+                'is_issue' => false,
+                'user_id' => auth()->id()
+            ]);
+        }
+
       /*  if ($applicationData['status_id'] != 1) {
             $application->issueAcceptions()->create([
                 'is_issue' => false

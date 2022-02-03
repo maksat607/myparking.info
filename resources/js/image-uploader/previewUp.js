@@ -29,7 +29,7 @@ const imageUpload = {
     },
     writeHtml(file){
 
-        let html = `<div class="page-file-item transfer">
+        let html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
                     <img src="${URL.createObjectURL(file)}" alt="">
                     <div class="page-file__option">
                         <button type="button" class="page-file__zoom"></button>

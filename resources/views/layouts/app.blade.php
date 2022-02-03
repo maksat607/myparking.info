@@ -44,6 +44,7 @@
                             {{ __('Applications') }}
                         </a>
                     </li>
+                    @hasanyrole('SuperAdmin|Admin|Manager|Partner')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">Таблицы</a>
                         <ul class="nav__item-dd-list">
@@ -85,17 +86,17 @@
                             @endcanany
                         </ul>
                     </li>
+                    @endhasanyrole
+                    @hasanyrole('SuperAdmin|Admin|Manager')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">{{ __('Report') }}</a>
                         <ul class="nav__item-dd-list">
-                            @unlessrole('Partner|PartnerOperator')
                             <li>
                                 <a href="{{ route('report.report-by-partner') }}">
                                     {{ __('Partner Report') }}
                                 </a>
                             </li>
-                            @endunlessrole
-                            @hasanyrole('SuperAdmin|Admin|Manager')
+
                             <li>
                                 <a href="{{ route('report.report-by-employee') }}">
                                     {{ __('Employee Report') }}
@@ -106,10 +107,9 @@
                                     {{ __('All Partners Report') }}
                                 </a>
                             </li>
-                            @endhasanyrole
-
                         </ul>
                     </li>
+                    @endhasanyrole
                     @hasanyrole('SuperAdmin')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">Настройки</a>
@@ -328,6 +328,11 @@
             @endif
             @yield('content')
         </main>
+        <div class="modal-block">
+
+        </div>
+
+        <div class="overlay"></div>
     </div>
 
     <script type="text/javascript">
