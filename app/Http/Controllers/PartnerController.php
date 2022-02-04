@@ -45,7 +45,7 @@ class PartnerController extends AppController
      */
     public function index()
     {
-        $partners = Partner::with('partnerType')->get();
+        $partners = Partner::with('partnerType')->orderBy('status', 'DESC')->paginate();
         $title = __('Partners');
 
         return view('partners.index', compact('title', 'partners'));

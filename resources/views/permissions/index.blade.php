@@ -1,120 +1,69 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="setting">
-        <div class="wrapper">
-            <h2 class="setting__title">{{ $title }}</h2>
-            <div class="setting__bar s-between">
-                <input type="text" class="input setting__search" placeholder="Поиск по столбцам">
-                <a class="btn blue-btn"
-                    onclick="event.preventDefault(); document.getElementById('savePermissions').submit(); return true">
-                    {{ __('Save') }}
-                </a>
-            </div>
-            <div class="table-response">
-                <form action="{{ route('permissions.sync') }}" method="POST" id="savePermissions">
-                    @csrf
-                    <table class="setting__table">
-                        <thead>
-                            <tr>
-                                <th scope="col">{{ __('Permissions') }}</th>
-                                @if (!empty($roles))
-                                    @foreach ($roles as $role)
-                                        <th scope="col">{{ $role->name }}</th>
-                                    @endforeach
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if(!empty($permissions))
-                                @foreach($permissions as $permission)
-                                    <tr>
-                                        <th scope="col">{{ $permission }}</th>
-                                        @if(!empty($roles))
-                                            @foreach($roles as $role)
-                                                <td scope="col">
-                                                    @if($role->hasPermissionTo($permission))
-                                                        <input name="{{ $role->name }}[]"
-                                                               checked
-                                                               type="checkbox" value="{{ $permission }}">
-                                                    @else
-                                                        <input name="{{ $role->name }}[]"
-                                                               type="checkbox" value="{{ $permission }}">
-                                                    @endif
-                                                </td>
-                                            @endforeach
-                                        @endif
-                                    </tr>
-                                @endforeach
-                            @endif
 
-                        </tbody>
-                    </table>
-                </form>
-            </div>
-        </div>
-    </section>
-    {{-- <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        {{ $title }}
-                        <div class="text-right my-2">
-                            <a class="btn btn-primary" onclick="event.preventDefault();
-                                                     document.getElementById('savePermissions').submit(); return true">
-                                {{ __('Save') }}
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-
-                            <form action="{{ route('permissions.sync') }}" method="POST" id="savePermissions">
-                                @csrf
-
-                                <table class="table">
-                                    <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">{{ __('Permissions') }}</th>
-                                        @if (!empty($roles))
-                                            @foreach ($roles as $role)
-                                                <th scope="col">{{ $role->name }}</th>
-                                            @endforeach
-                                        @endif
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (!empty($permissions))
-                                            @foreach ($permissions as $permission)
-                                                <tr>
-                                                    <th scope="col">{{ $permission }}</th>
-                                                    @if (!empty($roles))
-                                                        @foreach ($roles as $role)
-                                                            <td scope="col">
-                                                                @if ($role->hasPermissionTo($permission))
-                                                                    <input name="{{ $role->name }}[]"
-                                                                           checked
-                                                                           type="checkbox" value="{{ $permission }}">
-                                                                @else
-                                                                    <input name="{{ $role->name }}[]"
-                                                                           type="checkbox" value="{{ $permission }}">
-                                                                @endif
-                                                            </td>
-                                                        @endforeach
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        @endif
-
-                                    </tbody>
-                                </table>
-
-                            </form>
-
+    <form action="{{ route('permissions.sync') }}" method="POST" id="savePermissions">
+        @csrf
+        <div class="container page-head-wrap">
+            <div class="page-head">
+                <div class="page-head__top d-flex align-items-center">
+                    <h1>{{ $title }}</h1>
+                    <label class="field-style blue">
+                        <span>Поиск</span>
+                        <input type="text" placeholder="Поиск по столбцам">
+                    </label>
+                    <div class="ml-auto d-flex">
+                        <button class="btn btn-white">Сохранить</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div> --}}
+
+        <div class="container">
+            <div class="inner-page">
+                <table class="table text-center">
+                    <thead>
+                    <tr>
+                        <th class="text-left">Действие</th>
+                        @if (!empty($roles))
+                            @foreach ($roles as $role)
+                                <th><strong>{{ $role->name }}</strong></th>
+                            @endforeach
+                        @endif
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if(!empty($permissions))
+                        @foreach($permissions as $permission)
+                            <tr>
+                                <td class="text-left">{{ $permission }}</td>
+                                @if(!empty($roles))
+                                    @foreach($roles as $role)
+                                        <td>
+                                            @if($role->hasPermissionTo($permission))
+                                                <label class="checkbox-custom">
+                                                    <input name="{{ $role->name }}[]"
+                                                           checked
+                                                           type="checkbox" value="{{ $permission }}">
+                                                    <span></span>
+                                                </label>
+                                            @else
+                                                <label class="checkbox-custom">
+                                                    <input name="{{ $role->name }}[]"
+                                                           type="checkbox" value="{{ $permission }}">
+                                                    <span></span>
+                                                </label>
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                @endif
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
 @endsection
