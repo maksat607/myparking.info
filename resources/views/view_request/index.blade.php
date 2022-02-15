@@ -67,12 +67,14 @@
                                 <div class="status-table status-danger">Повтор</div>
                             @endif
                         </td>
+
                         <td>
                             <div class="car-dd">
                                 <div class="car-close-dd"></div>
                                 <div class="car-dd-body">
                                     @if($viewRequest->application->status->code == 'storage')
                                         @can('application_issue')
+                                            @if($viewRequest->application->issuance)
                                             <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
                                             {{ route('application.issuance.create', ['application' => $viewRequest->application->id]) }}
                                             @else
@@ -91,6 +93,26 @@
 
                                                 Выдача
                                             </a>
+                                            @else
+                                            <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                                                        {{ route('application.issuance.create', ['application' => $viewRequest->application->id]) }}
+                                                    @else
+                                                        {{ route('issue_requests.create', ['application' => $viewRequest->application->id]) }}
+                                                    @endif
+                                                " class="link text-success">
+                                                <svg class="car-dd-icon" width="21" height="20" viewBox="0 0 21 20"
+                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                          d="M18 11.6665C18 11.2063 17.6269 10.8332 17.1667 10.8332L7.16667 10.8332C5.78595 10.8332 4.66667 9.71388 4.66667 8.33317L4.66666 4.99984C4.66666 4.5396 4.29357 4.1665 3.83333 4.1665C3.37309 4.1665 3 4.5396 3 4.99984L3 8.33317C3 10.6344 4.86548 12.4998 7.16667 12.4998L17.1667 12.4998C17.6269 12.4998 18 12.1267 18 11.6665Z"
+                                                          fill="#27AE60" />
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                          d="M17.7559 12.2558C18.0814 11.9303 18.0814 11.4027 17.7559 11.0772L14.4226 7.74391C14.0972 7.41848 13.5695 7.41848 13.2441 7.74391C12.9186 8.06935 12.9186 8.59699 13.2441 8.92242L15.9882 11.6665L13.2441 14.4106C12.9186 14.736 12.9186 15.2637 13.2441 15.5891C13.5695 15.9145 14.0972 15.9145 14.4226 15.5891L17.7559 12.2558Z"
+                                                          fill="#27AE60" />
+                                                </svg>
+
+                                                Выдача
+                                            </a>
+                                            @endif
                                         @endcan
                                     @endif
                                     <a href="{{ route('view_requests.edit', [
