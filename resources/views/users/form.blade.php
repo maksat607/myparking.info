@@ -62,6 +62,20 @@
                                 </label>
                             </div>
                             <div class="col-6 mt-3">
+                                <label class="field-style">
+                                    <span>Тел</span>
+                                    <input id="phone" type="text" class="@error('phone') is-invalid @enderror" name="phone"
+                                           value="@if(isset($user)){{ $user->phone }}@else{{ old('phone') }}@endif"
+                                           required placeholder="Не указан">
+
+                                    @error('phone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </label>
+                            </div>
+                            <div class="col-6 mt-3">
                                 @hasanyrole('SuperAdmin|Admin|Manager')
                                 <label class="field-style">
                                     <span>Роль</span>

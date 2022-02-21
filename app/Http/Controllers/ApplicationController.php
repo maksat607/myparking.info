@@ -131,7 +131,7 @@ class ApplicationController extends AppController
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::statuses()->get();
+        $statuses = Status::statuses($application)->get();
 
 
         $title = __('Create a Request');
@@ -367,7 +367,7 @@ class ApplicationController extends AppController
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
 
-        $statuses = Status::statuses($application->acceptions)->get();
+        $statuses = Status::statuses($application)->get();
 
         extract($this->applicationUpdateData($application));
 
@@ -560,12 +560,9 @@ class ApplicationController extends AppController
     {
         $application = Application::application($id)->firstOrFail();
         $this->authorize('delete', $application);
-//        $application->client()->delete();
-//        $application->viewRequests()->delete();
-        $application->attachments->each(function ($item, $key) {
-            $this->AttachmentController->delete($item);
-        });
-        $result = Application::destroy($application->id);
+
+        $result = $application->update(['status_id' => 8]);
+
         if ( $result ) {
             Toastr::success(__('Deleted.'));
             return redirect()->back();

@@ -153,9 +153,13 @@ class ReportController extends Controller
         $partners = Partner::orderBy('name', 'ASC')->get();
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
-        $data = $this->dataByPartner($request);
+        $data = $this->dataByPartner($request, );
+
+        $orderBy = $request->get('order-by', 'asc');
+        $orderBy = $orderBy == 'asc' ? 'desc' : 'asc';
+
         $title = __('Partner Report');
-        return view('report.partner', compact('data', 'partners', 'parking', 'title'));
+        return view('report.partner', compact('data', 'partners', 'parking', 'title', 'orderBy'));
     }
     /**
      * Display a listing of the resource.
@@ -256,9 +260,8 @@ class ReportController extends Controller
             $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
         }
 
-        $applications = $applicationQuery
-            ->orderBy($sortBy, 'desc')
-            ->get();
+
+        $applications = $applicationQuery->get();
 
 //        print_r($applicationQuery
 //            ->orderBy($sortBy, 'desc')->toSql());

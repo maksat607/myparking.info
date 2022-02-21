@@ -477,7 +477,7 @@
             @endcan
             @can('delete', $application)
                 <a href="#" class="link basket delete"
-                   data-deletion-id="deleteApp{{ $application->id }}"
+                   data-deletion-id="deletePopup{{ $application->id }}"
                    data-message="Уверены что хотите удалить выбранный элемент?"
                 >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -488,7 +488,7 @@
                         </g>
                     </svg>
                 </a>
-                <form id="deleteApp{{ $application->id }}" method="POST"
+                <form id="deletePopup{{ $application->id }}" method="POST"
                       action="{{ route('applications.destroy', ['application' => $application->id]) }}">
                     @csrf
                     @method('DELETE')

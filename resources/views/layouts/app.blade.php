@@ -23,6 +23,8 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    @stack('style')
+
 </head>
 
 <body>
@@ -39,11 +41,24 @@
                             <a href="{{ route('applications.create') }}" class="nav__link">{{ __('Add a car') }}</a>
                         @endcan
                     </li>
-                    <li class="nav__item{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">
-                        <a class="nav__link" href="{{ route('applications.index') }}">
-                            {{ __('Applications') }}
-                        </a>
+                    <li class="nav__item nav__item-dd">
+                        <a href="{{ route('applications.index') }}" class="nav__link{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">{{ __('Applications') }}</a>
+                        <ul class="nav__item-dd-list">
+                            @unlessrole('Operator')
+                            <li class="{{ request()->routeIs('applications.duplicate') ? ' active' : '' }}">
+                                <a href="{{ route('applications.duplicate') }}">
+                                    Дубли
+                                </a>
+                            </li>
+                            <li class="{{ (request()->route('status_id') == 8) ? ' active' : '' }}">
+                                <a href="{{ route('applications.index', ['status_id' => 8]) }}">
+                                    Удаленные
+                                </a>
+                            </li>
+                            @endunlessrole
+                        </ul>
                     </li>
+
                     @hasanyrole('SuperAdmin|Admin|Manager|Partner')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">Таблицы</a>
@@ -335,6 +350,7 @@
         <div class="overlay"></div>
     </div>
 
+    @stack('script-includes')
     <script type="text/javascript">
         @stack('scripts')
     </script>

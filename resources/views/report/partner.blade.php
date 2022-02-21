@@ -8,39 +8,41 @@
                 <h1>{{ $title }}</h1>
             </div>
         </div>
-        <form action="{{ route('report.report-by-partner') }}" method="GET" class="filter d-flex align-items-center">
-            <label class="field-style">
-                <span>Партнер</span>
-                <select name="partner_id" class="page-select">
-                    <option hidden value="">Выберите партнера</option>
-                    @foreach($partners as $partner)
-                        <option @if(request()->query('partner_id') == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->name }}</option>
-                    @endforeach
-                </select>
-            </label>
-            <label class="field-style">
-                <span>Стоянка</span>
-                <select name="parking_id" class="page-select">
-                    <option hidden value="">Выберите стоянку</option>
-                    @foreach($parking as $p)
-                        <option @if(request()->query('parking_id') == $p->id) selected @endif value="{{ $p->id }}">{{ $p->title }}</option>
-                    @endforeach
-                </select>
-            </label>
-            <label class="field-style">
-                <span>Статус</span>
-                <select name="status_id" class="page-select">
-                    <option value="arrived">Были на Хранение</option>
-                    <option @if(request()->query('status_id') == 'issued') selected @endif value="issued">Выданные</option>
-                </select>
-            </label>
-            <label class="field-style">
-                <span>Даты отчёта</span>
-                <input type="text" class="date-range input" name="dates" value="">
-                @push('scripts')
-                    const dateReportRange = '{{ request()->query('dates', '') }}';
-                @endpush
-            </label>
+        <form action="{{ route('report.report-by-partner') }}" method="GET" class="filter">
+            <div class="d-flex align-items-center mb-3">
+                <label class="field-style">
+                    <span>Партнер</span>
+                    <select name="partner_id" class="page-select">
+                        <option hidden value="">Выберите партнера</option>
+                        @foreach($partners as $partner)
+                            <option @if(request()->query('partner_id') == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->name }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label class="field-style">
+                    <span>Стоянка</span>
+                    <select name="parking_id" class="page-select">
+                        <option hidden value="">Выберите стоянку</option>
+                        @foreach($parking as $p)
+                            <option @if(request()->query('parking_id') == $p->id) selected @endif value="{{ $p->id }}">{{ $p->title }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label class="field-style">
+                    <span>Статус</span>
+                    <select name="status_id" class="page-select">
+                        <option value="arrived">Были на Хранение</option>
+                        <option @if(request()->query('status_id') == 'issued') selected @endif value="issued">Выданные</option>
+                    </select>
+                </label>
+                <label class="field-style">
+                    <span>Даты отчёта</span>
+                    <input type="text" class="date-range input" name="dates" value="">
+                    @push('scripts')
+                        const dateReportRange = '{{ request()->query('dates', '') }}';
+                    @endpush
+                </label>
+            </div>
             <button type="submit" class="btn btn-primary ml-auto">Показать</button>
             <a href="{{ route('report.csv-by-partner', request()->query()) }}" class="btn btn-dowenload"></a>
         </form>
@@ -48,7 +50,7 @@
 
     <div class="container">
         <div class="inner-page">
-            <table class="table fs-13">
+            <table class="table fs-13 sortable">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -90,3 +92,15 @@
     </div>
 
 @endsection
+@push('style')
+    <style>
+        /* Sortable tables */
+        table.sortable thead {
+            cursor: pointer;
+        }
+    </style>
+@endpush
+
+@push('script-includes')
+    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+@endpush

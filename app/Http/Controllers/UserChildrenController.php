@@ -67,6 +67,7 @@ class UserChildrenController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'numeric'],
             'role' => ['exists:roles,name', 'required'],
             'status' => ['boolean'],
         ])->validate();
@@ -76,6 +77,7 @@ class UserChildrenController extends AppController
         $childData = [
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'status' => $request->status,
             'parent_id' => $id,
@@ -136,6 +138,7 @@ class UserChildrenController extends AppController
         Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($child->id)],
+            'phone' => ['required', 'numeric'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['exists:roles,name'],
             'status' => ['boolean'],
@@ -143,6 +146,7 @@ class UserChildrenController extends AppController
 
         $child->name = $request->name;
         $child->email = $request->email;
+        $child->phone = $request->phone;
         if(!is_null($request->password)) {
             $child->password = Hash::make($request->password);
         }

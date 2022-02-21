@@ -2308,8 +2308,8 @@ input.is-invalid {
 }
 .delete-popup__main {
     position: relative;
-    width: 20%;
-    padding: 10px;
+    width: 30%;
+    padding: 30px 10px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -2352,7 +2352,6 @@ input.is-invalid {
 .delete-popup__body {
     font-size: 22px;
     line-height: 28px;
-    padding-right: 16px;
     text-align: center;
     padding-bottom: 25px;
 }

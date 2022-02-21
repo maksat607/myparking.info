@@ -80,6 +80,7 @@ class UserController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'numeric'],
             'role' => ['exists:roles,name', 'required'],
             'status' => ['boolean'],
         ])->validate();
@@ -87,6 +88,7 @@ class UserController extends AppController
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'status' => $request->input('status', 0),
         ];
@@ -158,12 +160,14 @@ class UserController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'numeric'],
             'role' => ['exists:roles,name'],
             'status' => ['boolean'],
         ])->validate();
 
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone;
         if(!is_null($request->password)) {
             $user->password = Hash::make($request->password);
         }
