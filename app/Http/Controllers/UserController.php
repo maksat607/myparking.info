@@ -59,7 +59,7 @@ class UserController extends AppController
     public function create()
     {
         $this->authorize('issetPartnerOperator', auth()->user());
-        $roles = Role::all()->pluck('name');
+        $roles = Role::whereNotIn('name', ['Partner', 'PartnerOperator'])->pluck('name');
         $title = __('Create new user');
 
         return view('users.create', compact('roles', 'title'));
@@ -136,7 +136,14 @@ class UserController extends AppController
     {
         $user = User::user($id)->firstOrFail();
         $this->authorize('updateUser', $user);
-        $roles = Role::all()->pluck('name');
+        $roles = Role::query()
+            ->when($user->hasRole(['Partner']), function ($query){
+                $query->where('name', 'Partner');
+            })
+            ->when(!$user->hasRole(['Partner', 'PartnerOperator']), function ($query){
+                $query->whereNotIn('name', ['Partner', 'PartnerOperator']);
+            })
+            ->pluck('name');
 
         $title = __('Edit user :User', ['user' => $user->name]);
 

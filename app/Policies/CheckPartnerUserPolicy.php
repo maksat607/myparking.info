@@ -20,7 +20,6 @@ class CheckPartnerUserPolicy
      */
     public function issetPartnerUser(User $user, Partner $partner)
     {
-//        dump($partner->user);
         return (is_null($partner->user))
             ? Response::allow()
             : Response::deny(__('The partner already has a linked user!'));

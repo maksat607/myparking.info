@@ -118,7 +118,14 @@ class UserChildrenController extends AppController
     public function edit($user_id, $child_id)
     {
         $child = User::where('id', $child_id)->where('parent_id', $user_id)->firstOrFail();
-        $roles = Role::whereIn('name', ['Manager', 'Operator'])->pluck('name');
+        $roles = Role::query()
+            ->when($child->hasRole(['PartnerOperator']), function ($query){
+                $query->where('name', 'PartnerOperator');
+            })
+            ->when(!$child->hasRole(['Partner', 'PartnerOperator']), function ($query){
+                $query->whereIn('name', ['Manager', 'Operator']);
+            })
+        ->pluck('name');
         $title = __('Edit user :User', ['user' => $child->name]);
 
         return view('users.children.edit', compact('child', 'roles', 'title'));
@@ -157,7 +164,7 @@ class UserChildrenController extends AppController
         $child->assignRole($request->role);
 
         return ($child->save())
-            ? redirect()->route('users.children.index', ['user' => $user_id])->with('success', __('Saved.'))
+            ? redirect()->route('users.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
     }
 

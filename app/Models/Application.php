@@ -226,11 +226,8 @@ class Application extends Model
             return $query
                 ->whereIn('parking_id', $parkingsIds);
         } elseif($authUser->hasRole(['Partner'])) {
-            $childrenIds = $authUser->children()->without('owner')->get()->modelKeys();
-            $childrenIds[] = $authUser->id;
-            $childrenWithOwnerId = $childrenIds;
             return $query
-                ->whereIn('user_id', $childrenWithOwnerId);
+                ->where('partner_id', $authUser->partner->id);
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
@@ -241,10 +238,8 @@ class Application extends Model
             return $query
                 ->whereIn('parking_id', $parkingsIds);
         } elseif ($authUser->hasRole(['PartnerOperator'])) {
-            $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role(['Operator', 'PartnerOperator'])->get()->modelKeys();
-            $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
-                ->whereIn('user_id', $operatorWithOwnerId);
+                ->where('partner_id', $authUser->owner->partner->id);
         }
         return $query;
     }

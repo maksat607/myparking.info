@@ -43,8 +43,8 @@
                     </li>
                     <li class="nav__item nav__item-dd">
                         <a href="{{ route('applications.index') }}" class="nav__link{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">{{ __('Applications') }}</a>
+                        @unlessrole('Operator')
                         <ul class="nav__item-dd-list">
-                            @unlessrole('Operator')
                             <li class="{{ request()->routeIs('applications.duplicate') ? ' active' : '' }}">
                                 <a href="{{ route('applications.duplicate') }}">
                                     Дубли
@@ -55,8 +55,8 @@
                                     Удаленные
                                 </a>
                             </li>
-                            @endunlessrole
                         </ul>
+                        @endunlessrole
                     </li>
 
                     @hasanyrole('SuperAdmin|Admin|Manager|Partner')

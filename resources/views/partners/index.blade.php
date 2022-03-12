@@ -11,7 +11,7 @@
                     <input type="text" placeholder="Поиск по столбцам">
                 </label>
                 <div class="ml-auto d-flex">
-                    <button class="btn btn-white">Добавить</button>
+                    <a href="{{ route('partners.create') }}" class="btn btn-white">Добавить</a>
                 </div>
             </div>
         </div>
