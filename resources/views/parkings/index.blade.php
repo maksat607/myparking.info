@@ -9,9 +9,11 @@
                     <span>Поиск</span>
                     <input type="text" placeholder="Поиск по столбцам">
                 </label>
+                @can('parking_create')
                 <div class="ml-auto d-flex">
                     <a class="btn btn-white" href="{{ route('parkings.create') }}">{{ __('Create') }}</a>
                 </div>
+                @endcan
             </div>
         </div>
     </div>

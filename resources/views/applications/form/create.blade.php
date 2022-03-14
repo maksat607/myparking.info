@@ -114,7 +114,7 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Телефон собствениика</span>
-                                        <input type="text" name="app_data[courier_phone]"
+                                        <input type="tel" name="app_data[courier_phone]"
                                                value="{{ old('app_data.courier_phone') }}"
                                                placeholder="+7 (___) ___-__-__">
                                     </label>
@@ -599,12 +599,12 @@
                                     <label class="field-style">
                                         <span>ПТС</span>
                                         <div class="d-flex two-field">
-                                            <input id="pts_type_input" name="car_data[pts_type]" value="{{ old('car_data.pts_type') }}" type="text" placeholder="Не указан">
-                                            <select id="pts_type" class="page-select">
+                                            <input id="pts_type_input" name="car_data[pts_]" value="{{ old('car_data.pts') }}" type="text" placeholder="Не указан">
+                                            <select id="pts_type" name="car_data[pts_type]" class="page-select">
                                                 <option selected hidden disabled value="">{{ __('Select a pts type..') }}</option>
-                                                <option value="Электронный">Электронный</option>
-                                                <option value="Оригинал">Оригинал</option>
-                                                <option value="Дубликат">Дубликат</option>
+                                                <option @if(old('car_data.pts_type') == 'Электронный') selected @endif value="Электронный">Электронный</option>
+                                                <option @if(old('car_data.pts_type') == 'Оригинал') selected @endif value="Оригинал">Оригинал</option>
+                                                <option @if(old('car_data.pts_type') == 'Дубликат') selected @endif value="Дубликат">Дубликат</option>
                                             </select>
                                         </div>
                                     </label>

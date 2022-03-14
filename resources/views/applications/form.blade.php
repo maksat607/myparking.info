@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="tabform__inputwrap">
                                     <label>Телефон собственника</label>
-                                    <input type="text" name="app_data[courier_phone]" placeholder="+7 (___) ___-__-__">
+                                    <input type="tel" name="app_data[courier_phone]" placeholder="+7 (___) ___-__-__">
                                 </div>
                             </div>
                         </div>

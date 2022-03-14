@@ -267,6 +267,10 @@
                         <span>Двигатель</span>
                         @if(!is_null($application->condition_engine)) {{ implode(', ', $application->condition_engine) }} @endif
                     </div>
+                    <div class="info-item">
+                        <span>Ходовая</span>
+                        @if(!is_null($application->condition_gear)) {{ implode(', ', $application->condition_gear) }} @endif
+                    </div>
                 </div>
                 {{--<div class="tab-pane fade" id="v-pills-tab7" role="tabpanel"
                      aria-labelledby="v-pills-tab7-tab">

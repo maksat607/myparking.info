@@ -18,4 +18,4 @@ const ptsType = {
     }
 }
 
-ptsType.init();
+// ptsType.init();
