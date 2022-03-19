@@ -84,7 +84,6 @@ class PartnerUserController extends Controller
 
         } catch (QueryException $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
         }
     }

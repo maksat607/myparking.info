@@ -150,3 +150,13 @@ function confirmDelete(event) {
         $(this).removeClass("hide").dequeue();
     });
 }
+
+$('.chech-dd').on('change', function() {
+    if ($(this).is(":checked")) {
+        $(this).parent().siblings('.chech-dd-list').slideDown();
+        $(this).parent().siblings('.chech-dd-list').addClass('active');
+    } else {
+        $(this).parent().siblings('.chech-dd-list').slideUp();
+        $(this).parent().siblings('.chech-dd-list').removeClass('active');
+    }
+})

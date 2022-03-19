@@ -7,7 +7,6 @@
         <div class="container page-head-wrap">
             <div class="page-head">
                 <div class="page-head__top d-flex align-items-center">
-                    <a href="#" class="page-head__cancel">Отменить</a>
                     <h1>{{ $title }}</h1>
                     <div class="ml-auto d-flex">
                         <button class="btn btn-white">Выдать</button>
@@ -19,7 +18,7 @@
         <div class="container">
             <div class="inner-page">
                 <div class="row no-gutters">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="inner-page__item">
                             <div class="inner-item-title">
                                 Информация об авто
@@ -200,56 +199,6 @@
                                         <button type="button" class="page-file__download"></button>
                                         <button type="button" class="page-file__delete"></button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="sidebar">
-                            <div class="sidebar__title">
-                                Чек-лист оформления
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Дата
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Дата выдачи</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Промежуток времени</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Ифнормация о выдаче
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Название организации</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">ИНН</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">ФИО доверенного лица</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Телефон доверенного лица</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Документы
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Документы</span>
-                                    <span class="sidebar__icon"></span>
                                 </div>
                             </div>
                         </div>

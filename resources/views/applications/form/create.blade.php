@@ -56,7 +56,7 @@
             </div>
             <div class="tab-content tab-content-main col-md-12">
                 <div class="row no-gutters tab-pane fade show active" id="v-pills-1">
-                    <div class="col-md-8 main-col">
+                    <div class="col-md-12 main-col">
                         <div class="inner-page__item">
                             <div class="inner-item-title">
                                 Административная информация
@@ -238,112 +238,17 @@
 
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="sidebar">
-
-                            <div class="sidebar__title">
-                                Обозначения
-                            </div>
-                            <div class="sidebar__item">
-                                <ul class="conformity-status-list">
-                                    <li>
-                                        <span class="conformity-success conformity__icon">Х</span>
-                                        Авто на хранении
-                                    </li>
-                                    <li>
-                                        <span class="conformity-warning conformity__icon">зХ</span>
-                                        Заявка на хранение
-                                    </li>
-                                    <li>
-                                        <span class="conformity-orange conformity__icon">О</span>
-                                        Заявка на осмотр
-                                    </li>
-                                    <li>
-                                        <span class="conformity-primary conformity__icon">зВ</span>
-                                        Заявка на выдачу
-                                    </li>
-                                    <li>
-                                        <span class="conformity-dark conformity__icon">В</span>
-                                        Авто выдано
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="sidebar__title">
-                                Чек-лист оформления
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Административные данные
-                                </div>
-                                <div
-                                    class="check-valid sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">VIN / Номер кузова</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div
-                                    class="check-invalid sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Государственный номер</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    О собственнике
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">ФИО собственника</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Телефон собственника</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Системная информация
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Партнёр*</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Стоянка*</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Номер убытка / договора*</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Дата
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Дата постановки</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Промежуток времени</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="row no-gutters tab-pane fade" id="v-pills-2">
-                    <div class="col-md-8 main-col">
+                    <div class="col-md-12 main-col">
                         <div class="inner-page__item">
                             <div class="inner-item-title">
                                 Марка и модель
                             </div>
-                            <div class="row">
+                            <div class="row mr-offset-20">
                                 <div class="col-12">
-                                    <div class="tabform__cartlist d-flex">
-                                        <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model mt-0" id="types">
+                                    <div class="tabform__cartlist w-100 d-flex">
+                                        <fieldset class="tabform__cart select first-cart car_type_id fieldset new-style-model" id="types">
                                             <legend class="legend">{{ __('The type of car...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -362,7 +267,7 @@
                                                 </ul>
                                             </div>
                                         </fieldset>
-                                        <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto mt-0" id="marks" data-id="selectGroup">
+                                        <fieldset class="tabform__cart select car_mark_id fieldset new-style-model" id="marks" data-id="selectGroup">
                                             <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -380,7 +285,7 @@
                                                 </ul>
                                             </div>
                                         </fieldset>
-                                        <fieldset class="tabform__cart select year fieldset new-style-model ml-auto" id="years" data-id="selectGroup">
+                                        <fieldset class="tabform__cart select year fieldset new-style-model" id="years" data-id="selectGroup">
                                             <legend class="legend">{{ __('The year of the car...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd type-card">
                                                 <input type="text" placeholder="Поиск" class="select-search">
@@ -389,52 +294,15 @@
                                                 </ul>
                                             </div>
                                         </fieldset>
-                                        <div id="textArea" class="d-none ml-auto">
+                                        <div id="textArea" class="d-none col">
                                             <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
-                                            <textarea class="form-control" id="autoDesc"
+                                            <textarea class="form-control mw-100" id="autoDesc"
                                                       rows="4"
                                                       name="car_data[car_title]"
                                                       value="{{ old('car_data.car_title') }}"
                                             ></textarea>
                                         </div>
                                     </div>
-                                    {{--<fieldset class="fieldset">
-                                        <legend class="legend">Тип автомобиля</legend>
-                                        <div class="d-flex">
-                                            <div class="type-card">
-                                                <input type="text" placeholder="Поиск">
-                                                <ul class="type-list">
-                                                    <li class="type-item active">Легковой автомобиль</li>
-                                                    <li class="type-item">Автобус</li>
-                                                    <li class="type-item">Автокраны</li>
-                                                    <li class="type-item">Автопогрузчики</li>
-                                                    <li class="type-item">Автопоезд/ТС на сцепке</li>
-                                                    <li class="type-item">Бульдозеры</li>
-                                                    <li class="type-item">Грузовик</li>
-                                                </ul>
-                                            </div>
-                                            <div class="type-card-info">
-                                                <ul class="type-info">
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Тип автомобиля</span>
-                                                        <div>Легковой автомобиль</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Марка</span>
-                                                        <div>BMW</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Модель</span>
-                                                        <div>1 серия</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Год выпуска</span>
-                                                        <span>Не указан</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </fieldset>--}}
                                 </div>
                             </div>
                         </div>
@@ -444,7 +312,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="tabform__cartlist tabform__cartlist-col-3 d-flex">
+                                    <div class="tabform__cartlist tabform__cartlist-col-3 d-flex justify-content-between">
                                         <fieldset class="tabform__cart select cart-3 fieldset" id="generations">
                                             <legend class="legend">{{ __('Generation...') }} <span class="mob-arrow"></span></legend>
                                             <div class="tabform__mob-dd">
@@ -500,48 +368,7 @@
                                             </div>
                                         </fieldset>
                                     </div>
-                                    {{--<fieldset class="fieldset">
-                                        <legend class="legend">Поколение</legend>
-                                        <div class="d-flex">
-                                            <div class="type-card">
-                                                <input type="text" placeholder="Поиск">
-                                                <ul class="type-list">
-                                                    <li class="type-item active">F20/F21 [рестайлинг]</li>
-                                                    <li class="type-item">F52</li>
-                                                    <li class="type-item">F40</li>
-                                                </ul>
-                                            </div>
-                                            <div class="type-card-info">
-                                                <ul class="type-info">
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Поколение</span>
-                                                        <div>F20/F21 [рестайлинг]</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Кузов</span>
-                                                        <div>Седан</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Модификация</span>
-                                                        <div>118i Steptronic (136 л.с.)</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Двигатель</span>
-                                                        <div>Бензиновый</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">КПП</span>
-                                                        <div>Автомат</div>
-                                                    </li>
-                                                    <li class="type-info-item">
-                                                        <span class="type-info-title">Привод</span>
-                                                        <div>Передний</div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </fieldset>--}}
-                                </div>
+\                                </div>
                             </div>
                         </div>
                         <div class="inner-page__item">
@@ -554,24 +381,12 @@
                                         <span>VIN</span>
                                         <input class="vin" type="text" placeholder="Не указан" value="XTA210600C0000001">
                                     </label>
-                                    {{--<label class="field-style mt-3">
-                                        <span>VIN</span>
-                                        <input type="text" placeholder="Не указан" value="XTA210600C0000001">
-                                        <button type="button" class="add"></button>
-                                    </label>--}}
                                 </div>
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Гос. номер</span>
                                         <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">
                                     </label>
-                                    {{--<div class="mt-2">
-                                        <label class="switch-radio-wrap">
-                                            <input type="checkbox">
-                                            <span class="switcher-radio"></span>
-                                            <span>Нет учёта</span>
-                                        </label>
-                                    </div>--}}
                                 </div>
                             </div>
                         </div>
@@ -625,54 +440,55 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="inner-page__item-title">Кол-во владельцев</div>
-                                    <div class="mt-2 mb-3">
-                                        <label class="switch-radio-wrap">
-                                            <input @if(old('car_data.owner_number') == 1){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="1">
-                                            <span class="switcher-radio"></span>
-                                            <span>Первый</span>
-                                        </label>
+                                    <div class="d-flex radio-check-list">
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if(old('car_data.owner_number') == 1){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="1">
+                                                <span class="switcher-radio"></span>
+                                                <span>Первый</span>
+                                            </label>
+                                        </div>
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if(old('car_data.owner_number') == 2){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="2">
+                                                <span class="switcher-radio"></span>
+                                                <span>Второй</span>
+                                            </label>
+                                        </div>
+                                        <div class="mt-2 mb-3">
+                                            <label class="switch-radio-wrap">
+                                                <input @if(old('car_data.owner_number') == 3){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="3">
+                                                <span class="switcher-radio"></span>
+                                                <span>Третий и более</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="mt-2 mb-3">
-                                        <label class="switch-radio-wrap">
-                                            <input @if(old('car_data.owner_number') == 2){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="2">
-                                            <span class="switcher-radio"></span>
-                                            <span>Второй</span>
-                                        </label>
-                                    </div>
-                                    <div class="mt-2 mb-3">
-                                        <label class="switch-radio-wrap">
-                                            <input @if(old('car_data.owner_number') == 3){{ 'checked' }}@endif type="radio" name="car_data[owner_number]" value="3">
-                                            <span class="switcher-radio"></span>
-                                            <span>Третий и более</span>
-                                        </label>
-                                    </div>
-
                                 </div>
                                 <div class="col-6">
                                     <div class="inner-page__item-title">Кол-во ключей</div>
-                                    <div class="row">
-                                        <div class="col-5 mt-2 mb-3">
+                                    <div class="d-flex radio-check-list">
+                                        <div class="mt-2 mb-3">
                                             <label class="switch-radio-wrap">
                                                 <input @if(is_null(old('car_data.car_key_quantity')) || old('car_data.car_key_quantity') == '0'){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="0">
                                                 <span class="switcher-radio"></span>
                                                 <span>0</span>
                                             </label>
                                         </div>
-                                        <div class="col-5 mt-2 mb-3">
+                                        <div class="mt-2 mb-3">
                                             <label class="switch-radio-wrap">
                                                 <input @if(old('car_data.car_key_quantity') == 1){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="1">
                                                 <span class="switcher-radio"></span>
                                                 <span>1</span>
                                             </label>
                                         </div>
-                                        <div class="col-5 mt-2 mb-3">
+                                        <div class="mt-2 mb-3">
                                             <label class="switch-radio-wrap">
                                                 <input @if(old('car_data.car_key_quantity') == 2){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="2">
                                                 <span class="switcher-radio"></span>
                                                 <span>2</span>
                                             </label>
                                         </div>
-                                        <div class="col-5 mt-2 mb-3">
+                                        <div class="mt-2 mb-3">
                                             <label class="switch-radio-wrap">
                                                 <input @if(old('car_data.car_key_quantity') == 3){{ 'checked' }}@endif type="radio" name="car_data[car_key_quantity]" value="3">
                                                 <span class="switcher-radio"></span>
@@ -680,7 +496,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="row mt-5">
@@ -715,7 +530,108 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <fieldset class="fieldset">
+                                    <div class="row radio-check-list">
+                                        <div class="col-3 mt-2 mb-3">
+                                            <label class="switch-radio-wrap bold">
+                                                <input type="checkbox" name="car_data[condition_engine][]" value="" class="chech-dd">
+                                                <span class="switcher-radio"></span>
+                                                <span>Неисправности
+                                                        двигателя</span>
+                                            </label>
+                                            <div class="chech-dd-list">
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_engine][]" value="Дымность двигателя (густой, белый, сизый, черный)">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Дымность двигателя (густой,
+                                                            белый, сизый, черный)</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный стук и шум при работе двигателя">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Повышенный стук и шум при
+                                                            работе двигателя</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_engine][]" value="Повышенный шум при работе выхлопной системы">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Повышенный шум при работе
+                                                            выхлопной системы</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_engine][]" value="Подтекание при осмотре подкапотного пространства">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Подтекание при осмотре
+                                                            подкапотного пространства</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-2 mb-3">
+                                            <label class="switch-radio-wrap bold">
+                                                <input type="checkbox" name="car_data[condition_transmission][]" value="" class="chech-dd">
+                                                <span class="switcher-radio"></span>
+                                                <span>Неисправности КПП</span>
+                                            </label>
+                                            <div class="chech-dd-list" id="">
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_transmission][]" value="Рывки и толчки авто при переключении">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Рывки и толчки авто при
+                                                            переключении</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_transmission][]" value="Повышенный шум при переключении">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Повышенный шум при
+                                                            переключении</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-2 mb-3">
+                                            <label class="switch-radio-wrap bold">
+                                                <input type="checkbox" name="car_data[condition_electric][]" value="" class="chech-dd">
+                                                <span class="switcher-radio"></span>
+                                                <span>Неисправности
+                                                        электрики</span>
+                                            </label>
+                                            <div class="chech-dd-list" id="">
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_electric][]" value="Ошибки на панели приборов при заведенном ДВС">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Ошибки на панели приборов при
+                                                            заведенном ДВС</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_electric][]" value="Неправильные команды электроники">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Неправильные команды
+                                                            электроники</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-2 mb-3">
+                                            <label class="switch-radio-wrap bold">
+                                                <input type="checkbox" name="car_data[condition_gear][]" value="" class="chech-dd">
+                                                <span class="switcher-radio"></span>
+                                                <span>Неисправности
+                                                        ходовой</span>
+                                            </label>
+                                            <div class="chech-dd-list" id="">
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_gear][]" value="Посторонний звук со стороны ходовой">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Посторонний звук со стороны
+                                                            ходовой</span>
+                                                </label>
+                                                <label class="switch-radio-wrap d-flex mb-3">
+                                                    <input type="checkbox" name="car_data[condition_gear][]" value="Посторонние звуки при вращении рулевого колеса">
+                                                    <span class="switcher-radio ml-auto"></span>
+                                                    <span class="check-box-text">Посторонние звуки при вращении
+                                                            рулевого колеса</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{--<fieldset class="fieldset">
                                         <legend class="legend">Неисправности</legend>
                                         <div class="d-flex">
                                             <div class="type-card parts-list tab-checkbox" id="tab-checkbox" role="tablist">
@@ -808,7 +724,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </fieldset>
+                                    </fieldset>--}}
                                 </div>
                             </div>
                             {{--<div class="row mt-5">
@@ -850,28 +766,6 @@
                                     </svg>
                                 </div>
 
-                                {{--<div class="page-file-item">
-                                    <img src="" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <img src="" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <img src="" alt="">
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__zoom"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>--}}
-
                             </div>
                             <input type="file" id="uploader" name="images[]" class="d-none" multiple>
                         </div>
@@ -882,170 +776,10 @@
                             <div class="field-style">
                                 <span>Описание</span>
                                 <textarea name="car_data[car_additional]"
-                                          id="car_additional" placeholder="Не указан">{{ old('car_data.car_additional') }}</textarea>
+                                          id="car_additional" placeholder="Не указан" class="mw-100">{{ old('car_data.car_additional') }}</textarea>
                             </div>
                         </div>
                         <div id="hiddenInputs"></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="sidebar">
-                            <div class="sidebar__title">
-                                Чек-лист оформления
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Марка и модель
-                                </div>
-                                <div
-                                    class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Тип автомобиля</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div
-                                    class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Марка</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div
-                                    class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Модель</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div
-                                    class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Год выпуска</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Поколение и модификация
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Поколение</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Кузов</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Модификация</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Двигатель</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">КПП</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Привод</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Административная информация
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">VIN</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Гос. номер</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Документы
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">СТС</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">ПТС</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Информация об автомобиле
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Кол-во владельцев</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Кол-во ключей</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Пробег</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Цвет</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Тех. состояние
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Двигатель</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">КПП</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Электрика</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Ходовая</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Кузов</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Салон</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Фотографии
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Фотографии</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                            <div class="sidebar__item">
-                                <div class="sidebar-item-title">
-                                    Дополнительно
-                                </div>
-                                <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                    <span class="sidebar__check-name">Описание</span>
-                                    <span class="sidebar__icon"></span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

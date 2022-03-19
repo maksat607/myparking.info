@@ -536,8 +536,8 @@ class ApplicationController extends AppController
         }
 
         if ($isUpdate) {
-            Toastr::success(__('Saved.'));
-            return redirect()->route('applications.index', ['application' => $application->id]);
+            Toastr::success(__('Updated.'));
+            return redirect()->route('applications.index', ['status_id' => $application->status->id]);
         }
 
         Toastr::error(__('Error'));
