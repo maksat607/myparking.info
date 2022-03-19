@@ -8,7 +8,6 @@
         <div class="container page-head-wrap">
             <div class="page-head">
                 <div class="page-head__top d-flex align-items-center">
-                    <a href="#" class="page-head__cancel">Отменить</a>
                     <h1>{{ $title }}</h1>
                     <div class="ml-auto d-flex">
                         <label class="field-style">
