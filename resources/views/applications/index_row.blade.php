@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@dd($application)
 @section('content')
     @include('applications.menu.top_menu_filter')
     <section class="car-row">
