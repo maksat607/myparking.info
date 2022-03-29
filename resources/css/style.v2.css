@@ -3031,9 +3031,9 @@ span.serch-overlap {
 }
 
 
-/*Modal Delete*/
+/*Modal Confirm*/
 
-.delete-popup {
+.confirm-popup {
     width: 100%;
     height: 100%;
     position: fixed;
@@ -3048,11 +3048,11 @@ span.serch-overlap {
     z-index: 999;
 }
 
-.delete-popup.hide {
+.confirm-popup.hide {
     opacity: 0;
 }
 
-.delete-popup__main {
+.confirm-popup__main {
     position: relative;
     width: 30%;
     padding: 30px 10px;
@@ -3063,8 +3063,8 @@ span.serch-overlap {
     align-items: center;
 }
 
-.delete-popup__close:before,
-.delete-popup__close:after {
+.confirm-popup__close:before,
+.confirm-popup__close:after {
     content: "";
     width: 16px;
     height: 1px;
@@ -3074,15 +3074,15 @@ span.serch-overlap {
     left: 0%;
 }
 
-.delete-popup__close:before {
+.confirm-popup__close:before {
     transform: rotate(45deg);
 }
 
-.delete-popup__close:after {
+.confirm-popup__close:after {
     transform: rotate(-45deg);
 }
 
-.delete-popup__close {
+.confirm-popup__close {
     width: 16px;
     height: 16px;
     position: absolute;
@@ -3092,24 +3092,24 @@ span.serch-overlap {
     cursor: pointer;
 }
 
-.delete-popup__top,
-.delete-popup__bottom {
+.confirm-popup__top,
+.confirm-popup__bottom {
     width: 100%;
 }
 
-.delete-popup__bottom {
+.confirm-popup__bottom {
     display: flex;
     justify-content: space-around;
 }
 
-.delete-popup__body {
+.confirm-popup__body {
     font-size: 22px;
     line-height: 28px;
     text-align: center;
     padding-bottom: 25px;
 }
 
-.delete-popup__bottom>button {
+.confirm-popup__bottom>button {
     padding: 9px 26px;
     border-radius: 5px;
     font-size: 18px;

@@ -103,19 +103,25 @@ $(`.overlay`).on('click', function(){
     $(this).removeClass('active');
 });
 
-$(`body`).on('click', `.delete`, confirmDelete);
-$(`body`).on('click', `#deletePopup button, #deletePopup .delete-popup__close`, function(event){
+$(`body`).on('click', `.delete`, confirmUp);
+$(`body`).on('click', `.deny`, confirmUp);
+$(`body`).on('click', `#confirmPopup button, #confirmPopup .confirm-popup__close`, function(event){
     event.preventDefault();
-    let deletionId = $(this).data('deletion-id');
-    if(deletionId) {
-        $(`#${deletionId}`).submit();
+    let confirmId = $(this).data('confirm-id');
+    let confirmType = $(this).data('confirm-type');
+    let confirmUrl = $(this).data('confirm-url');
+
+    if(confirmId && confirmType == "delete") {
+        $(`#${confirmId}`).submit();
+    } else if(confirmId && confirmUrl != '' && confirmType == "deny") {
+        window.location.href = confirmUrl;
     } else {
-        closeDeletePopup(this)
+        closeConfirmUp(this)
     }
 });
 
-function closeDeletePopup(self) {
-    $(self).parents(`#deletePopup`)
+function closeConfirmUp(self) {
+    $(self).parents(`#confirmPopup`)
         .addClass('hide')
         .delay(500).queue(function(){
         $(this).remove().dequeue();
@@ -123,30 +129,35 @@ function closeDeletePopup(self) {
 }
 
 
-function confirmDelete(event) {
+function confirmUp(event) {
     event.preventDefault();
-    let deletionId = $(this).data('deletion-id'),
-        message = $(this).data('message') ? $(this).data('message') : 'Удалить выбранный элемент?';
+    let confirmId = $(this).data('confirm-id'),
+        confirmType = $(this).data('confirm-type'),
+        confirmUrl = $(this).data('confirm-url'),
+        message = $(this).data('confirm-message') ? $(this).data('confirm-message') : 'Удалить выбранный элемент?';
 
 
-    let popupHtml = `<div id="deletePopup" class="delete-popup hide">`;
-            popupHtml += `<div class="delete-popup__main">`;
-                popupHtml += `<div class="delete-popup__close"></div>`;
-                popupHtml += `<div class="delete-popup__top">`;
-                    popupHtml += `<div class="delete-popup__body">`;
+    let popupHtml = `<div id="confirmPopup" class="confirm-popup hide">`;
+            popupHtml += `<div class="confirm-popup__main">`;
+                popupHtml += `<div class="confirm-popup__close"></div>`;
+                popupHtml += `<div class="confirm-popup__top">`;
+                    popupHtml += `<div class="confirm-popup__body">`;
                         popupHtml += message;
                     popupHtml += `</div>`;
                 popupHtml += `</div>`;
-                popupHtml += `<div class="delete-popup__bottom">`;
-                    popupHtml += `<button class="btn btn-success" type="button" data-deletion-id="${deletionId}">Да</button>`;
+                popupHtml += `<div class="confirm-popup__bottom">`;
+                    popupHtml += `<button class="btn btn-success" type="button" \
+                                    data-confirm-type="${confirmType}" \
+                                    data-confirm-url="${confirmUrl}" \
+                                    data-confirm-id="${confirmId}">Да</button>`;
                     popupHtml += `<button class="btn btn-danger" type="button">Нет</button>`;
                 popupHtml += `</div>`;
             popupHtml += `</div>`;
         popupHtml += `</div>`;
 
-    $(`#deletePopup`, `body`).remove()
+    $(`#confirmPopup`, `body`).remove()
     $(`body`).append(popupHtml);
-    $(`#deletePopup`, `body`).delay(500).queue(function(){
+    $(`#confirmPopup`, `body`).delay(500).queue(function(){
         $(this).removeClass("hide").dequeue();
     });
 }

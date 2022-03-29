@@ -154,7 +154,12 @@
                                 @if($application->acceptions && $user->hasRole(['SuperAdmin', 'Admin', 'Manager']))
                                     @can('application_to_accepted')
                                         <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="btn btn-success">Принять</a>
-                                        <a href="{{ route('application.deny', ['application_id' => $application->id]) }}" class="btn btn-danger">Отклонить</a>
+                                        <a href="{{ route('application.deny', ['application_id' => $application->id]) }}"
+                                           data-confirm-id="{{ $application->id }}"
+                                           data-confirm-url="{{ route('application.deny', ['application_id' => $application->id]) }}"
+                                           data-confirm-type="deny"
+                                           data-confirm-message="Уверены что хотите отклонить?"
+                                           class="btn btn-danger deny">Отклонить</a>
                                     @endcan
                                 @elseif(
                                         ($application->acceptions ||
@@ -172,8 +177,9 @@
                                     @endcan
                                     @can('delete', $application)
                                         <a href="#" class="link basket delete"
-                                           data-deletion-id="deleteApp{{ $application->id }}"
-                                           data-message="Уверены что хотите удалить выбранный элемент?"
+                                           data-confirm-id="deleteApp{{ $application->id }}"
+                                           data-confirm-type="delete"
+                                           data-confirm-message="Уверены что хотите удалить выбранный элемент?"
                                         >
                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
@@ -211,8 +217,9 @@
                                     @endcan
                                     @can('delete', $application)
                                         <a href="#" class="link basket delete"
-                                           data-deletion-id="deleteApp{{ $application->id }}"
-                                           data-message="Уверены что хотите удалить выбранный элемент?"
+                                           data-confirm-id="deleteApp{{ $application->id }}"
+                                           data-confirm-type="delete"
+                                           data-confirm-message="Уверены что хотите удалить выбранный элемент?"
                                         >
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
