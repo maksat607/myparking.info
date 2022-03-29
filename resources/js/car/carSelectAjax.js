@@ -261,7 +261,16 @@ const carSelectAjax = {
             html += `</li>`;
         });
 
+        self.activeOneElement(selectId);
         $(`#${selectId} .select-list`).html(html);
+    },
+    activeOneElement(selectId) {
+        $.when($(`#${selectId} .select-list`))
+            .then((response) => {
+                    if(response.find('li').length == 1) {
+                        response.find('a').trigger('click');
+                    }
+            });
     },
     filteredItems() {
         let self = this;

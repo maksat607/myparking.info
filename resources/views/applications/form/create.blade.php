@@ -367,7 +367,7 @@
                                             </div>
                                         </fieldset>
                                     </div>
-\                                </div>
+                                </div>
                             </div>
                         </div>
                         <div class="inner-page__item">
