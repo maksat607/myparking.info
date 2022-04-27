@@ -1,12 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-body {
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    color: #536E9B;
-    background: #F7F7F7;
-}
-
 ::-webkit-scrollbar {
     width: 5px;
 }
@@ -352,6 +343,15 @@ body {
     color: #011A3F;
 }
 
+body {
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    color: #536E9B;
+    background: #F7F7F7;
+}
+
 .filter {
     padding: 15px 30px 20px 30px;
     padding-top: 30px;
@@ -412,7 +412,7 @@ body {
 }
 
 .field-style.blue input {
-    color: #fff;
+    /* color: #fff; */
     border: 1px solid #fff;
 }
 
@@ -3141,4 +3141,18 @@ span.serch-overlap {
 
 .flatpickr {
     max-width: 255px;
+}
+.car-col__info-item .car-dd-body {
+    visibility: hidden;
+  }
+  .car-dd.active .car-dd-body {
+    visibility: visible;
+  }
+.page-file-item span {
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    width: 100%;
 }

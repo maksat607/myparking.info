@@ -19,8 +19,8 @@
                             </svg>
                         </div>
                         <div class="car-slide">
-                            @if($application->attachments->isNotEmpty())
-                                @foreach($application->attachments as $attachment)
+                            @if($application->attachments->where('file_type','image')->count()>0)
+                                @foreach($application->attachments->where('file_type','image')->all() as $attachment)
                                     <div class="newcart__imgwrap">
                                         <a href="{{ $attachment->url }}">
                                             <img src="{{ $attachment->thumbnail_url }}" class="car-row__image">

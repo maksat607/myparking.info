@@ -195,6 +195,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/generate-act/{application}', [ApplicationController::class, 'generateAct'])->name('application.generate-act');
     Route::get('/application/remove/attachment/{attachment}', [ApplicationController::class, 'removeAttachment']);
 
+    Route::post('/application/{application}/upload', [ApplicationController::class, 'addAttachmentsFromPopup'])
+        ->name('application.photo.add');
+
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
@@ -239,6 +242,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::delete('issue-requests/{issue_request}', [IssueRequestController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name( 'issue_requests.destroy');
+
 
     /*Report*/
     Route::get('/csv-by-partner', [ReportController::class, 'csvByPartner'])->name( 'report.csv-by-partner');

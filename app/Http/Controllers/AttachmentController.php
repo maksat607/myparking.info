@@ -29,7 +29,54 @@ class AttachmentController extends AppController
     {
         //
     }
+   /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function storeToModelDoc(Request $request, $fileKey = 'docs', $fileType = 'docs', $fileNameExtension = '_doc')
+    {
 
+        $this->validate($request, [
+            $fileKey . '.*' => 'nullable|sometimes|mimes:doc,docx,xls,xlsx,pdf,csv,jpg,jpeg,png,bmp',
+        ]);
+
+        $files = $request->file($fileKey);
+        if($fileKey =="docspopup"){
+            $files = $request->all();
+        }
+
+        if (is_null($files)) {
+            return [];
+        }
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+        if ( !is_dir( public_path('/uploads') ) ) {
+            mkdir(public_path('/uploads'), 0777);
+        }
+        $thumbnail_url = null;
+        foreach($files as $key=>$singleFile)
+        {
+            $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
+            Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
+            if(in_array(strtolower($singleFile->getClientOriginalExtension()),['jpg','jpeg','png','bmp'])){
+                Image::make( $singleFile->path() )->resize(300, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save( Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
+                $thumbnail_url = Storage::disk('uploads')->url('thumbnails/' . $fileName) ;
+            }
+
+            $attachments[] = new Attachment([
+                'name' => $fileName,
+                'file_type' => $fileType,
+                'url' => Storage::disk('uploads')->url($fileName),
+                'thumbnail_url' => $thumbnail_url
+            ]);
+        }
+        return $attachments;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -38,11 +85,15 @@ class AttachmentController extends AppController
      */
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
+
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
+        if($fileKey =="imagespopup"){
+            $files = $request->all();
+        }
 
         if (is_null($files)) {
             return [];

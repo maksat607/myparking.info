@@ -21,7 +21,7 @@
                         <span class="field-style-title">Статус</span>
                         <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
                             @foreach($statuses as $status)
-                                @if($application->status_id == $status->id)
+                                @if($application->status->nextStatus() == $status->id)
                                     <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
                                     @continue
                                 @endif

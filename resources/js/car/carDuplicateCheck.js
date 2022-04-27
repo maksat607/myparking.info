@@ -65,7 +65,7 @@ const checkDuplicate = {
 
         if(this.allDuplicates) {
             this.allDuplicates.forEach((element) => {
-                allHtml += `<a href="${APP_URL}/applications/create/${element.id}" class="conformity-link">`;
+                allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;
                 allHtml += `<span class="conformity__info">${element.vin}</span>`;
                 allHtml += `<span class="${this.statusClass[element.status_code]} conformity__icon">${this.statusLabels[element.status_code]}</span>`;
                 allHtml += `</a>`;

@@ -157,7 +157,7 @@
                                 Документы
                             </div>
                             Паспорт, доверенность и прочее
-                            <div class="page-file-list">
+                            <div class="page-file-list" id='images'>
                                 <div class="page-add-file">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -166,7 +166,7 @@
                                               fill="#536E9B" />
                                     </svg>
                                 </div>
-                                <div class="page-file-item">
+                                {{-- <div class="page-file-item">
                                     <div class="file-icon doc-icon"></div>
                                     <span>dogovor-na-otvetstv...</span>
                                     <div class="page-file__option">
@@ -189,9 +189,10 @@
                                         <button type="button" class="page-file__download"></button>
                                         <button type="button" class="page-file__delete"></button>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
+                        <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                     </div>
                 </div>
             </div>

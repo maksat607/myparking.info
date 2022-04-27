@@ -1,12 +1,13 @@
 const imageDelete = {
     imgId: null,
     init() {
-        $(`#images`).on('click', `.page-file__delete`, {self:this}, this.deleteFromDb);
+        $(`body`).on('click', `.page-file__delete`, {self:this}, this.deleteFromDb);
     },
     remove(el) {
         el.remove();
     },
     async deleteFromDb(e) {
+        console.log('deleting..');
         let self = e.data.self;
         self.imgId = $(this).data('img-id');
         if(!self.imgId) return;

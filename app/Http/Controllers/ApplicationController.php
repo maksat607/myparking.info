@@ -54,7 +54,6 @@ class ApplicationController extends AppController
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
         $this->authorize('viewAny', Application::class);
-
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
@@ -351,6 +350,7 @@ class ApplicationController extends AppController
      */
     public function edit($id)
     {
+
         $application = Application::application($id)->firstOrFail();
 
         $this->authorize('update', $application);
@@ -404,6 +404,38 @@ class ApplicationController extends AppController
 
     }
 
+    public function addAttachmentsFromPopup(Request $request, $id){
+
+        // return $request->all();
+
+        $application = Application::application($id)->firstOrFail();
+        $this->authorize('update', $application);
+
+        if ($request->has('doc')&&$request->doc=='true') {
+            request()->request->remove('doc');
+            // return 'creating doc'.$request->doc;
+            $attachments = $this->AttachmentController->storeToModelDoc($request,'docspopup');
+        }else{
+            // return 'creating image'.$request->doc;
+            if($request->has('doc')){
+                request()->request->remove('doc');
+            }
+            $attachments = $this->AttachmentController->storeToModel($request,'imagespopup');
+        }
+
+
+
+        if (count($attachments) > 0) {
+            $application->attachments()->saveMany($attachments);
+        }
+        $result = [];
+       foreach ($attachments as $attachment) {
+               $name = explode("^", $attachment->name)[1];
+           $attachment->name = $name;
+           $result[$name] = $attachment->id;
+       }
+        return (    $result);
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -549,6 +581,8 @@ class ApplicationController extends AppController
     {
         return Attachment::where('id', $attachment)->delete();
     }
+
+
 
     /**
      * Remove the specified resource from storage.

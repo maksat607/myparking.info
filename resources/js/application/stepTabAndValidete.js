@@ -178,3 +178,12 @@ const validate = {
 }
 
 stepTab.init();
+
+$('a[data-id="v-pills-2"]').on('click',function(){
+    $('#tabNext').trigger('click');
+});
+
+
+$('a[data-id="v-pills-1"]').on('click',function(){
+    $('#tabPrev').trigger('click');
+});

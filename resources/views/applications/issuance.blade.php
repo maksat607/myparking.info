@@ -7,7 +7,7 @@
         <div class="container page-head-wrap">
             <div class="page-head">
                 <div class="page-head__top d-flex align-items-center">
-                    <h1>{{ $title }}</h1>
+                    <h1>{{ $title  }}</h1>
                     <div class="ml-auto d-flex">
                         <button class="btn btn-white">Выдать</button>
                     </div>
@@ -167,7 +167,7 @@
                                 Документы
                             </div>
                             Паспорт, доверенность и прочее
-                            <div class="page-file-list">
+                            <div class="page-file-list" id="images">
                                 <div class="page-add-file">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -201,6 +201,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                         </div>
                     </div>
                 </div>

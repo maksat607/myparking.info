@@ -80,7 +80,7 @@ class UserController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'phone' => ['required', 'numeric'],
+            'phone' => ['required'],
             'role' => ['exists:roles,name', 'required'],
             'status' => ['boolean'],
         ])->validate();
@@ -167,7 +167,7 @@ class UserController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'phone' => ['required', 'numeric'],
+            'phone' => ['required'],
             'role' => ['exists:roles,name'],
             'status' => ['boolean'],
         ])->validate();

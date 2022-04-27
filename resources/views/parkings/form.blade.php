@@ -18,7 +18,7 @@
     <div class="container">
         <div class="inner-page">
             <div class="row no-gutters">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="inner-page__item">
                         <div class="inner-item-title">
                             О стоянке
@@ -126,129 +126,8 @@
 
 
 
-                    <div class="inner-page__item">
-                        <div class="inner-item-title">
-                            Связи <span style="color: darkred">новый блок</span>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <fieldset class="fieldset">
-                                    <legend class="legend">Связи</legend>
-                                    <div class="d-flex">
-                                        <div class="type-card parts-list">
-                                            <div class="nav condition-nav" id="condition" role="tablist" >
-                                                <a class="block-nav__item active" href="#tab-1" data-toggle="tab">Юр. лица</a>
-                                                <a class="block-nav__item " href="#tab-2" data-toggle="tab">Пользователи</a>
-                                            </div>
-                                        </div>
-                                        <div class="type-card-info tab-content">
-                                            <div class="row no-gutters tab-pane fade show active" id="tab-1">
-                                                <label class="field-style">
-                                                    <span>Поиск</span>
-                                                    <input type="text" placeholder="По названию">
-                                                </label>
-                                                <ul class="list">
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox">
-                                                            <span class="list-checked"></span>
-                                                            ПАО СберБанкСтрах
-                                                        </label>
-                                                    </li>
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox">
-                                                            <span class="list-checked"></span>
-                                                            А-Приори
-                                                        </label>
-                                                    </li>
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox" checked>
-                                                            <span class="list-checked"></span>
-                                                            РосСтрах Групп
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="row no-gutters tab-pane fade" id="tab-2">
-                                                <label class="field-style">
-                                                    <span>Поиск</span>
-                                                    <input type="text" placeholder="По названию">
-                                                </label>
-                                                <ul class="list">
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox">
-                                                            <span class="list-checked"></span>
-                                                            ПАО СберБанкСтрах
-                                                        </label>
-                                                    </li>
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox">
-                                                            <span class="list-checked"></span>
-                                                            А-Приори
-                                                        </label>
-                                                    </li>
-                                                    <li class="list__item">
-                                                        <label>
-                                                            <input type="checkbox" class="list-checkbox" checked>
-                                                            <span class="list-checked"></span>
-                                                            РосСтрах Групп
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-                <div class="col-md-4">
-                    <div class="sidebar">
-                        <div class="sidebar__title">
-                            Чек-лист оформления
-                        </div>
-                        <div class="sidebar__item">
-                            <div class="sidebar-item-title">
-                                О стоянке
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Название</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Регион</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Адрес</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                        </div>
-                        <div class="sidebar__item">
-                            <div class="sidebar-item-title">
-                                Связи
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Юр. лица</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Пользователи</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                            <div class="sidebar__check-item d-flex align-items-center justify-content-between">
-                                <span class="sidebar__check-name">Партнёры</span>
-                                <span class="sidebar__icon"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+     
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@
                 </svg>
             </div>
             <div class="car-slide">
+                <input type="hidden" id="appId" value="{{$application->id}}">
                 @if($application->attachments->isNotEmpty())
                     @foreach($application->attachments as $attachment)
                         <div class="newcart__imgwrap">
@@ -110,6 +111,8 @@
                    aria-controls="v-pills-tab5" aria-selected="false">Об автомобиле</a>
                 <a class="" id="v-pills-tab6-tab" data-toggle="pill" href="#v-pills-tab6" role="tab"
                    aria-controls="v-pills-tab6" aria-selected="false">Тех. состояние</a>
+                <a class="" id="v-pills-tab10-tab" data-toggle="pill" href="#v-pills-tab10" role="tab"
+                   aria-controls="v-pills-tab10" aria-selected="false">Документы</a>
                 {{--<a class="" id="v-pills-tab7-tab" data-toggle="pill" href="#v-pills-tab7" role="tab"
                    aria-controls="v-pills-tab7" aria-selected="false">Повреждения кузова</a>
                 <a class="" id="v-pills-tab8-tab" data-toggle="pill" href="#v-pills-tab8" role="tab"
@@ -199,17 +202,22 @@
                 </div>
                 <div class="tab-pane fade" id="v-pills-tab3" role="tabpanel"
                      aria-labelledby="v-pills-tab3-tab">
-                    <div class="page-file-list">
-                        {{--<div class="page-add-file">
+                     <form action="" id='picsForm' method="POST">
+                         @csrf
+                        <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
+                     </form>
+
+                    <div class="page-file-list" id="images">
+                        <div class="page-add-file add-images">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.6"
                                       d="M20.0013 6.6665C20.9218 6.6665 21.668 7.4127 21.668 8.33317V18.3332H31.668C32.5884 18.3332 33.3346 19.0794 33.3346 19.9998C33.3346 20.9203 32.5884 21.6665 31.668 21.6665H21.668V31.6665C21.668 32.587 20.9218 33.3332 20.0013 33.3332C19.0808 33.3332 18.3346 32.587 18.3346 31.6665V21.6665H8.33464C7.41416 21.6665 6.66797 20.9203 6.66797 19.9998C6.66797 19.0794 7.41416 18.3332 8.33464 18.3332H18.3346V8.33317C18.3346 7.4127 19.0808 6.6665 20.0013 6.6665Z"
                                       fill="#536E9B" />
                             </svg>
-                        </div>--}}
+                        </div>
 
-                        @foreach($application->attachments as $attachment)
+                        @foreach($application->attachments->where('file_type','image')->all() as $attachment)
                             <div class="page-file-item" data-src="{{ $attachment->url }}">
                                 <img src="{{ $attachment->thumbnail_url }}" alt="">
                                 <div class="page-file__option">
@@ -413,6 +421,55 @@
                         </div>
                     </div>
                 </div>--}}
+
+
+                <div class="tab-pane fade" id="v-pills-tab10" role="tabpanel"
+                        aria-labelledby="v-pills-tab10-tab">
+                        <form action="" id='picsForm' method="POST">
+                            @csrf
+                        <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
+                        </form>
+
+                    <div class="page-file-list" id="images">
+                        <div class="page-add-file docs">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.6"
+                                        d="M20.0013 6.6665C20.9218 6.6665 21.668 7.4127 21.668 8.33317V18.3332H31.668C32.5884 18.3332 33.3346 19.0794 33.3346 19.9998C33.3346 20.9203 32.5884 21.6665 31.668 21.6665H21.668V31.6665C21.668 32.587 20.9218 33.3332 20.0013 33.3332C19.0808 33.3332 18.3346 32.587 18.3346 31.6665V21.6665H8.33464C7.41416 21.6665 6.66797 20.9203 6.66797 19.9998C6.66797 19.0794 7.41416 18.3332 8.33464 18.3332H18.3346V8.33317C18.3346 7.4127 19.0808 6.6665 20.0013 6.6665Z"
+                                        fill="#536E9B" />
+                            </svg>
+                        </div>
+                        @php
+                            $type = ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
+                        @endphp
+                        @foreach($application->attachments->where('file_type','docs')->all() as $attachment)
+                         @if(in_array(strtolower(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]),['jpg','jpeg','png','bmp']))
+                            <div class="page-file-item" data-src="{{ $attachment->url }}">
+                                <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                <div class="page-file__option">
+                                    <button type="button" class="page-file__zoom" ></button>
+                                    <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
+                                </div>
+                            </div>
+                         @else
+                         {{-- @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))   --}}
+                            @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
+                                <div class="page-file-item doc">
+                                    <div class="file-icon {{ $type[explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]] }}"></div>
+                                    <span>{{$attachment->name}}</span>
+                                    <div class="page-file__option">
+                                        <a href="{{ $attachment->url }}" type="button" class="page-file__download" data-img-id="{{ $attachment->id }}"></a>
+                                        <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
+                                    </div>
+                                </div>
+                             @endif
+                         @endif
+                        @endforeach
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
     </div>

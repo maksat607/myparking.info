@@ -153,6 +153,7 @@ class IssueRequestController extends AppController
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
 
         $title = __('Editing an application for issuance');
+        dd(1);
         return view('issue_request.edit', compact(
             'title', 'issueRequest', 'client', 'application', 'individualLegalOptions'
         ));
