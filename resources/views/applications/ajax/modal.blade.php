@@ -11,6 +11,7 @@
             </div>
             <div class="car-slide">
                 <input type="hidden" id="appId" value="{{$application->id}}">
+
                 @if($application->attachments->isNotEmpty())
                     @foreach($application->attachments as $attachment)
                         <div class="newcart__imgwrap">
@@ -206,7 +207,7 @@
                          @csrf
                         <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                      </form>
-
+                    <input type="hidden" id="appId" value="{{$application->id}}">
                     <div class="page-file-list" id="images">
                         <div class="page-add-file add-images">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"

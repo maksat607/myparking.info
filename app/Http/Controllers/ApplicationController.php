@@ -430,7 +430,10 @@ class ApplicationController extends AppController
         }
         $result = [];
        foreach ($attachments as $attachment) {
+           $name = $attachment->name;
+           if(str_contains($attachment->name, '^')){
                $name = explode("^", $attachment->name)[1];
+           }
            $attachment->name = $name;
            $result[$name] = $attachment->id;
        }

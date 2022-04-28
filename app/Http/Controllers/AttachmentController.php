@@ -109,7 +109,8 @@ class AttachmentController extends AppController
         }
         foreach($files as $key=>$singleFile)
         {
-            $fileName = Carbon::now()->format('Y-m-d') . "-" . uniqid() . $fileNameExtension . $singleFile->getClientOriginalExtension();
+//            $fileName = Carbon::now()->format('Y-m-d') . "-" . uniqid() . $fileNameExtension . $singleFile->getClientOriginalExtension();
+            $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
             Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
 
             Image::make( $singleFile->path() )->resize(300, null, function ($constraint) {

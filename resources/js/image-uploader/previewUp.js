@@ -31,15 +31,15 @@ const imageUpload = {
                 // self.writeHtml(file);
             }
             self.files = this.files;
-            console.log(this.files)
-            // console.log($('#picsForm'));
+
+
             if ($('#appId').length){
                 fd.append('doc', self.doc);
                 self.form = fd;
                 self.appId = $('#appId').val();
 
                 self.uploadImage().then( v => {
-                    // console.log(v)
+                    console.log(v)
                     self.docs = v;
                     self.loopFiles();
                 });
@@ -66,8 +66,7 @@ const imageUpload = {
         $(`#uploader`).prop('files', files);
     },
     loopFiles(){
-        console.log(this.files)
-        console.log(this.docs)
+
         for (let i = 0; i < this.files.length; i++) {
             let file = this.files.item(i);
             this.writeHtml(file);
@@ -79,8 +78,7 @@ const imageUpload = {
         let html = "";
         let ext = "image";
         ext = file.name.split('.').pop();
-        console.log(this.docs)
-        console.log(file.name)
+
         if(ext =='pdf'){
             html = `<div class="page-file-item doc">
                                 <div class="file-icon pdf-icon"></div>
@@ -113,7 +111,7 @@ const imageUpload = {
                                 <img src="${URL.createObjectURL(file)}" alt="">
                                 <div class="page-file__option">
                                     <button type="button" class="page-file__zoom"></button>
-                                    // <button type="button" class="page-file__delete transfer__delete" data-img-id="${this.docs[file.name]}"></button>
+                                     <button type="button" class="page-file__delete transfer__delete" data-img-id="${this.docs[file.name]}"></button>
                                 </div>
                             </div>`;
         }
@@ -138,6 +136,5 @@ const imageUpload = {
     }
 }
 imageUpload.init();
-
 
 
