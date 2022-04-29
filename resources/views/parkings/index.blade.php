@@ -7,7 +7,7 @@
                 <h1>{{ $title }}</h1>
                 <label class="field-style blue">
                     <span>Поиск</span>
-                    <input type="text" placeholder="Поиск по столбцам">
+                    <input type="text" id="keyword" placeholder="Поиск по столбцам">
                 </label>
                 @can('parking_create')
                 <div class="ml-auto d-flex">
@@ -20,7 +20,7 @@
 
     <div class="container">
         <div class="inner-page">
-            <table class="table">
+            <table class="table" id="searchable">
                 <thead>
                 <tr>
                     <th></th>

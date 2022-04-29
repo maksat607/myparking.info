@@ -7,7 +7,7 @@
                 <h1>{{ $title }}</h1>
                 <label class="field-style blue">
                     <span>Поиск</span>
-                    <input type="text" placeholder="Поиск по столбцам">
+                    <input type="text" id="keyword" placeholder="Поиск по столбцам">
                 </label>
                 <div class="ml-auto d-flex">
                     <a href="{{ route('legals.create') }}" class="btn btn-white">Добавить</a>
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="searchable">
         <div class="inner-page">
             @if ($legals->isNotEmpty())
             <table class="table">

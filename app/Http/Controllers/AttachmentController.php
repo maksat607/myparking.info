@@ -85,12 +85,13 @@ class AttachmentController extends AppController
      */
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
-
+        dump($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
+        dd($files);
         if($fileKey =="imagespopup"){
             $files = $request->all();
         }

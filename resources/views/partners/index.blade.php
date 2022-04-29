@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div class="container page-head-wrap">
         <div class="page-head">
             <div class="page-head__top d-flex align-items-center">

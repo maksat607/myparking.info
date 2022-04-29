@@ -25,8 +25,10 @@ const checkDuplicate = {
     },
     init() {
         $(`#vin, #license_plate`).on('input', {self:this}, function(e){
+
             let self = e.data.self;
             self.vin = $(`#vin`).val().split(',');
+            console.log(self.vin);
             self.licensePlate = $(`#license_plate`).val();
             self.duplicateExist();
         });
@@ -40,6 +42,7 @@ const checkDuplicate = {
                     id: this.application_id
                 }
             }).then(response => {
+                console.log(response)
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
                 this.setHtml();

@@ -70,7 +70,7 @@
                 </thead>
                 <tbody>
                 @foreach($data['data'] as $application)
-                    <tr>
+                    <tr class="car-show-modal" data-app-id="{{ $application->id }}">
                         <td class="tr-id">{{ $loop->iteration }}</td>
                         <td>{{ $application->external_id }}</td>
                         <td>{{ $application->car_mark_name }}</td>

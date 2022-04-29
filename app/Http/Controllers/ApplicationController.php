@@ -169,6 +169,8 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+        $attachments = $this->AttachmentController->storeToModel($request,'images');
+        dd(11);
         $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;

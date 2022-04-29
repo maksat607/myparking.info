@@ -2,6 +2,7 @@ require('./bootstrap');
 
 $(function() {
     require('./image-uploader/previewUp');
+    require('./search/search');
     require('./image-uploader/imadeDelete');
     require('./fancybox/fancybox');
     require('./select2/selcte2');
