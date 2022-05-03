@@ -9,10 +9,11 @@ const checkDuplicate = {
         'storage': 'Х',
         'issued': 'В',
         'draft': 'Ч',
-        'pending': 'Ож',
+        'pending': 'НХ',
         'denied-for-storage': 'ОХ',
         'cancelled-by-partner':'ОП',
-        'cancelled-by-us': 'ОН'
+        'cancelled-by-us': 'ОН',
+        'deleted' : 'УДН'
     },
     statusClass : {
         'storage': 'conformity-success',
@@ -20,6 +21,7 @@ const checkDuplicate = {
         'draft': 'conformity-warning',
         'pending': 'conformity-primary',
         'denied-for-storage': 'conformity-orange',
+        'deleted' : 'conformity-red'
         /*'cancelled-by-partner':'ОП',
         'cancelled-by-us': 'ОН'*/
     },

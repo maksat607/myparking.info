@@ -63,9 +63,12 @@
                             <div class="col-6 mt-3">
                                 <label class="field-style">
                                     <span>Тел</span>
-                                    <input id="phone" type="text" class="@error('phone') is-invalid @enderror" name="phone"
+                                    <input id="phone" type="tel" class="@error('phone') is-invalid @enderror" name="phone"
                                            value="@if(isset($user)){{ $user->phone }}@else{{ old('phone') }}@endif"
-                                           required placeholder="Не указан">
+                                           required placeholder="+7 (___) ___-__-__">
+
+
+
 
                                     @error('phone')
                                     <span class="invalid-feedback" role="alert">

@@ -37,15 +37,17 @@ class AttachmentController extends AppController
      */
     public function storeToModelDoc(Request $request, $fileKey = 'docs', $fileType = 'docs', $fileNameExtension = '_doc')
     {
-
+//dd($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:doc,docx,xls,xlsx,pdf,csv,jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
+
         if($fileKey =="docspopup"){
             $files = $request->all();
         }
+
 
         if (is_null($files)) {
             return [];
@@ -59,6 +61,7 @@ class AttachmentController extends AppController
         $thumbnail_url = null;
         foreach($files as $key=>$singleFile)
         {
+
             $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
             Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
             if(in_array(strtolower($singleFile->getClientOriginalExtension()),['jpg','jpeg','png','bmp'])){
@@ -85,13 +88,16 @@ class AttachmentController extends AppController
      */
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
-        dump($request->all());
+//        dd($fileKey);
+//        dd($request->file);
+//        dump($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
-        dd($files);
+
+
         if($fileKey =="imagespopup"){
             $files = $request->all();
         }
@@ -108,10 +114,13 @@ class AttachmentController extends AppController
         if ( !is_dir( public_path('/uploads/thumbnails') ) ) {
             mkdir(public_path('/uploads/thumbnails'), 0777);
         }
+
         foreach($files as $key=>$singleFile)
         {
+
 //            $fileName = Carbon::now()->format('Y-m-d') . "-" . uniqid() . $fileNameExtension . $singleFile->getClientOriginalExtension();
             $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
+
             Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
 
             Image::make( $singleFile->path() )->resize(300, null, function ($constraint) {

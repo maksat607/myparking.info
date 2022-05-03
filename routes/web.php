@@ -177,7 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/accepting-request', [AcceptingRequestController::class, 'index'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.accepting.request');
-    Route::get('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
+    Route::post('/application/deny/{application_id}', [ApplicationController::class, 'deny'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.deny');
     Route::get('/application/favorite/{application}', [ApplicationController::class, 'toggleFavorite'])
@@ -197,6 +197,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     Route::post('/application/{application}/upload', [ApplicationController::class, 'addAttachmentsFromPopup'])
         ->name('application.photo.add');
+    Route::post('/application/{application}/delete', [ApplicationController::class, 'delete'])
+        ->name('applications.delete');
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])

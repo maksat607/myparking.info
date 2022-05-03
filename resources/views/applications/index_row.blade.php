@@ -190,9 +190,9 @@
                                             </svg>
                                         </a>
                                         <form id="deleteApp{{ $application->id }}" method="POST"
-                                              action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                                              action="{{ route('applications.delete', ['application' => $application->id]) }}">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('POST')
                                         </form>
                                     @endcan
                                 @elseif($application->status->code == 'storage')
@@ -230,9 +230,9 @@
                                             </svg>
                                         </a>
                                         <form id="deleteApp{{ $application->id }}" method="POST"
-                                              action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                                              action="{{ route('applications.delete', ['application' => $application->id]) }}">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('POST')
                                         </form>
                                     @endcan
 

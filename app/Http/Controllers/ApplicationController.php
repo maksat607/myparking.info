@@ -169,8 +169,9 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-        $attachments = $this->AttachmentController->storeToModel($request,'images');
-        dd(11);
+
+//        $attachments = $this->AttachmentController->storeToModel($request,'images');
+//        dd(11);
         $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
@@ -610,13 +611,36 @@ class ApplicationController extends AppController
         Toastr::error(__('Error'));
         return redirect()->back();
     }
-
-    public function deny($application_id)
+    public function delete(Request $request,$id)
     {
+
+        $application = Application::application($id)->firstOrFail();
+        $this->authorize('delete', $application);
+
+        $result = $application->update(['status_id' => 8]);
+
+        if ( $result ) {
+            if($request->has('car_additional')){
+                $application->update(['car_additional' => $request->car_additional]);
+            }
+            Toastr::success(__('Deleted.'));
+            return redirect()->back();
+        }
+
+        Toastr::error(__('Error'));
+        return redirect()->back();
+    }
+
+    public function deny(Request $request,$application_id)
+    {
+
         $application = Application::application($application_id)->firstOrFail();
         $status = Status::find(6);
 
         if($application->exists) {
+            if($request->has('car_additional')) {
+                $application->car_additional = $request->car_additional;
+            }
             $application->status()->associate($status);
             $application->acceptions()->delete();
 
@@ -647,9 +671,15 @@ class ApplicationController extends AppController
                     'individualLegalOptions',
         ));
     }
-
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function issuance(Request $request, $application_id)
     {
+
         $clientData = $request->client;
 
         Validator::make($clientData, [
@@ -677,6 +707,11 @@ class ApplicationController extends AppController
             $client = tap($application->issuance->client)->update($clientData);
         }
 
+        $attachments = $this->AttachmentController->storeToModelDoc($request,'docs');
+
+        if (count($attachments) > 0) {
+            $application->attachments()->saveMany($attachments);
+        }
 
         if($client->exists) {
             $application->issuedBy()->associate(auth()->user());
@@ -734,18 +769,18 @@ class ApplicationController extends AppController
             ? Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                 ->join('statuses', 'statuses.id', '=', 'applications.status_id')
                 ->where([
-                    ['license_plate', 'like', '%' . $request->license_plate . '%'],
+                    ['license_plate', 'like', '%' . $request->license_plate . '%']
                 ])
-                ->when(auth()->user()->getUsersAdmin(), function ($query) {
-//                    return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
-                    $query->where(function ($query) {
-                        $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
-                            ->orWhere(function ($query){
-                                $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
-                                    ->where('applications.status_id', 7);
-                            });
-                    });
-                })
+//                ->when(auth()->user()->getUsersAdmin(), function ($query) {
+////                    return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
+//                    $query->where(function ($query) {
+//                        $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
+//                            ->orWhere(function ($query){
+//                                $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
+//                                    ->where('applications.status_id', 7);
+//                            });
+//                    });
+//                })
                 ->get()->toArray()
             : [];
         $vinDuplicates = [];
@@ -765,16 +800,16 @@ class ApplicationController extends AppController
 
                 $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
                     ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-                    ->when(auth()->user()->getUsersAdmin(), function ($query) {
-//                        return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
-                        $query->where(function ($query) {
-                            $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
-                                ->orWhere(function ($query){
-                                    $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
-                                        ->where('applications.status_id', 7);
-                                });
-                        });
-                    })
+//                    ->when(auth()->user()->getUsersAdmin(), function ($query) {
+////                        return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
+//                        $query->where(function ($query) {
+//                            $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
+//                                ->orWhere(function ($query){
+//                                    $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
+//                                        ->where('applications.status_id', 7);
+//                                });
+//                        });
+//                    })
                     ->where(function($query) use( $vinArray ) {
                         foreach ($vinArray as $singleVin) {
                             $query->orWhere('vin', 'like', '%' .$singleVin . '%');

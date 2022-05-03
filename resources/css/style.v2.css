@@ -2692,6 +2692,10 @@ span.invalid__item {
     background: #F2994A;
 }
 
+.conformity-red {
+    background: #EB5757;
+}
+
 .conformity-dark {
     background: #9C9C9C;
 }

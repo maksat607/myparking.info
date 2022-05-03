@@ -104,6 +104,10 @@ $(`.overlay`).on('click', function(){
 });
 
 $(`body`).on('click', `.delete`, confirmUp);
+$(`body`).on('click', `#deleteApp`,  function(event){
+    event.preventDefault();
+    addComment($(this).data('confirm-id'));
+});
 $(`body`).on('click', `.deny`, confirmUp);
 $(`body`).on('click', `#confirmPopup button, #confirmPopup .confirm-popup__close`, function(event){
     event.preventDefault();
@@ -112,13 +116,24 @@ $(`body`).on('click', `#confirmPopup button, #confirmPopup .confirm-popup__close
     let confirmUrl = $(this).data('confirm-url');
 
     if(confirmId && confirmType == "delete") {
+        let car_additional = $('#car_additional').val();
+        console.log(confirmId)
+        $(`#${confirmId}`).append(`<input type="text" value="${car_additional}" name="car_additional">`);
         $(`#${confirmId}`).submit();
     } else if(confirmId && confirmUrl != '' && confirmType == "deny") {
-        window.location.href = confirmUrl;
+        let car_additional = $('#car_additional').val();
+        console.log(confirmId)
+        $(`#denyApp${confirmId}`).append(`<input type="text" value="${car_additional}" name="car_additional">`);
+        $(`#denyApp${confirmId}`).submit();
+        // window.location.href = confirmUrl;
     } else {
         closeConfirmUp(this)
     }
 });
+
+function addComment(t){
+    console.log(t)
+}
 
 function closeConfirmUp(self) {
     $(self).parents(`#confirmPopup`)
@@ -143,6 +158,10 @@ function confirmUp(event) {
                 popupHtml += `<div class="confirm-popup__top">`;
                     popupHtml += `<div class="confirm-popup__body">`;
                         popupHtml += message;
+                        popupHtml += `<div class="field-style">
+                                        <span>Причина</span>
+                                        <textarea name="car_additional" id="car_additional" placeholder="Не указан" class="mw-100"></textarea>
+                                      </div>`;
                     popupHtml += `</div>`;
                 popupHtml += `</div>`;
                 popupHtml += `<div class="confirm-popup__bottom">`;
@@ -150,7 +169,7 @@ function confirmUp(event) {
                                     data-confirm-type="${confirmType}" \
                                     data-confirm-url="${confirmUrl}" \
                                     data-confirm-id="${confirmId}">Да</button>`;
-                    popupHtml += `<button class="btn btn-danger" type="button">Нет</button>`;
+                    popupHtml += `<button class="btn btn-danger" id="deleteApp" type="button" data-confirm-id="${confirmId}">Нет</button>`;
                 popupHtml += `</div>`;
             popupHtml += `</div>`;
         popupHtml += `</div>`;
@@ -161,6 +180,8 @@ function confirmUp(event) {
         $(this).removeClass("hide").dequeue();
     });
 }
+
+
 
 $('.chech-dd').on('change', function() {
     if ($(this).is(":checked")) {

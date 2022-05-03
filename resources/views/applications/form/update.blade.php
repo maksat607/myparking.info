@@ -42,11 +42,11 @@
             <div class="row no-gutters position-relative">
                 <div class="col-md-8 block-nav">
                     <div class="nav tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <a class="block-nav__item active" id="v-pills-settings-tab" data-id="v-pills-1"
+                        <a class="block-nav__item active d-none" id="v-pills-settings-tab" data-id="v-pills-1"
                            href="#"
                            role="tab"
                            aria-controls="v-pills-settings" aria-selected="false">Заявка</a>
-                        <a class="block-nav__item" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
+                        <a class="block-nav__item d-none" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
                            role="tab"
                            aria-controls="v-pills-settings" aria-selected="false">Авто</a>
                     </div>

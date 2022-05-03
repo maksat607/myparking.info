@@ -44,11 +44,18 @@
         <div class="row no-gutters position-relative">
             <div class="col-md-8 block-nav">
                 <div class="nav tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="block-nav__item active" id="v-pills-settings-tab" data-id="v-pills-1"
+{{--                    <span class="block-nav__item active" id="v-pills-settings-tab" data-id="v-pills-1"--}}
+
+{{--                       role="tab"--}}
+{{--                       aria-controls="v-pills-settings" aria-selected="false">Заявка</span>--}}
+{{--                    <span class="block-nav__item" id="v-pills-settings-tab" data-id="v-pills-2"--}}
+{{--                       role="tab"--}}
+{{--                       aria-controls="v-pills-settings" aria-selected="false">Авто</span>--}}
+                    <a class="block-nav__item active d-none" id="v-pills-settings-tab" data-id="v-pills-1"
                        href="#"
                        role="tab"
                        aria-controls="v-pills-settings" aria-selected="false">Заявка</a>
-                    <a class="block-nav__item" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
+                    <a class="block-nav__item d-none" id="v-pills-settings-tab" data-id="v-pills-2" href="#"
                        role="tab"
                        aria-controls="v-pills-settings" aria-selected="false">Авто</a>
                 </div>
@@ -147,7 +154,7 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Стоянка*</span>
-                                        <select name="app_data[parking_id]" id="parking_id">
+                                        <select name="app_data[parking_id]" id="parking_id" class="page-select">
                                             <option selected hidden disabled value="">{{ __('Select a parking..') }}</option>
                                             @foreach($parkings as $parking)
                                                 @if(old('app_data.parking_id') == $parking->id)
@@ -190,49 +197,49 @@
                                         </select>
                                     </label>
                                 </div>
-                                @hasrole('Admin')
-                                <div class="col-6 mt-3">
-                                    <label class="field-style">
-                                        <span>Дата выдачи</span>
-                                        <div class="input-group flatpickr">
-                                            <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"
-                                                   placeholder="Выберите дату.." data-input>
-                                            <div class="input-group-append">
-                                                <button id="dataClear" class="btn btn-danger" type="button" data-clear>
-                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div class="col-6 mt-3">
-                                    <label class="field-style">
-                                        <span>Кто выдал</span>
-                                        <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">
-                                            <option selected hidden value="">{{ __('Select a manager..') }}</option>
-                                            @foreach($managers as $manager)
-                                                @if(old('app_data.issued_by') == $manager->id)
-                                                    <option selected value="{{ $manager->id }}">{{ $manager->name }}</option>
-                                                    @continue
-                                                @else
-                                                    <option value="{{ $manager->id }}">{{ $manager->name }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </label>
-                                </div>
-                                {{--<div class="col-12 mt-3">
-                                    <label class="field-style">
-                                        <span>Статус</span>
-                                        <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">
-                                            <option selected hidden value="">{{ __('Select a status..') }}</option>
-                                            @foreach($statuses as $statuse)
-                                                <option value="{{ $statuse->id }}">{{ $statuse->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </label>
-                                </div>--}}
-                                @endhasrole
+{{--                                @hasrole('Admin')--}}
+{{--                                <div class="col-6 mt-3">--}}
+{{--                                    <label class="field-style">--}}
+{{--                                        <span>Дата выдачи</span>--}}
+{{--                                        <div class="input-group flatpickr">--}}
+{{--                                            <input type="text" id="issued_at" class="date-admin" name="app_data[issued_at]"--}}
+{{--                                                   placeholder="Выберите дату.." data-input>--}}
+{{--                                            <div class="input-group-append">--}}
+{{--                                                <button id="dataClear" class="btn btn-danger" type="button" data-clear>--}}
+{{--                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>--}}
+{{--                                                </button>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-6 mt-3">--}}
+{{--                                    <label class="field-style">--}}
+{{--                                        <span>==Кто выдал</span>--}}
+{{--                                        <select name="app_data[issued_by]" id="issued_by" class="issued_by @error('issued_by') is-invalid @enderror">--}}
+{{--                                            <option selected hidden value="">{{ __('Select a manager..') }}</option>--}}
+{{--                                            @foreach($managers as $manager)--}}
+{{--                                                @if(old('app_data.issued_by') == $manager->id)--}}
+{{--                                                    <option selected value="{{ $manager->id }}">{{ $manager->name }}</option>--}}
+{{--                                                    @continue--}}
+{{--                                                @else--}}
+{{--                                                    <option value="{{ $manager->id }}">{{ $manager->name }}</option>--}}
+{{--                                                @endif--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
+{{--                                --}}{{--<div class="col-12 mt-3">--}}
+{{--                                    <label class="field-style">--}}
+{{--                                        <span>Статус</span>--}}
+{{--                                        <select name="app_data[status_admin]" id="status_admin" class="status_admin @error('status_admin') is-invalid @enderror">--}}
+{{--                                            <option selected hidden value="">{{ __('Select a status..') }}</option>--}}
+{{--                                            @foreach($statuses as $statuse)--}}
+{{--                                                <option value="{{ $statuse->id }}">{{ $statuse->name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
+{{--                                @endhasrole--}}
                             </div>
 
                         </div>
@@ -756,7 +763,7 @@
                                 Фотографии
                             </div>
                             <div class="page-file-list" id="images">
-                                <div class="page-add-file">
+                                <div class="page-add-file no-ajax">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path opacity="0.6"
@@ -766,7 +773,7 @@
                                 </div>
 
                             </div>
-                            <input type="file" id="uploader" name="images[]" class="d-none" multiple>
+                            <input type="file" id="noAjaxFileUploader" name="images[]" class="d-none" multiple>
                         </div>
                         <div class="inner-page__item">
                             <div class="inner-item-title">

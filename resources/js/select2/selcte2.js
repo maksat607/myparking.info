@@ -34,4 +34,6 @@ let select2Ajax = $('.get-parking-ajax').select2({
 select2Ajax.on('select2:open', () => {
     document.querySelector('.select2-search__field').focus();
 });
-
+$(document).ready(function() {
+    $('.page-select').select2();
+});

@@ -58,9 +58,9 @@
 
                                     <form id="deleteApp{{ $acceptingRequest->application->id }}"
                                           method="POST"
-                                          action="{{ route('applications.destroy', ['application' => $acceptingRequest->application->id]) }}">
+                                          action="{{ route('applications.delete', ['application' => $acceptingRequest->application->id]) }}">
                                         @csrf
-                                        @method('DELETE')
+                                        @method('POST')
                                     </form>
                                 </div>
                             </td>

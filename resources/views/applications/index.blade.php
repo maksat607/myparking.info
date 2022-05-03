@@ -7,6 +7,12 @@
     <div class="container">
         <div class="row">
             @foreach($applications as $application)
+
+                <form id="denyApp{{ $application->id }}" method="POST"
+                      action="{{ route('application.deny', ['application_id' => $application->id]) }}">
+                    @csrf
+                    @method('POST')
+                </form>
             <div class="col-md-3 @if($application->favorite){{ 'select-favorite' }}@endif" id="application_{{ $application->id }}">
                 <div class="car-col__item">
                     <div class="car-slide-wrap">
@@ -134,9 +140,9 @@
                                                 </svg>
                                             </a>
                                             <form id="deleteApp{{ $application->id }}" method="POST"
-                                                  action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                                                  action="{{ route('applications.delete', ['application' => $application->id]) }}">
                                                 @csrf
-                                                @method('DELETE')
+                                                @method('POST')
                                             </form>
                                         @endcan
                                     @elseif($application->status->code == 'storage')
@@ -173,9 +179,9 @@
                                             </svg>
                                         </a>
                                         <form id="deleteApp{{ $application->id }}" method="POST"
-                                              action="{{ route('applications.destroy', ['application' => $application->id]) }}">
+                                              action="{{ route('applications.delete', ['application' => $application->id]) }}">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('POST')
                                         </form>
                                         @endcan
 

@@ -17,8 +17,26 @@ const imageUpload = {
 
             }
             self.imageDiv = $(this).parent();
+            if($(this).hasClass("no-ajax")){
+                console.log(9999)
+                $(`#noAjaxFileUploader`).trigger('click');
+                return;
+            }
+
 
             $(`#uploader`).trigger('click');
+
+        });
+        $(`body`).on('change',`#noAjaxFileUploader`,{self:this}, function (e) {
+            var fd = new FormData();
+            let self = e.data.self;
+
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files.item(i);
+                self.writeImage(file);
+            }
+            self.files = this.files;
+
         });
         $(`body`).on('change',`#uploader`,{self:this}, function (e) {
             var fd = new FormData();
@@ -28,6 +46,7 @@ const imageUpload = {
             for (let i = 0; i < this.files.length; i++) {
                 let file = this.files.item(i);
                 fd.append(i, images.files[i]);
+
                 if (!$('#appId').length){
                     self.writeImage(file);
                 }
@@ -126,14 +145,50 @@ const imageUpload = {
 
     },
     writeImage(file){
-        let html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
+
+        let html = "";
+        let ext = "image";
+        ext = file.name.split('.').pop();
+
+        if(ext =='pdf'){
+            html = `<div class="page-file-item doc">
+                                <div class="file-icon pdf-icon"></div>
+                                <span>${file.name}</span>
+                                <div class="page-file__option">
+                                    <button type="button" class="page-file__download"></button>
+                                    <button type="button" class="page-file__delete"></button>
+                                </div>
+                             </div>`;
+        }else if(ext=='doc' || ext=='docx'){
+            html = `<div class="page-file-item doc">
+                                    <div class="file-icon doc-icon"></div>
+                                    <span>${file.name}</span>
+                                    <div class="page-file__option">
+                                        <button type="button" class="page-file__download"></button>
+                                        <button type="button" class="page-file__delete"></button>
+                                    </div>
+                                </div>`;
+        }else if(ext=='xls' || ext=='xlsx'|| ext=="csv"){
+            html = `<div class="page-file-item doc">
+                    <div class="file-icon xls-icon"></div>
+                                <span>${file.name}</span>
+                                <div class="page-file__option">
+                                    <button type="button" class="page-file__download"></button>
+                                    <button type="button" class="page-file__delete"></button>
+                                </div>
+                            </div>`;
+        }else{
+            html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
                                 <img src="${URL.createObjectURL(file)}" alt="">
                                 <div class="page-file__option">
                                     <button type="button" class="page-file__zoom"></button>
                                      <button type="button" class="page-file__delete transfer__delete"></button>
                                 </div>
                             </div>`;
-        $(`#images`).append(html);
+        }
+
+
+        this.imageDiv.append(html);
     },
     async  uploadImage(){
         const result = await $.ajax({

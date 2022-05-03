@@ -58,32 +58,40 @@
                     @endhasanyrole
                     <td>{{ $user->email }}</td>
                     @hasanyrole('SuperAdmin')
-                    <td>
+                    <td class="d-flex flex-column">
                         @if ($user->legals->isNotEmpty())
-                            <a href="{{ route('legals.view', ['user'=>$user->id, 'legal'=>$user->legals->pluck('id')->first()]) }}">
-                                {{ $user->legals->pluck('name')->first() }}
+                            @foreach($user->legals as $legal)
+                            <a href="{{ route('legals.view', ['user'=>$user->id, 'legal'=>$legal->id]) }}">
+                                {{ $legal->name }}
                             </a>
-                            @if($user->legals->count() > 1)
-                                <br>
-                                <a href="{{ route('legals.all', ['user'=>$user->id]) }}">{{ __('show all') }}</a>
-                            @endif
+                            @endforeach
+{{--                            @if($user->legals->count() > 1)--}}
+{{--                                <br>--}}
+{{--                                <a href="{{ route('legals.all', ['user'=>$user->id]) }}">{{ __('show all') }}</a>--}}
+{{--                            @endif--}}
                         @else
                             <p>{{ __('No Legal entity') }}</p>
                         @endif
                     </td>
                     @endhasanyrole
-                    <td>
-                        @if($user->managerParkings->isNotEmpty())
-                            <a href="{{ route('parkings.edit', ['parking' => $user->managerParkings->pluck('id')->first()]) }}">
-                                {{ $user->managerParkings->pluck('title')->first() }}
-                            </a>
-                            @if($user->managerParkings->count() > 1)
-                                <br>
-                                <a href="{{ route('user.parking.all', ['user'=>$user->id]) }}">{{ __('show all') }}</a>
+                    <td class="d-flex flex-column">
+
+                            @if($user->managerParkings->isNotEmpty())
+                                @foreach($user->managerParkings as $parking)
+                                    <a href="{{ route('parkings.edit', ['parking' =>$parking->id]) }}" >
+                                        {{ $parking->title }}
+                                    </a>
+                                @endforeach
+                                    {{--                            @if($user->managerParkings->count() > 1)--}}
+                                    {{--                                <br>--}}
+                                    {{--                                <a href="{{ route('user.parking.all', ['user'=>$user->id]) }}">{{ __('show all') }}</a>--}}
+                                    {{--                            @endif--}}
+                            @else
+                                <p>{{ __('No parking lots') }}</p>
                             @endif
-                        @else
-                            <p>{{ __('No parking lots') }}</p>
-                        @endif
+
+
+
                     </td>
                     <td>
                         <div class="car-dd">
