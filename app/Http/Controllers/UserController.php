@@ -41,6 +41,7 @@ class UserController extends AppController
      */
     public function index()
     {
+
         $users = User::users()->with('legals')->get();
         $title = __('Users');
 

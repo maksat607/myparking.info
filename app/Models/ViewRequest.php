@@ -25,6 +25,44 @@ class ViewRequest extends Model
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
+    public function applicationWithParking()
+    {
+
+        $query = $this->application;
+        $authUser = auth()->user();
+        if($authUser->hasRole(['Admin'])) {
+            $childrenIds = $authUser->children()->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;
+            $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
+            if(in_array($query->parking_id,$parkingsIds)){
+                return $query;
+            }
+
+        } elseif($authUser->hasRole(['Partner'])) {
+            if($query->partner_id==$authUser->partner->id){
+                return $query;
+            }
+
+        } elseif ($authUser->hasRole(['Manager'])) {
+            if(in_array($query->parking_id,$authUser->managerParkings()->get()->modelKeys())){
+                return $query;
+            }
+
+        } elseif($authUser->hasRole(['Operator'])) {
+            /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;*/
+            $parkingsIds = Parking::where('user_id', $authUser->owner->id)->pluck('id')->toArray();
+            if(in_array($query->parking_id,$parkingsIds)){
+                return $query;
+            }
+
+        } elseif ($authUser->hasRole(['PartnerOperator'])) {
+            if($query->partner_id==$authUser->owner->partner->id){
+                return $query;
+            }
+        }
+        return false;
+    }
 
     public function createdBy()
     {

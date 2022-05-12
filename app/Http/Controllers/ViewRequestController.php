@@ -26,19 +26,30 @@ class ViewRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        $viewRequests = ViewRequest::viewRequests()
-            ->with(['application'])
+        $app_ids = [];
+        $viewRequests = ViewRequest::viewRequests()->with(['application']);
+        $viewRequests->get()->map(function ($r) use (&$app_ids){
+            if($r->applicationWithParking()!=false){
+                $app_ids[] = $r->applicationWithParking()->id;
+            }
+        });
+
+        $viewRequests = $viewRequests
             ->whereHas('application', function(Builder $query) use ($filters){
                 $query->filter($filters);
             })
+            ->whereIn('application_id',$app_ids)
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();
+            ->withQueryString()
+
+            ;
+
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )
             ->withQueryString();*/
-
+//        dd($viewRequests);
         $title = __('View Requests');
         /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));

@@ -6,6 +6,7 @@
     <section class="car-table">
         <div class="container">
             <table class="table-wrap">
+
                 @foreach($viewRequests as $viewRequest)
                     <tr class="@if($viewRequest->application->favorite){{ 'select-favorite' }}@endif" id="application_{{ $viewRequest->application->id }}">
                         <td>

@@ -58,7 +58,8 @@
                     @endhasanyrole
                     <td>{{ $user->email }}</td>
                     @hasanyrole('SuperAdmin')
-                    <td class="d-flex flex-column">
+                    <td>
+                        <div class="d-flex flex-column">
                         @if ($user->legals->isNotEmpty())
                             @foreach($user->legals as $legal)
                             <a href="{{ route('legals.view', ['user'=>$user->id, 'legal'=>$legal->id]) }}">
@@ -72,10 +73,11 @@
                         @else
                             <p>{{ __('No Legal entity') }}</p>
                         @endif
+                        </div>
                     </td>
                     @endhasanyrole
-                    <td class="d-flex flex-column">
-
+                    <td>
+                        <div class="d-flex flex-column">
                             @if($user->managerParkings->isNotEmpty())
                                 @foreach($user->managerParkings as $parking)
                                     <a href="{{ route('parkings.edit', ['parking' =>$parking->id]) }}" >
@@ -90,7 +92,7 @@
                                 <p>{{ __('No parking lots') }}</p>
                             @endif
 
-
+                        </div>
 
                     </td>
                     <td>

@@ -53,6 +53,7 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
@@ -621,7 +622,7 @@ class ApplicationController extends AppController
 
         if ( $result ) {
             if($request->has('car_additional')){
-                $application->update(['car_additional' => $request->car_additional]);
+                $application->update(['car_additional' => $application->car_additional.'<br>'.'Причина удаления:'.'<br>'.$request->car_additional]);
             }
             Toastr::success(__('Deleted.'));
             return redirect()->back();
@@ -639,7 +640,8 @@ class ApplicationController extends AppController
 
         if($application->exists) {
             if($request->has('car_additional')) {
-                $application->car_additional = $request->car_additional;
+                $application->update(['car_additional' => $application->car_additional.'<br>'.'Причина отклонения:'.'<br>'.$request->car_additional]);
+                //$application->car_additional = $request->car_additional;
             }
             $application->status()->associate($status);
             $application->acceptions()->delete();
