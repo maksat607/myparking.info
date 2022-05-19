@@ -42,7 +42,6 @@ class ViewRequestController extends AppController
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
             ->withQueryString()
-
             ;
 
         /*$applications = Application::applications()->filter($filters)
