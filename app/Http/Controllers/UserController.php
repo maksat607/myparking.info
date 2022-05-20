@@ -93,6 +93,7 @@ class UserController extends AppController
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'status' => $request->input('status', 0),
+            'email_verified_at'=>Carbon::now(),
         ];
 
         if(isNotAdminRole($request->role)) {
