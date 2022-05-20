@@ -46,8 +46,8 @@ class CarTablesSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $this->command->info('Car Modifications seeded!');
 
-        $path = __DIR__ . '/sql/car_characteristic_values.sql';
-        DB::unprepared(file_get_contents($path));
-        $this->command->info('Car Characteristic Values seeded!');
+//        $path = __DIR__ . '/sql/car_characteristic_values.sql';
+//        DB::unprepared(file_get_contents($path));
+//        $this->command->info('Car Characteristic Values seeded!');
     }
 }

@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PartnerSeeder::class);
         $this->call(StatusSeeder::class);
         $this->call(CarTypeSeeder::class);
-        $this->call(CarTablesSeeder::class);
+//        $this->call(CarTablesSeeder::class);
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(SuperAdminSeeder::class);
     }
