@@ -100,8 +100,8 @@ class UserController extends AppController
         }
 
         $user = User::create($userData);
-        $user->email_verified_at=Carbon::now();
-        $user->save();
+//        $user->email_verified_at=Carbon::now();
+//        $user->save();
         $user->roles()->detach();
         $user->assignRole($request->role);
 
