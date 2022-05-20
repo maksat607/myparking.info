@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Notifications\CreateUserNotifications;
 use App\Scopes\RoleScope;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -99,7 +100,8 @@ class UserController extends AppController
         }
 
         $user = User::create($userData);
-
+        $user->email_verified_at=Carbon::now();
+        $user->save();
         $user->roles()->detach();
         $user->assignRole($request->role);
 
