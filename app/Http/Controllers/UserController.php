@@ -76,6 +76,7 @@ class UserController extends AppController
      */
     public function store(Request $request)
     {
+//        dd(11);
         $this->authorize('issetPartnerOperator', auth()->user());
         $this->addRoleToRequest($request);
         Validator::make($request->all(), [
@@ -93,7 +94,6 @@ class UserController extends AppController
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'status' => $request->input('status', 0),
-            'email_verified_at'=>Carbon::now(),
         ];
 
         if(isNotAdminRole($request->role)) {
@@ -101,13 +101,13 @@ class UserController extends AppController
         }
 
         $user = User::create($userData);
-//        $user->email_verified_at=Carbon::now();
-//        $user->save();
         $user->roles()->detach();
         $user->assignRole($request->role);
 
         $user->notify(new CreateUserNotifications($request->password));
 
+        $user->email_verified_at=Carbon::now();
+        $user->save();
         return ($user->exists)
             ? redirect()->route('users.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
