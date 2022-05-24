@@ -65,7 +65,7 @@ $('.date').flatpickr({
     altInput: true,
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
-    minDate: (dataDefault) ? dataDefault : "today",
+    // minDate: (dataDefault) ? dataDefault : "today",
     defaultDate: getDate(),
     disable: [
         function(date) {
