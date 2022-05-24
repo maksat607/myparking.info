@@ -1,5 +1,6 @@
 
 <div class="ov-test">
+    <input type="hidden" id="appId" value="{{$application->id}}">
     <div class="car-row__item d-flex @if($application->favorite){{ 'select-favorite' }}@endif">
         <div class="car-slide-wrap">
             <span class="pagingInfo"></span>
@@ -10,8 +11,8 @@
                 </svg>
             </div>
             <div class="car-slide">
-                <input type="hidden" id="appId" value="{{$application->id}}">
 
+              {{ $application->attachments->count() }}
                 @if($application->attachments->isNotEmpty())
                     @foreach($application->attachments as $attachment)
                         <div class="newcart__imgwrap">
@@ -22,7 +23,7 @@
                     @endforeach
                 @else
                     <div>
-                        <img src="{{ $application->default_attachment->thumbnail_url }}" alt="" class="car-row__image">
+                        <img src="{{ $application->default_attachment->thumbnail_url }}" alt="" class="car-row__image lk">
                     </div>
                 @endif
             </div>

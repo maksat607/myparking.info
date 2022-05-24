@@ -101,7 +101,7 @@ const imageUpload = {
         let html = "";
         let ext = "image";
         ext = file.name.split('.').pop();
-
+        console.log(ext)
         if(ext =='pdf'){
             html = `<div class="page-file-item doc">
                                 <div class="file-icon pdf-icon"></div>
