@@ -18,6 +18,7 @@
                             <a href="{{ $attachment->url }}">
                                 <img src="{{ $attachment->thumbnail_url }}" class="car-row__image">
                             </a>
+
                         </div>
                     @endforeach
                 @else
