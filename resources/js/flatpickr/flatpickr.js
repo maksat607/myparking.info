@@ -61,6 +61,7 @@ function getOneMonthDate()
     ];
 }
 
+
 $('.date').flatpickr({
     altInput: true,
     altFormat: "d/m/Y",
@@ -73,6 +74,8 @@ $('.date').flatpickr({
         }
     ],
 });
+
+console.log('mk')
 
 $('.date-manager').flatpickr({
     altInput: true,
