@@ -114,8 +114,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getUsersAdmin()
     {
+
         return isset(auth()->user()->owner) ?
-            array_merge([auth()->user()->owner->id], auth()->user()->children->modelKeys()) :
+            array_merge([auth()->user()->owner->id], auth()->user()->owner->children->modelKeys()) :
             array_merge([auth()->user()->id], auth()->user()->children->modelKeys());
     }
 

@@ -31,7 +31,7 @@
     <header class="header" id="app">
         <div class="container header__wrap">
             <a href="/">
-                <img src="{{ asset('img/logo.svg') }}" alt="" class="logo">
+                <img src="{{ asset('img/new_logo.svg') }}" alt="" class="logo">
             </a>
             <nav class="nav">
                 <ul class="nav__list">

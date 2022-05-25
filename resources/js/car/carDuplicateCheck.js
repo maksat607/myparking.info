@@ -13,7 +13,7 @@ const checkDuplicate = {
         'denied-for-storage': 'ОХ',
         'cancelled-by-partner':'ОП',
         'cancelled-by-us': 'ОН',
-        'deleted' : 'УДН'
+        'deleted' : 'УН'
     },
     statusClass : {
         'storage': 'conformity-success',
@@ -21,7 +21,8 @@ const checkDuplicate = {
         'draft': 'conformity-warning',
         'pending': 'conformity-primary',
         'denied-for-storage': 'conformity-orange',
-        'deleted' : 'conformity-red'
+        'deleted' : 'conformity-red',
+        'cancelled-by-us': 'conformity-red',
         /*'cancelled-by-partner':'ОП',
         'cancelled-by-us': 'ОН'*/
     },
@@ -44,7 +45,9 @@ const checkDuplicate = {
                     id: this.application_id
                 }
             }).then(response => {
-                console.log(response)
+                console.log('response')
+                console.log(response.data.vin)
+                console.log(response.data.license_plate)
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
                 this.setHtml();
@@ -72,7 +75,7 @@ const checkDuplicate = {
             this.allDuplicates.forEach((element) => {
                 allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;
                 allHtml += `<span class="conformity__info">${element.vin}</span>`;
-                allHtml += `<span class="${this.statusClass[element.status_code]} conformity__icon">${this.statusLabels[element.status_code]}</span>`;
+                allHtml += `<span class="${this.statusClass[element.status.code]} conformity__icon">${this.statusLabels[element.status.code]}</span>`;
                 allHtml += `</a>`;
             });
         }

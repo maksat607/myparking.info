@@ -41,7 +41,6 @@ const imageUpload = {
         $(`body`).on('change',`#uploader`,{self:this}, function (e) {
             var fd = new FormData();
             let self = e.data.self;
-
             let images = $('#uploader')[0];
             for (let i = 0; i < this.files.length; i++) {
                 let file = this.files.item(i);

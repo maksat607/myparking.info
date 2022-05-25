@@ -768,21 +768,13 @@ class ApplicationController extends AppController
     {
 
         $licensePlateDuplicates = ( isset($request->license_plate) && strlen($request->license_plate) >= 3)
-            ? Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
-                ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-                ->where([
-                    ['license_plate', 'like', '%' . $request->license_plate . '%']
-                ])
-//                ->when(auth()->user()->getUsersAdmin(), function ($query) {
-////                    return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
-//                    $query->where(function ($query) {
-//                        $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
-//                            ->orWhere(function ($query){
-//                                $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
-//                                    ->where('applications.status_id', 7);
-//                            });
-//                    });
-//                })
+            ?
+        Application::with('status')
+            ->where(function ($query) {
+                $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                    ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+            })
+            ->where('license_plate', 'like', '%' .$request->license_plate . '%')
                 ->get()->toArray()
             : [];
         $vinDuplicates = [];
@@ -798,25 +790,18 @@ class ApplicationController extends AppController
                     $searchVin = true;
                 }
             }
+
             if ($searchVin) {
 
-                $vinQuery = Application::select('applications.id as id', 'car_title', 'vin', 'license_plate', 'statuses.code as status_code')
-                    ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-//                    ->when(auth()->user()->getUsersAdmin(), function ($query) {
-////                        return $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin());
-//                        $query->where(function ($query) {
-//                            $query->whereIn('applications.accepted_by', auth()->user()->getUsersAdmin())
-//                                ->orWhere(function ($query){
-//                                    $query->whereIn('applications.user_id', auth()->user()->getUsersAdmin())
-//                                        ->where('applications.status_id', 7);
-//                                });
-//                        });
-//                    })
-                    ->where(function($query) use( $vinArray ) {
-                        foreach ($vinArray as $singleVin) {
-                            $query->orWhere('vin', 'like', '%' .$singleVin . '%');
-                        }
-                    });
+                    $singleVin = $vinArray[0];
+                    $vinQuery = Application::with('status')
+                        ->where(function ($query) {
+                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        })
+                        ->where('vin', 'like', '%' .$singleVin . '%')
+                        ;
+
                 $vinDuplicates = $vinQuery->get()->toArray();
 
             }
