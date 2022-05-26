@@ -59,7 +59,11 @@
                                     <span class="car__cunt">12</span>
                                 </span>
                             </h3>
+                            @if($application->parking)
                             <span class="car__subtitle">{{ $application->parking->title }}</span>
+                            @else
+                                <span class="car__subtitle">{{ $application->parking_id }}</span>
+                            @endif
                         </div>
                         <div class="car-col__info-item">
                             <div>
@@ -71,6 +75,7 @@
                                 {{ $application->license_plate }}
                             </div>
                         </div>
+
                         <div class="car-col__info-item">
                             <div>
                                 <span>Дата постановки</span>
@@ -95,7 +100,12 @@
                                 @endif
 
                             </div>
-                            <span>{{ $application->partner->name }}</span>
+                            @if($application->partner)
+                                <span>{{ $application->partner->name }}</span>
+                            @else
+                                <span>{{ $application->partner_id }}</span>
+                            @endif
+{{--                            <span>{{ $application->partner->name }}</span>--}}
                             <span>{{ $application->external_id }}</span>
 
                             <div class="car-dd">
