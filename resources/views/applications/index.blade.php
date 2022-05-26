@@ -35,6 +35,7 @@
                                 @endforeach
                             @else
                                 <div class="newcart__imgwrap">
+                                    {{ $application->default_attachment->thumbnail_url }}
                                     <img src="{{ $application->default_attachment->thumbnail_url }}" class="car-row__image">
                                 </div>
                             @endif
