@@ -1,3 +1,4 @@
+
 <form method="POST" action="@if(isset($user)) {{ route('users.update', ['user'=>$user->id]) }} @else {{ route('users.store') }} @endif">
     @csrf
     @if(isset($user)) @method('PUT') @endif
@@ -26,7 +27,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <label class="field-style">
-                                    <span>Имя</span>
+                                    <span>Фамилия, имя</span>
                                     <input id="name" type="text" class="@error('name') is-invalid @enderror" name="name"
                                            value="@if(isset($user)){{ $user->name }}@else{{ old('name') }}@endif"
                                            required placeholder="Не указан">
@@ -77,6 +78,7 @@
                                     @enderror
                                 </label>
                             </div>
+
                             <div class="col-6 mt-3">
                                 @hasanyrole('SuperAdmin|Admin|Manager')
                                 <label class="field-style">

@@ -61,7 +61,11 @@ class UserController extends AppController
     public function create()
     {
         $this->authorize('issetPartnerOperator', auth()->user());
-        $roles = Role::whereNotIn('name', ['Partner', 'PartnerOperator'])->pluck('name');
+        $roles = Role::whereNotIn('name', ['Partner', 'PartnerOperator'])
+            ->pluck('name')
+            ->reject(function ($value, $key) {
+            return $value=='SuperAdmin';
+        })->all();
         $title = __('Create new user');
 
         return view('users.create', compact('roles', 'title'));
