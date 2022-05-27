@@ -18,6 +18,7 @@ $(function() {
     require('./application/favorite');
     require('./application/stepTabAndValidete');
     require('./application/ptsType');
+    require('./card/editCard');
     require('./common');
     require('./custom.v2');
 });

@@ -203,6 +203,7 @@ const imageUpload = {
         return result;
     }
 }
+console.log('Modal');
 imageUpload.init();
 
 

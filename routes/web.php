@@ -199,6 +199,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('application.photo.add');
     Route::post('/application/{application}/delete', [ApplicationController::class, 'delete'])
         ->name('applications.delete');
+    Route::post('/application/acceptedby', [ApplicationController::class, 'assignAcceptedUser']);
+
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])

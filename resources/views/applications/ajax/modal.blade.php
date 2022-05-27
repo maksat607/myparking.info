@@ -154,11 +154,38 @@
                             </div>
                             <div class="info-item pseudo-field">
                                 <span>Принял</span>
-                                @if($application->acceptedBy)
-                                    <div contenteditable="false">{{ $application->acceptedBy->name }}</div>
-                                @else
-                                    <div contenteditable="false">Не указан</div>
-                                @endif
+
+
+                                <select class="custom-select user-select d-none">
+
+                                        @foreach(\App\Models\User::all() as $user)
+                                            @if($application->acceptedBy&& $user->id == $application->acceptedBy->id)
+                                                <option value="{{ $user->id }}" selected >{{ $user->name }}</option>
+                                                @continue
+                                            @endif
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+
+                                </select>
+
+                                <div class="clicked pt-0">
+                                    <div class="d-flex pt-0">
+                                    @if($application->acceptedBy)
+                                        <div class="">{{ $application->acceptedBy->name }}</div>
+
+                                    @else
+                                        <div class="">Не указан</div>
+                                    @endif
+                                        <div class="editAcceptedBy">
+
+                                                <svg  width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13.5774 1.91058C13.9028 1.58514 14.4305 1.58514 14.7559 1.91058L18.0893 5.24391C18.4147 5.56935 18.4147 6.09699 18.0893 6.42243L7.25592 17.2558C7.09964 17.412 6.88768 17.4998 6.66667 17.4998H3.33333C2.8731 17.4998 2.5 17.1267 2.5 16.6665V13.3332C2.5 13.1122 2.5878 12.9002 2.74408 12.7439L11.0772 4.41075L13.5774 1.91058ZM11.6667 6.17835L4.16667 13.6783V15.8332H6.32149L13.8215 8.33317L11.6667 6.17835ZM15 7.15466L16.3215 5.83317L14.1667 3.67835L12.8452 4.99984L15 7.15466Z" fill="#536E9B"></path>
+                                                </svg>
+
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                             <div class="info-item pseudo-field">
                                 <span>Дата выдачи</span>

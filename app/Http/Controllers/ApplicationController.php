@@ -1224,4 +1224,12 @@ class ApplicationController extends AppController
             'carGears'
         );
     }
+    public function assignAcceptedUser(Request $request): bool
+    {
+        $app = Application::find($request->appid);
+        $accepted_id = $request->userid;
+        $app->accepted_by = $accepted_id;
+        $app->save();
+        return true;
+    }
 }
