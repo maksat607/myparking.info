@@ -50,20 +50,6 @@ $('body').on('click', '.password-control', function () {
     return false;
 });
 
-$('#btn-systemic .edit-systemic').click(function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $('#systemic .pseudo-field').addClass('active');
-    $('#systemic .pseudo-field div').attr('contenteditable', 'true');
-    $(this).parent().addClass('active');
-});
-$('#btn-systemic .save-systemic').click(function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $('#systemic .pseudo-field').removeClass('active');
-    $('#systemic .pseudo-field div').attr('contenteditable', 'false');
-    $(this).parent().removeClass('active');
-});
 
 $('.tab-checkbox a').click(function () {
     $('.tab-checkbox a').removeClass('active');

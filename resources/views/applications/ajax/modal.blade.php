@@ -62,10 +62,33 @@
             </div>
             <div class="car-row__col-6 text-right">
                 <div class="fs-0">
+{{--                    new change--}}
+                    @if(auth()->user()->hasRole(['SuperAdmin', 'Admin']))
+
+                    <label class="mr-0 mb-0 border-0">
+                        <select class="status-select theme-back" name="app_data[status_id] @error('status_id') invalid @enderror">
+                            @foreach(\App\Models\Status::all() as $status)
+
+                                @if($application->status->id == $status->id)
+                                    <option value="{{ $status->id }}" selected>{{ $status->name }}</option>
+                                    @continue
+                                @endif
+                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+
+
+{{--                    end new change--}}
+                    @else
                     <span class="car-row__status">{{$application->status->name}}</span>
+                    @endif
                     @if($application->returned)
                         <span class="car-row__status">Повтор</span>
                     @endif
+
+
+
                     <span>{{ $application->partner->name }}</span>
                     <span>{{ $application->external_id }}</span>
                 </div>
@@ -88,7 +111,7 @@
                 <a class=" active" id="v-pills-tab1-tab" data-toggle="pill" href="#v-pills-tab1" role="tab"
                    aria-controls="v-pills-tab1" aria-selected="true">
                     Системные данные
-                    {{--<span class="btn-systemic" id="btn-systemic">
+                    <span class="btn-systemic" id="btn-systemic">
                         <span class="edit-systemic">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -101,7 +124,7 @@
                                 <path d="M0.25 1.75C0.25 0.921573 0.921573 0.25 1.75 0.25H4.75H9.25H10.4393C10.8372 0.25 11.2187 0.408035 11.5 0.68934L13.5303 2.71967C13.671 2.86032 13.75 3.05109 13.75 3.25V12.25C13.75 13.0784 13.0784 13.75 12.25 13.75H9.25H4.75H1.75C0.921573 13.75 0.25 13.0784 0.25 12.25V1.75ZM4.75 12.25H9.25V7.75H4.75V12.25ZM10.75 12.25H12.25V3.56066L10.75 2.06066V3.25C10.75 4.07843 10.0784 4.75 9.25 4.75H4.75C3.92157 4.75 3.25 4.07843 3.25 3.25V1.75H1.75V12.25H3.25V7.75C3.25 6.92157 3.92157 6.25 4.75 6.25H9.25C10.0784 6.25 10.75 6.92157 10.75 7.75V12.25ZM4.75 1.75V3.25H9.25V1.75H4.75Z" fill="#536E9B"/>
                                 </svg>
                         </span>
-                    </span>--}}
+                    </span>
                 </a>
                 <a class="" id="v-pills-tab2-tab" data-toggle="pill" href="#v-pills-tab2" role="tab"
                    aria-controls="v-pills-tab2" aria-selected="false">Админ. данные</a>
@@ -130,74 +153,126 @@
                      aria-labelledby="v-pills-tab1-tab">
                     <div class="row " id="systemic">
                         <div class="col-6">
-                            <div class="info-item pseudo-field">
+                            <div class="info-item pseudo-field1">
                                 <span>VIN</span>
-                                <div contenteditable="false">{{ $application->vin }}</div>
+                                <div id="vinnumber" contenteditable="false" id="vin">{{ $application->vin }}</div>
                             </div>
-                            <div class="info-item pseudo-field">
+                            <div class="info-item pseudo-field1">
                                 <span>Гос. номер</span>
-                                <div contenteditable="false">{{ $application->license_plate }}</div>
+                                <div id="licenceplate" contenteditable="false">{{ $application->license_plate }}</div>
                             </div>
-                            <div class="info-item pseudo-field">
+                            <div class="info-item pseudo-field1">
                                 <span>Партнёр</span>
-                                <div contenteditable="false">{{ $application->partner->name }}</div>
+                                <select class="custom-select partner-select partner d-none">
+                                    <option value="0">Не указан</option>
+                                    @foreach(\App\Models\Partner::all() as $partner)
+                                        <option value="0">Не указан</option>
+                                        @if($application->partner&& $partner->id == $application->partner->id)
+                                            <option value="{{ $partner->id }}" selected >{{ $partner->name }}</option>
+                                            @continue
+                                        @endif
+                                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                    @endforeach
+
+                                </select>
+                                <div class="dropdownEditible partner pt-0">
+                                @if($application->partner)
+                                    <div contenteditable="false">{{ $application->partner->name }}</div>
+                                @else
+                                    <div class="">Не указан</div>
+                                @endif
+                                </div>
                             </div>
-                            <div class="info-item pseudo-field">
+                            <div class="info-item pseudo-field1">
                                 <span>Стоянка</span>
-                                <div contenteditable="false">{{ $application->parking->title }}</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="info-item pseudo-field">
-                                <span>Дата постановки</span>
-                                <div contenteditable="false">{{ $application->formated_arrived_at }}</div>
-                            </div>
-                            <div class="info-item pseudo-field">
-                                <span>Принял</span>
 
 
-                                <select class="custom-select user-select d-none">
 
-                                        @foreach(\App\Models\User::all() as $user)
-                                            @if($application->acceptedBy&& $user->id == $application->acceptedBy->id)
-                                                <option value="{{ $user->id }}" selected >{{ $user->name }}</option>
-                                                @continue
-                                            @endif
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                        @endforeach
+                                <select class="custom-select parking-select parking d-none">
+                                    <option value="0">Не указан</option>
+                                    @foreach(\App\Models\Parking::all() as $parking)
+                                        @if($application->parking&& $parking->id == $application->parking->id)
+                                            <option value="{{ $parking->id }}" selected >{{ $parking->title }}</option>
+                                            @continue
+                                        @endif
+                                        <option value="{{ $parking->id }}">{{ $parking->title }}</option>
+                                    @endforeach
 
                                 </select>
 
-                                <div class="clicked pt-0">
-                                    <div class="d-flex pt-0">
-                                    @if($application->acceptedBy)
-                                        <div class="">{{ $application->acceptedBy->name }}</div>
-
+                                <div class="dropdownEditible parking pt-0">
+                                    @if($application->parking)
+                                        <div contenteditable="false">{{ $application->parking->title }}</div>
                                     @else
                                         <div class="">Не указан</div>
                                     @endif
-                                        <div class="editAcceptedBy">
+                                </div>
 
-                                                <svg  width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M13.5774 1.91058C13.9028 1.58514 14.4305 1.58514 14.7559 1.91058L18.0893 5.24391C18.4147 5.56935 18.4147 6.09699 18.0893 6.42243L7.25592 17.2558C7.09964 17.412 6.88768 17.4998 6.66667 17.4998H3.33333C2.8731 17.4998 2.5 17.1267 2.5 16.6665V13.3332C2.5 13.1122 2.5878 12.9002 2.74408 12.7439L11.0772 4.41075L13.5774 1.91058ZM11.6667 6.17835L4.16667 13.6783V15.8332H6.32149L13.8215 8.33317L11.6667 6.17835ZM15 7.15466L16.3215 5.83317L14.1667 3.67835L12.8452 4.99984L15 7.15466Z" fill="#536E9B"></path>
-                                                </svg>
 
-                                        </div>
 
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-item pseudo-field1">
+                                <span>Дата постановки</span>
+                                <input type="text" id="arriving_at_modal"  class="custom-select date-select d-none"  placeholder="Не указан">
+                                <div class="dropdownEditible pt-0">
+                                    <div contenteditable="false" id="arriving_at_div">{{ $application->formated_arrived_at }}</div>
                                 </div>
                             </div>
-                            <div class="info-item pseudo-field">
-                                <span>Дата выдачи</span>
-                                <div contenteditable="false">{{ $application->formated_issued_at }}</div>
+
+
+                            <div class="info-item pseudo-field1 acc">
+                                <span>Принял</span>
+
+                                <select class="custom-select user-select accepted d-none">
+                                    <option value="0">Не указан</option>
+                                    @foreach(\App\Models\User::all() as $user)
+                                        @if($application->acceptedBy&& $user->id == $application->acceptedBy->id)
+                                            <option value="{{ $user->id }}" selected >{{ $user->name }}</option>
+                                            @continue
+                                        @endif
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+
+                                </select>
+
+                                <div class="dropdownEditible accepted pt-0">
+                                    @if($application->acceptedBy)
+                                        <div class="">{{ $application->acceptedBy->name }}</div>
+                                    @else
+                                        <div class="">Не указан</div>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="info-item pseudo-field">
+                            <div class="info-item pseudo-field1">
+                                <span>Дата выдачи</span>
+                                    <input type="text" id="issued_at_modal"  class="custom-select date-select d-none"  placeholder="Не указан">
+                                <div class="dropdownEditible pt-0">
+                                    <div contenteditable="false" id="issued_at_div">{{ $application->formated_issued_at }}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item pseudo-field1">
                                 <span>Выдал</span>
-                                @if($application->issuedBy)
-                                    <div contenteditable="false">{{ $application->issuedBy->name }}</div>
-                                @else
-                                    <div contenteditable="false">Не указан</div>
-                                @endif
+                                <select class="custom-select user-select issued d-none">
+                                    <option value="0">Не указан</option>
+                                    @foreach(\App\Models\User::all() as $user)
+                                        @if($application->issuedBy&& $user->id == $application->issuedBy->id)
+                                            <option value="{{ $user->id }}" selected >{{ $user->name }}</option>
+                                            @continue
+                                        @endif
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+
+                                </select>
+                                <div class="dropdownEditible issued pt-0">
+                                    @if($application->issuedBy)
+                                        <div contenteditable="false" id="issuedBy" data-id="{{$application->issuedBy->id}}">{{ $application->issuedBy->name }}</div>
+                                    @else
+                                        <div contenteditable="false" id="issuedBy" data-id="no">Не указан</div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

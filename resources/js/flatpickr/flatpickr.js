@@ -41,7 +41,6 @@ function getDate()
     }
 
     let todayFormat = dd + '/' + mm + '/' + yyyy;
-
     return todayFormat;
 }
 
@@ -90,6 +89,9 @@ let dateAdmin = $('.date-admin').flatpickr({
     dateFormat: "d-m-Y",
     defaultDate: dataIssuedDefault,
 });
+
+
+
 $(`#dataClear`).on('click', dateAdmin.clear);
 
 $('.date-range').flatpickr({
@@ -100,3 +102,36 @@ $('.date-range').flatpickr({
     defaultDate: (dataReportRangeDefault) ? dataReportRangeDefault : getOneMonthDate()
 });
 
+
+
+
+/////Modal
+
+$(function() {
+    $("body").delegate("#arriving_at_modal", "focusin", function(){
+        $(this).flatpickr({
+            defaultDate: getDateAr('#arriving_at_div'),
+            altInput: true,
+            altFormat: "d.m.Y",
+            dateFormat: "d.m.Y",
+        });
+    });
+});
+$(function() {
+    $("body").delegate("#issued_at_modal", "focusin", function(){
+        $(this).flatpickr({
+            defaultDate: getDateAr('#issued_at_div'),
+            altInput: true,
+            altFormat: "d.m.Y",
+            dateFormat: "d.m.Y",
+        });
+    });
+});
+
+function getDateAr(id){
+    let date = $(id).text();
+    if(date){
+        return date;
+    }
+    return getDate();
+}

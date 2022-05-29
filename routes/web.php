@@ -199,7 +199,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('application.photo.add');
     Route::post('/application/{application}/delete', [ApplicationController::class, 'delete'])
         ->name('applications.delete');
-    Route::post('/application/acceptedby', [ApplicationController::class, 'assignAcceptedUser']);
+    Route::post('/application/change-status', [ApplicationController::class, 'assignStatus']);
+    Route::post('/application/change-system-data', [ApplicationController::class, 'updateSystemData']);
 
 
     /*Attachments*/

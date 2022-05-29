@@ -8,6 +8,26 @@ $('select').select2({
 
 $('select.multiple').select2();
 
+$('select.user-select').select2();
+
+$(function() {
+    $("body").delegate(".user-select", "click", function(){
+        $(this).select2();
+    });
+});
+$(function() {
+    $("body").delegate(".parking-select", "click", function(){
+        $(this).select2();
+    });
+});
+$(function() {
+    $("body").delegate(".partner-select", "click", function(){
+        $(this).select2();
+    });
+});
+
+
+
 let select2Ajax = $('.get-parking-ajax').select2({
     theme: 'bootstrap4',
     placeholder: 'Поиск по ИНН или Названию стоянки',
