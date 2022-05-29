@@ -66,17 +66,17 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     $('.select2').addClass('d-none')
 
     $('div.issued').empty();
-    $('div.issued').append(issuedName);
+    $('div.issued').append(issuedName?issuedName:'Не указан');
     $('div.accepted').empty();
-    $('div.accepted').append(acceptedName);
+    $('div.accepted').append(acceptedName?acceptedName:'Не указан');
     $('div.parking').empty();
-    $('div.parking').append(parkingName);
+    $('div.parking').append(parkingName?parkingName:'Не указан');
     $('div.partner').empty();
-    $('div.partner').append(partnerName);
+    $('div.partner').append(partnerName?partnerName:'Не указан');
     $('div#issued_at_div').empty();
-    $('div#issued_at_div').append(issued_at_modal);
+    $('div#issued_at_div').append(issued_at_modal?issued_at_modal:'Не указан');
     $('div#arriving_at_div').empty();
-    $('div#arriving_at_div').append(arriving_at_modal);
+    $('div#arriving_at_div').append(arriving_at_modal?arriving_at_modal:'Не указан');
 
 
 
