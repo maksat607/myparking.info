@@ -63,7 +63,8 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     $('.dropdownEditible').removeClass('d-none');
     // $('.date-select').addClass('position-absolute');
     $('.custom-select').addClass('d-none')
-    $('.select2').addClass('d-none')
+    $('#systemic').find('.select2').addClass('d-none')
+    // $('.acc .select2').addClass('d-none')
 
     $('div.issued').empty();
     $('div.issued').append(issuedName?issuedName:'Не указан');
