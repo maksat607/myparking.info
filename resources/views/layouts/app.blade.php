@@ -63,7 +63,7 @@
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">Таблицы</a>
                         <ul class="nav__item-dd-list">
-                            @hasanyrole('Admin')
+                            @hasanyrole('SuperAdmin|Admin')
                             @canany(['legal_view', 'legal_create', 'legal_update', 'legal_delete'])
                                 <li class="{{ (request()->routeIs('legals.index')) ? 'active' : '' }}">
                                     <a href="{{ route('legals.index') }}">

@@ -17,7 +17,7 @@ class LegalController extends AppController
     public function __construct()
     {
 
-        $this->middleware(['role:Admin'])->except([
+        $this->middleware(['role:Admin|SuperAdmin'])->except([
             'allForParking',
             'viewForParking',
             'allForUser',
@@ -94,7 +94,11 @@ class LegalController extends AppController
      */
     public function index()
     {
-        $legals = auth()->user()->legals;
+        if(auth()->user()->hasRole(['SuperAdmin'])){
+            $legals = Legal::all();
+        }else{
+            $legals = auth()->user()->legals;
+        }
         $title = __('Legal entities');
 
         return view('legals.index', compact('legals', 'title'));
@@ -168,13 +172,17 @@ class LegalController extends AppController
      */
     public function edit($id)
     {
-        $legal = auth()->user()->legals()->where('id', $id)->firstOrFail();
+        if(auth()->user()->hasRole(['SuperAdmin'])){
+            $legal = Legal::where('id', $id)->firstOrFail();
+        }else{
+            $legal = auth()->user()->legals()->where('id', $id)->firstOrFail();
+        }
 //        $legal = Legal::where('user_id', auth()->id())->where('id', $id)->firstOrFail();
 
         $title = __('Edit legal entity: :Legal', ['legal' => $legal->name]);
 
         return view('legals.edit', compact('legal', 'title'));
-    }
+        }
 
     /**
      * Update the specified resource in storage.
@@ -186,7 +194,12 @@ class LegalController extends AppController
      */
     public function update(Request $request, $id)
     {
-        $legal = auth()->user()->legals()->where('id', $id)->firstOrFail();
+        if(auth()->user()->hasRole(['SuperAdmin'])) {
+            $legal = Legal::where('id', $id)->firstOrFail();
+        }
+        else{
+            $legal = auth()->user()->legals()->where('id', $id)->firstOrFail();
+        }
 
         Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
