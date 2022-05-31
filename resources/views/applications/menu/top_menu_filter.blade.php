@@ -1,11 +1,20 @@
 <div class="container page-head-wrap">
     <div class="page-head">
         <div class="page-head__top d-flex align-items-center">
-            <h1>Автомобили</h1>
+            @if(request()->routeIs('issue_requests.index'))
+                <h1>Выдача({{$applications->total()}})</h1>
+            @elseif(request()->routeIs('view_requests.index'))
+                <h1>Осмотр({{$viewRequests->total()}})</h1>
+            @elseif(is_null(request()->route('status_id')) && request()->routeIs('applications.index'))
+                <h1>Все({{$applications->total()}})</h1>
+            @else
+            <h1>{{\App\Models\Status::find(request()->route('status_id'))->name}}({{$applications->total()}})</h1>
+            @endif
             <a href="{{ route('applications.create') }}" class="btn ml-auto btn-white">Добавить авто</a>
         </div>
     </div>
 </div>
+
 <div class="container">
     <ul class="page-nav">
         <li class="page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
