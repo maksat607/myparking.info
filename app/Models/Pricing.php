@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pricing extends Model
 {
-    protected $fillable = ['discount_price', 'regular_price', 'free_days', 'partner_id', 'car_type_id'];
+    protected $fillable = ['discount_price', 'regular_price', 'free_days', 'partner_id', 'car_type_id','partner_user_id'];
 
     public function partner()
     {

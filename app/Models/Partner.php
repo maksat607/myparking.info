@@ -18,6 +18,10 @@ class Partner extends Model
         'rank',
         'partner_type_id',
         'status',
+        'shortname',
+        'base_type',
+        'inn',
+        'kpp',
     ];
 
     public function partnerType()
@@ -29,7 +33,7 @@ class Partner extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
+//    public function
     public function pricings()
     {
         return $this->hasMany(Pricing::class, 'partner_id', 'id');

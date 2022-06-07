@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container page-head-wrap">
         <div class="page-head">
@@ -22,11 +21,11 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th scope="col">@lang('Name')</th>
-                    <th scope="col">@lang('Address')</th>
-                    <th scope="col">@lang('Phone')</th>
-                    <th scope="col">@lang('Email')</th>
-                    <th scope="col">@lang('Status')</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Тип</th>
+                    <th scope="col">ИНН</th>
+                    <th scope="col">КПП</th>
+                    <th scope="col">База</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -35,22 +34,30 @@
                     <tr class="@if(!$partner->status){{ 'disabled-tr' }}@endif">
                         <td class="tr-id">{{ $loop->iteration }}</th>
                         <td>
+                            @if($partner->status)
                             <div class="first-info d-flex align-items-center">
                                 <span class="status-dot status-success">&bull;</span>
-                                <span>{{ $partner->name }}</span>
+                                <span>{{ $partner->shortname }}</span>
                             </div>
-                            <div class="company-type">{{ $partner->partnerType->name }}</div>
-                        </td>
-                        <td style="width: 200px;">{{ $partner->address }}</td>
-                        <td>{{ $partner->phone }}</td>
-                        <td>{{ $partner->email }}</td>
-                        <td>
-                            @if ($partner->status)
-                                <span class="status-td statusgreen">{{ __('Active') }}</span>
                             @else
-                                <span class="status-td statuspink">{{ __('Not active') }}</span>
+                                <div class="first-info d-flex align-items-center status-danger">
+                                    <span class="status-dot">&bull;</span>
+                                    <span>{{ $partner->shortname }}</span>
+                                </div>
                             @endif
+                            <div class="company-type">{{ $partner->name }}</div>
                         </td>
+                        <td style="width: 200px;">{{ $partner->partnerType->name }}</td>
+                        <td>{{ $partner->inn }}</td>
+                        <td>{{ $partner->kpp }}</td>
+                        <td>{{ $partner->base_type }}</td>
+{{--                        <td>--}}
+    {{--                            @if ($partner->status)--}}
+{{--                                <span class="status-td statusgreen">{{ __('Active') }}</span>--}}
+{{--                            @else--}}
+{{--                                <span class="status-td statuspink">{{ __('Not active') }}</span>--}}
+{{--                            @endif--}}
+{{--                        </td>--}}
 
                         <td>
                             <div class="car-dd">

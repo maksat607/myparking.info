@@ -131,7 +131,6 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $query;
     }
-
     public function scopeUser($query, $id)
     {
         if(auth()->user()->hasRole('Admin|Partner')) {
@@ -141,7 +140,6 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $query;
     }
-
     public function usersFilter()
     {
         $auth = auth()->user();
@@ -153,7 +151,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $auth->kids = $auth->children()->orderBy('name', 'ASC')->get();
         return $auth;
     }
-
     public function getParentUser()
     {
         if (auth()->user()->hasRole(['Manager', 'Operator', 'PertnerOperator'])) {
@@ -162,5 +159,9 @@ class User extends Authenticatable implements MustVerifyEmail
             return auth()->user()->id;
         }
         return null;
+    }
+    public function partners()
+    {
+        return $this->belongsToMany(Partner::class);
     }
 }

@@ -45,13 +45,20 @@ class PartnerController extends AppController
      */
     public function index()
     {
-        $partners = Partner::with('partnerType')->orderBy('status', 'DESC')->paginate();
-        $title = __('Partners');
+//        dd(auth()->user()->id);
+        if(auth()->user()->hasRole(['Admin'])){
+            $p_ids = auth()->user()->partners->pluck('id');
+            $partners = Partner::whereIn('id',$p_ids)->with('partnerType')->orderBy('status', 'DESC')->paginate();
+        }
+        if(auth()->user()->hasRole(['SuperAdmin'])) {
+            $partners = Partner::with('partnerType')->orderBy('status', 'DESC')->paginate();
+        }
+            $title = __('Partners');
 
-        return view('partners.index', compact('title', 'partners'));
-    }
+            return view('partners.index', compact('title', 'partners'));
+        }
 
-    /**
+        /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -63,9 +70,8 @@ class PartnerController extends AppController
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
-
         $pricings = createPriceList($car_types);
-
+//dd($pricings);
         $title = __('Create new Partner');
 
         return view('partners.create', compact('title', 'partner_types', 'pricings'));
@@ -79,36 +85,48 @@ class PartnerController extends AppController
      */
     public function store(Request $request)
     {
+//        dd($request->pricings);
+        $request->validate([ 'inn' => 'required|unique:partners']) ;
 
-        Validator::make($request->pricings, [
-            '*.regular_price' => ['nullable', 'integer'],
-            '*.dicount_price' => ['nullable', 'integer'],
-            '*.free_days' => ['nullable', 'integer'],
-            '*.car_type_id' => ['integer'],
-        ])->validate();
+//        $validator = Validator::make(array_merge($request->pricings,['inn'=>$request->inn]))->validate();
+//        $validator = Validator::make($request->pricings, [
+//            '*.regular_price' => ['nullable', 'integer'],
+//            '*.dicount_price' => ['nullable', 'integer'],
+//            '*.free_days' => ['nullable', 'integer'],
+//            '*.car_type_id' => ['integer'],
+////            'inn' => 'required|unique:partners'
+//
+//        ])->validate();
+//        if ($validator->fails()) {
+////            dd($validator->errors());
+//            return redirect()->back()
+//                ->withErrors($validator->errors())
+//                ->withInput();
+//        }
 
 
-        $this->validator($request->all())->validate();
+
 
         $partnerData = [
             'name' => $request->name,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'rank' => $request->rank,
+            'shortname' => $request->shortname,
+            'inn' => $request->inn,
+            'kpp' => $request->kpp,
+            'base'=>$request->base,
             'partner_type_id' => $request->partner_type,
             'status' => $request->status,
         ];
-
+        dd($partnerData);
         $partner = Partner::create($partnerData);
 
-        $partner->pricings()->createMany(
+        $lv = $partner->pricings()->createMany(
             $request->pricings
         );
 
-        return ($partner->exists)
-            ? redirect()->route('partners.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+
+//        return ($partner->exists)
+//            ? redirect()->route('partners.index')->with('success', __('Saved.'))
+//            : redirect()->back()->with('error', __('Error'));
     }
 
     /**

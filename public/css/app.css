@@ -728,6 +728,7 @@ body {
     margin-bottom: 0;
 }
 
+
 .field-style {
     position: relative;
     margin-right: 30px;
@@ -753,7 +754,16 @@ body {
     /* width: 100%; */
 }
 
+.field-style.span select{
+    width: 265px !important;
+}
 .field-style-title {
+    color: #536E9B;
+}
+
+.field-style.span span.select2-selection__rendered{
+    width: 265px;
+    height: 45px !important;
     color: #536E9B;
 }
 
@@ -3675,6 +3685,11 @@ span.serch-overlap {
     white-space: nowrap;
     display: block;
     width: 100%;
+}
+
+.add-partners .inner-page__item:first-child {
+    margin-top: 0px;
+    padding-top: 10px;
 }
 
 @charset "UTF-8";
