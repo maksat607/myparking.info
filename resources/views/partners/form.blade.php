@@ -64,13 +64,13 @@
                         <input type="text" class="" name="inn"
                                value="@if(isset($partner)){{ $partner->inn }}@else{{ old('inn') }}@endif"
                                 autofocus placeholder="Не указан">
-                        @dump($errors->toArray())
+{{--                        @dump($errors->toArray())--}}
 {{--                    @if($errors->has('inn'))--}}
-{{--                        @error($errors->has('inn'))--}}
-{{--                        <span class="invalid-feedback" role="alert">--}}
-{{--                            <strong>{{ $message }}</strong>--}}
-{{--                        </span>--}}
-{{--                        @endif--}}
+                        @error('inn')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
                     </label>
                 </div>
 
