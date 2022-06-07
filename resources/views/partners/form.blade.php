@@ -61,7 +61,7 @@
                 <div class="col-6 mt-3">
                     <label class="field-style">
                         <span>ИНН</span>
-                        <input type="text" class="" name="inn"
+                        <input type="text" class="" name="inn" class="@error($errors->has('inn')) is-invalid @enderror"
                                value="@if(isset($partner)){{ $partner->inn }}@else{{ old('inn') }}@endif"
                                 autofocus placeholder="Не указан">
 {{--                        @dump($errors->toArray())--}}
