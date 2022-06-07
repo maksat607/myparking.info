@@ -63,7 +63,7 @@
                         <span>ИНН</span>
                         <input type="text" class="" name="inn"
                                value="@if(isset($partner)){{ $partner->inn }}@else{{ old('inn') }}@endif"
-                               required autofocus placeholder="Не указан">
+                                autofocus placeholder="Не указан">
                         @dump($errors->toArray())
 {{--                    @if($errors->has('inn'))--}}
 {{--                        @error($errors->has('inn'))--}}

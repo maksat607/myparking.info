@@ -86,7 +86,7 @@ class PartnerController extends AppController
     public function store(Request $request)
     {
 //        dd($request->pricings);
-        $request->validate([ 'inn' => 'required|unique:partners']) ;
+        $request->validate([ 'inn' => 'required']) ;
 
 //        $validator = Validator::make(array_merge($request->pricings,['inn'=>$request->inn]))->validate();
 //        $validator = Validator::make($request->pricings, [
