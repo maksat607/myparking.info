@@ -65,7 +65,7 @@ Route::get('/', function () {
         return redirect('/applications');
     }
     return view('welcome');
-});
+})->name('home');
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('check_legal')->name('home');
 
@@ -145,6 +145,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::delete('/partner/parkings/remove/{parking}/', [PartnerController::class, 'removeParking'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('partner.parkings.remove');
+    //////////
+    Route::post('/partner/search-vin', [PartnerController::class, 'searchVin']);
+    Route::get('/partner/add/{partner}', [PartnerController::class, 'addPartner']);
+    Route::get('/partner/add-new', [PartnerController::class, 'addNewPartner'])->name('addNewPartner');
+    Route::get('/partner/search', [PartnerController::class, 'search'])->name('partners.search');
+
 
     /*Cars select AJAX*/
     Route::get('/car/mark/list/{type_id}', [CarController::class, 'carMarkList']);

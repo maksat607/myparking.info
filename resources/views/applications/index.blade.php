@@ -2,7 +2,6 @@
 
 @section('content')
 @include('applications.menu.top_menu_filter')
-
 <section class="car-col">
     <div class="container">
         <div class="row">

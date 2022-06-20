@@ -81,7 +81,7 @@
                             @canany(['partner_view', 'partner_create', 'partner_update'])
                                 <li class="{{ (request()->routeIs('partners.index')) ? 'active' : '' }}">
                                     <a href="{{ route('partners.index') }}" >
-                                        ///{{ __('Partners') }}
+                                        {{ __('Partners') }}
                                     </a>
                                 </li>
                             @endcanany

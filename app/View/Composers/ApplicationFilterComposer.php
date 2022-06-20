@@ -17,7 +17,17 @@ class ApplicationFilterComposer
 
     public function __construct(Partner $partners, Parking $parkings, User $user)
     {
-        $this->partners = $partners->partners()->orderBy('name', 'ASC')->get();
+        if(auth()->user()->hasRole(['Admin'])){
+            $partners = auth()->user()->partners;
+        }
+        if(auth()->user()->hasRole(['SuperAdmin'])){
+            $partners = Partner::all();
+        }
+        if(!auth()->user()->hasRole(['SuperAdmin|Admin'])){
+            $partners = auth()->user()->owner->partners;
+        }
+//        $this->partners = $partners->partners()->orderBy('name', 'ASC')->get();
+        $this->partners = $partners->sortBy('name');
         $this->parkings = $parkings->parkings()->orderBy('title', 'ASC')->get();
         $this->user = $user->usersFilter();
     }

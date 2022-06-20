@@ -4,12 +4,13 @@
         <div class="page-head">
             <div class="page-head__top d-flex align-items-center">
                 <h1>{{ $title }}</h1>
-                <label class="field-style blue">
-                    <span>Поиск</span>
-                    <input type="text" placeholder="Поиск по столбцам">
-                </label>
+{{--                <label class="field-style blue">--}}
+{{--                    <span>Поиск</span>--}}
+{{--                    <input type="text" placeholder="Поиск по столбцам">--}}
+{{--                </label>--}}
                 <div class="ml-auto d-flex">
-                    <a href="{{ route('partners.create') }}" class="btn btn-white">Добавить</a>
+{{--                    <a href="{{ route('partners.create') }}" class="btn btn-white">Добавить</a>--}}
+                    <a href="{{ route('partners.search') }}" class="btn btn-white">Добавить</a>
                 </div>
             </div>
         </div>

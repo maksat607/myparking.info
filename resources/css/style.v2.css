@@ -1,3 +1,10 @@
+.theme-back option{
+    text-align: right;
+    color: rgb(255 255 255);
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 15px;
+}
 .theme-back{
     background-color: #536e9b !important;
     color: white;
@@ -10,13 +17,6 @@
     background: none;
     padding: 0;
     border: none;
-}
-.theme-back option{
-    text-align: right;
-    color: rgb(255 255 255);
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 15px;
 }
 ::-webkit-scrollbar {
     width: 5px;
@@ -421,7 +421,18 @@ body {
     height: 45px !important;
     color: #536E9B;
 }
-
+.d-down-field>span:first-child,
+.field-style>span:first-child {
+    display: block;
+    font-size: 13px;
+    position: absolute;
+    top: -10px;
+    background: #fff;
+    margin-left: 11px;
+    padding: 0 3px;
+    z-index: 2;
+}
+.d-down-field,
 .field-style input,
 .field-style select,
 .field-style textarea {
@@ -436,6 +447,25 @@ body {
     font-size: 16px;
     color: #536E9B;
 }
+.d-down-field {
+    position: relative;
+    max-width: 605px;
+}
+
+.d-down-field {
+    padding: 0;
+    height: auto;
+}
+
+.d-down-field .field-style {
+    margin-bottom: 0;
+}
+
+.d-down-field input {
+    border: 0;
+    /* padding: 0px 0px; */
+}
+
 
 .field-style.blue input {
     background: #536E9B;
@@ -3299,4 +3329,63 @@ span.serch-overlap {
 .add-partners .inner-page__item:first-child {
     margin-top: 0px;
     padding-top: 10px;
+}
+
+.d-dowen-body {
+    display: none;
+}
+
+.d-dowen-body.active {
+    display: block;
+}
+
+.d-dowen-body ul {
+    padding: 0;
+    margin: 0;
+}
+.d-dowen-body ul {
+    padding: 0;
+    margin: 0;
+}
+
+.d-dowen-body li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid hsla(218, 30%, 47%, 0.201);
+    padding: 12px;
+    font-weight: 400;
+}
+
+.d-dowen-body li.active {
+    background: #DDE2EB;
+}
+
+.d-dowen-body li span {
+    display: block;
+}
+
+.d-dowen-body li div {
+    font-weight: 400;
+    font-size: 13px;
+}
+
+.d-dowen-body button {
+    background: transparent;
+    border: none;
+    padding: 19px 16px;
+    color: #536E9B;
+    font-weight: 400;
+    font-size: 16px;
+}
+.d-dowen-body a {
+    background: transparent;
+    border: none;
+    color: #536E9B;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.d-dowen-body button svg a {
+    margin-right: 20px;
 }
