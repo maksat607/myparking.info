@@ -2,6 +2,6 @@
 
 @section('content')
 
-    @include('partners.form')
+    @include('partners.search')
 
 @endsection

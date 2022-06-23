@@ -14,13 +14,19 @@ $('.inner-page-search').on('keyup', function() {
             $('.d-dowen-select').empty();
             let route = $('.d-dowen-select').data('url');
             for (let i = 0; i < data.length; i++) {
-                let res =  `<a href="${route}/partner/add/${data[i]['id']}"><li>
-                                <span>${data[i]['name']}</span>
-                                <div>
-                                    <span>ИНН: ${data[i]['inn']}</span>
-                                    <span>КПП: ${data[i]['kpp']}</span>
-                                </div>
-                            </li></a>`
+                let anchor = `<a href="${route}/partner/add/${data[i]['id']}">`;
+                if($('#superadminid').length){
+                    anchor = `<a href="${route}/partners/${data[i]['id']}/edit">`;
+                }
+                let res =  `${anchor}
+                                <li>
+                                    <span>${data[i]['name']}</span>
+                                    <div>
+                                        <span>ИНН: ${data[i]['inn']}</span>
+                                        <span>КПП: ${data[i]['kpp']}</span>
+                                    </div>
+                                </li>
+                            </a>`
                 $('.d-dowen-select').append(res);
 
             }

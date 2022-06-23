@@ -3,7 +3,7 @@
 
 @section('content')
 
-
+@dump($partner)
     <form method="POST" action="{{ route('partners.store') }}" class="mkmk">
         @csrf
         <div class="container page-head-wrap">
@@ -36,6 +36,7 @@
                     </div>
                     <div class="d-down-field">
                         <span>Поиск</span>
+                        @if(auth()->user()->hasRole(['SuperAdmin']))<input type="hidden" id="superadminid" name="superadmin">@endif
                         <label class="field-style">
                             <input type="text" class="inner-page-search" placeholder="Название или юр. данные">
                         </label>
@@ -61,65 +62,65 @@
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label class="field-style">
+                                <label class="field-style @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>Полное название</span>
 
                                     <input id="name" type="text" class="form-control" name="name"
                                            value="@if(isset($partner)){{ $partner->name }}@else{{ old('name') }}@endif"
-                                           required autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                           required autofocus placeholder="Не указан"  @if(isset($disabled)&&$disabled) readonly @endif >
 
                                 </label>
                             </div>
 
                             <div class="col-6">
-                                <label class="switch-radio-wrap mt-11px" >
+                                <label class="switch-radio-wrap mt-11px  @if(isset($disabled)&&$disabled) disabled @endif" >
                                     <input type="checkbox" name="status" @if(isset($partner)&&($partner->status==0)) value="0"  @else value="1"  checked @endif @if(isset($partner)) onclick="return false;" @endif>
                                     <span class="switcher-radio"></span>
                                     <span>Активен</span>
                                 </label>
                             </div>
                             <div class="col-6 mt-3">
-                                <label class="field-style">
+                                <label class="field-style  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>Короткое название</span>
 
                                     <input id="shortname" type="text" class="form-control " name="shortname"
                                            value="@if(isset($partner)){{ $partner->shortname }}@else{{ old('shortname') }}@endif"
-                                           required autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                           required autofocus placeholder="Не указан" @if(isset($disabled)&&$disabled) readonly @endif >
 
 
                                 </label>
                             </div>
 
                             <div class="col-6 mt-3">
-                                <label class="field-style @if($errors->has('inn')) invalid @endif">
+                                <label class="field-style @if($errors->has('inn')) invalid @endif  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>ИНН</span>
                                     <input type="text" name="inn"
                                            value="@if(isset($partner)){{ $partner->inn }}@else{{ old('inn') }}@endif"
-                                           autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                           autofocus placeholder="Не указан" @if(isset($disabled)&&$disabled) readonly @endif >
 
                                 </label>
                             </div>
 
 
                             <div class="col-6 mt-3">
-                                <label class="field-style span">
+                                <label class="field-style span  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>Тип партнёра</span>
                                     @if(!$personal)
                                         <input type="text"
                                                value="@if(isset($partner)){{ $partner->partnerType->name }}@else{{ old('partner_type') }}@endif"
-                                               autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                               autofocus placeholder="Не указан"  @if(isset($disabled)&&$disabled) readonly @endif>
                                         <input type="hidden" name="partner_type"
                                                value="@if(isset($partner)){{ $partner->partnerType->id }}@else{{ old('partner_type') }}@endif"
-                                               autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                               autofocus placeholder="Не указан"  @if(isset($disabled)&&$disabled) readonly @endif>
                                     @else
-                                    <select name="partner_type" id="partner_id" class="partner_id page-select custom-select @if($errors->has('partner_type')) is-invalid @endif" required @if(isset($partner)) readonly="readonly" @endif>
+                                    <select name="partner_type" id="partner_id" class="partner_id page-select custom-select @if($errors->has('partner_type')) is-invalid @endif" required  >
 
-                                        <option selected hidden disabled value="">Выберите тип партнера</option>
+                                        <option selected hidden  value="">Выберите тип партнера</option>
                                         @foreach($partner_types as $partner_type)
                                             @if((isset($partner) && ($partner->partnerType->id === $partner_type->id))||(old('partner_type') == $partner_type->id))
                                                 <option selected value="{{ $partner_type->id }}">{{ $partner_type->name }}</option>
                                             @else
-                                                <option value="{{ $partner_type->id }}" @if(isset($partner)) disabled @endif>{{ $partner_type->name }}</option>
+                                                <option value="{{ $partner_type->id }}">{{ $partner_type->name }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -127,15 +128,15 @@
                                 </label>
                             </div>
                             <div class="col-6 mt-3">
-                                <label class="field-style">
+                                <label class="field-style  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>КПП</span>
                                     <input id="kpp" type="text" name="kpp"
                                            value="@if(isset($partner)){{ $partner->kpp }}@else{{ old('kpp') }}@endif"
-                                           required autofocus placeholder="Не указан" @if(isset($partner)) readonly="readonly" @endif>
+                                           required autofocus placeholder="Не указан" @if(isset($disabled)&&$disabled) readonly @endif >
                                 </label>
                             </div>
                             <div class="col-6 mt-3">
-                                <label class="field-style span">
+                                <label class="field-style span  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>База</span>
 
                                     @if(!$personal)
@@ -146,7 +147,7 @@
                                             <input  type="hidden" name="base" value="user" readonly="readonly" >
                                             <input  type="text" value="Пользовательская" readonly="readonly" >
                                         @else
-                                            <select name="base" @if(isset($partner)) readonly="readonly" @endif    >
+                                            <select name="base"      >
                                                 <option value="public" @if(auth()->user()->hasRole(['Admin']))  @endif >Общая</option>
                                                 <option value="user">Пользовательская</option>
                                             </select>

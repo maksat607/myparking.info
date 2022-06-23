@@ -3389,3 +3389,40 @@ span.serch-overlap {
 .d-dowen-body button svg a {
     margin-right: 20px;
 }
+
+.d-down-field.disabled, .field-style.disabled input, .field-style.disabled select, .field-style.disabled textarea {
+    border: 1px solid #9C9C9C !important;
+    color: #9C9C9C !important;
+    pointer-events: none !important;
+}
+
+.field-style.disabled .select2-container--default .select2-selection--single,  .field-style.disabled .select2-container--default .select2-selection--multiple{
+    border: 1px solid #d6d6d6 !important;
+    color: #9C9C9C !important;
+    pointer-events: none !important;
+}
+.field-style.disabled span{
+    color: #9C9C9C !important;
+}
+.field-style.disabled .select2-selection__arrow {
+    filter: grayscale(15);
+}
+
+.switch-radio-wrap.disabled{
+    pointer-events: none;
+}
+.switch-radio-wrap.disabled .switcher-radio {
+    background: #9c9c9c !important;
+    border-color: #9c9c9c !important;
+}
+
+.switch-radio-wrap.disabled .switcher-radio+span{
+    color: #9c9c9c !important;
+}
+.select2-container--default .select2-results__option--selected{
+    background-color: unset;
+    color: unset;
+}
+/*.field-style.span .select2-results__option:hover {*/
+/*    background-color: #ddd !important;*/
+/*}*/

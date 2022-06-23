@@ -156,10 +156,12 @@ class PartnerController extends AppController
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
-
+        if($partner->base_type="public"){
+            $disabled = true;
+        }
         $partner_types = PartnerType::all();
         $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
-        return view('partners.edit', compact('title', 'partner', 'partner_types', 'pricings'));
+        return view('partners.edit', compact('title', 'partner', 'partner_types', 'pricings',$partner->base_type="public"?'disabled':''));
     }
 
     /**
@@ -295,7 +297,10 @@ class PartnerController extends AppController
         return $p;
     }
     public function search(){
-
+//        if(auth()->user()->hasRole('Admin'))
+//            $personal = true;
+//        else
+//            $personal = false;
         $title = __('Create new Partner');
         $partner_types = PartnerType::all();
         return view('partners.search', compact('title','partner_types'));
@@ -316,10 +321,12 @@ class PartnerController extends AppController
     }
     public function addPartner(Partner $partner){
 
-        if(auth()->user()->hasRole('Admin'))
+            $disabled = true;
+            if(auth()->user()->hasRole(['SuperAdmin']))
+            {
+                $disabled = false;
+            }
             $personal = true;
-        else
-            $personal = false;
         $car_types  = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -327,7 +334,7 @@ class PartnerController extends AppController
         $partner_types = PartnerType::all();
         $pricings = createPriceList($car_types);
         $title = __('Create new Partner');
-        return view('partners.search', compact('title','partner','pricings','personal','partner_types'));
+        return view('partners.search', compact('title','partner','pricings','personal','partner_types','disabled'));
     }
     private function groupInns()
     {
