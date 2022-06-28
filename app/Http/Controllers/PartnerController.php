@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Validation\Rule;
 class PartnerController extends AppController
 {
     private $parkingAjax = [];
@@ -86,20 +86,8 @@ class PartnerController extends AppController
      */
     public function store(Request $request)
     {
-
-
-
-        $validator = Validator::make(array_merge($request->pricings,['inn'=>$request->inn]), [
-            '*.regular_price' => ['nullable', 'integer'],
-            '*.dicount_price' => ['nullable', 'integer'],
-            '*.free_days' => ['nullable', 'integer'],
-            '*.car_type_id' => ['integer'],
-            'inn' => (isset($request->beingAdded)&&$request->beingAdded=='public') ? 'required' : 'required|unique:partners'
-
-        ])->validate();
-
-        $partner = Partner::find($request->partner);
-
+dd(1);
+        $spartner = Partner::find($request->partner);
         $partnerData = [
             'name' => $request->name,
             'shortname' => $request->shortname,
@@ -109,7 +97,8 @@ class PartnerController extends AppController
             'partner_type_id' => $request->partner_type,
             'status' => $request->status,
         ];
-        $request->dd();
+        $this->validator($request->all(),$request)->validate();
+
         if(isset($request->beingAdded)&&$request->beingAdded=='public'&&auth()->user()->hasRole(['Admin'])){
             if(PartnerUser::where('user_id',auth()->user()->id)->where('partner_id',$request->partner)->count()>0){
                 redirect()->back()->with('error', __('Error'));
@@ -118,12 +107,12 @@ class PartnerController extends AppController
             }
         }
 //        else{
-//            $partner = Partner::create($partnerData);
+    //            $partner = Partner::create($partnerData);
 //        }
 
-        $lv = $partner->pricings()->createMany(
-            $request->pricings
-        );
+//        $lv = $partner->pricings()->createMany(
+//            $request->pricings
+//        );
 
 
 //        return ($partner->exists)
@@ -151,6 +140,7 @@ class PartnerController extends AppController
     public function edit($id)
     {
         $partner = Partner::findOrFail($id);
+        $personal = true;
         $car_types  = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -159,9 +149,13 @@ class PartnerController extends AppController
         if($partner->base_type="public"){
             $disabled = true;
         }
+        if(auth()->user()->hasRole('SuperAdmin')){
+            $personal = false;
+            $disabled = false;
+        }
         $partner_types = PartnerType::all();
         $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
-        return view('partners.edit', compact('title', 'partner', 'partner_types', 'pricings',$partner->base_type="public"?'disabled':''));
+        return view('partners.edit', compact('title', 'partner', 'partner_types','personal', 'pricings','disabled'));
     }
 
     /**
@@ -173,36 +167,48 @@ class PartnerController extends AppController
      */
     public function update(Request $request, $id)
     {
-        Validator::make($request->pricings, [
+
+        if(!$request->has('status')){
+            $request->request->add(['status' =>0]);
+        }else{
+            $request->request->add(['status' =>1]);
+        }
+
+
+
+        if($request->has('pricings')){
+            Validator::make($request->pricings, [
             '*.regular_price' => ['nullable', 'integer'],
             '*.dicount_price' => ['nullable', 'integer'],
             '*.free_days' => ['nullable', 'integer'],
             '*.car_type_id' => ['integer'],
         ])->validate();
+        }
 
         $partner = Partner::findOrFail($id);
 
-        $this->validator($request->all())->validate();
+        $this->validator($request->all(),$request)->validate();
 
         $request->request->add(['partner_type_id' => $request->partner_type]);
         $is_update = $partner->update($request->except(['partner_type']));
 
+
 //        $is_update = Partner::where('id', $id)->update($request->except(['partner_type', '_token', '_method']));
-
-        foreach ($request->pricings as $pricing) {
-            Pricing::updateOrCreate(
-                [
-                    'car_type_id'=> $pricing['car_type_id'],
-                    'partner_id'=> $partner->id,
-                ],
-                [
-                    'free_days'=> $pricing['free_days'],
-                    'discount_price'=> $pricing['discount_price'],
-                    'regular_price'=> $pricing['regular_price']
-                ]
-            );
+        if($request->has('pricings')) {
+            foreach ($request->pricings as $pricing) {
+                Pricing::updateOrCreate(
+                    [
+                        'car_type_id' => $pricing['car_type_id'],
+                        'partner_id' => $partner->id,
+                    ],
+                    [
+                        'free_days' => $pricing['free_days'],
+                        'discount_price' => $pricing['discount_price'],
+                        'regular_price' => $pricing['regular_price']
+                    ]
+                );
+            }
         }
-
         return ($is_update)
             ? redirect()->route('partners.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
@@ -219,16 +225,22 @@ class PartnerController extends AppController
         //
     }
 
-    protected function validator(array $data)
+    protected function validator(array $data,Request $request)
     {
+
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:100', 'unique:partner_types'],
             'address' => ['string', 'max:100', 'nullable'],
             'phone' => ['numeric', 'min:20', 'nullable'],
             'email' => ['string', 'email', 'nullable'],
-            'rank' => ['required', 'numeric', 'min:0'],
+            'rank' => [ 'numeric', 'min:0'],
             'partner_type' => ['required', 'exists:partner_types,id'],
             'status' => ['boolean'],
+            'inn' => (isset($request->beingAdded)&&$request->beingAdded=='public') ? 'required' :
+                ['required',
+                    $request->has('update') ? (Rule::unique('partners')->ignore(json_decode($request->partner)->id)) :
+                    'unique:partners'
+                ]
         ]);
     }
 
@@ -306,6 +318,7 @@ class PartnerController extends AppController
         return view('partners.search', compact('title','partner_types'));
     }
     public function addNewPartner(){
+        $disabled=false;
         if(auth()->user()->hasRole('Admin'))
             $personal = true;
         else
@@ -317,7 +330,7 @@ class PartnerController extends AppController
         $partner_types = PartnerType::all();
         $pricings = createPriceList($car_types);
         $title = __('Create new Partner');
-        return view('partners.search', compact('title','pricings','personal','partner_types'));
+        return view('partners.search', compact('title','pricings','personal','partner_types','disabled'));
     }
     public function addPartner(Partner $partner){
 

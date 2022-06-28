@@ -3,9 +3,13 @@
 
 @section('content')
 
-@dump($partner)
-    <form method="POST" action="{{ route('partners.store') }}" class="mkmk">
+{{ Route::currentRouteName() }}
+{{--{{  url()->current() }}--}}
+    <form method="POST"  class="mkmk" action="@if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')) {{ route('partners.update', ['partner'=>$partner->id]) }} @else {{ route('partners.store') }} @endif">
         @csrf
+
+
+        @if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')) @method('PUT') @endif
         <div class="container page-head-wrap">
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -16,12 +20,17 @@
                     </ul>
                 </div>
             @endif
+                @if(isset($partner)||Route::currentRouteName()=="partners.edit")
+                    <input name="update" type="hidden">
+                @endif
             <div class="page-head">
 
                 <div class="page-head__top d-flex align-items-center">
                     <h1>{{ $title }}</h1>
                     <div class="ml-auto d-flex">
-                        <button class="btn btn-white" type="submit">Добавить</button>
+                        @if(!(!isset($partner)&&Route::currentRouteName()=="partners.search"))
+                            <button class="btn btn-white" type="submit">@if(isset($partner)&&Route::currentRouteName()=="partners.edit") Обновить @else Добавить  @endif</button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -53,7 +62,6 @@
                     </div>
                 </div>
                 @if(isset($personal))
-
                     <input type="hidden" name="beingAdded" value="frompublic">
                 @if(isset($partner))<input type="hidden" name="partner" value="{{$partner}}">@endif
                     <div class="inner-page__item">
@@ -74,7 +82,7 @@
 
                             <div class="col-6">
                                 <label class="switch-radio-wrap mt-11px  @if(isset($disabled)&&$disabled) disabled @endif" >
-                                    <input type="checkbox" name="status" @if(isset($partner)&&($partner->status==0)) value="0"  @else value="1"  checked @endif @if(isset($partner)) onclick="return false;" @endif>
+                                    <input type="checkbox" name="status" @if(isset($partner)&&($partner->status==0)) value="0"  @else value="1"  checked @endif @if(isset($partner)&&$disabled) onclick="return false;" @endif>
                                     <span class="switcher-radio"></span>
                                     <span>Активен</span>
                                 </label>
@@ -105,7 +113,7 @@
                             <div class="col-6 mt-3">
                                 <label class="field-style span  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>Тип партнёра</span>
-                                    @if(!$personal)
+                                    @if(!$personal&&$disabled)
                                         <input type="text"
                                                value="@if(isset($partner)){{ $partner->partnerType->name }}@else{{ old('partner_type') }}@endif"
                                                autofocus placeholder="Не указан"  @if(isset($disabled)&&$disabled) readonly @endif>
