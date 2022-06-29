@@ -8,7 +8,7 @@ $('.inner-page-search').on('keyup', function() {
         let r = searchvin(fd);
 
         // console.log(res)
-        // console.log(r)
+
         r.done(function(data){
             console.log(data.length)
             $('.d-dowen-select').empty();

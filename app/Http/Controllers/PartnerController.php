@@ -86,29 +86,33 @@ class PartnerController extends AppController
      */
     public function store(Request $request)
     {
-dd(1);
+
         $spartner = Partner::find($request->partner);
         $partnerData = [
             'name' => $request->name,
             'shortname' => $request->shortname,
             'inn' => $request->inn,
             'kpp' => $request->kpp,
-            'base'=>$request->base,
+            'base_type'=>$request->base,
             'partner_type_id' => $request->partner_type,
             'status' => $request->status,
         ];
         $this->validator($request->all(),$request)->validate();
 
-        if(isset($request->beingAdded)&&$request->beingAdded=='public'&&auth()->user()->hasRole(['Admin'])){
+        if($request->has('partner')&&isset($request->beingAdded)&&$request->beingAdded=='frompublic'&&auth()->user()->hasRole(['Admin'])){
+
             if(PartnerUser::where('user_id',auth()->user()->id)->where('partner_id',$request->partner)->count()>0){
-                redirect()->back()->with('error', __('Error'));
+                return redirect()->back()->with('error', 'Уже есть в списке партнёров');
             }else{
                 PartnerUser::create(['user_id'=>auth()->user()->id,'partner_id'=>$request->partner]);
+                return redirect()->route('partners.index')->with('success', 'Добавлено');
             }
         }
-//        else{
-    //            $partner = Partner::create($partnerData);
-//        }
+        else{
+                $partner = Partner::create($partnerData);
+                PartnerUser::create(['user_id'=>auth()->user()->id,'partner_id'=>$partner->id]);
+                return redirect()->route('partners.index')->with('success', 'Добавлено');
+        }
 
 //        $lv = $partner->pricings()->createMany(
 //            $request->pricings
@@ -150,6 +154,10 @@ dd(1);
             $disabled = true;
         }
         if(auth()->user()->hasRole('SuperAdmin')){
+            $personal = false;
+            $disabled = false;
+        }
+        if(auth()->user()->hasRole('Admin')&&$partner->base_type=='user'){
             $personal = false;
             $disabled = false;
         }
@@ -238,7 +246,7 @@ dd(1);
             'status' => ['boolean'],
             'inn' => (isset($request->beingAdded)&&$request->beingAdded=='public') ? 'required' :
                 ['required',
-                    $request->has('update') ? (Rule::unique('partners')->ignore(json_decode($request->partner)->id)) :
+                    $request->has('update') ? (Rule::unique('partners')->ignore($request->partner)) :
                     'unique:partners'
                 ]
         ]);
@@ -305,7 +313,7 @@ dd(1);
 
     public function searchVin(Request $request){
 //        return $request->vin;
-        $p = Partner::where('base_type','public')->where('inn','like',"%{$request->vin}%")->get()->toArray();
+        $p = Partner::where('base_type','public')->where('status',1)->where('inn','like',"%{$request->vin}%")->get()->toArray();
         return $p;
     }
     public function search(){

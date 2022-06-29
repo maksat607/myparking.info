@@ -22,6 +22,7 @@ class Partner extends Model
         'base_type',
         'inn',
         'kpp',
+        'base_type'
     ];
 
     public function partnerType()
