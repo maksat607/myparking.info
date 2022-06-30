@@ -3,7 +3,7 @@
 
 @section('content')
 
-{{ Route::currentRouteName() }}
+{{--{{ Route::currentRouteName() }}--}}
 {{--{{  url()->current() }}--}}
     <form method="POST"  class="mkmk" action="@if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')||isset($partner)&&Route::currentRouteName()=="partners.edit") {{ route('partners.update', ['partner'=>$partner->id]) }} @else {{ route('partners.store') }} @endif">
         @csrf
