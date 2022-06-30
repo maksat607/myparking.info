@@ -5,11 +5,13 @@
 
 {{ Route::currentRouteName() }}
 {{--{{  url()->current() }}--}}
-    <form method="POST"  class="mkmk" action="@if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')) {{ route('partners.update', ['partner'=>$partner->id]) }} @else {{ route('partners.store') }} @endif">
+    <form method="POST"  class="mkmk" action="@if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')||isset($partner)&&Route::currentRouteName()=="partners.edit") {{ route('partners.update', ['partner'=>$partner->id]) }} @else {{ route('partners.store') }} @endif">
         @csrf
 
 
         @if(isset($partner)&&auth()->user()->hasRole('SuperAdmin')) @method('PUT') @endif
+        @if(isset($partner)&&Route::currentRouteName()=="partners.edit")@method('PUT') @endif
+
         <div class="container page-head-wrap">
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -147,7 +149,7 @@
                                 <label class="field-style span  @if(isset($disabled)&&$disabled) disabled @endif">
                                     <span>База</span>
 
-                                    @if(!$personal||((isset($partner)&&$partner->base_type=='public')))
+                                    @if(!$personal&&((isset($partner)&&$partner->base_type=='public'))&&auth()->user()->hasRole(['Admin']))
                                         <input  type="hidden" name="base" value="public" readonly="readonly" >
                                         <input  type="text" value="Общая" readonly="readonly" >
                                     @else

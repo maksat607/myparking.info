@@ -144,23 +144,27 @@ class PartnerController extends AppController
     public function edit($id)
     {
         $partner = Partner::findOrFail($id);
+
+//        dd(((auth()->user()->hasRole('Admin'))&&($partner->base_type=='user')));
         $personal = true;
         $car_types  = CarType::where('is_active', 1)
             ->select('id','name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
-        if($partner->base_type="public"){
+        if($partner->base_type=="public"){
             $disabled = true;
         }
         if(auth()->user()->hasRole('SuperAdmin')){
             $personal = false;
             $disabled = false;
         }
-        if(auth()->user()->hasRole('Admin')&&$partner->base_type=='user'){
-            $personal = false;
+        if((auth()->user()->hasRole('Admin'))&&($partner->base_type=='user')){
+
+            $personal = true;
             $disabled = false;
         }
+
         $partner_types = PartnerType::all();
         $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
         return view('partners.edit', compact('title', 'partner', 'partner_types','personal', 'pricings','disabled'));
@@ -175,7 +179,7 @@ class PartnerController extends AppController
      */
     public function update(Request $request, $id)
     {
-
+//$request->dd();
         if(!$request->has('status')){
             $request->request->add(['status' =>0]);
         }else{
@@ -198,25 +202,26 @@ class PartnerController extends AppController
         $this->validator($request->all(),$request)->validate();
 
         $request->request->add(['partner_type_id' => $request->partner_type]);
+        $request->request->add(['base_type'=>$request->base]);
         $is_update = $partner->update($request->except(['partner_type']));
 
 
 //        $is_update = Partner::where('id', $id)->update($request->except(['partner_type', '_token', '_method']));
-        if($request->has('pricings')) {
-            foreach ($request->pricings as $pricing) {
-                Pricing::updateOrCreate(
-                    [
-                        'car_type_id' => $pricing['car_type_id'],
-                        'partner_id' => $partner->id,
-                    ],
-                    [
-                        'free_days' => $pricing['free_days'],
-                        'discount_price' => $pricing['discount_price'],
-                        'regular_price' => $pricing['regular_price']
-                    ]
-                );
-            }
-        }
+//        if($request->has('pricings')) {
+//            foreach ($request->pricings as $pricing) {
+//                Pricing::updateOrCreate(
+//                    [
+//                        'car_type_id' => $pricing['car_type_id'],
+//                        'partner_id' => $partner->id,
+//                    ],
+//                    [
+//                        'free_days' => $pricing['free_days'],
+//                        'discount_price' => $pricing['discount_price'],
+//                        'regular_price' => $pricing['regular_price']
+//                    ]
+//                );
+//            }
+//        }
         return ($is_update)
             ? redirect()->route('partners.index')->with('success', __('Saved.'))
             : redirect()->back()->with('error', __('Error'));
