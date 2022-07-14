@@ -31,9 +31,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($partners as $partner)
+                @foreach ($partners as  $partner)
                     <tr class="@if(!$partner->status){{ 'disabled-tr' }}@endif">
-                        <td class="tr-id">{{ $loop->iteration }}</th>
+                        <td class="tr-id">{{ $partner->number }}</th>
                         <td>
                             @if($partner->status)
                             <div class="first-info d-flex align-items-center">
@@ -48,10 +48,10 @@
                             @endif
                             <div class="company-type">{{ $partner->name }}</div>
                         </td>
-                        <td style="width: 200px;">{{ $partner->partnerType->name }}</td>
+                        <td style="width: 200px;">@if($partner->partnerType!==null){{ $partner->partnerType->name }} @else null @endif</td>
                         <td>{{ $partner->inn }}</td>
                         <td>{{ $partner->kpp }}</td>
-                        <td>{{ $partner->base_type }}</td>
+                        <td>@if($partner->base_type=='public') общая @else Пользовательская @endif </td>
 {{--                        <td>--}}
     {{--                            @if ($partner->status)--}}
 {{--                                <span class="status-td statusgreen">{{ __('Active') }}</span>--}}

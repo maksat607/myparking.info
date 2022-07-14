@@ -50,6 +50,9 @@ class PartnerController extends AppController
         if(auth()->user()->hasRole(['Admin'])){
             $p_ids = auth()->user()->partners->pluck('id');
             $partners = Partner::whereIn('id',$p_ids)->with('partnerType')->orderBy('status', 'DESC')->paginate();
+            $partners->each(function ($collect, $index) use ($partners) {
+                $collect->number     = $partners->perPage() * ($partners->currentPage() - 1) + $index + 1;
+            });
         }
         if(auth()->user()->hasRole(['SuperAdmin'])) {
             $partners = Partner::with('partnerType')->orderBy('status', 'DESC')->paginate();
@@ -318,7 +321,9 @@ class PartnerController extends AppController
 
     public function searchVin(Request $request){
 //        return $request->vin;
+
         $p = Partner::where('base_type','public')->where('status',1)->where('inn','like',"%{$request->vin}%")->get()->toArray();
+//        $p = Partner::where('base_type','user')->where('status',1)->where('inn','like',"%{$request->vin}%")->get()->toArray();
         return $p;
     }
     public function search(){
