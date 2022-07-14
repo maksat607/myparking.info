@@ -78,13 +78,13 @@
                                     {{ __('Parking lots') }}
                                 </a>
                             </li>
-                            @canany(['partner_view', 'partner_create', 'partner_update'])
+{{--                            @canany(['partner_view', 'partner_create', 'partner_update'])--}}
                                 <li class="{{ (request()->routeIs('partners.index')) ? 'active' : '' }}">
                                     <a href="{{ route('partners.index') }}" >
                                         {{ __('Partners') }}
                                     </a>
                                 </li>
-                            @endcanany
+{{--                            @endcanany--}}
                             @endhasanyrole
                             @hasanyrole('Partner')
                             <li class="{{ (request()->routeIs('partner.parkings')) ? 'active' : '' }}">
