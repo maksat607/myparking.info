@@ -202,8 +202,8 @@ class ApplicationController extends AppController
             'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
-            'car_model_id' => ['integer', 'required'],
-            'year' => ['integer', 'required'],
+            'car_model_id' => ['integer'],
+            'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
             'status_id' => ['exists:statuses,id', Rule::in($statuses)]
         ]);
@@ -391,7 +391,8 @@ class ApplicationController extends AppController
 //        $condition_electric = $application->condition_electric;
 //        $condition_gear = $application->condition_gear;
 //        $condition_transmission = $application->condition_transmission;
-
+        $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y');
+        $dateTime =$dateDataApplication.' '.$application->arriving_interval;
         $title = __('Update a Request');
         return view('applications.edit', compact(
             'title',
@@ -413,6 +414,7 @@ class ApplicationController extends AppController
             'carEngines',
             'carTransmissions',
             'carGears',
+            'dateTime'
         ));
 
     }

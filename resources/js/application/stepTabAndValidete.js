@@ -137,7 +137,13 @@ const validate = {
         });
 
         this.removeErrorCar(els);
-        if(this.filtered.length > 0) {
+        // if(this.filtered.length > 0) {
+        if(this.filtered.includes(".car_mark_id")) {
+            this.filtered = ['.car_mark_id'];
+            // console.log(this.filtered)
+            // if(this.filtered.includes(".car_model_id")){
+            //
+            // }
             this.addCar();
             return true
         }

@@ -173,25 +173,37 @@
                                     Дата
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label class="field-style">
-                                            <span>Дата поставки</span>
-                                            <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]" placeholder="Не указан">
-                                        </label>
-                                        @push('scripts')
-                                            const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
-                                        @endpush
-                                    </div>
-                                    @if($application->status_id!=2)
+                                    @if($application->status->id!=7)
                                         <div class="col-6">
                                             <label class="field-style">
-                                                <span>Промежуток времени</span>
-                                                <select id="arriving_interval" name="app_data[arriving_interval]">
-                                                    <option selected hidden disabled value="">{{ __('Select a time interval..') }}</option>
-                                                    <option @if( $application->arriving_interval == "10:00 - 14:00" ) selected @endif value="10:00 - 14:00">10:00 - 14:00</option>
-                                                    <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
-                                                </select>
+                                                <span>Дата поставки</span>
+                                                <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]" placeholder="Не указан">
                                             </label>
+                                            @push('scripts')
+                                                const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                            @endpush
+
+                                        </div>
+                                        @if($application->status_id!=2)
+                                            <div class="col-6">
+                                                <label class="field-style">
+                                                    <span>Промежуток времени</span>
+                                                    <select id="arriving_interval" name="app_data[arriving_interval]">
+                                                        <option selected hidden disabled value="">{{ __('Select a time interval..') }}</option>
+                                                        <option @if( $application->arriving_interval == "10:00 - 14:00" ) selected @endif value="10:00 - 14:00">10:00 - 14:00</option>
+                                                        <option @if( $application->arriving_interval == "14:00 - 18:00" ) selected @endif value="14:00 - 18:00">14:00 - 18:00</option>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                        @endif
+                                    @else
+
+                                        <div class="col-6">
+                                            <label class="field-style">
+                                                <span>Дата поставки</span>
+                                                <input type="text"    value="{{ $dateTime }}" disabled>
+                                            </label>
+
                                         </div>
                                     @endif
                                     @hasrole('Admin')

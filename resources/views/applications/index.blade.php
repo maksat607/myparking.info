@@ -91,7 +91,7 @@
                                     <span class="car-status status-new">Есть осмотр</span>
                                 @endif
                                 @if($application->issuance)
-                                   <span class="car-status status-new">Есть выдача</span>
+                                   <span class="car-status status-new">На выдачу</span>
                                 @endif
                                 <span class="car-status {{ $application->status->getColorClass() }}">{{$application->status->name}}</span>
                                 @if($application->returned)

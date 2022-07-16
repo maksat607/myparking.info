@@ -28,6 +28,7 @@ if(uploaded) {
     });
 }*/
 
+
 $(`body`).on('click', `.newcart__imgwrap a`, function(e){
     e.preventDefault();
     let parentSlider = $(this).parents(`.car-slide`);
@@ -39,13 +40,14 @@ $(`body`).on('click', `.newcart__imgwrap a`, function(e){
     $.fancybox.open(gallery, {
         beforeClose : function( instance, current, e ) {
             parentSlider.slick("slickGoTo", current.index)
-        }
+        },
+        loop : true
     }, dataIndex);
-
+    console.log(dataIndex)
 });
 
 $(`body`).on('click', `.page-file__zoom`, function(e){
-    e.preventDefault();
+    // e.preventDefault();
     let gallery = $(`#images .page-file-item`);
     let dataIndex = $(this).parents(`.page-file-item`).index() -1;
 

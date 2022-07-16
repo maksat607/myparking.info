@@ -3,7 +3,7 @@
     <div class="page-head">
         <div class="page-head__top d-flex align-items-center">
             @if(request()->routeIs('issue_requests.index'))
-                <h1>Выдача ({{$applications->total()}})</h1>
+                <h1>На выдачу ({{$applications->total()}})</h1>
             @elseif(request()->routeIs('view_requests.index'))
                 <h1>Осмотр ({{$viewRequests->total()}})</h1>
             @elseif(is_null(request()->route('status_id')) && request()->routeIs('applications.index'))
@@ -28,7 +28,7 @@
             <a href="{{ route('applications.index', ['status_id' => 7]) }}" class="page-nav__link">Постановка</a>
         </li>
         <li class="page-nav__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
-            <a href="{{ route('issue_requests.index') }}" class="page-nav__link">Выдача</a>
+            <a href="{{ route('issue_requests.index') }}" class="page-nav__link">На выдачу</a>
         </li>
         <li class="page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
             <a href="{{ route('view_requests.index') }}" class="page-nav__link">Осмотр</a>
