@@ -489,8 +489,8 @@ class ApplicationController extends AppController
             ],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ['integer', 'required'],
-            'car_model_id' => ['integer', 'required'],
-            'year' => ['integer', 'required'],
+            'car_model_id' => ['integer'],
+            'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
             'preloaded.*' => ['nullable', 'sometimes', 'exists:attachments,id']
         ])->validate();
