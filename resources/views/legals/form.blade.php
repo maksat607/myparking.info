@@ -72,7 +72,7 @@
                                     <span>КПП</span>
                                     <input type="text" class="@error('kpp'){{ 'is-invalid' }}@enderror" name="kpp"
                                            value="@if(isset($legal)){{ $legal->kpp }}@else{{ old('kpp') }}@endif"
-                                           required placeholder="Не указан">
+                                            placeholder="Не указан">
 
                                     @error('kpp')
                                     <span class="invalid-feedback" role="alert">

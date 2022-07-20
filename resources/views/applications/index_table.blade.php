@@ -34,7 +34,7 @@
                                 <span class="car__cunt">12</span>
                             </span>--}}
                         </h3>
-                        <span class="car__subtitle">{{ $application->parking->title }}</span>
+                        <span class="car__subtitle">@if($application->parking){{ $application->parking->title }}@endif</span>
                     </td>
                     <td>
                         <span>VIN</span>

@@ -130,7 +130,7 @@ class LegalController extends AppController
             'name' => ['required', 'string', 'max:255'],
             'reg_number' => ['required', 'string', 'min:5', 'max:255', 'unique:legals'],
             'inn' => ['required', 'string', 'min:5', 'unique:legals'],
-            'kpp' => ['required', 'string', 'min:5', 'unique:legals'],
+            'kpp' => [   'unique:legals'],
             'status' => ['boolean'],
         ])->validate();
 
