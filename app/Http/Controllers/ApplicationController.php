@@ -1248,7 +1248,7 @@ class ApplicationController extends AppController
     }
     public function updateSystemData(Request $request){
 //        return $request->all();
-        if(auth()->user()->hasRole(['SuperAdmin', 'Admin'])){
+        if(auth()->user()->hasRole(['SuperAdmin', 'Admin','Manager'])){
 
             $app = Application::find($request->appid);
             if($app){
