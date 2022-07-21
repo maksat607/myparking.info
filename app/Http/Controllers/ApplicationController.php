@@ -1247,15 +1247,17 @@ class ApplicationController extends AppController
         return true;
     }
     public function updateSystemData(Request $request){
+//        return $request->all();
         if(auth()->user()->hasRole(['SuperAdmin', 'Admin'])){
+
             $app = Application::find($request->appid);
             if($app){
                 $app->accepted_by = $request->acceptedId;
                 $app->issued_by = $request->issuedId;
                 $app->parking_id = $request->parkingId;
                 $app->partner_id = $request->partnerId;
-                $app->arrived_at = Carbon::parse($request->arriving_at_modal)->format('Y-m-d H:i:s');
-                $app->issued_at = Carbon::parse($request->issued_at_modal)->format('Y-m-d H:i:s');
+                $app->arrived_at = ($request->arriving_at_modal) ? Carbon::parse($request->arriving_at_modal)->format('Y-m-d H:i:s') : null;
+                $app->issued_at = ($request->issued_at_modal) ? Carbon::parse($request->issued_at_modal)->format('Y-m-d H:i:s') : null;
                 $app->vin = $request->vin;
                 $app->license_plate = $request->plate;
                 $app->save();

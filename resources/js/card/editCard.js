@@ -54,11 +54,13 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     fd.append('vin', vin);
     fd.append('plate', plate);
     fd.append('appid', appid);
+    // console.log(fr)
     let r = changeSystemData(fd);
+    console.log('>')
     console.log(r);
-
-    console.log(vin)
-    console.log(plate)
+    console.log('<')
+    // console.log(vin)
+    // console.log(plate)
 
     $('.dropdownEditible').removeClass('d-none');
     // $('.date-select').addClass('position-absolute');

@@ -77,7 +77,8 @@
 
                         <div class="car-col__info-item">
                             <div>
-                                <span>Дата постановки</span>
+                                <span>Дата постановки==</span>
+{{--                                @if($application->status->id==)--}}
                                 {{ $application->formated_arrived_at }}
                             </div>
                             <div>
@@ -226,7 +227,7 @@
                                                               fill="#27AE60" />
                                                     </svg>
 
-                                                    Выдача
+                                                    Выдать
                                                 </a>
                                             @else
                                                 <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
@@ -245,7 +246,7 @@
                                                               fill="#27AE60" />
                                                     </svg>
 
-                                                    Выдача
+                                                    Выдать
                                                 </a>
                                             @endif
                                         @endcan

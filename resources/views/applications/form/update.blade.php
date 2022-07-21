@@ -173,7 +173,7 @@
                                     Дата
                                 </div>
                                 <div class="row">
-                                    @if($application->status->id!=7)
+
                                         <div class="col-6">
                                             <label class="field-style">
                                                 <span>Дата поставки</span>
@@ -185,7 +185,7 @@
 
                                         </div>
                                         @if($application->status_id!=2)
-                                            <div class="col-6">
+                                            <div class="col-6" @if(auth()->user()->hasRole(['Manager'])) hidden @endif>
                                                 <label class="field-style">
                                                     <span>Промежуток времени</span>
                                                     <select id="arriving_interval" name="app_data[arriving_interval]">
@@ -196,16 +196,7 @@
                                                 </label>
                                             </div>
                                         @endif
-                                    @else
 
-                                        <div class="col-6">
-                                            <label class="field-style">
-                                                <span>Дата поставки</span>
-                                                <input type="text"    value="{{ $dateTime }}" disabled>
-                                            </label>
-
-                                        </div>
-                                    @endif
                                     @hasrole('Admin')
                                     <div class="col-6 mt-3">
                                         <label class="field-style">
