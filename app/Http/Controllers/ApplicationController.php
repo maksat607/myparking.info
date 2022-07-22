@@ -183,6 +183,7 @@ class ApplicationController extends AppController
 
 //        $attachments = $this->AttachmentController->storeToModel($request,'images');
 //        dd(11);
+
         $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
@@ -312,7 +313,11 @@ class ApplicationController extends AppController
                 $applicationData['car_title'] .= " {$applicationData['year']}";
             }
         }
+        if($applicationData['status_id']==2&&auth()->user()->hasRole(['Manager'])) {
 
+            $applicationData['accepted_by']=auth()->user()->id;
+        }
+//        dd($applicationData);
         $application = auth()->user()->applications()->create($applicationData);
         if ($application->status_id == 7) {
             $application->issueAcceptions()->create([

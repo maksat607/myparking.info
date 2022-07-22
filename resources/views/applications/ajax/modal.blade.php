@@ -557,16 +557,16 @@
                             </div>
                          @else
                          {{-- @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))   --}}
-                            @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
-                                <div class="page-file-item doc">
-                                    <div class="file-icon {{ $type[explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]] }}"></div>
-                                    <span>{{$attachment->name}}</span>
-                                    <div class="page-file__option">
-                                        <a href="{{ $attachment->url }}" type="button" class="page-file__download" data-img-id="{{ $attachment->id }}"></a>
-                                        <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
-                                    </div>
-                                </div>
-                             @endif
+{{--                            @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))--}}
+{{--                                <div class="page-file-item doc">--}}
+{{--                                    <div class="file-icon {{ $type[explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]] }}"></div>--}}
+{{--                                    <span>{{$attachment->name}}</span>--}}
+{{--                                    <div class="page-file__option">--}}
+{{--                                        <a href="{{ $attachment->url }}" type="button" class="page-file__download" data-img-id="{{ $attachment->id }}"></a>--}}
+{{--                                        <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                             @endif--}}
                          @endif
                         @endforeach
                     </div>
