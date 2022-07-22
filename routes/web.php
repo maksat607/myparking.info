@@ -62,7 +62,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/', function () {
     if(Auth::check()) {
-        return redirect('/applications');
+        return redirect('/applications/2');
     }
     return view('welcome');
 })->name('home');

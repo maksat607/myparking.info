@@ -76,14 +76,32 @@
                         </div>
 
                         <div class="car-col__info-item">
-                            <div>
-                                <span>Дата постановки==</span>
-{{--                                @if($application->status->id==)--}}
+                            <div @if($application->status->id==7) class="arrived-date-class" @endif>
+                                <span>Дата постановки</span>
+                                @if($application->status->id==7)
+                                    @php
+                                        $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d.m.Y') : now()->format('d.m.Y');
+                                        $dateTime =$dateDataApplication.' '.str_replace(' ', '', $application->arriving_interval);
+                                    @endphp
+                                    {{ $dateTime }}
+                                @else
                                 {{ $application->formated_arrived_at }}
+                                @endif
+
                             </div>
-                            <div>
+                            <div  @if($application->issuance) class="issue-date-class" @endif>
                                 <span>Дата выдачи</span>
-                                {{ $application->formated_issued_at }}
+                                @if($application->issuance)
+                                    @php
+                                        $dateDataApplication = ($application->issuance->arriving_at) ? $application->arriving_at->format('d.m.Y') : now()->format('d.m.Y');
+                                        $interval = ($application->issuance->arriving_interval) ? $application->issuance->arriving_interval : '';
+                                        $dateTime =$dateDataApplication.' '.str_replace(' ', '', $interval);
+                                    @endphp
+                                    {{ $dateTime }}
+
+                                @else
+                                    {{ $application->formated_issued_at }}
+                                @endif
                             </div>
                         </div>
                         <div class="car-col__info-item">

@@ -3814,6 +3814,17 @@ span.serch-overlap {
     background-color: unset;
     color: unset;
 }
+
+.issue-date-class{
+    font-size: 11px;
+    color: #BB6BD9 ;
+}
+
+
+.arrived-date-class{
+    font-size: 11px;
+    color: #EB5757 ;
+}
 /*.field-style.span .select2-results__option:hover {*/
 /*    background-color: #ddd !important;*/
 /*}*/

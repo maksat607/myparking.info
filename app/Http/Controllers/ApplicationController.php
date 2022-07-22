@@ -83,6 +83,7 @@ class ApplicationController extends AppController
             ->orderBy($status_sort, 'desc')
             ->paginate(config('app.paginate_by', '25'))->withQueryString();
 
+
         foreach ($applications as $key => $item) {
             $pricing = Pricing::where([
                 ['partner_id', $item->partner_id],
