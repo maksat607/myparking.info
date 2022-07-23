@@ -1,40 +1,81 @@
 const stepTab = {
-    buttons: null,
-    init() {
-        this.buttons = $(`.tabs a`);
-        this.showHidePrev(this.activeTab().index());
-        this.showHideNext(this.activeTab().index());
-        this.showHideSave(this.activeTab().index());
+        init() {
+            this.buttons = $(`.tabs a`);
+            this.showHidePrev(this.activeTab().index());
+            this.showHideNext(this.activeTab().index());
+            this.showHideSave(this.activeTab().index());
 
-        $(`#appStore`).on('submit', this.submit);
+            $(`#appStore`).on('submit', this.submit);
 
-        $(`#tabNext, #tabPrev`).on('click', {self:this}, this.slide);
+            $(`#tabNext, #tabPrev`).on('click', {self: this}, this.slide);
 
-    },
-    slide(event) {
-        event.preventDefault();
-        let self = event.data.self;
 
-        let activeBtn = self.activeTab();
-        if(validate.filters(activeBtn.index()) && ($(this).attr('id') == 'tabNext')) return;
-        self.buttons.removeClass('active');
+            $(`.checkbox-unknown`).on('click', {self: this}, function (e) {
+                if (this.checked) {
+                    $("#" + $(this).data('for')).attr("disabled", true);
+                    $("#" + $(this).data('for')).parent().addClass('disabled')
+                    $("#" + $(this).data('for')).val(null);
 
-        let btnNext = self.buttons.eq(activeBtn.index() + self.prevNext(this));
-        btnNext.addClass('active');
+                } else {
+                    $("#" + $(this).data('for')).attr("disabled", false);
+                    $("#" + $(this).data('for')).parent().removeClass('disabled')
+                    $("#" + $(this).data('for')).val(null);
+                }
+            });
+        },
+        buttons: null,
+        selector: null,
+        slide(event) {
+            event.preventDefault();
+            let self = event.data.self;
 
-        let activeTab = btnNext.data('id');
+            let activeBtn = self.activeTab();
+            if (validate.filters(activeBtn.index()) && ($(this).attr('id') == 'tabNext')) return;
+            self.buttons.removeClass('active');
 
-        $(`.tab-pane`).removeClass('show active');
-        $(`#${activeTab}`).addClass('show active');
+            let btnNext = self.buttons.eq(activeBtn.index() + self.prevNext(this));
+            btnNext.addClass('active');
 
-        self.showHidePrev(self.activeTab().index());
-        self.showHideNext(self.activeTab().index());
-        self.showHideSave(self.activeTab().index());
+            let activeTab = btnNext.data('id');
 
-        self.scrollActive($(`.select:visible`));
-        self.scrollTopTab();
+            $(`.tab-pane`).removeClass('show active');
+            $(`#${activeTab}`).addClass('show active');
 
-    },
+            self.showHidePrev(self.activeTab().index());
+            self.showHideNext(self.activeTab().index());
+            self.showHideSave(self.activeTab().index());
+
+            self.scrollActive($(`.select:visible`));
+            self.scrollTopTab();
+            self.changeVinLicenseInputs();
+
+
+        },
+        changeVinLicenseInputs(){
+            if($('.checkbox-unknown.clicense').is(":checked")){
+                $('.license_plate').parent().addClass('disabled');
+                $('.license_plate').attr("disabled", true);
+                $('.license_plate').val(null);
+            }else if(!$('.checkbox-unknown.clicense').is(":checked")){
+                $('.license_plate').attr("disabled", false);
+                $('.license_plate').parent().removeClass('disabled');
+                $('.license_plate').val($('#license_plate').val())
+
+            }
+
+            if($(`.checkbox-unknown.cvin`).is(":checked")){
+                $('.vin').parent().addClass('disabled');
+                $('.vin').attr("disabled", true);
+                $('.vin').val(null);
+
+            }else if(!$(`.checkbox-unknown.cvin`).is(":checked")){
+                $('.vin').attr("disabled", false);
+                $('.vin').parent().removeClass('disabled');
+                $('.vin').val($('#vin').val())
+
+        }
+    }
+,
     prevNext(self) {
         if($(self).attr('id') == 'tabNext')
             return 1;
@@ -120,6 +161,28 @@ const validate = {
         if(this.filtered.length == 1 && (this.filtered.includes('#vin') || this.filtered.includes('#license_plate'))) {
             this.filtered = [];
         }
+        console.log(this.filtered)
+
+        if($('.checkbox-unknown.clicense').is(":checked")){
+            console.log('license checked')
+            this.filtered = this.filtered.filter(e => e !== '#license_plate');
+        }else if(!$('.checkbox-unknown.clicense').is(":checked")){
+            console.log('license not checked')
+            if (!this.filtered.includes('#license_plate')) {
+                // this.filtered.push('#license_plate');
+            }
+        }
+
+        if($(`.checkbox-unknown.cvin`).is(":checked")){
+            console.log('vin checked')
+            this.filtered = this.filtered.filter(e => e !== '#vin');
+        }else if(!$(`.checkbox-unknown.cvin`).is(":checked")){
+            console.log('vin not checked')
+            if (!this.filtered.includes('#vin')) {
+                // this.filtered.push('#vin');
+            }
+        }
+        console.log(this.filtered)
         if(this.filtered.length > 0) {
             this.vinLicense();
             this.addError();
@@ -138,14 +201,21 @@ const validate = {
 
         this.removeErrorCar(els);
         // if(this.filtered.length > 0) {
+        let type_id = $('.type-list li.select-item.tabform__li.active a').data('id');
+        console.log('sdfst'+type_id)
+        console.log(els)
         if(this.filtered.includes(".car_mark_id")) {
             this.filtered = ['.car_mark_id'];
+            if(type_id!=5){
+                this.addCar();
+                return true
+            }
             // console.log(this.filtered)
             // if(this.filtered.includes(".car_model_id")){
             //
             // }
-            this.addCar();
-            return true
+
+
         }
         return false;
     },

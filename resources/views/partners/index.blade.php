@@ -31,7 +31,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($partners as  $partner)
+                @foreach ($partners->sortBy('name') as  $partner)
                     <tr class="@if(!$partner->status){{ 'disabled-tr' }}@endif">
                         <td class="tr-id">{{ $partner->number }}</th>
                         <td>

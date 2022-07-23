@@ -55,7 +55,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-
+        console.log(self.dataId)
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks']);

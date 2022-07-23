@@ -3434,6 +3434,16 @@ span.serch-overlap {
     font-size: 11px;
     color: #EB5757 ;
 }
+
+.disabled-border{
+    border: 1px solid #9C9C9C!important;
+}
+.disabled-text{
+    color: #9C9C9C!important;
+}
+.disabled{
+    color: #9C9C9C!important;
+}
 /*.field-style.span .select2-results__option:hover {*/
 /*    background-color: #ddd !important;*/
 /*}*/

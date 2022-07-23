@@ -180,10 +180,11 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-
-//        $attachments = $this->AttachmentController->storeToModel($request,'images');
-//        dd(11);
-
+//        $request->dd();
+        $required = true;
+        if(isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])){
+            $required=false;
+        }
         $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
@@ -191,19 +192,22 @@ class ApplicationController extends AppController
         if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
             $statuses = [1, 2, 3, 4, 5, 6, 7];
         }
+        $car_type=null;
 
-
+        if(isset($request->car_data['car_type_id'])){
+            $car_type = $request->car_data['car_type_id'];
+        }
 
         $validator = Validator::make($carRequest, [
-            'vin_array' => [
+            'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
                 'unique:applications,vin',
                 'nullable'
-            ],
-            'license_plate' => ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'],
+            ] : [],
+            'license_plate' => $required ? ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ['integer', 'required'],
+            'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
@@ -252,7 +256,9 @@ class ApplicationController extends AppController
 //        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
 //        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
 //        dd($applicationData['vin_array']);
-        $applicationData['vin'] = $applicationData['vin_array'];
+        if($required){
+            $applicationData['vin'] = $applicationData['vin_array'];
+        }
         unset($applicationData['car_series_body']);
 
         foreach ($applicationData as $key => $value) {

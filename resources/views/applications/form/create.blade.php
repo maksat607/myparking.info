@@ -1,3 +1,7 @@
+{{--@if($errors->any())--}}
+
+{{--    {{ implode('', $errors->all(':message')) }}--}}
+{{--@endif--}}
 <form id="appStore" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
     @csrf
 <div class="container page-head-wrap">
@@ -70,12 +74,19 @@
                             <div class="row">
                                 <div class="col-6">
                                     <label class="field-style @error('vin_array') invalid @enderror">
+
                                         <span>VIN</span>
                                         <input type="text" id="vin"
                                                class="vin"
                                                name="car_data[vin_array]"
                                                value="{{ old('car_data.vin_array') }}"
                                                placeholder="Не указан">
+
+                                    </label>
+                                    <label class="switch-radio-wrap mt-2">
+                                        <input class="checkbox-unknown cvin" data-for="vin" type="checkbox"  name="car_data[vin_status]" value="1">
+                                        <span class="switcher-radio"></span>
+                                        <span>неизвестно</span>
                                     </label>
                                 </div>
 
@@ -88,6 +99,11 @@
                                                value="{{ old('car_data.license_plate') }}"
                                                placeholder="Не указан">
 {{--                                        <span class="invalid__item">Неверный формат</span>--}}
+                                    </label>
+                                    <label class="switch-radio-wrap mt-2">
+                                        <input class="checkbox-unknown clicense" type="checkbox" data-for="license_plate" name="car_data[license_plate_status]" value="1">
+                                        <span class="switcher-radio"></span>
+                                        <span>неизвестно</span>
                                     </label>
                                 </div>
                                 <div class="col-6 mt-3">
@@ -385,13 +401,15 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>VIN</span>
-                                        <input class="vin" type="text" placeholder="Не указан" value="XTA210600C0000001">
+                                        <input class="vin" type="text" placeholder="Не указан">
+{{--                                        <input class="vin" type="text" placeholder="Не указан" value="XTA210600C0000001">--}}
                                     </label>
                                 </div>
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Гос. номер</span>
-                                        <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">
+{{--                                        <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">--}}
+                                        <input class="license_plate" type="text" placeholder="Не указан">
                                     </label>
                                 </div>
                             </div>
