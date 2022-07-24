@@ -58,11 +58,10 @@
                                     <span class="car__cunt">12</span>
                                 </span>
                             </h3>
-                            @if($application->parking)
-                            <span class="car__subtitle">{{ $application->parking->title }}</span>
-                            @else
-                                <span class="car__subtitle">{{ $application->parking_id }}</span>
-                            @endif
+
+                            <span class="car__subtitle">ID {{ @$application->id }}</span>
+                            <span class="car__subtitle">{{ @$application->parking->title }}</span>
+
                         </div>
                         <div class="car-col__info-item">
                             <div>
