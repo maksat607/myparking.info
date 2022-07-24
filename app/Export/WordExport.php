@@ -36,7 +36,7 @@ class WordExport implements ExportInterface
 			    $newContents = str_replace('vinplaceholder', $application->vin, $newContents);
 			    $newContents = str_replace('yearplaceholder', $application->year, $newContents);
 			    $newContents = str_replace('lisencenumber', $application->license_plate, $newContents);
-			    $newContents = str_replace('acceptedby', $application->acceptedBy->name, $newContents);
+			    $newContents = str_replace('acceptedby', $application->acceptedBy ? $application->acceptedBy->name : "", $newContents);
 
 
 			    //Delete the old...

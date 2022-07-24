@@ -83,6 +83,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models']);
 
         if(self.dataId) {
+            console.log(self.dataId)
             await axios.get(`${APP_URL}/car/model/list/${self.dataId}`)
                 .then(response => {
                     self.items = response.data;

@@ -8,7 +8,8 @@
                 <h1>Осмотр ({{$viewRequests->total()}})</h1>
             @elseif(is_null(request()->route('status_id')) && request()->routeIs('applications.index'))
                 <h1>Все ({{$applications->total()}})</h1>
-            @else
+            @elseif(request()->route('status_id'))
+{{--            @dump(request()->route('status_id'))--}}
             <h1>{{\App\Models\Status::find(request()->route('status_id'))->name}} ({{$applications->total()}})</h1>
             @endif
             <a href="{{ route('applications.create') }}" class="btn ml-auto btn-white">Добавить авто</a>
