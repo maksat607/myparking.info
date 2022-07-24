@@ -22,6 +22,7 @@ class Partner extends Model
         'base_type',
         'inn',
         'kpp',
+        'user_id',
         'base_type'
     ];
 

@@ -44,14 +44,22 @@
                                 <div class="first-info d-flex align-items-center status-danger">
                                     <span class="status-dot">&bull;</span>
                                     <span>{{ $partner->shortname }}</span>
-                                </div>
+                                    company-type</div>
                             @endif
                             <div class="company-type">{{ $partner->name }}</div>
                         </td>
                         <td style="width: 200px;">@if($partner->partnerType!==null){{ $partner->partnerType->name }} @else null @endif</td>
                         <td>{{ $partner->inn }}</td>
                         <td>{{ $partner->kpp }}</td>
-                        <td>@if($partner->base_type=='public') общая @else Пользовательская @endif </td>
+                        <td>
+                            @if($partner->base_type=='public')
+                                общая
+                            @else
+                                Пользовательская
+                                <div class="company-type">{{ @$partner->user->email }}</div>
+                            @endif
+
+                        </td>
 {{--                        <td>--}}
     {{--                            @if ($partner->status)--}}
 {{--                                <span class="status-td statusgreen">{{ __('Active') }}</span>--}}
