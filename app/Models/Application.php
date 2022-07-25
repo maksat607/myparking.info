@@ -247,6 +247,7 @@ class Application extends Model
 
     public function scopeApplication($query, $id)
     {
+
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
@@ -265,7 +266,7 @@ class Application extends Model
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->where('id', $id)
-                ->where('parking_id', $authUser->managerParkings()->get()->modelKeys());
+                ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
         } elseif($authUser->hasRole(['Operator'])) {
             /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
             $childrenIds[] = $authUser->id;*/

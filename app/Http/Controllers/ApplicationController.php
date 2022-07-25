@@ -375,8 +375,8 @@ class ApplicationController extends AppController
      */
     public function edit($id)
     {
-
         $application = Application::application($id)->firstOrFail();
+
 
         $this->authorize('update', $application);
 
@@ -839,6 +839,7 @@ class ApplicationController extends AppController
 
     public function getCarMarkList($type_id)
     {
+
         if ($type_id == 1) {
             $carMarks = CarMark::where([
                 ['car_marks.is_active', 1],
