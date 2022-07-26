@@ -182,6 +182,10 @@ class ApplicationController extends AppController
     {
 //        $request->dd();
         $required = true;
+        $returned = false;
+        if(isset($request->car_data['returned'])){
+            $returned = true;
+        }
         if(isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])){
             $required=false;
         }
@@ -202,10 +206,13 @@ class ApplicationController extends AppController
             'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                'unique:applications,vin',
+                $returned ? '' :'unique:applications,vin',
                 'nullable'
             ] : [],
-            'license_plate' => $required ? ['exclude_if:returned,1', 'unique:applications,license_plate', 'nullable'] : [],
+            'license_plate' => $required ? [
+                'exclude_if:returned,1',
+                $returned ? '' :'unique:applications,license_plate',
+                'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
@@ -217,7 +224,7 @@ class ApplicationController extends AppController
         $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
             $count = Application::where('vin', $carRequest['vin_array'])->count();
             if ($count < 1) {
-                $fail('There is no such duplicate!');
+                $fail('Нет такого дубликата!');
             }
         }, function ($input) {
             return $input->returned == 1;
@@ -406,6 +413,7 @@ class ApplicationController extends AppController
         $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y');
         $dateTime =$dateDataApplication.' '.$application->arriving_interval;
         $title = __('Update a Request');
+
         return view('applications.edit', compact(
             'title',
             'partners',
@@ -839,7 +847,7 @@ class ApplicationController extends AppController
 
     public function getCarMarkList($type_id)
     {
-
+        $carMarks =[];
         if ($type_id == 1) {
             $carMarks = CarMark::where([
                 ['car_marks.is_active', 1],
@@ -865,7 +873,7 @@ class ApplicationController extends AppController
                 ->get();
         }
 
-        if (count($carMarks) > 0) {
+        if (count($carMarks) > 0 && $type_id!=5) {
             $carMarks = CarMark::setLogo($carMarks);
             return $carMarks;
         }

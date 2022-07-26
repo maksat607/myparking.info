@@ -262,6 +262,7 @@
                                                             @endif
                                                         @endforeach
                                                     </ul>
+
                                                 </div>
                                             </fieldset>
                                             <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto" id="marks" data-id="selectGroup">
@@ -334,7 +335,7 @@
                                                     </ul>
                                                 </div>
                                             </fieldset>
-                                            <div id="textArea" class="d-none col">
+                                            <div id="textArea" class="@if($application->car_type_id==5) d-none @endif col">
                                                 <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
                                                 <textarea class="form-control mw-100" id="autoDesc"
                                                           rows="4"

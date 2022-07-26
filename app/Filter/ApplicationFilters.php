@@ -27,6 +27,7 @@ class ApplicationFilters extends QueryFilter
             ->where('car_title', 'like', '%'.$keyword.'%')
             ->orWhere('vin', 'like', '%'.$keyword.'%')
             ->orWhere('license_plate', 'like', '%'.$keyword.'%')
+            ->orWhere('id', 'like', '%'.$keyword.'%')
             ;
     }
 

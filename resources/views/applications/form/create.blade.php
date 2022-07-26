@@ -116,8 +116,14 @@
                                 </div>
                                 <div class="col-12 mt-3">
                                     <div id="allDuplicates" class="conformity">
+
                                     </div>
                                 </div>
+                                <label class="switch-radio-wrap ml-3">
+                                    <input class="" type="checkbox" data-for="license_plate" name="car_data[returned]" value="1">
+                                    <span class="switcher-radio"></span>
+                                    <span>повторное размещение</span>
+                                </label>
                             </div>
                         </div>
                         <div class="inner-page__item">
