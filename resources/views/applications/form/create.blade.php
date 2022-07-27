@@ -206,7 +206,7 @@
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Дата поставки</span>
-                                        <input type="text" id="arriving_at" class="date" name="app_data[arriving_at]" placeholder="Не указан">
+                                        <input type="text" id="arriving_at" class="@if(auth()->user()->hasRole(['Manager'])) date-manager @else date @endif" name="app_data[arriving_at]" placeholder="Не указан">
                                     </label>
                                 </div>
                                 <div class="col-6">

@@ -73,6 +73,7 @@ $('.date').flatpickr({
             return (date.getDay() === 0 || date.getDay() === 6);
         }
     ],
+
 });
 
 console.log('mk')
