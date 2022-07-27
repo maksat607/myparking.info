@@ -29,6 +29,10 @@ const checkDuplicate = {
     init() {
         $(`#vin, #license_plate`).on('input', {self:this}, function(e){
 
+            if($(this).val().length<1 && !$('.repeat-checkbox').hasClass('d-none')){
+                $('#repeat-checkbox').prop('checked',false);
+                $('.repeat-checkbox').addClass('d-none');
+            }
             let self = e.data.self;
             self.vin = $(`#vin`).val().split(',');
             console.log(self.vin);
@@ -46,7 +50,7 @@ const checkDuplicate = {
                 }
             }).then(response => {
                 console.log('response')
-                console.log(response.data.vin)
+                console.log(response.data)
                 console.log(response.data.license_plate)
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
@@ -73,11 +77,21 @@ const checkDuplicate = {
 
         if(this.allDuplicates) {
             this.allDuplicates.forEach((element) => {
-                allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;
+
+                if(element.status.id==3){
+                    $('.repeat-checkbox').removeClass('d-none')
+                    $('#repeat-checkbox').prop('checked',true);
+                    allHtml += `<a class="conformity-link">`;
+                }else{
+                    allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;
+                }
                 allHtml += `<span class="conformity__info">${element.vin}</span>`;
                 allHtml += `<span class="${this.statusClass[element.status.code]} conformity__icon">${this.statusLabels[element.status.code]}</span>`;
                 allHtml += `</a>`;
             });
+        }else if(!$('.repeat-checkbox').hasClass('d-none')){
+            $('#repeat-checkbox').prop('checked',false);
+            $('.repeat-checkbox').addClass('d-none');
         }
 
 /*        if(this.vinDuplicates.length) {

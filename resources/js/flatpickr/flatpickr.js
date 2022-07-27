@@ -41,6 +41,7 @@ function getDate()
     }
 
     let todayFormat = dd + '/' + mm + '/' + yyyy;
+    console.log(todayFormat)
     return todayFormat;
 }
 

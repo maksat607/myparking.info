@@ -119,8 +119,8 @@
 
                                     </div>
                                 </div>
-                                <label class="switch-radio-wrap ml-3">
-                                    <input class="" type="checkbox" data-for="license_plate" name="car_data[returned]" value="1">
+                                <label class="switch-radio-wrap ml-3 repeat-checkbox d-none">
+                                    <input class="" type="checkbox" id="repeat-checkbox" data-for="license_plate" name="car_data[returned]" value="1">
                                     <span class="switcher-radio"></span>
                                     <span>повторное размещение</span>
                                 </label>

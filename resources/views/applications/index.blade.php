@@ -92,9 +92,10 @@
                                 <span>Дата выдачи</span>
                                 @if($application->issuance)
                                     @php
-                                        $dateDataApplication = ($application->issuance->arriving_at) ? $application->arriving_at->format('d.m.Y') : now()->format('d.m.Y');
-                                        $interval = ($application->issuance->arriving_interval) ? $application->issuance->arriving_interval : '';
-                                        $dateTime =$dateDataApplication.' '.str_replace(' ', '', $interval);
+                                            $dateDataApplication = ($application->issuance->arriving_at) ? $application->issuance->arriving_at->format('d.m.Y') : now()->format('d.m.Y');
+
+                                            $interval = ($application->issuance->arriving_interval) ? $application->issuance->arriving_interval : '';
+                                            $dateTime =$dateDataApplication.' '.str_replace(' ', '', $interval);
                                     @endphp
                                     {{ $dateTime }}
 
