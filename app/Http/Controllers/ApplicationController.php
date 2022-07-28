@@ -483,11 +483,21 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
+
+        $required=true;
+        $returned = false;
+        if(isset($request->car_data['returned'])){
+            $returned = true;
+        }
         $application = Application::application($id)->firstOrFail();
         $this->authorize('update', $application);
 
         if(isset($request->car_data['car_type_id'])){
             $car_type = $request->car_data['car_type_id'];
+        }
+
+        if(isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])){
+            $required=false;
         }
 
         $carRequest = $request->car_data;
@@ -499,25 +509,36 @@ class ApplicationController extends AppController
         }
 
 
-        Validator::make($carRequest, [
-            'vin_array' => [
+        $validator = Validator::make($carRequest, [
+            'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                Rule::unique('applications', 'vin')->ignore($application->id),
+                $returned ? '' : Rule::unique('applications', 'vin')->ignore($application->id),
                 'nullable'
-            ],
-            'license_plate' => [
+            ] : [],
+            'license_plate' => $required ? [
                 'exclude_if:returned,1',
-                Rule::unique('applications', 'license_plate')->ignore($application->id),
+                $returned ? '' : Rule::unique('applications', 'license_plate')->ignore($application->id),
                 'nullable'
-            ],
+            ] : [],
+
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
             'preloaded.*' => ['nullable', 'sometimes', 'exists:attachments,id']
-        ])->validate();
+        ]);
+        $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
+            $count = Application::where('vin', $carRequest['vin_array'])->count();
+            if ($count < 1) {
+                $fail('Нет такого дубликата!');
+            }
+        }, function ($input) {
+            return $input->returned == 1;
+        });
+
+        $validator->validate();
 
         Validator::make($applicationRequest, [
             'external_id' => ['required'],
@@ -528,7 +549,8 @@ class ApplicationController extends AppController
         $applicationDataArray = get_object_vars(new ApplicationData());
         $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
 
-        $applicationData['vin'] = $applicationData['vin_array'];
+        if(isset($applicationData['vin_array']))$applicationData['vin'] = $applicationData['vin_array'];
+
         unset($applicationData['car_series_body']);
 
 
@@ -584,7 +606,17 @@ class ApplicationController extends AppController
                 $applicationData['status_id'] = $applicationData['status_admin'];
             }
         }*/
-
+        if(isset($request->car_data['vin_status'])){
+            $applicationData['vin']=null;
+            unset($applicationData['vin_status']);
+        }
+        if(isset($request->car_data['license_plate_status'])) {
+            $applicationData['license_plate'] = null;
+            unset($applicationData['license_plate_status']);
+        }
+//        dump($applicationData);
+//        $request->dd();
+//        dd($applicationData);
         $isUpdate = $application->update($applicationData);
 
         if ($application->status_id == 7) {

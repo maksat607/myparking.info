@@ -73,8 +73,11 @@ const stepTab = {
                 $('.vin').parent().removeClass('disabled');
                 $('.vin').val($('#vin').val())
 
+            }
+
+
         }
-    }
+
 ,
     prevNext(self) {
         if($(self).attr('id') == 'tabNext')
@@ -182,6 +185,18 @@ const validate = {
                 // this.filtered.push('#vin');
             }
         }
+        if(!$('.checkbox-unknown.clicense').is(":checked")&&$(`.checkbox-unknown.cvin`).is(":checked")&&!$('#license_plate').val()){
+            if(!$('#license_plate').parent().hasClass('invalid')){
+                $('#license_plate').parent().addClass('invalid');
+            }
+        }
+        if($('.checkbox-unknown.clicense').is(":checked")&&!$(`.checkbox-unknown.cvin`).is(":checked")&&!$('#vin').val()){
+            if(!$('#vin').parent().hasClass('invalid')){
+                $('#vin').parent().addClass('invalid');
+            }
+        }
+
+
         console.log(this.filtered)
         if(this.filtered.length > 0) {
             this.vinLicense();

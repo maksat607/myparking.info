@@ -60,25 +60,41 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <label class="field-style @error('vin_array') invalid @enderror">
+                                        <label class="field-style @if($application->license_plate==null&&$application->vin==null) disabled @endif @error('vin_array') invalid @enderror">
                                             <span>VIN</span>
                                             <input type="text" id="vin"
                                                    class="vin"
                                                    name="car_data[vin_array]"
                                                    value="{{ $application->vin }}"
+                                                   @if($application->license_plate==null&&$application->vin==null) disabled @endif
                                                    placeholder="Не указан">
+                                        </label>
+                                        <label class="switch-radio-wrap mt-2">
+                                            <input class="checkbox-unknown cvin" data-for="vin" type="checkbox"  name="car_data[vin_status]" value="1"
+                                                   @if($application->license_plate==null&&$application->vin==null) checked @endif
+                                            >
+                                            <span class="switcher-radio"></span>
+                                            <span>неизвестно</span>
                                         </label>
                                     </div>
 
                                     <div class="col-6">
-                                        <label class="field-style @error('license_plate') invalid @enderror">
+                                        <label class="field-style @if($application->license_plate==null&&$application->vin==null) disabled @endif @error('license_plate') invalid @enderror">
                                             <span>Гос. номер</span>
                                             <input type="text" id="license_plate"
                                                    class="license_plate"
                                                    name="car_data[license_plate]"
                                                    value="{{ $application->license_plate }}"
+                                                   @if($application->license_plate==null&&$application->vin==null) disabled @endif
                                                    placeholder="Не указан">
                                             {{--                                        <span class="invalid__item">Неверный формат</span>--}}
+                                        </label>
+                                        <label class="switch-radio-wrap mt-2">
+                                            <input class="checkbox-unknown clicense" type="checkbox" data-for="license_plate" name="car_data[license_plate_status]" value="1"
+                                            @if($application->license_plate==null&&$application->vin==null) checked @endif
+                                            >
+                                            <span class="switcher-radio"></span>
+                                            <span>неизвестно</span>
                                         </label>
                                     </div>
                                     <div class="col-6 mt-3">
@@ -93,6 +109,11 @@
                                         <div id="allDuplicates" class="conformity">
                                         </div>
                                     </div>
+                                    <label class="switch-radio-wrap ml-3 repeat-checkbox d-none">
+                                        <input class="" type="checkbox" id="repeat-checkbox" data-for="license_plate" name="car_data[returned]" value="1">
+                                        <span class="switcher-radio"></span>
+                                        <span>повторное размещение</span>
+                                    </label>
                                 </div>
                             </div>
                             <div class="inner-page__item">
