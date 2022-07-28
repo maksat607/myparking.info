@@ -9,7 +9,7 @@ class Status extends Model
 {
     protected $fillable = ['name', 'color','is_active', 'rank'];
     protected $appends = ['can_view', 'can_assign'];
-    protected static $nextstatus = [7 => 2, 2 => 3];
+    protected static $nextstatus = [7 => 2, 2 => 2];
     public static function viewableStatuses() {
         foreach (auth()->user()->getAllPermissions() as $key => $permission) {
             if ( strpos( $permission->name, 'status-can-view__') !== false ) {
@@ -92,6 +92,6 @@ class Status extends Model
         }else{
             return false;
         }
-        
+
     }
 }

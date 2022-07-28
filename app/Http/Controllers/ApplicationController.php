@@ -486,6 +486,10 @@ class ApplicationController extends AppController
         $application = Application::application($id)->firstOrFail();
         $this->authorize('update', $application);
 
+        if(isset($request->car_data['car_type_id'])){
+            $car_type = $request->car_data['car_type_id'];
+        }
+
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
@@ -508,7 +512,7 @@ class ApplicationController extends AppController
                 'nullable'
             ],
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ['integer', 'required'],
+            'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],

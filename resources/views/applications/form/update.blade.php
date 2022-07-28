@@ -21,7 +21,6 @@
                         <span class="field-style-title">Статус</span>
                         <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
                             @foreach($statuses as $status)
-
                                 @if($application->status->nextStatus() == $status->id)
                                     <option value="{{ $status->id }}" selected>{{ $status->name }}</option>
                                     @continue
@@ -335,13 +334,14 @@
                                                     </ul>
                                                 </div>
                                             </fieldset>
-                                            <div id="textArea" class="@if($application->car_type_id==5) d-none @endif col">
+                                            <div id="textArea" class="d-none col">
                                                 <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
                                                 <textarea class="form-control mw-100" id="autoDesc"
                                                           rows="4"
                                                           name="car_data[car_title]"
-                                                          value="{{ $application->car_title }}"
-                                                ></textarea>
+                                                >
+                                                    {{ $application->car_title }}
+                                                </textarea>
                                             </div>
                                         </div>
                                     </div>

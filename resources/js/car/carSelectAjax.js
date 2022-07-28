@@ -38,7 +38,11 @@ const carSelectAjax = {
         $(`body`).on('click', `.tabform__btn`, {self:this}, function(e) {
             let self = e.data.self;
             self.scrollActive($(`.select:visible`));
-        })
+        });
+        if($('ul.type-list li.active a').data('id')==5){
+            $('ul.type-list li.active a').trigger('click');
+        }
+
     },
     scrollActive(selects) {
         selects.each(function(index, element){

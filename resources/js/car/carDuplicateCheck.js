@@ -80,7 +80,7 @@ const checkDuplicate = {
 
                 if(element.status.id==3){
                     $('.repeat-checkbox').removeClass('d-none')
-                    $('#repeat-checkbox').prop('checked',true);
+                    $('#repeat-checkbox').prop('checked',false);
                     allHtml += `<a class="conformity-link">`;
                 }else{
                     allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;

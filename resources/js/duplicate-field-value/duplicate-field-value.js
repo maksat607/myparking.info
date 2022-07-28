@@ -5,7 +5,6 @@ function duplicateFieldValue(selector = null) {
     });
 }
 
-console.log('ngng  '+$('.checkbox-unknown.clicense').val())
 // if($('.checkbox-unknown.clicense').is(":checked")){
 //
 //
