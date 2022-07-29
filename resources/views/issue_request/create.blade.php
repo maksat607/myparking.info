@@ -62,7 +62,7 @@
                                 <div class="col-6">
                                     <label class="field-style @error('arriving_at') invalid @enderror">
                                         <span>Дата выдачи</span>
-                                        <input type="text" name="issue_request[arriving_at]" class="@if(auth()->user()->hasRole(['Manager'])) date-manager @else date @endif">
+                                        <input type="text" name="issue_request[arriving_at]" class="@if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager'])) date-manager @else date @endif">
                                     </label>
                                 </div>
                                 <div class="col-6">
