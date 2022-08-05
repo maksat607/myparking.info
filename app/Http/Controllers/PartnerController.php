@@ -112,15 +112,12 @@ class PartnerController extends AppController
             }
         }
         else{
-                $partnerData['user_id']=auth()->user()->id;
+                $partnerData['created_user_id']=auth()->user()->id;
                 $partner = Partner::create($partnerData);
                 PartnerUser::create(['user_id'=>auth()->user()->id,'partner_id'=>$partner->id]);
                 return redirect()->route('partners.index')->with('success', 'Добавлено');
         }
 
-//        $lv = $partner->pricings()->createMany(
-//            $request->pricings
-//        );
 
 
 //        return ($partner->exists)

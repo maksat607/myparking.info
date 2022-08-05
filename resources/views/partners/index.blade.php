@@ -56,7 +56,7 @@
                                 общая
                             @else
                                 Пользовательская
-                                <div class="company-type">{{ @$partner->user->email }}</div>
+                                <div class="company-type">{{ @$partner->created_user->email }}</div>
                             @endif
 
                         </td>

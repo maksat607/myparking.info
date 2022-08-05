@@ -17,13 +17,16 @@ class ApplicationFilterComposer
 
     public function __construct(Partner $partners, Parking $parkings, User $user)
     {
+        if(auth()->user()->hasRole(['Partner'])){
+            $partners = collect([auth()->user()->partner]);
+        }
         if(auth()->user()->hasRole(['Admin'])){
             $partners = auth()->user()->partners;
         }
         if(auth()->user()->hasRole(['SuperAdmin'])){
             $partners = Partner::all();
         }
-        if(!auth()->user()->hasRole(['SuperAdmin|Admin'])){
+        if(!auth()->user()->hasRole(['SuperAdmin|Admin|Partner'])){
             $partners = auth()->user()->owner->partners;
         }
 //        $this->partners = $partners->partners()->orderBy('name', 'ASC')->get();

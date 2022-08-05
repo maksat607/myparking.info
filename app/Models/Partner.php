@@ -23,7 +23,8 @@ class Partner extends Model
         'inn',
         'kpp',
         'user_id',
-        'base_type'
+        'base_type',
+        'created_user_id'
     ];
 
     public function partnerType()
@@ -34,6 +35,10 @@ class Partner extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function created_user()
+    {
+        return $this->belongsTo(User::class, 'created_user_id', 'id');
     }
 //    public function
     public function pricings()

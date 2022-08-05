@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use App\Models\Partner;
 use App\Models\User;
 use App\Notifications\CreateUserNotifications;
@@ -54,6 +54,7 @@ class PartnerUserController extends Controller
      */
     public function store(Request $request, Partner $partner)
     {
+
         $this->authorize('issetPartnerUser', $partner);
         Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -67,7 +68,9 @@ class PartnerUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => $request->status,
+            'email_verified_at'=>Carbon::now()->toDateTimeString()
         ];
+
 
         try {
             DB::beginTransaction();
