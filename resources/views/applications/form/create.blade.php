@@ -1,7 +1,7 @@
-{{--@if($errors->any())--}}
+@if($errors->any())
 
-{{--    {{ implode('', $errors->all(':message')) }}--}}
-{{--@endif--}}
+    {{ implode('', $errors->all(':message')) }}
+@endif
 <form id="appStore" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
     @csrf
 <div class="container page-head-wrap">

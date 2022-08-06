@@ -221,7 +221,7 @@ const validate = {
         console.log(els)
         if(this.filtered.includes(".car_mark_id")) {
             this.filtered = ['.car_mark_id'];
-            if(type_id!=5){
+            if(type_id!=27){
                 this.addCar();
                 return true
             }

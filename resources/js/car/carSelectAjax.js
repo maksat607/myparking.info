@@ -5,7 +5,8 @@ const carSelectAjax = {
     year: null,
     modificationId: null,
     items: null,
-    excluded: [5, 3],
+    // excluded: [5, 3],
+    excluded: [27],
     timeoutPromise: 500,
     init() {
         if(typeof carDataApplication == 'undefined' || carDataApplication == null) {
@@ -39,7 +40,7 @@ const carSelectAjax = {
             let self = e.data.self;
             self.scrollActive($(`.select:visible`));
         });
-        if($('ul.type-list li.active a').data('id')==5){
+        if($('ul.type-list li.active a').data('id')==27){
             $('ul.type-list li.active a').trigger('click');
         }
 
@@ -59,8 +60,8 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-        console.log(self.dataId)
-        self.setActive(this);
+        // console.log(self.dataId)
+         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks']);
 

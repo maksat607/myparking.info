@@ -25,7 +25,7 @@ class CarController extends AppController
                     ['car_marks.is_active', 1],
                     ['car_marks.car_type_id', $request->type_id],
                     ['car_generations.year_begin', '>=', 1990],
-                    ['car_generations.year_end', '<=', 2020],
+                    ['car_generations.year_end', '<=', 2022],
                 ])
                     ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
                     ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
@@ -34,7 +34,8 @@ class CarController extends AppController
                     ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
                     ->get();
             }
-            else if ($request->type_id == 2 || $request->type_id == 6 || $request->type_id == 7 || $request->type_id == 8 ) {
+            else{
+//            else if ($request->type_id == 2 || $request->type_id == 6 || $request->type_id == 7 || $request->type_id == 8 ) {
                 $carMarks = CarMark::where([
                     ['car_marks.is_active', 1],
                     ['car_marks.car_type_id', $request->type_id],
@@ -45,7 +46,7 @@ class CarController extends AppController
                     ->get();
             }
 
-            if (count($carMarks) > 0) {
+            if ($carMarks&&count($carMarks) > 0) {
                 $carMarks = CarMark::setLogo($carMarks);
                 return $carMarks;
             }

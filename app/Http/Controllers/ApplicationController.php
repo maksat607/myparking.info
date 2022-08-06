@@ -218,7 +218,7 @@ class ApplicationController extends AppController
                 $returned ? '' :'unique:applications,license_plate',
                 'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
+            'car_mark_id' => ($car_type==27) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
@@ -527,7 +527,7 @@ class ApplicationController extends AppController
             ] : [],
 
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type==5||$car_type==3) ? ['integer'] :['integer', 'required'],
+            'car_mark_id' => ($car_type==27) ? ['integer'] :['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
