@@ -33,6 +33,9 @@ class ApplicationFilterComposer
 //        $this->partners = $partners->partners()->orderBy('name', 'ASC')->get();
         $this->partners = $partners->sortBy('name');
         $this->parkings = $parkings->parkings()->orderBy('title', 'ASC')->get();
+        if(auth()->user()->hasRole(['Partner'])){
+            $this->parkings=Parking::all();
+        }
         $this->user = $user->usersFilter();
     }
 

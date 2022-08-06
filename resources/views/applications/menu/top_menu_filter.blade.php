@@ -59,7 +59,7 @@
             <select name="partner" class="page-select">
                 <option selected value="">Выберите партнера</option>
                 @foreach($partners as $partner)
-                    @if(request()->get('partner') == $partner->id)
+                    @if(request()->get('partner') == $partner->id||$partners->count()==1)
                         <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
                     @else
                         <option value="{{ $partner->id }}">{{ $partner->name }}</option>
