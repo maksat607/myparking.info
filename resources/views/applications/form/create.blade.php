@@ -160,7 +160,8 @@
                                         <select name="app_data[partner_id]" id="partner_id" class="partner_id page-select">
                                             <option selected hidden disabled value="">{{ __('Select a partner..') }}</option>
                                             @foreach($partners as $partner)
-                                                @if($loop->count == 1)
+
+                                                @if($loop->count == 1||$partners->count()==1)
                                                     <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
                                                     @continue
                                                 @elseif(old('app_data.partner_id') == $partner->id)

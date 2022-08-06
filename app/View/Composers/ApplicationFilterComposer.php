@@ -17,6 +17,7 @@ class ApplicationFilterComposer
 
     public function __construct(Partner $partners, Parking $parkings, User $user)
     {
+//        dd($parkings->parkings());
         if(auth()->user()->hasRole(['Partner'])){
             $partners = collect([auth()->user()->partner]);
         }

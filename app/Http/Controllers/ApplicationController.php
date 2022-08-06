@@ -53,6 +53,7 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
@@ -121,9 +122,10 @@ class ApplicationController extends AppController
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
 
-        if(auth()->user()->partner) {
+        if(auth()->user()->partner || auth()->user()->hasRole(['Partner'])) {
             $partners = auth()->user()->partner()->get();
-            $parkings = auth()->user()->partnerParkings;
+//            $parkings = auth()->user()->partnerParkings;
+            $parkings = Parking::all();
         } else {
             $partners = Partner::all();
             $parkings = Parking::parkings()->get();
@@ -134,8 +136,10 @@ class ApplicationController extends AppController
         if(auth()->user()->hasRole(['SuperAdmin'])){
             $partners = Partner::all();
         }
-        if(!auth()->user()->hasRole(['SuperAdmin|Admin'])){
+
+        if(!auth()->user()->hasRole(['SuperAdmin|Admin|Partner'])){
             $partners = auth()->user()->owner->partners;
+
         }
         $colors = Color::getColors();
 
