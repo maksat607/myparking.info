@@ -258,11 +258,13 @@ class Application extends Model
                 ->whereIn('parking_id', $parkingsIds);
         } elseif($authUser->hasRole(['Partner'])) {
             $childrenIds = $authUser->children()->without('owner')->get()->modelKeys();
+
             $childrenIds[] = $authUser->id;
             $childrenWithOwnerId = $childrenIds;
             return $query
                 ->where('id', $id)
-                ->whereIn('user_id', $childrenWithOwnerId);
+//                ->whereIn('user_id', $childrenWithOwnerId)
+                ;
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->where('id', $id)
