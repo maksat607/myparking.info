@@ -34,16 +34,17 @@ class ApplicationController extends AppController
 {
     protected $AttachmentController;
     private $exporter;
+
     public function __construct(ExportInterface $exporter, AttachmentController $AttachmentController)
     {
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
 
 //        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
-/*        $this->middleware(['permission:application_view'])->only('index', 'show');
-        $this->middleware(['permission:application_create'])->only('create', 'store');
-        $this->middleware(['permission:application_update'])->only('edit', 'update');
-        $this->middleware(['permission:application_delete'])->only('destroy');*/
+        /*        $this->middleware(['permission:application_view'])->only('index', 'show');
+                $this->middleware(['permission:application_create'])->only('create', 'store');
+                $this->middleware(['permission:application_update'])->only('edit', 'update');
+                $this->middleware(['permission:application_delete'])->only('destroy');*/
     }
 
     /**
@@ -62,12 +63,12 @@ class ApplicationController extends AppController
         $status_sort = ($status) ? $status->status_sort : 'arriving_at';
 
         $applications = Application::
-            applications()
-                ->filter($filters)
-            ->when($status_id, function($query, $status_id) {
+        applications()
+            ->filter($filters)
+            ->when($status_id, function ($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
-            ->when(!$status_id, function($query) use ($statuses){
+            ->when(!$status_id, function ($query) use ($statuses) {
                 return $query->whereIn('status_id', $statuses);
             })
             ->with('parking')
@@ -90,8 +91,8 @@ class ApplicationController extends AppController
                 ['partner_id', $item->partner_id],
                 ['car_type_id', $item->car_type_id]
             ])
-            ->select('discount_price', 'regular_price', 'free_days')
-            ->first();
+                ->select('discount_price', 'regular_price', 'free_days')
+                ->first();
 
             $applications[$key]['pricing'] = $pricing;
             $item->currentParkingCost = $item->currentParkingCost;
@@ -118,11 +119,11 @@ class ApplicationController extends AppController
     {
         $this->authorize('create', Application::class);
         $carTypes = CarType::where('is_active', 1)
-            ->select('id','name')
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
 
-        if(auth()->user()->partner || auth()->user()->hasRole(['Partner'])) {
+        if (auth()->user()->partner || auth()->user()->hasRole(['Partner'])) {
             $partners = auth()->user()->partner()->get();
 //            $parkings = auth()->user()->partnerParkings;
             $parkings = Parking::all();
@@ -130,14 +131,14 @@ class ApplicationController extends AppController
             $partners = Partner::all();
             $parkings = Parking::parkings()->get();
         }
-        if(auth()->user()->hasRole(['Admin'])){
+        if (auth()->user()->hasRole(['Admin'])) {
             $partners = auth()->user()->partners;
         }
-        if(auth()->user()->hasRole(['SuperAdmin'])){
+        if (auth()->user()->hasRole(['SuperAdmin'])) {
             $partners = Partner::all();
         }
 
-        if(!auth()->user()->hasRole(['SuperAdmin|Admin|Partner'])){
+        if (!auth()->user()->hasRole(['SuperAdmin|Admin|Partner'])) {
             $partners = auth()->user()->owner->partners;
 
         }
@@ -179,7 +180,7 @@ class ApplicationController extends AppController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -187,22 +188,22 @@ class ApplicationController extends AppController
 //        $request->dd();
         $required = true;
         $returned = false;
-        if(isset($request->car_data['returned'])){
+        if (isset($request->car_data['returned'])) {
             $returned = true;
         }
-        if(isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])){
-            $required=false;
+        if (isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])) {
+            $required = false;
         }
         $this->authorize('create', Application::class);
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
         $statuses = [1, 7];
-        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+        if (auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
             $statuses = [1, 2, 3, 4, 5, 6, 7];
         }
-        $car_type=null;
+        $car_type = null;
 
-        if(isset($request->car_data['car_type_id'])){
+        if (isset($request->car_data['car_type_id'])) {
             $car_type = $request->car_data['car_type_id'];
         }
 
@@ -210,15 +211,15 @@ class ApplicationController extends AppController
             'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                $returned ? '' :'unique:applications,vin',
+                $returned ? '' : 'unique:applications,vin',
                 'nullable'
             ] : [],
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
-                $returned ? '' :'unique:applications,license_plate',
+                $returned ? '' : 'unique:applications,license_plate',
                 'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type==27) ? ['integer'] :['integer', 'required'],
+            'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
@@ -267,72 +268,71 @@ class ApplicationController extends AppController
 //        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
 //        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
 //        dd($applicationData['vin_array']);
-        if($required){
+        if ($required) {
             $applicationData['vin'] = $applicationData['vin_array'];
         }
         unset($applicationData['car_series_body']);
 
         foreach ($applicationData as $key => $value) {
-            if ( $value === '' || $value === null || $value === 'null') {
-                if($key == 'issued_by' || $key == 'issued_at') continue;
+            if ($value === '' || $value === null || $value === 'null') {
+                if ($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
         }
 
 
+        /*        if (isset($applicationData['status_id'])) {
+                    $applicationData['status_id'] = 1;
+                } else {
+                    $applicationData['status_id'] = 7;
+                }
+                if(auth()->user()->hasRole('Admin')) {
+                    if(isset($applicationData['status_admin'])) {
+                        $applicationData['status_id'] = $applicationData['status_admin'];
+                    }
+                }*/
 
-/*        if (isset($applicationData['status_id'])) {
-            $applicationData['status_id'] = 1;
-        } else {
-            $applicationData['status_id'] = 7;
-        }
-        if(auth()->user()->hasRole('Admin')) {
-            if(isset($applicationData['status_admin'])) {
-                $applicationData['status_id'] = $applicationData['status_admin'];
-            }
-        }*/
-
-        if(!in_array($applicationData['status_id'], [1, 7])) {
+        if (!in_array($applicationData['status_id'], [1, 7])) {
             $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
         }
 
 
-        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
+        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
             $searchFilters = [];
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0 ) {
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
                 $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
             }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0 ) {
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0) {
                 $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
             }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0 ) {
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
             $carTitleData = DB::table('car_types')
                 ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-                ->leftJoin('car_marks',  'car_types.id', '=', 'car_marks.car_type_id')
+                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
                 ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
                 ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-                ->where( $searchFilters )
+                ->where($searchFilters)
                 ->first();
 
             $applicationData['car_title'] = '';
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) ) {
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
                 $applicationData['car_title'] .= "{$carTitleData->car_mark}";
             }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) ) {
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
                 $applicationData['car_title'] .= " {$carTitleData->car_model}";
             }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) ) {
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
                 $applicationData['car_title'] .= " {$carTitleData->car_generation}";
             }
-            if (isset($applicationData['year']) ) {
+            if (isset($applicationData['year'])) {
                 $applicationData['car_title'] .= " {$applicationData['year']}";
             }
         }
-        if($applicationData['status_id']==2&&auth()->user()->hasRole(['Manager'])) {
+        if ($applicationData['status_id'] == 2 && auth()->user()->hasRole(['Manager'])) {
 
-            $applicationData['accepted_by']=auth()->user()->id;
+            $applicationData['accepted_by'] = auth()->user()->id;
         }
 //        dd($applicationData);
         $application = auth()->user()->applications()->create($applicationData);
@@ -345,7 +345,7 @@ class ApplicationController extends AppController
 
 //        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
 
-        $attachments = $this->AttachmentController->storeToModel($request,'images');
+        $attachments = $this->AttachmentController->storeToModel($request, 'images');
 
         if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
@@ -362,7 +362,7 @@ class ApplicationController extends AppController
     /**
      * Display the specified resource.
      *status_id
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -374,25 +374,26 @@ class ApplicationController extends AppController
     {
 
         return $this->exporter->export([
-            'application'=>$application
+            'application' => $application
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
+
         $application = Application::application($id)->firstOrFail();
 
 
         $this->authorize('update', $application);
 
         $carTypes = CarType::where('is_active', 1)
-            ->select('id','name')
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $partners = Partner::all();
@@ -415,7 +416,7 @@ class ApplicationController extends AppController
 //        $condition_gear = $application->condition_gear;
 //        $condition_transmission = $application->condition_transmission;
         $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y');
-        $dateTime =$dateDataApplication.' '.$application->arriving_interval;
+        $dateTime = $dateDataApplication . ' ' . $application->arriving_interval;
         $title = __('Update a Request');
 
         return view('applications.edit', compact(
@@ -443,72 +444,73 @@ class ApplicationController extends AppController
 
     }
 
-    public function addAttachmentsFromPopup(Request $request, $id){
+    public function addAttachmentsFromPopup(Request $request, $id)
+    {
 
         // return $request->all();
 
         $application = Application::application($id)->firstOrFail();
         $this->authorize('update', $application);
 
-        if ($request->has('doc')&&$request->doc=='true') {
+        if ($request->has('doc') && $request->doc == 'true') {
             request()->request->remove('doc');
             // return 'creating doc'.$request->doc;
-            $attachments = $this->AttachmentController->storeToModelDoc($request,'docspopup');
-        }else{
+            $attachments = $this->AttachmentController->storeToModelDoc($request, 'docspopup');
+        } else {
             // return 'creating image'.$request->doc;
-            if($request->has('doc')){
+            if ($request->has('doc')) {
                 request()->request->remove('doc');
             }
-            $attachments = $this->AttachmentController->storeToModel($request,'imagespopup');
+            $attachments = $this->AttachmentController->storeToModel($request, 'imagespopup');
         }
-
 
 
         if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
         }
         $result = [];
-       foreach ($attachments as $attachment) {
-           $name = $attachment->name;
-           if(str_contains($attachment->name, '^')){
-               $name = explode("^", $attachment->name)[1];
-           }
-           $attachment->name = $name;
-           $result[$name] = $attachment->id;
-       }
-        return (    $result);
+        foreach ($attachments as $attachment) {
+            $name = $attachment->name;
+            if (str_contains($attachment->name, '^')) {
+                $name = explode("^", $attachment->name)[1];
+            }
+            $attachment->name = $name;
+            $result[$name] = $attachment->id;
+        }
+        return ($result);
     }
+
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-
-        $required=true;
+//        $request->dd();
+        $required = true;
         $returned = false;
-        if(isset($request->car_data['returned'])){
+        if (isset($request->car_data['returned'])) {
             $returned = true;
         }
         $application = Application::application($id)->firstOrFail();
         $this->authorize('update', $application);
 
-        if(isset($request->car_data['car_type_id'])){
+        if (isset($request->car_data['car_type_id'])) {
             $car_type = $request->car_data['car_type_id'];
         }
 
-        if(isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])){
-            $required=false;
+        if (isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])) {
+            $required = false;
         }
 
         $carRequest = $request->car_data;
         $applicationRequest = $request->app_data;
 
         $statuses = [1, 7];
-        if(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
+        if (auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
             $statuses = [1, 2, 3, 4, 5, 6, 7];
         }
 
@@ -527,7 +529,7 @@ class ApplicationController extends AppController
             ] : [],
 
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type==27) ? ['integer'] :['integer', 'required'],
+            'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
@@ -553,68 +555,70 @@ class ApplicationController extends AppController
         $applicationDataArray = get_object_vars(new ApplicationData());
         $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
 
-        if(isset($applicationData['vin_array']))$applicationData['vin'] = $applicationData['vin_array'];
+        if (isset($applicationData['vin_array'])) $applicationData['vin'] = $applicationData['vin_array'];
 
         unset($applicationData['car_series_body']);
 
 
-       foreach ($applicationData as $key => $value) {
-            if ( $value === '' || $value === null || $value === 'null') {
-                if($key == 'issued_by' || $key == 'issued_at') continue;
+        foreach ($applicationData as $key => $value) {
+            if ($value === '' || $value === null || $value === 'null') {
+                if ($key == 'issued_by' || $key == 'issued_at') continue;
                 unset($applicationData[$key]);
             }
-       }
+        }
 
-       if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1,2,6,7,8]) ) {
+        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
             $searchFilters = [];
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0 ) {
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
                 $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
             }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0 ) {
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0) {
                 $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
             }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0 ) {
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
             $carTitleData = DB::table('car_types')
                 ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-                ->leftJoin('car_marks',  'car_types.id', '=', 'car_marks.car_type_id')
+                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
                 ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
                 ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-                ->where( $searchFilters )
+                ->where($searchFilters)
                 ->first();
 
             $applicationData['car_title'] = '';
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) ) {
+            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
                 $applicationData['car_title'] .= "{$carTitleData->car_mark}";
             }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) ) {
+            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
                 $applicationData['car_title'] .= " {$carTitleData->car_model}";
             }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) ) {
+            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
                 $applicationData['car_title'] .= " {$carTitleData->car_generation}";
             }
-            if (isset($applicationData['year']) ) {
+            if (isset($applicationData['year'])) {
                 $applicationData['car_title'] .= " {$applicationData['year']}";
             }
-       }
+        }
 
-        if($applicationData['status_id'] != 7) {
-            $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
+        if ($applicationData['status_id'] != 7) {
+            $date = date('Y-m-d H:i:s', strtotime($request->app_data['arriving_at']));
+            $date = Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay();
+            $applicationData['arrived_at'] = $date;
             $application->acceptions()->delete();
             $application->acceptedBy()->associate(auth()->user());
         }
 
-/*        if(auth()->user()->hasRole('Admin') && !isset($applicationData['accept'])) {
-            if(isset($applicationData['status_admin'])) {
-                $applicationData['status_id'] = $applicationData['status_admin'];
-            }
-        }*/
-        if(isset($request->car_data['vin_status'])){
-            $applicationData['vin']=null;
+        /*        if(auth()->user()->hasRole('Admin') && !isset($applicationData['accept'])) {
+                    if(isset($applicationData['status_admin'])) {
+                        $applicationData['status_id'] = $applicationData['status_admin'];
+                    }
+                }*/
+        if (isset($request->car_data['vin_status'])) {
+            $applicationData['vin'] = null;
             unset($applicationData['vin_status']);
         }
-        if(isset($request->car_data['license_plate_status'])) {
+        if (isset($request->car_data['license_plate_status'])) {
             $applicationData['license_plate'] = null;
             unset($applicationData['license_plate_status']);
         }
@@ -630,16 +634,16 @@ class ApplicationController extends AppController
             ]);
         }
 
-      /*  if ($applicationData['status_id'] != 1) {
-            $application->issueAcceptions()->create([
-                'is_issue' => false
-            ]);
-        }*/
+        /*  if ($applicationData['status_id'] != 1) {
+              $application->issueAcceptions()->create([
+                  'is_issue' => false
+              ]);
+          }*/
 
 //        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
 
 
-        $attachments = $this->AttachmentController->storeToModel($request,'images');
+        $attachments = $this->AttachmentController->storeToModel($request, 'images');
 
         if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
@@ -661,11 +665,10 @@ class ApplicationController extends AppController
     }
 
 
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -675,7 +678,7 @@ class ApplicationController extends AppController
 
         $result = $application->update(['status_id' => 8]);
 
-        if ( $result ) {
+        if ($result) {
             Toastr::success(__('Deleted.'));
             return redirect()->back();
         }
@@ -683,7 +686,8 @@ class ApplicationController extends AppController
         Toastr::error(__('Error'));
         return redirect()->back();
     }
-    public function delete(Request $request,$id)
+
+    public function delete(Request $request, $id)
     {
 
         $application = Application::application($id)->firstOrFail();
@@ -691,9 +695,9 @@ class ApplicationController extends AppController
 
         $result = $application->update(['status_id' => 8]);
 
-        if ( $result ) {
-            if($request->has('car_additional')){
-                $application->update(['car_additional' => $application->car_additional.'<br>'.'Причина удаления:'.'<br>'.$request->car_additional]);
+        if ($result) {
+            if ($request->has('car_additional')) {
+                $application->update(['car_additional' => $application->car_additional . '<br>' . 'Причина удаления:' . '<br>' . $request->car_additional]);
             }
             Toastr::success(__('Deleted.'));
             return redirect()->back();
@@ -703,15 +707,15 @@ class ApplicationController extends AppController
         return redirect()->back();
     }
 
-    public function deny(Request $request,$application_id)
+    public function deny(Request $request, $application_id)
     {
 
         $application = Application::application($application_id)->firstOrFail();
         $status = Status::find(6);
 
-        if($application->exists) {
-            if($request->has('car_additional')) {
-                $application->update(['car_additional' => $application->car_additional.'<br>'.'Причина отклонения:'.'<br>'.$request->car_additional]);
+        if ($application->exists) {
+            if ($request->has('car_additional')) {
+                $application->update(['car_additional' => $application->car_additional . '<br>' . 'Причина отклонения:' . '<br>' . $request->car_additional]);
                 //$application->car_additional = $request->car_additional;
             }
             $application->status()->associate($status);
@@ -730,7 +734,7 @@ class ApplicationController extends AppController
         $application = Application::application($application_id)->firstOrFail();
         $client = null;
 
-        if($application->issuance) {
+        if ($application->issuance) {
             $client = $application->issuance->client;
         }
 
@@ -739,15 +743,16 @@ class ApplicationController extends AppController
         $title = __('Issue a car');
         return view('applications.issuance', compact(
             'title',
-                    'application',
-                    'client',
-                    'individualLegalOptions',
+            'application',
+            'client',
+            'individualLegalOptions',
         ));
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function issuance(Request $request, $application_id)
@@ -767,26 +772,26 @@ class ApplicationController extends AppController
         ])->validate();
 
         foreach ($clientData as $key => $value) {
-            if ( is_null($value) || $value == 'null') {
+            if (is_null($value) || $value == 'null') {
                 unset($clientData[$key]);
             }
         }
 
         $application = Application::application($application_id)->firstOrFail();
 
-        if(!$application->issuance) {
+        if (!$application->issuance) {
             $client = Client::create($clientData);
         } else {
             $client = tap($application->issuance->client)->update($clientData);
         }
 
-        $attachments = $this->AttachmentController->storeToModelDoc($request,'docs');
+        $attachments = $this->AttachmentController->storeToModelDoc($request, 'docs');
 
         if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
         }
 
-        if($client->exists) {
+        if ($client->exists) {
             $application->issuedBy()->associate(auth()->user());
             $application->update([
                 'status_id' => 3,
@@ -816,7 +821,7 @@ class ApplicationController extends AppController
             ->with('acceptions')
             ->with('issuance')->first();
 
-        if(!empty($application)) {
+        if (!empty($application)) {
 
             $pricing = Pricing::where([
                 ['partner_id', $application->partner_id],
@@ -829,7 +834,7 @@ class ApplicationController extends AppController
             $application->currentParkingCost = $application->currentParkingCost;
 
             $htmlRender = view('applications.ajax.modal', compact('application'))->render();
-            return response()->json(['success' => true, 'html'=>$htmlRender]);
+            return response()->json(['success' => true, 'html' => $htmlRender]);
 
         }
         return null;
@@ -838,40 +843,38 @@ class ApplicationController extends AppController
     public function checkDuplicate(Request $request)
     {
 
-        $licensePlateDuplicates = ( isset($request->license_plate) && strlen($request->license_plate) >= 3)
+        $licensePlateDuplicates = (isset($request->license_plate) && strlen($request->license_plate) >= 3)
             ?
-        Application::with('status')
-            ->where(function ($query) {
-                $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                    ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
-            })
-            ->where('license_plate', 'like', '%' .$request->license_plate . '%')
+            Application::with('status')
+                ->where(function ($query) {
+                    $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                        ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                })
+                ->where('license_plate', 'like', '%' . $request->license_plate . '%')
                 ->get()->toArray()
             : [];
         $vinDuplicates = [];
-        if (is_array($request->vin) && count($request->vin) > 0 ) {
+        if (is_array($request->vin) && count($request->vin) > 0) {
 
             $searchVin = false;
             $vinArray = $request->vin;
             foreach ($vinArray as $key => $singleVin) {
                 if (empty($singleVin)) {
                     unset($vinArray[$key]);
-                }
-                else if (strlen($singleVin) > 2){
+                } else if (strlen($singleVin) > 2) {
                     $searchVin = true;
                 }
             }
 
             if ($searchVin) {
 
-                    $singleVin = $vinArray[0];
-                    $vinQuery = Application::with('status')
-                        ->where(function ($query) {
-                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
-                        })
-                        ->where('vin', 'like', '%' .$singleVin . '%')
-                        ;
+                $singleVin = $vinArray[0];
+                $vinQuery = Application::with('status')
+                    ->where(function ($query) {
+                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    })
+                    ->where('vin', 'like', '%' . $singleVin . '%');
 
                 $vinDuplicates = $vinQuery->get()->toArray();
 
@@ -887,7 +890,7 @@ class ApplicationController extends AppController
 
     public function getCarMarkList($type_id)
     {
-        $carMarks =[];
+        $carMarks = [];
         if ($type_id == 1) {
             $carMarks = CarMark::where([
                 ['car_marks.is_active', 1],
@@ -901,8 +904,7 @@ class ApplicationController extends AppController
                 ->groupBy('car_marks.id', 'car_marks.name')
                 ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
                 ->get();
-        }
-        else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8 ) {
+        } else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8) {
             $carMarks = CarMark::where([
                 ['car_marks.is_active', 1],
                 ['car_marks.car_type_id', $type_id],
@@ -913,7 +915,7 @@ class ApplicationController extends AppController
                 ->get();
         }
 
-        if (count($carMarks) > 0 && $type_id!=5) {
+        if (count($carMarks) > 0 && $type_id != 5) {
             $carMarks = CarMark::setLogo($carMarks);
             return $carMarks;
         }
@@ -924,23 +926,23 @@ class ApplicationController extends AppController
         if (isset($mark_id) && is_numeric($mark_id)) {
 
             $carModels = CarModel::where(['car_mark_id' => $mark_id])
-                ->select('id','name')
+                ->select('id', 'name')
                 ->orderBy('rank', 'asc')->orderBy('name', 'ASC')->get();
 
             if (count($carModels) > 0) {
-                return $carModels ;
-            }
-            else {
-                return ['id' => 0,'name' => __('Unknown Model')];
+                return $carModels;
+            } else {
+                return ['id' => 0, 'name' => __('Unknown Model')];
             }
         }
     }
 
-    public function getCarYearList($model_id) {
+    public function getCarYearList($model_id)
+    {
         if (isset($model_id) && is_numeric($model_id)) {
 
             $carYears = CarGeneration::where(['car_model_id' => $model_id])
-                ->select(DB::raw("min(year_begin) as year_begin,max(year_end) as year_end") )
+                ->select(DB::raw("min(year_begin) as year_begin,max(year_end) as year_end"))
                 ->groupBy('car_model_id')
                 ->first();
 
@@ -949,7 +951,8 @@ class ApplicationController extends AppController
 
     }
 
-    public function getCarGenerationList($model_id, $year) {
+    public function getCarGenerationList($model_id, $year)
+    {
 
         if (isset($model_id) && is_numeric($model_id)) {
 
@@ -959,13 +962,14 @@ class ApplicationController extends AppController
                 $searchFilter[] = ['year_end', '>=', $year];
             }
             $carGenerations = CarGeneration::where($searchFilter)
-                ->select('id','name')
+                ->select('id', 'name')
                 ->get();
             return $carGenerations;
         }
     }
 
-    public function getCarSeriesList($model_id, $generation_id) {
+    public function getCarSeriesList($model_id, $generation_id)
+    {
         if (isset($model_id) && is_numeric($model_id)) {
             $searchFilter[] = ['car_model_id', $model_id];
             if (isset($generation_id) && is_numeric($generation_id) && $generation_id > 0) {
@@ -973,17 +977,18 @@ class ApplicationController extends AppController
             }
 
             $carSeries = CarSeries::where($searchFilter)
-                ->select('id','name')
+                ->select('id', 'name')
                 ->get();
             $returnValues = [];
             foreach ($carSeries as $singleSeries) {
-                $returnValues[] = (object)['id'=> $singleSeries->id, 'name'=> $singleSeries->name, 'body'=> $singleSeries->body_name];
+                $returnValues[] = (object)['id' => $singleSeries->id, 'name' => $singleSeries->name, 'body' => $singleSeries->body_name];
             }
             return $returnValues;
         }
     }
 
-    public function getCarModificationList($model_id, $series_id, $year) {
+    public function getCarModificationList($model_id, $series_id, $year)
+    {
         if (isset($model_id) && is_numeric($model_id) && isset($series_id) && is_numeric($series_id)) {
             $yearFilter = [];
             if (isset($year) && is_numeric($year) && $year > 0) {
@@ -995,18 +1000,19 @@ class ApplicationController extends AppController
                     ['car_series_id', $series_id]
                 ]
             )
-                ->where(function($q) use ( $yearFilter) {
+                ->where(function ($q) use ($yearFilter) {
                     $q->where($yearFilter)
                         ->orWhereNull('year_begin')
                         ->orWhereNull('year_end');
                 })
-                ->select('id','name')
+                ->select('id', 'name')
                 ->get();
             return $carModifications;
         }
     }
 
-    public function getCarEngineList($modification_id) {
+    public function getCarEngineList($modification_id)
+    {
         if (isset($modification_id) && is_numeric($modification_id)) {
 
             $carEngines = CarCharacteristicValue::where([
@@ -1019,7 +1025,8 @@ class ApplicationController extends AppController
         }
     }
 
-    public function getCarTransmissionList($modification_id) {
+    public function getCarTransmissionList($modification_id)
+    {
         if (isset($modification_id) && is_numeric($modification_id)) {
 
             $carTransmissions = CarCharacteristicValue::where([
@@ -1032,7 +1039,8 @@ class ApplicationController extends AppController
         }
     }
 
-    public function getCarGearList($modification_id) {
+    public function getCarGearList($modification_id)
+    {
         if (isset($modification_id) && is_numeric($modification_id)) {
 
             $carGears = CarCharacteristicValue::where([
@@ -1045,7 +1053,8 @@ class ApplicationController extends AppController
         }
     }
 
-    public function filteredItems($carYears) {
+    public function filteredItems($carYears)
+    {
         if (!empty($carYears)) {
             $filteredItems = [];
             if (isset($carYears->year_begin) && isset($carYears->year_end)) {
@@ -1054,21 +1063,18 @@ class ApplicationController extends AppController
                     $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
                     $currentYear--;
                 }
-            }
-            else if (isset($carYears->year_begin)) {
+            } else if (isset($carYears->year_begin)) {
                 $currentYear = date('Y');
                 while ($currentYear >= $carYears->year_begin) {
                     $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
                     $currentYear--;
                 }
-            }
-            else {
+            } else {
                 $filteredItems[] = (object)['name' => 'Год Не Указан', 'id' => 0];
             }
 
             return $filteredItems;
-        }
-        else {
+        } else {
             return (object)['name' => 'Год Не Указан', 'id' => 0];
         }
     }
@@ -1078,16 +1084,16 @@ class ApplicationController extends AppController
         $application->favorite = !$application->favorite;
         $application->save();
 
-        return ( $application->favorite === true )
+        return ($application->favorite === true)
             ? response()->json([
                 'favorite' => $application->favorite,
-                'message'=>__('Added to favorite'),
+                'message' => __('Added to favorite'),
                 'class' => 'select-favorite',
                 'remove_class' => ''
             ])
             : response()->json([
                 'favorite' => $application->favorite,
-                'message'=>__('Removed from favorite'),
+                'message' => __('Removed from favorite'),
                 'class' => '',
                 'remove_class' => 'select-favorite'
             ]);
@@ -1102,33 +1108,32 @@ class ApplicationController extends AppController
     {
         $duplicateIDs = null;
         $groupBy = $request->get('group-by', 'vin');
-        if ( $groupBy === 'license_plate' ) {
+        if ($groupBy === 'license_plate') {
             $groupBy = 'license_plate';
-            $duplicateIDs = DB::select( DB::raw(
+            $duplicateIDs = DB::select(DB::raw(
                 "SELECT GROUP_CONCAT(ids) as tmp FROM (
                     SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids
                     FROM `applications`
                     WHERE license_plate IS NOT NULL AND license_plate NOT LIKE '%Нет учета%'
                     group by license_plate
                     having cnt > 1 )
-                T1") )[0];
-        }
-        else if ( $groupBy === 'vin' ) {
-            $duplicateIDs = DB::select( DB::raw(
+                T1"))[0];
+        } else if ($groupBy === 'vin') {
+            $duplicateIDs = DB::select(DB::raw(
                 "SELECT GROUP_CONCAT(ids) as tmp FROM (
                     SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids, GROUP_CONCAT(`returned`) as returned_values
                     FROM `applications`
                     WHERE vin IS NOT NULL AND vin <> ''
                     group by vin having cnt > 1 )
                 as T1
-                where T1.returned_values like '%0%'") )[0];
+                where T1.returned_values like '%0%'"))[0];
         }
 
         if (isset($duplicateIDs->tmp)) {
             $applicationQuery = Application::
-                applications()
+            applications()
                 ->filter($filters)
-                ->whereIn('id', explode(',' , $duplicateIDs->tmp))
+                ->whereIn('id', explode(',', $duplicateIDs->tmp))
                 ->with('parking')
                 ->with('issuedBy')
                 ->with('acceptedBy')
@@ -1142,7 +1147,7 @@ class ApplicationController extends AppController
                 ->with('viewRequests')
                 ->orderBy('arrived_at', 'desc');
 
-            $applications = $applicationQuery->paginate( config('app.paginate_by', '25') )->withQueryString();
+            $applications = $applicationQuery->paginate(config('app.paginate_by', '25'))->withQueryString();
             foreach ($applications as $key => $item) {
                 $pricing = Pricing::where([
                     ['partner_id', $item->partner_id],
@@ -1157,13 +1162,14 @@ class ApplicationController extends AppController
         }
 
         $title = __('Duplicate');
-        if($request->get('direction') == 'row') {
+        if ($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
         } else {
             return view('applications.index', compact('title', 'applications'));
         }
 
     }
+
     /**
      * Display a listing of the duplicate resources.
      *
@@ -1195,11 +1201,12 @@ class ApplicationController extends AppController
             ->with('attachments')
             ->get();
 
-        return response()->json( [
-            'items'=> $items,
+        return response()->json([
+            'items' => $items,
         ]);
 
     }
+
     /**
      * Display a listing of the duplicate resources.
      *
@@ -1209,14 +1216,14 @@ class ApplicationController extends AppController
     {
         $applicationData = $request->application;
         foreach ($applicationData as $key => $value) {
-            if ( $value === '' || $value === null || $value === 'null') {
+            if ($value === '' || $value === null || $value === 'null') {
                 unset($applicationData[$key]);
             }
         }
         $application->update($applicationData);
         $ids = $application->getDuplicates()->pluck('id')->toArray();
 
-        if (($key = array_search( $application->id, $ids)) !== false) {
+        if (($key = array_search($application->id, $ids)) !== false) {
             unset($ids[$key]);
         }
 
@@ -1227,7 +1234,7 @@ class ApplicationController extends AppController
         Application::destroy($ids);
 
         return response()->json([
-            ['message'=>__('Applications merged'), 'class' => 'is-success']
+            ['message' => __('Applications merged'), 'class' => 'is-success']
         ]);
 
     }
@@ -1244,32 +1251,32 @@ class ApplicationController extends AppController
         $carTransmissions = null;
         $carGears = null;
 
-        if($application->car_type_id){
+        if ($application->car_type_id) {
             $carMarks = $this->getCarMarkList($application->car_type_id);
         }
-        if($application->car_mark_id){
+        if ($application->car_mark_id) {
             $carModels = $this->getCarModelList($application->car_mark_id);
         }
-        if($application->car_model_id){
+        if ($application->car_model_id) {
             $carYears = $this->filteredItems($this->getCarYearList($application->car_model_id));
         }
-        if($application->year){
+        if ($application->year) {
             $carGenerations = $this->getCarGenerationList($application->car_model_id, $application->year);
         }
-        if($application->car_generation_id){
+        if ($application->car_generation_id) {
             $carSeriess = $this->getCarSeriesList($application->car_model_id, $application->car_generation_id);
 
         }
-        if($application->car_series_id){
+        if ($application->car_series_id) {
             $carModifications = $this->getCarModificationList($application->car_model_id, $application->car_series_id, $application->year);
         }
-        if($application->car_modification_id){
+        if ($application->car_modification_id) {
             $carEngines = $this->getCarEngineList($application->car_modification_id);
         }
-        if($application->car_engine_id){
+        if ($application->car_engine_id) {
             $carTransmissions = $this->getCarTransmissionList($application->car_modification_id);
         }
-        if($application->car_gear_id){
+        if ($application->car_gear_id) {
             $carGears = $this->getCarGearList($application->car_modification_id);
         }
 
@@ -1296,23 +1303,26 @@ class ApplicationController extends AppController
             'carGears'
         );
     }
-    public function assignStatus(Request $request):bool
+
+    public function assignStatus(Request $request): bool
     {
-        if(auth()->user()->hasRole(['SuperAdmin', 'Admin'])){
+        if (auth()->user()->hasRole(['SuperAdmin', 'Admin'])) {
             $app = Application::find($request->appid);
-            if($app){
+            if ($app) {
                 $app->status_id = $request->statusid;
                 $app->save();
             }
         }
         return true;
     }
-    public function updateSystemData(Request $request){
+
+    public function updateSystemData(Request $request)
+    {
 //        return $request->all();
-        if(auth()->user()->hasRole(['SuperAdmin', 'Admin','Manager'])){
+        if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager'])) {
 
             $app = Application::find($request->appid);
-            if($app){
+            if ($app) {
                 $app->accepted_by = $request->acceptedId;
                 $app->issued_by = $request->issuedId;
                 $app->parking_id = $request->parkingId;
