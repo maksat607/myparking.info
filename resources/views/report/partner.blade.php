@@ -15,7 +15,7 @@
                     <select name="partner_id" class="page-select">
                         <option hidden value="">Выберите партнера</option>
                         @foreach($partners as $partner)
-                            <option @if(request()->query('partner_id') == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->name }}</option>
+                            <option @if(request()->query('partner_id') == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                         @endforeach
                     </select>
                 </label>
