@@ -145,7 +145,8 @@
                                    checked
                                 @endif
                             >
-                            <span>{{ __('By vin') }}</span>
+{{--                            <span>{{ __('By vin') }}</span>--}}
+                            <span>по VIN</span>
                         </label>
                         <label for="licensePlate">
                             <input type="radio" name="group-by" value="license_plate" id="licensePlate"
@@ -153,7 +154,8 @@
                                    checked
                                 @endif
                             >
-                            <span>{{ __('By state number') }}</span>
+{{--                            <span>{{ __('By state number') }}</span>--}}
+                            <span>по Гос.№</span>
                         </label>
                     </div>
                 </div>
