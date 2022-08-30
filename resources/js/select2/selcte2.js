@@ -57,3 +57,6 @@ select2Ajax.on('select2:open', () => {
 $(document).ready(function() {
     $('.page-select').select2();
 });
+$(document).ready(function() {
+    $('.select-multiple').select2();
+});

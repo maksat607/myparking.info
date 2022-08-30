@@ -9,6 +9,7 @@ $(document).on( 'click', '#btn-systemic .edit-systemic', function (e) {
     $('.dropdownEditible').addClass('d-none');
     // $('.date-select').addClass('position-absolute');
     $('.custom-select').removeClass('d-none')
+    $('.repeat-checkbox').removeClass('d-none')
 
 
 
@@ -44,6 +45,13 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     let appid = $('#appId').val();
 
     var fd = new FormData();
+    if($('#repeat-checkbox-return').is(":checked")){
+        console.log(true)
+        fd.append('repeat', true);
+    }else{
+        fd.append('repeat', false);
+        console.log(false)
+    }
     fd.append('acceptedId', acceptedId);
     fd.append('issuedId', issuedId);
     fd.append('parkingId', parkingId);
@@ -54,7 +62,8 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     fd.append('vin', vin);
     fd.append('plate', plate);
     fd.append('appid', appid);
-    // console.log(fr)
+
+
     let r = changeSystemData(fd);
     console.log('>')
     console.log(r);
@@ -81,13 +90,7 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     $('div#arriving_at_div').empty();
     $('div#arriving_at_div').append(arriving_at_modal?arriving_at_modal:'Не указан');
 
-
-
-
-    console.log(acceptedName )
-    console.log(issuedName )
-    console.log(parkingName )
-    console.log(partnerName )
+    $('.repeat-checkbox').addClass('d-none')
     $('#systemic .pseudo-field1').removeClass('active');
     $('#systemic .pseudo-field1 div').attr('contenteditable', 'false');
     $(this).parent().removeClass('active');

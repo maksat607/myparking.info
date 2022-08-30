@@ -189,9 +189,6 @@
                             </div>
                             <div class="info-item pseudo-field1">
                                 <span>Стоянка</span>
-
-
-
                                 <select class="custom-select parking-select parking d-none">
                                     <option value="0">Не указан</option>
                                     @foreach(\App\Models\Parking::all() as $parking)
@@ -215,6 +212,17 @@
 
 
                             </div>
+
+                            <div class="info-item pseudo-field1 repeat-checkbox d-none">
+                                @if(auth()->user()->hasRole(['SuperAdmin','Admin']))
+                                <label class="switch-radio-wrap mt-2">
+                                    <input class="" type="checkbox" id="repeat-checkbox-return" data-for="license_plate" name="repeat" @if($application->returned)value="1"@else value="0"@endif>
+                                    <span class="switcher-radio"></span>
+                                    <span>Повтор</span>
+                                </label>
+                                @endif
+                            </div>
+
                         </div>
                         <div class="col-6">
                             <div class="info-item pseudo-field1">

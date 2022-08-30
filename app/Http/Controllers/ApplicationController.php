@@ -65,6 +65,7 @@ class ApplicationController extends AppController
         $applications = Application::
         applications()
             ->filter($filters)
+            ->where('status_id','!=','8')
             ->when($status_id, function ($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
@@ -1318,7 +1319,7 @@ class ApplicationController extends AppController
 
     public function updateSystemData(Request $request)
     {
-//        return $request->all();
+
         if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager'])) {
 
             $app = Application::find($request->appid);
@@ -1331,6 +1332,7 @@ class ApplicationController extends AppController
                 $app->issued_at = ($request->issued_at_modal) ? Carbon::parse($request->issued_at_modal)->format('Y-m-d H:i:s') : null;
                 $app->vin = $request->vin;
                 $app->license_plate = $request->plate;
+                $app->returned = $request->has('repeat') ? filter_var($request->repeat, FILTER_VALIDATE_BOOLEAN) : $app->returned;
                 $app->save();
 
             }

@@ -173,6 +173,7 @@ class ReportController extends Controller
     }
     private function dataByPartner(Request $request)
     {
+
         $sortBy = 'applications.arrived_at';
 
         $dates = array_filter(explode(' — ', $request->dates), 'trim');
@@ -191,7 +192,7 @@ class ReportController extends Controller
         }
 
         $applicationQuery = Application
-            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'arriving_at'])
+            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at'])
             ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
             ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
@@ -245,7 +246,8 @@ class ReportController extends Controller
 
 
         if ( isset($request->partner_id)) {
-            $applicationQuery->whereIn('applications.partner_id', explode(',', $request->partner_id) );
+            $applicationQuery->whereIn('applications.partner_id', $request->partner_id );
+//            $applicationQuery->whereIn('applications.partner_id', explode(',', $request->partner_id) );
         }
 
         if ( isset($request->status_id)) {
@@ -257,7 +259,8 @@ class ReportController extends Controller
         }
 
         if ( isset($request->parking_id)) {
-            $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
+//            $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
+            $applicationQuery->whereIn('applications.parking_id',  $request->parking_id);
         }
 
 
@@ -285,7 +288,7 @@ class ReportController extends Controller
                 'status_name' => 'Статус',
                 'formated_arrived_at' => 'Постановка',
                 'formated_issued_at' => 'Выдано',
-                'formated_arriving_at' => 'Выдача',
+//                'formated_arriving_at' => 'Выдача',
                 'parked_days' => 'Кол-во дней',
                 'parked_price' => 'Сумма'],
             'sss'	=>  $applicationQuery
