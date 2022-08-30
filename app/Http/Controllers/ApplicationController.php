@@ -65,7 +65,6 @@ class ApplicationController extends AppController
         $applications = Application::
         applications()
             ->filter($filters)
-            ->where('status_id','!=','8')
             ->when($status_id, function ($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
