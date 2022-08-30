@@ -68,11 +68,15 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function partnerParkings()
     {
+
         return $this->belongsToMany(Parking::class);
     }
 
     public function parkings()
     {
+        if($this->hasRole(['SuperAdmin'])){
+            return new Parking();
+        }
         return $this->hasMany(Parking::class, 'user_id', 'id');
     }
 

@@ -153,6 +153,7 @@ class ReportController extends Controller
         $partners = Partner::orderBy('name', 'ASC')->get();
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
+
         $data = $this->dataByPartner($request, );
 
         $orderBy = $request->get('order-by', 'asc');

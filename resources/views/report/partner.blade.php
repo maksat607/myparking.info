@@ -13,7 +13,7 @@
                 <label class="field-style">
                     <span>Партнер</span>
                     <select name="partner_id[]" class="select-multiple" multiple="multiple">
-                        <option hidden value="">Выберите партнера</option>
+                        <option hidden value="" disabled>Выберите партнера</option>
                         @foreach($partners as $partner)
                             <option @if(in_array($partner->id,request()->query('partner_id')??[]   )) selected @endif value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                         @endforeach
@@ -22,7 +22,7 @@
                 <label class="field-style">
                     <span>Стоянка</span>
                     <select name="parking_id[]" class="select-multiple" multiple="multiple">
-                        <option hidden value="">Выберите стоянку</option>
+                        <option hidden value="" disabled    >Выберите стоянку</option>
                         @foreach($parking as $p)
                             <option @if(in_array($p->id,request()->query('parking_id')??[])) selected @endif value="{{ $p->id }}">{{ $p->title }}</option>
                         @endforeach

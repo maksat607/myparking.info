@@ -219,7 +219,7 @@ class Application extends Model
     public function scopeApplications($query)
     {
 //        dd($query->get());
-        $query=$query->where('status_id','!=',8);
+
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();

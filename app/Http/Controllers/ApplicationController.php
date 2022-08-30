@@ -61,15 +61,17 @@ class ApplicationController extends AppController
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
         $status_name = ($status) ? $status->name : 'Все';
         $status_sort = ($status) ? $status->status_sort : 'arriving_at';
-
         $applications = Application::
         applications()
             ->filter($filters)
-            ->when($status_id, function ($query, $status_id) {
+            ->when($status_id&&$status_id!=8, function ($query, $status_id) {
                 return $query->where('status_id', $status_id);
             })
             ->when(!$status_id, function ($query) use ($statuses) {
                 return $query->whereIn('status_id', $statuses);
+            })
+            ->when($status_id==8, function ($query) use ($statuses) {
+                return $query->where('status_id', 8);
             })
             ->with('parking')
             ->with('issuedBy')
