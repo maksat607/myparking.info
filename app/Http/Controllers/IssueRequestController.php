@@ -29,13 +29,14 @@ class IssueRequestController extends AppController
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
             ->withQueryString();*/
-
         $applications = Application::applications()
+            ->where('status_id','!=',8)
             ->with(['attachments', 'partner', 'parking', 'acceptions', 'issuance', 'viewRequests'])
             ->filter($filters)
             ->whereHas('issuance')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();
+            ->withQueryString()
+            ;
 
         $title = __('Issue Requests');
         /*if($request->get('direction') == 'row') {

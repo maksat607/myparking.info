@@ -218,8 +218,6 @@ class Application extends Model
 
     public function scopeApplications($query)
     {
-//        dd($query->get());
-
         $authUser = auth()->user();
         if($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
