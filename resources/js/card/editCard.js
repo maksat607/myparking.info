@@ -1,4 +1,4 @@
-$(document).on( 'click', '#btn-systemic .edit-systemic', function (e) {
+$(document).on('click', '#btn-systemic .edit-systemic', function (e) {
     console.log('customize')
     e.stopPropagation();
     e.preventDefault();
@@ -12,8 +12,6 @@ $(document).on( 'click', '#btn-systemic .edit-systemic', function (e) {
     $('.repeat-checkbox').removeClass('d-none')
 
 
-
-
     $('.partner-select').trigger('click');
     $('.date-select').trigger('focus');
 
@@ -23,7 +21,7 @@ $(document).on( 'click', '#btn-systemic .edit-systemic', function (e) {
     $(".date-select").prop('disabled', false);
 
 });
-$(document).on( 'click','#btn-systemic .save-systemic', function (e) {
+$(document).on('click', '#btn-systemic .save-systemic', function (e) {
     e.stopPropagation();
     e.preventDefault();
 
@@ -40,17 +38,25 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     let arriving_at_modal = $('#arriving_at_modal').val()
     let issued_at_modal = $('#issued_at_modal').val()
 
-    let  vin = $('div#vinnumber').text();
-    let  plate = $('div#licenceplate').text();
-    let appid = $('#appId').val();
+    let vin = $('div#vinnumber').text();
+    let plate = $('div#licenceplate').text();
+    let appid = $('#appIdModal').val();
 
     var fd = new FormData();
-    if($('#repeat-checkbox-return').is(":checked")){
-        console.log(true)
-        fd.append('repeat', true);
-    }else{
-        fd.append('repeat', false);
-        console.log(false)
+    if ($('#repeat-checkbox').is(":checked")) {
+        console.log('repeat true')
+        fd.append('repeat', 1);
+    } else {
+        console.log('repeat false')
+        fd.append('repeat', 0);
+    }
+    if ($('#checkbox-free-parking').is(":checked")) {
+        console.log('free-parking true')
+        fd.append('free_parking', 1);
+    } else {
+        console.log('free-parking false')
+        fd.append('free_parking', 0);
+
     }
     fd.append('acceptedId', acceptedId);
     fd.append('issuedId', issuedId);
@@ -66,6 +72,7 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
 
     let r = changeSystemData(fd);
     console.log('>')
+    console.log(appid)
     console.log(r);
     console.log('<')
     // console.log(vin)
@@ -78,17 +85,17 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     // $('.acc .select2').addClass('d-none')
 
     $('div.issued').empty();
-    $('div.issued').append(issuedName?issuedName:'Не указан');
+    $('div.issued').append(issuedName ? issuedName : 'Не указан');
     $('div.accepted').empty();
-    $('div.accepted').append(acceptedName?acceptedName:'Не указан');
+    $('div.accepted').append(acceptedName ? acceptedName : 'Не указан');
     $('div.parking').empty();
-    $('div.parking').append(parkingName?parkingName:'Не указан');
+    $('div.parking').append(parkingName ? parkingName : 'Не указан');
     $('div.partner').empty();
-    $('div.partner').append(partnerName?partnerName:'Не указан');
+    $('div.partner').append(partnerName ? partnerName : 'Не указан');
     $('div#issued_at_div').empty();
-    $('div#issued_at_div').append(issued_at_modal?issued_at_modal:'Не указан');
+    $('div#issued_at_div').append(issued_at_modal ? issued_at_modal : 'Не указан');
     $('div#arriving_at_div').empty();
-    $('div#arriving_at_div').append(arriving_at_modal?arriving_at_modal:'Не указан');
+    $('div#arriving_at_div').append(arriving_at_modal ? arriving_at_modal : 'Не указан');
 
     $('.repeat-checkbox').addClass('d-none')
     $('#systemic .pseudo-field1').removeClass('active');
@@ -96,8 +103,6 @@ $(document).on( 'click','#btn-systemic .save-systemic', function (e) {
     $(this).parent().removeClass('active');
 
     $(".date-select").prop('disabled', true);
-
-
 
 
 });
@@ -113,14 +118,14 @@ console.log('arriving_at1')
 // $('#arriving_at1').flatpickr({
 //     static:true
 // });
-$(function() {
-    $("body").delegate("#arriving_at1", "focusin", function(){
+$(function () {
+    $("body").delegate("#arriving_at1", "focusin", function () {
         $(this).flatpickr();
     });
 });
 
 
-$(document).on('change','.status-select', function() {
+$(document).on('change', '.status-select', function () {
     var appid = $('#appId').val();
     var statusid = this.value;
 
@@ -133,8 +138,9 @@ $(document).on('change','.status-select', function() {
     // $('.clicked').addClass('d-none');
     // $('.user-select').removeClass('d-none')
 });
-function  changeStatus(form){
-    const result =  $.ajax({
+
+function changeStatus(form) {
+    const result = $.ajax({
         url: `/application/change-status`,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -147,8 +153,9 @@ function  changeStatus(form){
 
     return result;
 }
-function  changeSystemData(form){
-    const result =  $.ajax({
+
+function changeSystemData(form) {
+    const result = $.ajax({
         url: `/application/change-system-data`,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

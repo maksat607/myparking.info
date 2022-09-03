@@ -13,15 +13,16 @@ class Application extends Model
 {
     protected $fillable = [
 
-        'external_id', 'internal_id', 'courier_fullname', 'courier_phone', 'parking_place_number', 'parking_car_sticker', 'arriving_method', 'arriving_interval', 'arriving_at','arrived_at', 'issued_at',
+        'external_id', 'internal_id', 'courier_fullname', 'courier_phone', 'parking_place_number', 'parking_car_sticker', 'arriving_method', 'arriving_interval', 'arriving_at', 'arrived_at', 'issued_at',
 
         'partner_id', 'parking_id', 'region_id', 'presentation_id', 'presentation_contract_id', 'courier_type_id', 'tow_truck_payment_id', 'orgn', 'client_id', 'responsible_user_id', 'created_user_id', 'accepted_by', 'issued_by', 'status_id',
 
-        'car_title', 'vin', 'license_plate', 'sts', 'pts', 'pts_type', 'pts_provided', 'sts_provided', 'car_key_quantity', 'year', 'milage', 'owner_number', 'color', 'price', 'on_sale', 'favorite', 'returned', 'services', 'exterior_damage', 'interior_damage', 'condition_gear',  'condition_engine',  'condition_electric',  'condition_transmission',  'car_additional',
+        'car_title', 'vin', 'license_plate', 'sts', 'pts', 'pts_type', 'pts_provided', 'sts_provided', 'car_key_quantity', 'year', 'milage', 'owner_number', 'color', 'price', 'on_sale', 'favorite', 'returned', 'services', 'exterior_damage', 'interior_damage', 'condition_gear', 'condition_engine', 'condition_electric', 'condition_transmission', 'car_additional',
 
-        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id'
+        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking'
 
     ];
+
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
     protected $appends = [
         'formated_created_at',
@@ -46,7 +47,7 @@ class Application extends Model
 
     public function attachments()
     {
-        return $this->morphMany(Attachment::class,'attachable');
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function parking()
@@ -113,13 +114,18 @@ class Application extends Model
     {
         return $this->issueAcceptions()->where('is_issue', false);
     }
+
     public function issuance()
     {
         return $this->issueAcceptions()->where('is_issue', true);
     }
+
     public function viewRequests()
     {
         return $this->hasMany(ViewRequest::class);
+    }
+    public function free(){
+        return $this->attributes['free_parking'];
     }
 
     public function getDefaultAttachmentAttribute()
@@ -130,8 +136,8 @@ class Application extends Model
     public function getCurrentParkingCostAttribute($value)
     {
         $endDate = Carbon::now();
-        if (!empty( $this->arrived_at ) ) {
-            $endDate = !empty( $this->issued_at ) ? $this->issued_at : $endDate;
+        if (!empty($this->arrived_at)) {
+            $endDate = !empty($this->issued_at) ? $this->issued_at : $endDate;
             $regularPrice = isset($this->pricing['regular_price']) ? $this->pricing['regular_price'] : 500;
             $discountPrice = isset($this->pricing['discount_price']) ? $this->pricing['discount_price'] : 500;
             $discountDays = isset($this->pricing['free_days']) ? $this->pricing['free_days'] : 0;
@@ -142,7 +148,7 @@ class Application extends Model
             $this->parked_days_discount = ($days >= $discountDays) ? $discountDays : $discountDays - $days;
 
             $this->parked_price_discount = ($days >= $discountDays) ? $discountDays * $discountPrice : ($discountDays - $days) * $discountPrice;
-            $this->parked_price_regular = ($days - $discountDays >= 0) ? ($days - $discountDays)  * $regularPrice : 0;
+            $this->parked_price_regular = ($days - $discountDays >= 0) ? ($days - $discountDays) * $regularPrice : 0;
             $this->parked_price_total = $this->parked_price_discount + $this->parked_price_regular;
         }
         return 0;
@@ -157,8 +163,9 @@ class Application extends Model
 
         $this->start = $arrivedAt <= $startDate ? $startDate : $arrivedAt;
         $this->end = $issuedAt <= $endDate ? $issuedAt : $endDate;
-        $this->parked_days = $this->end->diffInDays($this->start) + 1;
-        $this->parked_price = $this->parked_days * $price;
+        $this->parked_days = $this->attributes['free_parking'] ? "БХ" : $this->end->diffInDays($this->start) + 1;
+        $this->parked_price = $this->attributes['free_parking'] ? "БХ" : $this->parked_days * $price;
+
     }
 
     public function getDuplicates()
@@ -186,6 +193,7 @@ class Application extends Model
 
         return Application::whereIn('id', $ids);
     }
+
     public function getVinArrayAttribute()
     {
         return explode(',', $this->vin);
@@ -193,45 +201,45 @@ class Application extends Model
 
     public function getFormatedCreatedAtAttribute($value)
     {
-        return isset($this->created_at) && !is_null($this->created_at) ? $this->created_at->format('d-m-Y') : 'Не указана';
+        return isset($this->created_at) && !is_null($this->created_at) ? $this->created_at->format('d-m-Y') : 'Нет';
     }
 
     public function getFormatedUpdatedAtAttribute($value)
     {
-        return isset($this->updated_at) && !is_null($this->updated_at) ? $this->updated_at->format('d.m.Y') : 'Не указана';
+        return isset($this->updated_at) && !is_null($this->updated_at) ? $this->updated_at->format('d.m.Y') : 'Нет';
     }
 
     public function getFormatedArrivingAtAttribute($value)
     {
-        return isset($this->arriving_at) && !is_null($this->arriving_at) ? $this->arriving_at->format('d.m.Y') : 'Не указана';
+        return isset($this->arriving_at) && !is_null($this->arriving_at) ? $this->arriving_at->format('d.m.Y') : 'Нет';
     }
 
     public function getFormatedArrivedAtAttribute($value)
     {
-        return isset($this->arrived_at) && !is_null($this->arrived_at) ? $this->arrived_at->format('d.m.Y') : 'Не указана';
+        return isset($this->arrived_at) && !is_null($this->arrived_at) ? $this->arrived_at->format('d.m.Y') : 'Нет';
     }
 
     public function getFormatedIssuedAtAttribute($value)
     {
-        return isset($this->issued_at) && !is_null($this->issued_at) ? $this->issued_at->format('d.m.Y') : 'Не указана';
+        return isset($this->issued_at) && !is_null($this->issued_at) ? $this->issued_at->format('d.m.Y') : 'Нет';
     }
 
     public function scopeApplications($query)
     {
         $authUser = auth()->user();
-        if($authUser->hasRole(['Admin'])) {
+        if ($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
             $childrenIds[] = $authUser->id;
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->whereIn('parking_id', $parkingsIds);
-        } elseif($authUser->hasRole(['Partner'])) {
+        } elseif ($authUser->hasRole(['Partner'])) {
             return $query
                 ->where('partner_id', $authUser->partner->id);
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
-        } elseif($authUser->hasRole(['Operator'])) {
+        } elseif ($authUser->hasRole(['Operator'])) {
             /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
             $childrenIds[] = $authUser->id;*/
             $parkingsIds = Parking::where('user_id', $authUser->owner->id)->pluck('id')->toArray();
@@ -248,27 +256,26 @@ class Application extends Model
     {
 
         $authUser = auth()->user();
-        if($authUser->hasRole(['Admin'])) {
+        if ($authUser->hasRole(['Admin'])) {
             $childrenIds = $authUser->children()->pluck('id')->toArray();
             $childrenIds[] = $authUser->id;
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->where('id', $id)
                 ->whereIn('parking_id', $parkingsIds);
-        } elseif($authUser->hasRole(['Partner'])) {
+        } elseif ($authUser->hasRole(['Partner'])) {
             $childrenIds = $authUser->children()->without('owner')->get()->modelKeys();
 
             $childrenIds[] = $authUser->id;
             $childrenWithOwnerId = $childrenIds;
             return $query
-                ->where('id', $id)
-//                ->whereIn('user_id', $childrenWithOwnerId)
+                ->where('id', $id)//                ->whereIn('user_id', $childrenWithOwnerId)
                 ;
         } elseif ($authUser->hasRole(['Manager'])) {
             return $query
                 ->where('id', $id)
                 ->whereIn('parking_id', $authUser->managerParkings()->get()->modelKeys());
-        } elseif($authUser->hasRole(['Operator'])) {
+        } elseif ($authUser->hasRole(['Operator'])) {
             /*$childrenIds = $authUser->owner->children()->without('owner')->role(['Manager'])->pluck('id')->toArray();
             $childrenIds[] = $authUser->id;*/
             $parkingsIds = Parking::where('user_id', $authUser->owner->id)->pluck('id')->toArray();

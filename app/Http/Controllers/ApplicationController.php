@@ -1317,6 +1317,7 @@ class ApplicationController extends AppController
     public function updateSystemData(Request $request)
     {
 
+
         if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager'])) {
 
             $app = Application::find($request->appid);
@@ -1330,8 +1331,8 @@ class ApplicationController extends AppController
                 $app->vin = $request->vin;
                 $app->license_plate = $request->plate;
                 $app->returned = $request->has('repeat') ? filter_var($request->repeat, FILTER_VALIDATE_BOOLEAN) : $app->returned;
+                $app->free_parking = $request->has('free_parking') ? filter_var($request->free_parking, FILTER_VALIDATE_BOOLEAN) : $app->free_parking;
                 $app->save();
-
             }
         }
 

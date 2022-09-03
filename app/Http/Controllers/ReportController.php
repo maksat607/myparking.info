@@ -193,7 +193,7 @@ class ReportController extends Controller
         }
 
         $applicationQuery = Application
-            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at'])
+            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at','free_parking','returned'])
             ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
             ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
@@ -277,6 +277,7 @@ class ReportController extends Controller
             }
             $item->parkingCostInDateRange($startTime, $endTime);
         }
+
         return [
             'columns' => [
                 'external_id' => 'Номер убытка',
@@ -289,17 +290,17 @@ class ReportController extends Controller
                 'status_name' => 'Статус',
                 'formated_arrived_at' => 'Постановка',
                 'formated_issued_at' => 'Выдано',
-//                'formated_arriving_at' => 'Выдача',
                 'parked_days' => 'Кол-во дней',
                 'parked_price' => 'Сумма'],
-            'sss'	=>  $applicationQuery
+                'sss'	=>  $applicationQuery
                 ->orderBy($sortBy, 'desc')->toSql(),
-            'data'	=> $applications,
+                'data'	=> $applications,
         ];
     }
 
     public function reportAllPartner(Request $request)
     {
+
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
         $data = $this->dataAllPartner($request);

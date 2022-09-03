@@ -24,10 +24,9 @@ class CsvExport implements ExportInterface
 		$callback = function() use ($params) {
             $file = fopen('php://output', 'w');
             print "\xEF\xBB\xBF";
-            
+
             fputcsv($file, $params['columns']);
             $columnKeys = array_keys($params['columns']);
-
             foreach ($params['data'] as $task) {
 				$row = [];
 				foreach ($columnKeys as $columnKey) {
@@ -38,6 +37,7 @@ class CsvExport implements ExportInterface
 						$row[$columnKey] = trim($task[$columnKey]);
 					}
 				}
+
 				fputcsv($file, $row);
 			}
             fclose($file);

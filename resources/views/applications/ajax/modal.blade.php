@@ -1,6 +1,5 @@
 
 <div class="ov-test">
-    <input type="hidden" id="appId" value="{{$application->id}}">
     <div class="car-row__item d-flex @if($application->favorite){{ 'select-favorite' }}@endif">
         <div class="car-slide-wrap">
             <span class="pagingInfo"></span>
@@ -216,7 +215,7 @@
                             <div class="info-item pseudo-field1 repeat-checkbox d-none">
                                 @if(auth()->user()->hasRole(['SuperAdmin','Admin']))
                                 <label class="switch-radio-wrap mt-2">
-                                    <input class="" type="checkbox" id="repeat-checkbox-return" data-for="license_plate" name="repeat" @if($application->returned)value="1"@else value="0"@endif>
+                                    <input class="" type="checkbox" id="repeat-checkbox"  name="repeat" @if($application['returned']=='1') checked @endif>
                                     <span class="switcher-radio"></span>
                                     <span>Повтор</span>
                                 </label>
@@ -286,6 +285,17 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="info-item pseudo-field1 repeat-checkbox d-none">
+
+                                @if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager']))
+                                    <label class="switch-radio-wrap mt-2">
+
+                                        <input class="" type="checkbox" id="checkbox-free-parking"  name="free_parking" @if($application['free_parking']=="1") checked @endif>
+                                        <span class="switcher-radio"></span>
+                                        <span>Бесплатное хранение</span>
+                                    </label>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -322,7 +332,9 @@
                          @csrf
                         <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                      </form>
+
                     <input type="hidden" id="appId" value="{{$application->id}}">
+                    <input type="hidden" id="appIdModal" value="{{$application->id}}">
                     <div class="page-file-list" id="images">
                         <div class="page-add-file add-images">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"

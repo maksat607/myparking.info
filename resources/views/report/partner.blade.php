@@ -54,12 +54,12 @@
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>ID</th>
                     <th>Ном. убытка</th>
                     <th>Марка</th>
                     <th>Модель</th>
                     <th>Год</th>
                     <th>Тип авто</th>
-                    <th>ID</th>
                     <th>VIN</th>
                     <th>Гос. номер</th>
                     <th>Статус</th>
@@ -74,12 +74,12 @@
                     <tr class="car-show-modal" data-app-id="{{ $application->id }}">
                         <input type="hidden" id="appId" value="{{ $application->id }}">
                         <td class="tr-id">{{ $loop->iteration }}</td>
+                        <td style="word-break: keep-all">{{ $application->id }}</td>
                         <td>{{ $application->external_id }}</td>
                         <td>{{ $application->car_mark_name }}</td>
                         <td>{{ $application->car_model_name }}</td>
                         <td>{{ $application->year }}</td>
                         <td>{{ $application->car_type_name }}</td>
-                        <td style="word-break: keep-all">{{ $application->id }}</td>
                         <td>{{ $application->vin }}</td>
                         <td>{{ $application->license_plate }}</td>
                         <td>{{ $application->status_name }}</td>
