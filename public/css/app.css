@@ -349,6 +349,9 @@ body.compensate-for-scrollbar{overflow:hidden}.fancybox-active{height:auto}.fanc
     font-size: 13px;
     line-height: 15px;
 }
+.orange{
+    background-color: orange;
+}
 .theme-back{
     background-color: #536e9b !important;
     color: white;

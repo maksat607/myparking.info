@@ -16,12 +16,14 @@ use Illuminate\Database\Query\Builder;
 class ReportController extends Controller
 {
     private $exporter;
+
     public function __construct(ExportInterface $exporter)
     {
         $this->exporter = $exporter;
 
         $this->middleware(['role:SuperAdmin|Admin|Manager'])->except('reportByPartner', 'csvByPartner');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -36,6 +38,7 @@ class ReportController extends Controller
         return view('report.employee', compact('data', 'parking', 'title'));
 
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -55,10 +58,10 @@ class ReportController extends Controller
         $monthAgo = Carbon::now()->startOfDay()->subMonths(1);
         $now = Carbon::now()->endOfDay();
 
-        $startTime = (isset( $dates[0] ) && $dates[0] != '')
-            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay()  : $monthAgo;
+        $startTime = (isset($dates[0]) && $dates[0] != '')
+            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay() : $monthAgo;
 
-        $endTime = (isset( $dates[1] ) && $dates[1] != '')
+        $endTime = (isset($dates[1]) && $dates[1] != '')
             ? Carbon::createFromFormat('d-m-Y', $dates[1])->endOfDay() : $now;
 
 //        SELECT users.name, accepted.cnt as accepted_number, issued.cnt as issued_number, reviewed.cnt as reviewed_number FROM `users`
@@ -108,7 +111,7 @@ class ReportController extends Controller
             ])
             ->groupBy('reviewed_by');
 
-        if ( isset($request->parking_id)) {
+        if (isset($request->parking_id)) {
             $acceptedQuery->whereIn('parking_id', explode(',', $request->parking_id));
             $issuedQuery->whereIn('parking_id', explode(',', $request->parking_id));
             $reviewedQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
@@ -126,9 +129,7 @@ class ReportController extends Controller
             })
             ->orWhereNotNull('accepted.cnt')
             ->orWhereNotNull('issued.cnt')
-            ->orWhereNotNull('reviewed.cnt')
-        ;
-
+            ->orWhereNotNull('reviewed.cnt');
 
 
         return [
@@ -138,8 +139,8 @@ class ReportController extends Controller
                 'reviewed_number' => 'Показал',
                 'issued_number' => 'Выдал',
             ],
-            'data'	=> $userQuery->get(),
-            'sql'  => $userQuery->toSql(),
+            'data' => $userQuery->get(),
+            'sql' => $userQuery->toSql(),
         ];
     }
 
@@ -154,7 +155,7 @@ class ReportController extends Controller
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
 
-        $data = $this->dataByPartner($request, );
+        $data = $this->dataByPartner($request,);
 
         $orderBy = $request->get('order-by', 'asc');
         $orderBy = $orderBy == 'asc' ? 'desc' : 'asc';
@@ -162,6 +163,7 @@ class ReportController extends Controller
         $title = __('Partner Report');
         return view('report.partner', compact('data', 'partners', 'parking', 'title', 'orderBy'));
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -172,41 +174,41 @@ class ReportController extends Controller
         $data = $this->dataByPartner($request);
         return $this->exporter->export($data);
     }
+
     private function dataByPartner(Request $request)
     {
-
         $sortBy = 'applications.arrived_at';
 
         $dates = array_filter(explode(' — ', $request->dates), 'trim');
         $monthAgo = Carbon::now()->startOfDay()->subMonths(1);
         $now = Carbon::now()->endOfDay();
 
-        $startTime = (isset( $dates[0] ) && $dates[0] != '')
-            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay()  : $monthAgo;
+        $startTime = (isset($dates[0]) && $dates[0] != '')
+            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay() : $monthAgo;
 
-        $endTime = (isset( $dates[1] ) && $dates[1] != '')
+        $endTime = (isset($dates[1]) && $dates[1] != '')
             ? Carbon::createFromFormat('d-m-Y', $dates[1])->endOfDay() : $startTime;
 
-        if((!isset( $dates[0] )) && (!isset( $dates[1] ))) {
+        if ((!isset($dates[0])) && (!isset($dates[1]))) {
             $startTime = $monthAgo;
             $endTime = $now;
         }
 
         $applicationQuery = Application
-            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at','free_parking','returned'])
+            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
             ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
             ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
             ->join('car_types', 'car_types.id', '=', 'applications.car_type_id')
-            ->leftJoin('pricings', function($join){
+            ->leftJoin('pricings', function ($join) {
                 $join->on('pricings.partner_id', '=', 'applications.partner_id');
-                $join->on('pricings.car_type_id','=','applications.car_type_id');
+                $join->on('pricings.car_type_id', '=', 'applications.car_type_id');
             })
             ->whereNotNull('arrived_at');
 
         $status_id = $request->query('status_id', 'arrived');
 
-        if($status_id == "arrived") {
+        if ($status_id == "arrived") {
             //arrived at filter
             $applicationQuery->where('arrived_at', '<=', $endTime->format('Y-m-d H:i:s'));
             $applicationQuery->where(function ($query) use ($startTime, $endTime) {
@@ -242,26 +244,31 @@ class ReportController extends Controller
                     });
             });
 
+        } elseif ($status_id == 'instorage') {
+            $applicationQuery->where('status_id',2);
         }
 
 
-
-        if ( isset($request->partner_id)) {
-            $applicationQuery->whereIn('applications.partner_id', $request->partner_id );
+        if (isset($request->partner_id)) {
+            $applicationQuery->whereIn('applications.partner_id', $request->partner_id);
 //            $applicationQuery->whereIn('applications.partner_id', explode(',', $request->partner_id) );
         }
 
-        if ( isset($request->status_id)) {
-            if($request->status_id == "arrived") {
-                $applicationQuery->whereIn('applications.status_id', [2,3] );
+        if (isset($request->status_id)) {
+            if ($request->status_id == "arrived") {
+                $applicationQuery->whereIn('applications.status_id', [2, 3]);
             } elseif ($request->status_id == "issued") {
-                $applicationQuery->whereIn('applications.status_id', [3] );
+                $applicationQuery->whereIn('applications.status_id', [3]);
             }
         }
 
-        if ( isset($request->parking_id)) {
+        if (isset($request->parking_id)) {
 //            $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
-            $applicationQuery->whereIn('applications.parking_id',  $request->parking_id);
+            $applicationQuery->whereIn('applications.parking_id', $request->parking_id);
+        }
+
+        if (isset($request->favorite)) {
+            $applicationQuery->where('applications.favorite', 1);
         }
 
 
@@ -272,7 +279,7 @@ class ReportController extends Controller
 //        die;
 
         foreach ($applications as $key => $item) {
-            if ( empty($item->car_mark_name) && empty($item->car_model_name)){
+            if (empty($item->car_mark_name) && empty($item->car_model_name)) {
                 $item->car_mark_name = $item->car_title;
             }
             $item->parkingCostInDateRange($startTime, $endTime);
@@ -292,9 +299,9 @@ class ReportController extends Controller
                 'formated_issued_at' => 'Выдано',
                 'parked_days' => 'Кол-во дней',
                 'parked_price' => 'Сумма'],
-                'sss'	=>  $applicationQuery
+            'sss' => $applicationQuery
                 ->orderBy($sortBy, 'desc')->toSql(),
-                'data'	=> $applications,
+            'data' => $applications,
         ];
     }
 
@@ -309,6 +316,7 @@ class ReportController extends Controller
         $title = __('All Partners Report');
         return view('report.all-partner', compact('data', 'parking', 'total', 'title'));
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -329,10 +337,10 @@ class ReportController extends Controller
         $startOfMonth = Carbon::now()->firstOfMonth()->startOfDay();
         $now = Carbon::now()->endOfDay();
 
-        $startTime = (isset( $dates[0] ) && $dates[0] != '')
-            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay()  : $startOfMonth   ;
+        $startTime = (isset($dates[0]) && $dates[0] != '')
+            ? Carbon::createFromFormat('d-m-Y', $dates[0])->startOfDay() : $startOfMonth;
 
-        $endTime = (isset( $dates[1] ) && $dates[1] != '')
+        $endTime = (isset($dates[1]) && $dates[1] != '')
             ? Carbon::createFromFormat('d-m-Y', $dates[1])->endOfDay() : $now;
 
         // issued application section
@@ -340,20 +348,17 @@ class ReportController extends Controller
             ->selectRaw('count(*) as issued')
             ->selectRaw('ap2.partner_id')
             ->selectRaw('ap2.parking_id')
-
             ->whereNotNull('issued_at')
             ->where([
                 ['issued_at', '>=', $startTime->format('Y-m-d H:i:s')],
                 ['issued_at', '<=', $endTime->format('Y-m-d H:i:s')]
             ]);
-        if ( isset($request->parking_id)) {
+        if (isset($request->parking_id)) {
             $issueQuery->whereIn('ap2.parking_id', explode(',', $request->parking_id));
         }
 
         $issuedApplications = $issueQuery
             ->groupBy('ap2.partner_id', 'ap2.parking_id');
-
-
 
 
         // arrived application section
@@ -376,7 +381,7 @@ class ReportController extends Controller
             ->whereNull('issued_at')
             ->where('arrived_at', '<=', $endTime->format('Y-m-d H:i:s'));
 
-        if ( isset($request->parking_id)) {
+        if (isset($request->parking_id)) {
             $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
         }
 
@@ -408,7 +413,7 @@ class ReportController extends Controller
                 'issued' => 'Выдано',
                 'total_days' => 'Всего дней',
             ],
-            'data'	=> $applications,
+            'data' => $applications,
         ];
     }
 }
