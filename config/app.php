@@ -189,6 +189,8 @@ return [
 
         Brian2694\Toastr\ToastrServiceProvider::class,
         App\Providers\ExportServiceProvider::class,
+
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
     ],
 
     /*

@@ -153,8 +153,8 @@
                                         <input  type="text" value="Общая" readonly="readonly" >
                                     @else
                                         @if(auth()->user()->hasRole(['Admin']))
-                                            <input  type="hidden" name="base" value="user" readonly="readonly" >
-                                            <input  type="text" value="Пользовательская" readonly="readonly" >
+                                            <input  type="hidden" name="public" value="user" readonly="readonly" >
+                                            <input  type="text" value="Общая" readonly="readonly" >
                                         @else
                                             <select name="base"      >
                                                 <option value="public" @if(auth()->user()->hasRole(['Admin']))  @endif >Общая</option>

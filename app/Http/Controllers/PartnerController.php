@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filter\PartnerFilters;
 use App\Models\CarType;
 use App\Models\Parking;
 use App\Models\Partner;
@@ -44,18 +45,17 @@ class PartnerController extends AppController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request,PartnerFilters $filters)
     {
-//        dd(auth()->user()->id);
         if(auth()->user()->hasRole(['Admin'])){
             $p_ids = auth()->user()->partners->pluck('id');
-            $partners = Partner::whereIn('id',$p_ids)->with('partnerType')->orderBy('status', 'DESC')->paginate();
+            $partners = Partner::sortable()->whereIn('id',$p_ids)->filter($filters)->with('partnerType')->paginate();
             $partners->each(function ($collect, $index) use ($partners) {
                 $collect->number     = $partners->perPage() * ($partners->currentPage() - 1) + $index + 1;
             });
         }
         if(auth()->user()->hasRole(['SuperAdmin'])) {
-            $partners = Partner::with('partnerType')->orderBy('status', 'DESC')->paginate();
+            $partners = Partner::sortable()->filter($filters)->with('partnerType')->orderBy('status', 'DESC')->paginate();
         }
             $title = __('Partners');
 
@@ -282,6 +282,12 @@ class PartnerController extends AppController
         return response()->json($this->groupInns());
     }
 
+    public function getModelUsersContent(Partner $partner)
+    {
+        $admins = $partner->users;
+        $htmlRender = view('partners.modals.admins', compact('admins'))->render();
+        return response()->json(['success' => true, 'html' => $htmlRender]);
+    }
     public function parkingList()
     {
         $title = __('Parking lots');

@@ -471,11 +471,11 @@ body {
 
 
 .field-style.blue input {
-    background: #536E9B;
+    background: #536E9B!important;
 }
 
 .field-style.blue input {
-    /* color: #fff; */
+     color: #fff;
     border: 1px solid #fff;
 }
 
@@ -2019,6 +2019,9 @@ span.invalid__item {
     transition: all 0.3s;
 }
 
+.switcher-radio.onfilter:before {
+    background: #fff;
+}
 .switcher-radio:before {
     content: "";
     display: block;
@@ -2041,15 +2044,48 @@ span.invalid__item {
     background: #536E9B;
     border-color: #536e9b;
 }
+.switch-radio-wrap input:checked+.switcher-radio.onfilter {
+    background: #FFFFFF;
+    border-color: #536e9b;
+}
 
 .switch-radio-wrap input:checked+.switcher-radio+span {
     color: #536e9b;
 }
 
+.switch-radio-wrap input:checked+.switcher-radio.onfilter:before {
+    background: #536e9b;
+    left: calc(100% - 17px);
+}
 .switch-radio-wrap input:checked+.switcher-radio:before {
     background: #fff;
     left: calc(100% - 17px);
 }
+button.text-btn {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    text-decoration: underline;
+}
+.text-grey {
+    color: #9C9C9C;
+}
+
+th.sortable {
+    position: relative;
+    cursor: pointer;
+}
+
+th.sortable::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 10px;
+    margin-left: 4px;
+    background-image: url("data:image/svg+xml,%3Csvg width='8' height='10' viewBox='0 0 8 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath opacity='0.3' d='M0 4L4 -3.49691e-07L8 4L0 4Z' fill='%23536E9B'/%3E%3Cpath opacity='0.3' d='M8 6L4 10L0 6L8 6Z' fill='%23536E9B'/%3E%3C/svg%3E%0A");
+}
+
 
 .page-file-list {
     display: flex;

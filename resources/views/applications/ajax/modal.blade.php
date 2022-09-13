@@ -1,5 +1,5 @@
 
-<div class="ov-test">
+<div class="ov-test lllkkk">
     <div class="car-row__item d-flex @if($application->favorite){{ 'select-favorite' }}@endif">
         <div class="car-slide-wrap">
             <span class="pagingInfo"></span>

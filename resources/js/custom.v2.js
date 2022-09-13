@@ -178,3 +178,7 @@ $('.chech-dd').on('change', function() {
         $(this).parent().siblings('.chech-dd-list').removeClass('active');
     }
 })
+
+
+
+

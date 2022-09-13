@@ -10,4 +10,5 @@ class PartnerUser extends Model
     use HasFactory;
     protected $table='partner_user';
     protected $fillable = ['user_id','partner_id'];
+
 }

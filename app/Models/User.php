@@ -79,6 +79,13 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $this->hasMany(Parking::class, 'user_id', 'id');
     }
+    public function cars(){
+        return $this->hasManyThrough(
+            Application::class,//dep
+            Parking::class,//env
+
+        );
+    }
 
     public function managerParkings()
     {

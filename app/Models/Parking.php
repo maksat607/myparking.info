@@ -22,7 +22,10 @@ class Parking extends Model
         'address',
         'timezone',
     ];
-
+    public function applications(){
+//        return $this->belongsTo(Parking::class);
+        return $this->hasMany(Application::class);
+    }
     public function legals()
     {
         return $this->belongsToMany(Legal::class);

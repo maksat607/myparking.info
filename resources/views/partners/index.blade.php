@@ -1,15 +1,28 @@
 @extends('layouts.app')
 @section('content')
     <div class="container page-head-wrap">
-        <div class="page-head">
+        <div class="page-head partner">
             <div class="page-head__top d-flex align-items-center">
                 <h1>{{ $title }}</h1>
-{{--                <label class="field-style blue">--}}
-{{--                    <span>Поиск</span>--}}
-{{--                    <input type="text" placeholder="Поиск по столбцам">--}}
-{{--                </label>--}}
+                    <form id="appPartnerFilter" action="{{ url()->current() }}" method="GET"
+                      class="d-flex align-items-center">
+                    <label class="field-style blue">
+                        <span>Поиск</span>
+                        <input type="text" name="search" placeholder="Поиск по столбцам" value="@if(request()->get('search')){{ request()->get('search') }}@endif">
+                    </label>
+                    <label class="switch-radio-wrap " style="margin-right: 35px;">
+                        <input type="checkbox" name="public" @if(request()->get('public')) checked @endif>
+                        <span class="switcher-radio onfilter"></span>
+                        <div>Общие</div>
+                    </label>
+                    <label class="switch-radio-wrap ">
+                        <input type="checkbox" name="user" @if(request()->get('user')) checked @endif>
+                        <span class="switcher-radio onfilter"></span>
+                        <div>Пользовательские</div>
+                    </label>
+                </form>
                 <div class="ml-auto d-flex">
-{{--                    <a href="{{ route('partners.create') }}" class="btn btn-white">Добавить</a>--}}
+                    {{--                    <a href="{{ route('partners.create') }}" class="btn btn-white">Добавить</a>--}}
                     <a href="{{ route('partners.search') }}" class="btn btn-white">Добавить</a>
                 </div>
             </div>
@@ -22,10 +35,10 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th scope="col">Название</th>
-                    <th scope="col">Тип</th>
-                    <th scope="col">ИНН</th>
-                    <th scope="col">КПП</th>
+                    <th class="sortable" scope="col">@sortablelink('name','Название')</th>
+                    <th class="sortable" scope="col">@sortablelink('partnerType.name','Тип')</th>
+                    <th class="sortable" scope="col">@sortablelink('inn','ИНН')</th>
+                    <th class="sortable" scope="col">@sortablelink('kpp','КПП')</th>
                     <th scope="col">База</th>
                     <th></th>
                 </tr>
@@ -33,40 +46,52 @@
                 <tbody>
                 @foreach ($partners->sortBy('name') as  $partner)
                     <tr class="@if(!$partner->status){{ 'disabled-tr' }}@endif">
-                        <td class="tr-id">{{ $partner->number }}</th>
+                        <td class="tr-id">
+                        {{ $partner->number }}</th>
                         <td>
                             @if($partner->status)
-                            <div class="first-info d-flex align-items-center">
-                                <span class="status-dot status-success">&bull;</span>
-                                <span>{{ $partner->shortname }}</span>
-                            </div>
+                                <div class="first-info d-flex align-items-center">
+                                    <span class="status-dot status-success">&bull;</span>
+                                    <span>{{ $partner->shortname }}</span>
+                                </div>
                             @else
                                 <div class="first-info d-flex align-items-center status-danger">
                                     <span class="status-dot">&bull;</span>
                                     <span>{{ $partner->shortname }}</span>
-                                    company-type</div>
+                                    company-type
+                                </div>
                             @endif
                             <div class="company-type">{{ $partner->name }}</div>
                         </td>
-                        <td style="width: 200px;">@if($partner->partnerType!==null){{ $partner->partnerType->name }} @else null @endif</td>
+                        <td style="width: 200px;">@if($partner->partnerType!==null){{ $partner->partnerType->name }} @else
+                                null @endif</td>
                         <td>{{ $partner->inn }}</td>
                         <td>{{ $partner->kpp }}</td>
                         <td>
                             @if($partner->base_type=='public')
-                                общая
-                            @else
-                                Пользовательская
-                                <div class="company-type">{{ @$partner->created_user->email }}</div>
+                                <div>общая</div>
+                                <div>
+                                        <button type="button" class="text-grey text-btn @if(auth()->user()->hasRole('SuperAdmin')) partner-users-show-modal" @endif
+                                                data-partner-id="{{ $partner->id }}">
+                                            Организация: {{ $partner->users->count() }}</button>
+                                    </div>
+                                    @else
+                                        <div>Пользовательская</div>
+                                        <div>
+                                            <button type="button"
+                                                    class="text-grey text-btn"> {{ @$partner->created_user->email }}</button>
+                                        </div>
+
                             @endif
 
                         </td>
-{{--                        <td>--}}
-    {{--                            @if ($partner->status)--}}
-{{--                                <span class="status-td statusgreen">{{ __('Active') }}</span>--}}
-{{--                            @else--}}
-{{--                                <span class="status-td statuspink">{{ __('Not active') }}</span>--}}
-{{--                            @endif--}}
-{{--                        </td>--}}
+                        {{--                        <td>--}}
+                        {{--                            @if ($partner->status)--}}
+                        {{--                                <span class="status-td statusgreen">{{ __('Active') }}</span>--}}
+                        {{--                            @else--}}
+                        {{--                                <span class="status-td statuspink">{{ __('Not active') }}</span>--}}
+                        {{--                            @endif--}}
+                        {{--                        </td>--}}
 
                         <td>
                             <div class="car-dd">
@@ -100,7 +125,15 @@
                 </tbody>
             </table>
         </div>
+
+
         {{ $partners->links() }}
+
+        <div class="partner-users-modal-block">
+
+        </div>
+
+        <div class="partner-overlay"></div>
     </div>
 
 @endsection

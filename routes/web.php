@@ -110,6 +110,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->except(['show', 'destroy']);
 
     /*Partners*/
+
+
+
     Route::resource('partners', PartnerController::class)
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->except(['show', 'destroy']);
@@ -129,6 +132,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::delete('/partner-users/{partner_user}/partner/{partner}/', [PartnerUserController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('partner-users.destroy');
+    Route::get('/partner/get-modal-users-content/{partner}', [PartnerController::class, 'getModelUsersContent'])
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+
+
 
     Route::get('/partner/parkings/', [PartnerController::class, 'parkingList'])
         ->middleware(['check_legal', 'check_child_owner_legal'])

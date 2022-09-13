@@ -117,6 +117,7 @@
       <path value="$PROJECT_DIR$/vendor/brian2694/laravel-toastr" />
       <path value="$PROJECT_DIR$/vendor/phpoffice/phpword" />
       <path value="$PROJECT_DIR$/vendor/laminas/laminas-escaper" />
+      <path value="$PROJECT_DIR$/vendor/kyslik/column-sortable" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3">

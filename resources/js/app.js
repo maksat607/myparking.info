@@ -20,8 +20,11 @@ $(function() {
     require('./application/ptsType');
     require('./card/editCard');
     require('./partner/search');
+    require('./partner/filter');
+    require('./partner/partnerModalAjaxContent');
 
     require('./common');
     require('./custom.v2');
+    require('./custom');
 });
 
