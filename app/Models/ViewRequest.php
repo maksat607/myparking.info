@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\NotifyViewRequestChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class ViewRequest extends Model
 {
+    use HasFactory,NotifyViewRequestChanges;
     protected $fillable = ['client_name', 'organization_name', 'comment', 'arriving_at', 'arriving_interval', 'finished_at', 'status_id', 'application_id', 'created_user_id', 'user_id', 'reviewed_by'];
     protected $dates = ['arriving_at', 'finished_at'];
     protected $appends = ['status_name', 'formated_created_at', 'formated_arriving_at', 'formated_finished_at', 'formated_arriving_interval'];

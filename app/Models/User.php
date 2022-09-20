@@ -171,8 +171,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return null;
     }
+
+
     public function partners()
     {
-        return $this->belongsToMany(Partner::class);
+        return $this->belongsToMany(Partner::class)->withPivot('active')->wherePivot('active',1);;
     }
 }

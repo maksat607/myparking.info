@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\CreateUserNotifications;
+use App\Notifications\UserNotification;
 use App\Scopes\RoleScope;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
@@ -46,7 +47,7 @@ class UserController extends AppController
         $users = User::users()->with('legals')->get();
         $title = __('Users');
 
-        if($users->isEmpty()) {
+        if ($users->isEmpty()) {
             return view('users.empty', compact('title'));
         }
 
@@ -64,8 +65,8 @@ class UserController extends AppController
         $roles = Role::whereNotIn('name', ['Partner', 'PartnerOperator'])
             ->pluck('name')
             ->reject(function ($value, $key) {
-            return $value=='SuperAdmin';
-        })->all();
+                return $value == 'SuperAdmin';
+            })->all();
         $title = __('Create new user');
 
         return view('users.create', compact('roles', 'title'));
@@ -100,7 +101,7 @@ class UserController extends AppController
             'status' => $request->input('status', 0),
         ];
 
-        if(isNotAdminRole($request->role)) {
+        if (isNotAdminRole($request->role)) {
             $userData['parent_id'] = auth()->id();
         }
 
@@ -110,7 +111,7 @@ class UserController extends AppController
 
         $user->notify(new CreateUserNotifications($request->password));
 
-        $user->email_verified_at=Carbon::now();
+        $user->email_verified_at = Carbon::now();
         $user->save();
         return ($user->exists)
             ? redirect()->route('users.index')->with('success', __('Saved.'))
@@ -121,7 +122,7 @@ class UserController extends AppController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -137,7 +138,7 @@ class UserController extends AppController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -145,10 +146,10 @@ class UserController extends AppController
         $user = User::user($id)->firstOrFail();
         $this->authorize('updateUser', $user);
         $roles = Role::query()
-            ->when($user->hasRole(['Partner']), function ($query){
+            ->when($user->hasRole(['Partner']), function ($query) {
                 $query->where('name', 'Partner');
             })
-            ->when(!$user->hasRole(['Partner', 'PartnerOperator']), function ($query){
+            ->when(!$user->hasRole(['Partner', 'PartnerOperator']), function ($query) {
                 $query->whereNotIn('name', ['Partner', 'PartnerOperator']);
             })
             ->pluck('name');
@@ -183,12 +184,12 @@ class UserController extends AppController
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
-        if(!is_null($request->password)) {
+        if (!is_null($request->password)) {
             $user->password = Hash::make($request->password);
         }
         $user->status = $request->input('status', 0);;
 
-        if(isNotAdminRole($request->role)) {
+        if (isNotAdminRole($request->role)) {
             $userData['parent_id'] = auth()->id();
         }
 
@@ -206,7 +207,7 @@ class UserController extends AppController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -227,7 +228,7 @@ class UserController extends AppController
 
     protected function addRoleToRequest(Request &$request, $is_role = 'Partner', $role = 'PartnerOperator')
     {
-        if(auth()->user()->hasRole($is_role)) {
+        if (auth()->user()->hasRole($is_role)) {
             $request->request->add(['role' => $role]);
         }
     }
@@ -236,8 +237,34 @@ class UserController extends AppController
     {
         $user = User::user($id)->firstOrFail();
         $managerParkings = $user->managerParkings;
-        $title = __('Parking lots of the user :User', ['user'=>$user->name]);
+        $title = __('Parking lots of the user :User', ['user' => $user->name]);
 
         return view('users.parking.index', compact('managerParkings', 'title'));
+    }
+
+    public function notifications()
+    {
+        $title = 'Уведомление';
+        return view('users.notifications.index', compact('title'));
+    }
+    public function message(Request $request,User $user)
+    {
+        $title = "Сообщение";
+        if(auth()->user()->hasRole('SuperAdmin')){
+            $title = "Сообщение от суперадмина";
+        }
+        if(auth()->user()->hasRole('Admin')){
+            $title = "Сообщение от администратора";
+        }
+
+        if($request->message){
+            $user->notify(new UserNotification(['message'=>$request->message,'title'=>$title]));
+        }
+        return redirect()->back()->with('success', 'Отправлено');
+    }
+    public function sendMessage(User $user)
+    {
+        $htmlRender = view('users.modals.message', compact('user'))->render();
+        return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 }

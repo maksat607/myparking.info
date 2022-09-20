@@ -76,6 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::resource('users', UserController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
     Route::get('/users/{user}/parking/all', [UserController::class, 'allUserParking'])->name('user.parking.all');
+    Route::get('/notifications', [UserController::class, 'notifications'])->name('notifications.list');
+    Route::post('/message/{user}', [UserController::class, 'message'])->name('user.message');
+
+    Route::get('/users/message/{user}', [UserController::class, 'sendMessage'])->name('user.send.message');
 
     Route::resource('users.children', UserChildrenController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
@@ -133,7 +137,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('partner-users.destroy');
     Route::get('/partner/get-modal-users-content/{partner}', [PartnerController::class, 'getModelUsersContent'])
-        ->middleware(['check_legal', 'check_child_owner_legal']);
+        ->middleware(['check_legal', 'check_child_owner_legal'])
+        ->name('get.model.users.content');
 
 
 
@@ -157,6 +162,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/partner/add/{partner}', [PartnerController::class, 'addPartner']);
     Route::get('/partner/add-new', [PartnerController::class, 'addNewPartner'])->name('addNewPartner');
     Route::get('/partner/search', [PartnerController::class, 'search'])->name('partners.search');
+    Route::post('/partner/user/{user}', [PartnerController::class, 'togglePartnerUser']);
+    Route::get('/partner/add-user/{partner}/{user}', [PartnerController::class, 'addPartnerUser'])->name('add.partner.user');
 
 
     /*Cars select AJAX*/

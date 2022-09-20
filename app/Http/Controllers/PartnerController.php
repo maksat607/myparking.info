@@ -16,6 +16,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
 class PartnerController extends AppController
 {
     private $parkingAjax = [];
@@ -33,36 +34,37 @@ class PartnerController extends AppController
                 'parkingList',
                 'addParking',
                 'removeParking',
-                ]);
+            ]);
 
         $this->middleware(['permission:partner_view'])->only('index', 'show');
         $this->middleware(['permission:partner_create'])->only('create', 'store');
         $this->middleware(['permission:partner_update'])->only('edit', 'update');
 //        $this->middleware(['permission:partner_delete'])->only('destroy');
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,PartnerFilters $filters)
+    public function index(Request $request, PartnerFilters $filters)
     {
-        if(auth()->user()->hasRole(['Admin'])){
+        if (auth()->user()->hasRole(['Admin'])) {
             $p_ids = auth()->user()->partners->pluck('id');
-            $partners = Partner::sortable()->whereIn('id',$p_ids)->filter($filters)->with('partnerType')->paginate();
+            $partners = Partner::sortable()->whereIn('id', $p_ids)->filter($filters)->with('partnerType')->paginate();
             $partners->each(function ($collect, $index) use ($partners) {
-                $collect->number     = $partners->perPage() * ($partners->currentPage() - 1) + $index + 1;
+                $collect->number = $partners->perPage() * ($partners->currentPage() - 1) + $index + 1;
             });
         }
-        if(auth()->user()->hasRole(['SuperAdmin'])) {
+        if (auth()->user()->hasRole(['SuperAdmin'])) {
             $partners = Partner::sortable()->filter($filters)->with('partnerType')->orderBy('status', 'DESC')->paginate();
         }
-            $title = __('Partners');
+        $title = __('Partners');
 
-            return view('partners.index', compact('title', 'partners'));
-        }
+        return view('partners.index', compact('title', 'partners'));
+    }
 
-        /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -70,8 +72,8 @@ class PartnerController extends AppController
     public function create()
     {
         $partner_types = PartnerType::all();
-        $car_types  = CarType::where('is_active', 1)
-            ->select('id','name')
+        $car_types = CarType::where('is_active', 1)
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
@@ -84,7 +86,7 @@ class PartnerController extends AppController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -96,28 +98,26 @@ class PartnerController extends AppController
             'shortname' => $request->shortname,
             'inn' => $request->inn,
             'kpp' => $request->kpp,
-            'base_type'=>$request->base,
+            'base_type' => $request->base,
             'partner_type_id' => $request->partner_type,
             'status' => $request->status,
         ];
-        $this->validator($request->all(),$request)->validate();
+        $this->validator($request->all(), $request)->validate();
 
-        if($request->has('partner')&&isset($request->beingAdded)&&$request->beingAdded=='frompublic'&&auth()->user()->hasRole(['Admin'])){
+        if ($request->has('partner') && isset($request->beingAdded) && $request->beingAdded == 'frompublic' && auth()->user()->hasRole(['Admin'])) {
 
-            if(PartnerUser::where('user_id',auth()->user()->id)->where('partner_id',$request->partner)->count()>0){
+            if (PartnerUser::where('user_id', auth()->user()->id)->where('partner_id', $request->partner)->count() > 0) {
                 return redirect()->back()->with('error', 'Уже есть в списке партнёров');
-            }else{
-                PartnerUser::create(['user_id'=>auth()->user()->id,'partner_id'=>$request->partner]);
+            } else {
+                PartnerUser::create(['user_id' => auth()->user()->id, 'partner_id' => $request->partner]);
                 return redirect()->route('partners.index')->with('success', 'Добавлено');
             }
+        } else {
+            $partnerData['created_user_id'] = auth()->user()->id;
+            $partner = Partner::create($partnerData);
+            PartnerUser::create(['user_id' => auth()->user()->id, 'partner_id' => $partner->id]);
+            return redirect()->route('partners.index')->with('success', 'Добавлено');
         }
-        else{
-                $partnerData['created_user_id']=auth()->user()->id;
-                $partner = Partner::create($partnerData);
-                PartnerUser::create(['user_id'=>auth()->user()->id,'partner_id'=>$partner->id]);
-                return redirect()->route('partners.index')->with('success', 'Добавлено');
-        }
-
 
 
 //        return ($partner->exists)
@@ -128,7 +128,7 @@ class PartnerController extends AppController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -139,7 +139,7 @@ class PartnerController extends AppController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -148,19 +148,19 @@ class PartnerController extends AppController
 
 //        dd(((auth()->user()->hasRole('Admin'))&&($partner->base_type=='user')));
         $personal = true;
-        $car_types  = CarType::where('is_active', 1)
-            ->select('id','name')
+        $car_types = CarType::where('is_active', 1)
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
-        if($partner->base_type=="public"){
+        if ($partner->base_type == "public") {
             $disabled = true;
         }
-        if(auth()->user()->hasRole('SuperAdmin')){
+        if (auth()->user()->hasRole('SuperAdmin')) {
             $personal = false;
             $disabled = false;
         }
-        if((auth()->user()->hasRole('Admin'))&&($partner->base_type=='user')){
+        if ((auth()->user()->hasRole('Admin')) && ($partner->base_type == 'user')) {
 
             $personal = true;
             $disabled = false;
@@ -168,42 +168,41 @@ class PartnerController extends AppController
 
         $partner_types = PartnerType::all();
         $title = __('Edit partner: :Partner', ['partner' => $partner->name]);
-        return view('partners.edit', compact('title', 'partner', 'partner_types','personal', 'pricings','disabled'));
+        return view('partners.edit', compact('title', 'partner', 'partner_types', 'personal', 'pricings', 'disabled'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
 //$request->dd();
-        if(!$request->has('status')){
-            $request->request->add(['status' =>0]);
-        }else{
-            $request->request->add(['status' =>1]);
+        if (!$request->has('status')) {
+            $request->request->add(['status' => 0]);
+        } else {
+            $request->request->add(['status' => 1]);
         }
 
 
-
-        if($request->has('pricings')){
+        if ($request->has('pricings')) {
             Validator::make($request->pricings, [
-            '*.regular_price' => ['nullable', 'integer'],
-            '*.dicount_price' => ['nullable', 'integer'],
-            '*.free_days' => ['nullable', 'integer'],
-            '*.car_type_id' => ['integer'],
-        ])->validate();
+                '*.regular_price' => ['nullable', 'integer'],
+                '*.dicount_price' => ['nullable', 'integer'],
+                '*.free_days' => ['nullable', 'integer'],
+                '*.car_type_id' => ['integer'],
+            ])->validate();
         }
 
         $partner = Partner::findOrFail($id);
 
-        $this->validator($request->all(),$request)->validate();
+        $this->validator($request->all(), $request)->validate();
 
         $request->request->add(['partner_type_id' => $request->partner_type]);
-        $request->request->add(['base_type'=>$request->base]);
+        $request->request->add(['base_type' => $request->base]);
         $is_update = $partner->update($request->except(['partner_type']));
 
 
@@ -231,7 +230,7 @@ class PartnerController extends AppController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -239,7 +238,7 @@ class PartnerController extends AppController
         //
     }
 
-    protected function validator(array $data,Request $request)
+    protected function validator(array $data, Request $request)
     {
 
         return Validator::make($data, [
@@ -247,35 +246,35 @@ class PartnerController extends AppController
             'address' => ['string', 'max:100', 'nullable'],
             'phone' => ['numeric', 'min:20', 'nullable'],
             'email' => ['string', 'email', 'nullable'],
-            'rank' => [ 'numeric', 'min:0'],
+            'rank' => ['numeric', 'min:0'],
             'partner_type' => ['required', 'exists:partner_types,id'],
             'status' => ['boolean'],
-            'inn' => (isset($request->beingAdded)&&$request->beingAdded=='public') ? 'required' :
+            'inn' => (isset($request->beingAdded) && $request->beingAdded == 'public') ? 'required' :
                 ['required',
                     $request->has('update') ? (Rule::unique('partners')->ignore($request->partner)) :
-                    'unique:partners'
+                        'unique:partners'
                 ]
         ]);
     }
 
     public function getParkings(Request $request)
     {
-        if(!$request->ajax()) abort(404);
+        if (!$request->ajax()) abort(404);
 
-        if($request->has('q')){
+        if ($request->has('q')) {
             $search = $request->q;
         }
         $this->parkingAjax = DB::table('legal_parking')
             ->join('parkings', 'legal_parking.parking_id', '=', 'parkings.id')
             ->join('legals', 'legal_parking.legal_id', '=', 'legals.id')
-            ->select('parkings.id','parkings.title', 'legals.inn')
+            ->select('parkings.id', 'parkings.title', 'legals.inn')
             ->whereNotIn('parkings.id', DB::table('parking_user')
                 ->distinct()
                 ->where('parking_user.user_id', auth()->id())
                 ->pluck('parking_user.parking_id'))
-            ->where(function($query) use ($search){
-                $query->where('parkings.title','LIKE',"%{$search}%")
-                    ->orWhere('legals.inn','=',"{$search}");
+            ->where(function ($query) use ($search) {
+                $query->where('parkings.title', 'LIKE', "%{$search}%")
+                    ->orWhere('legals.inn', '=', "{$search}");
             })
             ->get();
 
@@ -285,9 +284,27 @@ class PartnerController extends AppController
     public function getModelUsersContent(Partner $partner)
     {
         $admins = $partner->users;
-        $htmlRender = view('partners.modals.admins', compact('admins'))->render();
+        $absentUsers = User::role('Admin')->whereNotIn('id', $admins->pluck('id'))->get();
+        $partnerUsers = PartnerUser::where('partner_id', $partner->id)->get();
+
+        $htmlRender = view('partners.modals.admins', compact('partner', 'partnerUsers', 'absentUsers'))->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
+
+    public function togglePartnerUser(Request $request, User $user)
+    {
+        $partnerUser = PartnerUser::where('user_id', $user->id)->where('partner_id', $request->partnerId)->first();
+        $partnerUser->active = !$partnerUser->active;
+        $partnerUser->save();
+        return $partnerUser->active;
+    }
+
+    public function addPartnerUser(Partner $partner, User $user)
+    {
+        PartnerUser::create(['user_id'=>$user->id,'partner_id'=>$partner->id]);
+        return true;
+    }
+
     public function parkingList()
     {
         $title = __('Parking lots');
@@ -323,60 +340,67 @@ class PartnerController extends AppController
             : redirect()->back()->with('error', __('Error'));
     }
 
-    public function searchVin(Request $request){
+    public function searchVin(Request $request)
+    {
 //        return $request->vin;
 
-        $p = Partner::where('base_type','public')->where('status',1)->where('inn','like',"%{$request->vin}%")->get()->toArray();
+        $p = Partner::where('base_type', 'public')->where('status', 1)->where('inn', 'like', "%{$request->vin}%")->get()->toArray();
 //        $p = Partner::where('base_type','user')->where('status',1)->where('inn','like',"%{$request->vin}%")->get()->toArray();
         return $p;
     }
-    public function search(){
+
+    public function search()
+    {
 //        if(auth()->user()->hasRole('Admin'))
 //            $personal = true;
 //        else
 //            $personal = false;
         $title = __('Create new Partner');
         $partner_types = PartnerType::all();
-        return view('partners.search', compact('title','partner_types'));
+        return view('partners.search', compact('title', 'partner_types'));
     }
-    public function addNewPartner(){
-        $disabled=false;
-        if(auth()->user()->hasRole('Admin'))
+
+    public function addNewPartner()
+    {
+        $disabled = false;
+        if (auth()->user()->hasRole('Admin'))
             $personal = true;
         else
             $personal = false;
-        $car_types  = CarType::where('is_active', 1)
-            ->select('id','name')
+        $car_types = CarType::where('is_active', 1)
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $partner_types = PartnerType::all();
         $pricings = createPriceList($car_types);
         $title = __('Create new Partner');
-        return view('partners.search', compact('title','pricings','personal','partner_types','disabled'));
+        return view('partners.search', compact('title', 'pricings', 'personal', 'partner_types', 'disabled'));
     }
-    public function addPartner(Partner $partner){
 
-            $disabled = true;
-            if(auth()->user()->hasRole(['SuperAdmin']))
-            {
-                $disabled = false;
-            }
-            $personal = true;
-        $car_types  = CarType::where('is_active', 1)
-            ->select('id','name')
+    public function addPartner(Partner $partner)
+    {
+
+        $disabled = true;
+        if (auth()->user()->hasRole(['SuperAdmin'])) {
+            $disabled = false;
+        }
+        $personal = true;
+        $car_types = CarType::where('is_active', 1)
+            ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $partner_types = PartnerType::all();
         $pricings = createPriceList($car_types);
         $title = __('Create new Partner');
-        return view('partners.search', compact('title','partner','pricings','personal','partner_types','disabled'));
+        return view('partners.search', compact('title', 'partner', 'pricings', 'personal', 'partner_types', 'disabled'));
     }
+
     private function groupInns()
     {
-        if(empty($this->parkingAjax)) return $this->parkingAjax;
+        if (empty($this->parkingAjax)) return $this->parkingAjax;
         $temps = [];
         $this->parkingAjax->each(function ($item, $key) use (&$temps) {
-            if(Arr::exists($temps, $item->id)) {
+            if (Arr::exists($temps, $item->id)) {
                 $temps[$item->id]->inn .= ', ' . $item->inn;
             } else {
                 $temps[$item->id] = $item;
@@ -384,7 +408,7 @@ class PartnerController extends AppController
 
         });
 
-        return array_values(Arr::sort($temps, function($value){
+        return array_values(Arr::sort($temps, function ($value) {
             return $value->title;
         }));
     }

@@ -12,7 +12,7 @@
                 </ul>
             </div>
         @endif
-
+        <input type="hidden" value="1" id="triggerNumber">
         <div class="page-head">
             <div class="page-head__top d-flex align-items-center">
                 <h1>{{ $title }}</h1>
@@ -197,10 +197,15 @@
                                         <div class="col-6">
                                             <label class="field-style">
                                                 <span>Дата поставки</span>
-                                                <input type="text" id="arriving_at" class="@if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager'])) date-manager @else date @endif" name="app_data[arriving_at]" placeholder="Не указан">
+                                                <input type="text" @if($application->status_id==7) id="arriving_at" name="app_data[arriving_at]" @else id="arrived_at" name="app_data[arrived_at]"@endif
+                                                       class="@if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager'])) date-manager @else date @endif"  placeholder="Не указан">
                                             </label>
                                             @push('scripts')
-                                                const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                                @if($application->status_id==7)
+                                                    const dateDataApplication = '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                                @else
+                                                    const dateDataApplication = '{{ ($application->arrived_at) ? $application->arrived_at->format('d-m-Y') : now()->format('d-m-Y') }}';
+                                                @endif
                                             @endpush
 
                                         </div>
@@ -289,7 +294,7 @@
                                                 <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
                                                 <div class="tabform__mob-dd type-card">
                                                     <input type="text" placeholder="Поиск" class="select-search">
-                                                    <ul class="tabform__ul select-list type-list" data-placeholder="Выберите тип авто">
+                                                    <ul class="tabform__ul select-list type-list car-mark" data-placeholder="Выберите тип авто">
                                                         {{-- <li class="tabform__li"><img src="img/bmw-icon.png"> bmw</li> --}}
                                                         @if(!$carMarks)
                                                             <li class="placeholder statuspink">Выберите тип авто</li>
@@ -337,11 +342,12 @@
                                                 <div class="tabform__mob-dd type-card">
                                                     <input type="text" placeholder="Поиск" class="select-search">
                                                     <ul class="select-list tabform__ul type-list" data-placeholder="Выберите модель авто">
+
                                                         @if(!$carYears)
                                                             <li class="placeholder statuspink">Выберите модель авто</li>
                                                         @else
                                                             @foreach($carYears as $carYear)
-                                                                @if($application->year === $carYear->id)
+                                                                @if(intval($application->year) === intval($carYear->id))
                                                                     <li class="select-item tabform__li active">
                                                                         <a href="" data-name-id="year" data-id="{{ $carYear->id }}">{{ $carYear->name }}</a>
                                                                     </li>
@@ -357,6 +363,7 @@
                                             </fieldset>
                                             <div id="textArea" class="d-none col">
                                                 <label for="reg_number" style="padding: 0 15px;">{{ __('Description of auto') }}</label>
+
                                                 <textarea class="form-control mw-100" id="autoDesc"
                                                           rows="4"
                                                           name="car_data[car_title]"

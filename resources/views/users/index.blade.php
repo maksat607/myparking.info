@@ -99,6 +99,16 @@
                         <div class="car-dd">
                             <div class="car-close-dd"></div>
                             <div class="car-dd-body">
+
+                                    <a data-user-id="{{ $user->id }}" class="link message-user-show-modal">
+                                        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0 2C0 0.89543 0.895431 0 2 0H18C19.1046 0 20 0.89543 20 2V13C20 14.1046 19.1046 15 18 15H13.4142L10.7071 17.7071C10.3166 18.0976 9.68342 18.0976 9.29289 17.7071L6.58579 15H2C0.895431 15 0 14.1046 0 13V2ZM18 2H2V13H7C7.26522 13 7.51957 13.1054 7.70711 13.2929L10 15.5858L12.2929 13.2929C12.4804 13.1054 12.7348 13 13 13H18V2Z" fill="#536E9B"/>
+                                            <path d="M11.5 7.5C11.5 8.32843 10.8284 9 10 9C9.17157 9 8.5 8.32843 8.5 7.5C8.5 6.67157 9.17157 6 10 6C10.8284 6 11.5 6.67157 11.5 7.5Z" fill="#536E9B"/>
+                                            <path d="M15.5 7.5C15.5 8.32843 14.8284 9 14 9C13.1716 9 12.5 8.32843 12.5 7.5C12.5 6.67157 13.1716 6 14 6C14.8284 6 15.5 6.67157 15.5 7.5Z" fill="#536E9B"/>
+                                            <path d="M7.5 7.5C7.5 8.32843 6.82843 9 6 9C5.17157 9 4.5 8.32843 4.5 7.5C4.5 6.67157 5.17157 6 6 6C6.82843 6 7.5 6.67157 7.5 7.5Z" fill="#536E9B"/>
+                                        </svg>
+                                    </a>
+
                                 @can('user_update')
                                     <a href="{{ route('users.edit', ['user'=>$user->id]) }}" class="link">
                                         <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -147,6 +157,14 @@
                             <div class="car-dd">
                                 <div class="car-close-dd"></div>
                                 <div class="car-dd-body">
+                                    <a data-user-id="{{ $child->id }}" class="link message-user-show-modal">
+                                        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0 2C0 0.89543 0.895431 0 2 0H18C19.1046 0 20 0.89543 20 2V13C20 14.1046 19.1046 15 18 15H13.4142L10.7071 17.7071C10.3166 18.0976 9.68342 18.0976 9.29289 17.7071L6.58579 15H2C0.895431 15 0 14.1046 0 13V2ZM18 2H2V13H7C7.26522 13 7.51957 13.1054 7.70711 13.2929L10 15.5858L12.2929 13.2929C12.4804 13.1054 12.7348 13 13 13H18V2Z" fill="#536E9B"/>
+                                            <path d="M11.5 7.5C11.5 8.32843 10.8284 9 10 9C9.17157 9 8.5 8.32843 8.5 7.5C8.5 6.67157 9.17157 6 10 6C10.8284 6 11.5 6.67157 11.5 7.5Z" fill="#536E9B"/>
+                                            <path d="M15.5 7.5C15.5 8.32843 14.8284 9 14 9C13.1716 9 12.5 8.32843 12.5 7.5C12.5 6.67157 13.1716 6 14 6C14.8284 6 15.5 6.67157 15.5 7.5Z" fill="#536E9B"/>
+                                            <path d="M7.5 7.5C7.5 8.32843 6.82843 9 6 9C5.17157 9 4.5 8.32843 4.5 7.5C4.5 6.67157 5.17157 6 6 6C6.82843 6 7.5 6.67157 7.5 7.5Z" fill="#536E9B"/>
+                                        </svg>
+                                    </a>
                                     @can('user_update')
                                         <a href="{{ route('users.children.edit', ['user'=>$user->id, 'child'=>$child->id]) }}" class="link">
                                             <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -181,6 +199,11 @@
         </div>
     </div>
 
+    <div class="message-to-users-modal-block">
+
+    </div>
+
+    <div class="message-to-users-overlay"></div>
 
 
 

@@ -1,4 +1,4 @@
-const applicationFilter = {
+    const applicationFilter = {
     form: '#appPartnerFilter',
     init() {
         $(`

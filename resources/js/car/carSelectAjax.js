@@ -8,6 +8,7 @@ const carSelectAjax = {
     // excluded: [5, 3],
     excluded: [27],
     timeoutPromise: 500,
+    fieldsNeedsToBeCleared:['car_model_id','year','car_generation_id','car_series_id','car_modification_id','car_engine_id','car_transmission_id','car_gear_id'],
     init() {
         if(typeof carDataApplication == 'undefined' || carDataApplication == null) {
             $.when(`#types .select-item.active a`).then((response) => {
@@ -19,6 +20,7 @@ const carSelectAjax = {
             this.modificationId = carDataApplication.modificationId;
             this.addHiddenInput();
         }
+
 
         $(`#types .select-item a`).on('click', {self:this}, this.getMarks);
         $(`body`).on('click', `#marks .select-item a`, {self:this}, this.getModels);
@@ -78,13 +80,27 @@ const carSelectAjax = {
         }
         self.setHTML(`marks`, `car_mark_id`);
     },
+    clearFields(start){
+        // this.fieldsNeedsToBeCleared.forEach((item, index)=> {
+        //     if((index)>start){
+        //         $(`#${item}`).val('');
+        //     }
+        // });
+    },
     async getModels(e) {
+
+        console.log('clicked models')
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
+        self.clearFields(-1);
+
+
 
         self.setActive(this);
         self.addHiddenInput();
+
+
         self.resetLists(['#types', '#marks', '#models']);
 
         if(self.dataId) {
@@ -97,13 +113,19 @@ const carSelectAjax = {
                 });
         }
         self.setHTML(`models`, `car_model_id`);
+        if($('#triggerNumber').val()==1){
+            $('#triggerNumber').val('')
+            $('ul.car-mark li.active a').trigger('click');
+            console.log('one trigger')
+        }
     },
     async getYears(e) {
         e.preventDefault();
+
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
         self.modelId = self.dataId;
-
+        self.clearFields(0);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years']);
@@ -126,7 +148,7 @@ const carSelectAjax = {
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
         self.year = self.dataId;
-
+        self.clearFields(1);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations']);
@@ -147,7 +169,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-
+        self.clearFields(2);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series']);
@@ -168,7 +190,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-
+        self.clearFields(3);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications']);
@@ -190,7 +212,7 @@ const carSelectAjax = {
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
         self.modificationId = self.dataId;
-
+        self.clearFields(4);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
@@ -212,7 +234,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-
+        self.clearFields(5);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
@@ -235,7 +257,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
-
+        self.clearFields(6);
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
@@ -327,7 +349,9 @@ const carSelectAjax = {
         let self = this;
         let actives = $(`.select .select-item.active a`);
         let inputs = '';
+
         actives.each((index, element) => {
+            console.log(element)
             let name = $(element).data('name-id');
             let id = $(element).data('id');
             let body = $(element).data('body');

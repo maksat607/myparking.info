@@ -20,38 +20,38 @@
 <div class="container">
     <ul class="page-nav">
         <li class="page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', ['status_id' => 2]) }}" class="page-nav__link">Хранение</a>
+            <a href="{{ route('applications.index', ['status_id' => 2,'search'=>request()->get('search')]) }}" class="page-nav__link">Хранение</a>
         </li>
         <li class="page-nav__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', ['status_id' => 1]) }}" class="page-nav__link">Черновики</a>
+            <a href="{{ route('applications.index', ['status_id' => 1,'search'=>request()->get('search')]) }}" class="page-nav__link">Черновики</a>
         </li>
         <li class="page-nav__item{{ (request()->route('status_id') == 7) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', ['status_id' => 7]) }}" class="page-nav__link">Постановка</a>
+            <a href="{{ route('applications.index', ['status_id' => 7,'search'=>request()->get('search')]) }}" class="page-nav__link">Постановка</a>
         </li>
         <li class="page-nav__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
-            <a href="{{ route('issue_requests.index') }}" class="page-nav__link">На выдачу</a>
+            <a href="{{ route('issue_requests.index',['search'=>request()->get('search')]) }}" class="page-nav__link">На выдачу</a>
         </li>
         <li class="page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
-            <a href="{{ route('view_requests.index') }}" class="page-nav__link">Осмотр</a>
+            <a href="{{ route('view_requests.index',['search'=>request()->get('search')]) }}" class="page-nav__link">Осмотр</a>
         </li>
         @unlessrole('Operator')
         <li class="page-nav__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', ['status_id' => 3]) }}" class="page-nav__link">Выдано</a>
+            <a href="{{ route('applications.index', ['status_id' => 3,'search'=>request()->get('search')]) }}" class="page-nav__link">Выдано</a>
         </li>
         @endunlessrole
         <li class="page-nav__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', ['status_id' => 6]) }}" class="page-nav__link">Отклонено</a>
+            <a href="{{ route('applications.index', ['status_id' => 6,'search'=>request()->get('search')]) }}" class="page-nav__link">Отклонено</a>
         </li>
         <li class="page-nav__item{{
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">
-            <a href="{{ route('applications.index') }}" class="page-nav__link">Все</a>
+            <a href="{{ route('applications.index',[ 'search'=>request()->get('search') ]) }}" class="page-nav__link">Все</a>
         </li>
     </ul>
     <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">
         <label class="field-style">
             <span> Поиск по тексту</span>
-            <input type="text" name="search" value="@if(request()->get('search')){{ request()->get('search') }}@endif">
+            <input type="text" name="search" value="@if(request()->get('search')){{ request()->get('search') }}@endif ">
         </label>
 
         <label class="field-style">

@@ -843,7 +843,7 @@ span.car-row__status {
 }
 
 .table .car-dd.active {
-    max-width: 123px;
+    max-width: 140px;
 }
 
 .mt-11px {
@@ -3482,6 +3482,11 @@ span.serch-overlap {
 }
 .disabled{
     color: #9C9C9C!important;
+}
+
+
+.field-style span.partnerAdmin{
+    min-width: 150px !important;
 }
 /*.field-style.span .select2-results__option:hover {*/
 /*    background-color: #ddd !important;*/

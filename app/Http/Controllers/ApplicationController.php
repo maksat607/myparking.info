@@ -487,7 +487,7 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
-//        $request->dd();
+//        $request->dump();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -528,8 +528,8 @@ class ApplicationController extends AppController
 
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
-            'car_model_id' => ['integer'],
-            'year' => ['integer'],
+            'car_model_id' =>isset($carRequest['car_model_id']) ? ['integer'] : '',
+            'year' => isset($carRequest['year']) ? ['integer'] : '',
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
             'preloaded.*' => ['nullable', 'sometimes', 'exists:attachments,id']
         ]);
@@ -599,7 +599,9 @@ class ApplicationController extends AppController
             }
         }
 
-        if ($applicationData['status_id'] != 7) {
+
+        if ($application->status_id == 7 && $applicationData['status_id'] == 2 ) {
+
             $date = date('Y-m-d H:i:s', strtotime($request->app_data['arriving_at']));
             $date = Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay();
             $applicationData['arrived_at'] = $date;
@@ -612,17 +614,28 @@ class ApplicationController extends AppController
                         $applicationData['status_id'] = $applicationData['status_admin'];
                     }
                 }*/
-        if (isset($request->car_data['vin_status'])) {
+        if (isset($request->car_data['vin_status']) || !isset($applicationData['vin'])) {
             $applicationData['vin'] = null;
             unset($applicationData['vin_status']);
         }
-        if (isset($request->car_data['license_plate_status'])) {
+
+        if (isset($request->car_data['license_plate_status']) || !isset($applicationData['license_plate'])) {
             $applicationData['license_plate'] = null;
             unset($applicationData['license_plate_status']);
         }
-//        dump($applicationData);
-//        $request->dd();
+
+
+        $car_fields = ['car_model_id','year','car_additional','car_engine_id','car_transmission_id','car_gear_id','car_generation_id','car_series_id','car_modification_id'];
+
+        foreach ($car_fields as $car_field){
+            if(!isset($applicationData[$car_field])){
+                $applicationData[$car_field] = null;
+            }
+        }
+
 //        dd($applicationData);
+
+
         $isUpdate = $application->update($applicationData);
 
         if ($application->status_id == 7) {
@@ -695,7 +708,7 @@ class ApplicationController extends AppController
 
         if ($result) {
             if ($request->has('car_additional')) {
-                $application->update(['car_additional' => $application->car_additional . '<br>' . 'Причина удаления:' . '<br>' . $request->car_additional]);
+                $application->update(['deleted_by' => auth()->user()->id, 'car_additional' => $application->car_additional . '<br>' . 'Причина удаления:' . '<br>' . $request->car_additional]);
             }
             Toastr::success(__('Deleted.'));
             return redirect()->back();
@@ -713,7 +726,7 @@ class ApplicationController extends AppController
 
         if ($application->exists) {
             if ($request->has('car_additional')) {
-                $application->update(['car_additional' => $application->car_additional . '<br>' . 'Причина отклонения:' . '<br>' . $request->car_additional]);
+                $application->update(['rejected_by' => auth()->user()->id, 'car_additional' => $application->car_additional . '<br>' . 'Причина отклонения:' . '<br>' . $request->car_additional]);
                 //$application->car_additional = $request->car_additional;
             }
             $application->status()->associate($status);

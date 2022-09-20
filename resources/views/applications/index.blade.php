@@ -6,7 +6,6 @@
     <div class="container">
         <div class="row">
             @foreach($applications as $application)
-
                 <form id="denyApp{{ $application->id }}" method="POST"
                       action="{{ route('application.deny', ['application_id' => $application->id]) }}">
                     @csrf

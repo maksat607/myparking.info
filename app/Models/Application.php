@@ -3,14 +3,22 @@
 namespace App\Models;
 
 use App\Filter\QueryFilter;
+use App\Notifications\CarStatusChangeNotification;
+use App\Traits\NotifyApplicationChanges;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+
 
 class Application extends Model
 {
+    use HasFactory,NotifyApplicationChanges;
     protected $fillable = [
 
         'external_id', 'internal_id', 'courier_fullname', 'courier_phone', 'parking_place_number', 'parking_car_sticker', 'arriving_method', 'arriving_interval', 'arriving_at', 'arrived_at', 'issued_at',
@@ -19,8 +27,7 @@ class Application extends Model
 
         'car_title', 'vin', 'license_plate', 'sts', 'pts', 'pts_type', 'pts_provided', 'sts_provided', 'car_key_quantity', 'year', 'milage', 'owner_number', 'color', 'price', 'on_sale', 'favorite', 'returned', 'services', 'exterior_damage', 'interior_damage', 'condition_gear', 'condition_engine', 'condition_electric', 'condition_transmission', 'car_additional',
 
-        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking'
-
+        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking','rejected_by','deleted_by'
     ];
 
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
@@ -41,6 +48,7 @@ class Application extends Model
         'favorite' => 'boolean',
         'returned' => 'boolean'
     ];
+
 
     protected $with = ['issueAcceptions', 'status', 'acceptions'];
 
@@ -88,6 +96,19 @@ class Application extends Model
     public function acceptedBy()
     {
         return $this->belongsTo(User::class, 'accepted_by');
+    }
+
+    public function removedBy()
+    {
+        return $this->belongsTo(User::class, 'issued_by');
+    }
+    public function deletedBy()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+    public function rejectedBy()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 
     public function createdUser()
