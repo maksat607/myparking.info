@@ -27,7 +27,7 @@ class Application extends Model
 
         'car_title', 'vin', 'license_plate', 'sts', 'pts', 'pts_type', 'pts_provided', 'sts_provided', 'car_key_quantity', 'year', 'milage', 'owner_number', 'color', 'price', 'on_sale', 'favorite', 'returned', 'services', 'exterior_damage', 'interior_damage', 'condition_gear', 'condition_engine', 'condition_electric', 'condition_transmission', 'car_additional',
 
-        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking','rejected_by','deleted_by'
+        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking','rejected_by','deleted_by','approved'
     ];
 
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
@@ -254,7 +254,15 @@ class Application extends Model
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->whereIn('parking_id', $parkingsIds);
-        } elseif ($authUser->hasRole(['Partner'])) {
+        }elseif ($authUser->hasRole(['Moderator'])) {
+            $childrenIds = $authUser->owner->children()->pluck('id')->toArray();
+            $childrenIds[] = $authUser->id;
+            $childrenIds[] = $authUser->owner->id;
+            $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
+            return $query
+                ->whereIn('parking_id', $parkingsIds);
+        }
+        elseif ($authUser->hasRole(['Partner'])) {
             return $query
                 ->where('partner_id', $authUser->partner->id);
         } elseif ($authUser->hasRole(['Manager'])) {
@@ -315,5 +323,8 @@ class Application extends Model
     public function scopeFilter(Builder $builder, QueryFilter $filters)
     {
         return $filters->apply($builder);
+    }
+    public function ApplicationHasPending(){
+        return $this->hasOne(ApplicationHasPending::class);
     }
 }

@@ -67,6 +67,7 @@ class UserController extends AppController
             ->reject(function ($value, $key) {
                 return $value == 'SuperAdmin';
             })->all();
+//        @dump($roles);
         $title = __('Create new user');
 
         return view('users.create', compact('roles', 'title'));
@@ -249,16 +250,11 @@ class UserController extends AppController
     }
     public function message(Request $request,User $user)
     {
-        $title = "Сообщение";
-        if(auth()->user()->hasRole('SuperAdmin')){
-            $title = "Сообщение от суперадмина";
-        }
-        if(auth()->user()->hasRole('Admin')){
-            $title = "Сообщение от администратора";
-        }
+        $title = "Сообщение от ".auth()->user()->getRoleNames()->first().' '.auth()->user()->email;
+
 
         if($request->message){
-            $user->notify(new UserNotification(['message'=>$request->message,'title'=>$title]));
+            $user->notify(new UserNotification(['message'=>$request->message,'title'=>$title,'id'=>auth()->user()->id]));
         }
         return redirect()->back()->with('success', 'Отправлено');
     }

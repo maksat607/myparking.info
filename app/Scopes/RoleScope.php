@@ -20,5 +20,7 @@ class RoleScope implements Scope
         if(!auth()->user()->hasRole(['SuperAdmin'])) {
             $builder->whereNotIn('name', ['SuperAdmin', 'Admin', 'Partner', 'PartnerOperator']);
         }
+
+
     }
 }

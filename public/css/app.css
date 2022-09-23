@@ -3696,7 +3696,7 @@ span.serch-overlap {
     font-weight: 500;
 }
 
-.notification__dd-list .new-notif:before {
+.new-notif:before {
     content: "";
     display: inline-block;
     min-width: 8px;
@@ -7523,6 +7523,10 @@ span.serch-overlap {
 .field-style span.partnerAdmin{
     min-width: 150px !important;
 }
+.theme-blue{
+    color: #536E9B !important;
+}
+
 /*.field-style.span .select2-results__option:hover {*/
 /*    background-color: #ddd !important;*/
 /*}*/

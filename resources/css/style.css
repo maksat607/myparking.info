@@ -3305,7 +3305,7 @@ span.serch-overlap {
     font-weight: 500;
 }
 
-.notification__dd-list .new-notif:before {
+.new-notif:before {
     content: "";
     display: inline-block;
     min-width: 8px;

@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use App\Models\User;
+use App\Models\Status;
 use Carbon\Carbon;
 
 class Message
@@ -20,25 +21,69 @@ class Message
         'Осмотрено' => 2,
         'Не осмотрено' => 3,
     ];
-
+    public $status = null;
     public static $superAdmin = 2;
     public static $messages = [
-        'acceptedForStorageShort' => "Авто car_title прибыло на хранение",
-        'diffForHumans' => "diffForHumans",
-        'applyForStorageShort' => "Заявка на хранение для авто car_title",
-        'applyForStorageLong' => "DATE в TIME. Заявка на хранение для авто car_title (VIN vin_number). Создал менеджер created_user",
-        'acceptedForStorageLong' => "accepted_at_date в accepted_time авто car_title (VIN vin_number) прибыло на хранение. Принял менеджер accepted_by.",
-        'issuedFromStorageShort' => 'Авто car_title снято с хранения',
-        'issuedFromStorageLong' => "issued_at_date в issued_time авто car_title (VIN vin_number) снято с хранения. Выдал менеджер issued_by.",
-        'rejectedForStorageShort' => 'Авто car_title отклонено на хранение',
-        'rejectedForStorageLong' => "rejected_at_date в rejected_time авто car_title (VIN vin_number) отклонено на хранение. Отклонил менеджер rejected_by",
-        'requestViewPendingShort' => "Заявка на осмотр авто car_title",
-        'requestViewPendingLong' => "DATE в TIME. Заявка на осмотр для авто car_title (VIN vin_number). Создал менеджер created_user",
-        'requestViewedShort' => 'Авто car_title осмотрено',
-        'requestViewedLong' => "DATE в TIME. Авто car_title (VIN vin_number) осмотрено. Осмотр провел менеджер created_user",
-        'requestViewFailedShort' => 'Авто car_title не осмотрено',
-        'requestViewFailedLong' => "DATE в TIME. Авто car_title (VIN vin_number) не осмотрено.",
+
+
+        'pendingShort' => "Заявка на хранение для авто car_title",
+        'pendingLong' => "DATE в TIME. Заявка на хранение для авто car_title (VIN vin_number). Создал user_role user_email",
+
+        'storageShort' => "Авто car_title прибыло на хранение",
+        'storageLong' => "DATE в DATE авто car_title (VIN vin_number) прибыло на хранение. Принял user_role user_email.",
+
+        'issuanceShort' => "Заявка на выдачу для авто car_title",
+        'issuanceLong' => "DATE в TIME. Заявка на выдачу для авто car_title (VIN vin_number). Создал user_role user_email",
+
+        'issuedShort' => 'Авто car_title снято с хранения',
+        'issuedLong' => "DATE в TIME авто car_title (VIN vin_number) снято с хранения. Выдал user_role user_email.",
+
+        'denied-for-storageShort' => 'Авто car_title отклонено на хранение',
+        'denied-for-storageLong' => "DATE в TIME авто car_title (VIN vin_number) отклонено на хранение. Отклонил user_role user_email",
+
+        'cancelled-by-partnerShort' => 'Авто car_title отклонено на хранение',
+        'cancelled-by-partnerLong' => "DATE в TIME авто car_title (VIN vin_number) отклонено на хранение партнером. Отклонил user_role user_email",
+
+        'cancelled-by-usShort' => 'Авто car_title отклонено на хранение',
+        'cancelled-by-usLong' => "DATE в TIME авто car_title (VIN vin_number) отклонено на хранение нами. Отклонил user_role user_email",
+
+        'cancelled-byShort' => 'Авто car_title отклонено на хранение нами',
+        'cancelled-byLong' => "DATE в TIME авто car_title (VIN vin_number) отклонено на хранение нами. Отклонил user_role user_email",
+
+        'deletedShort' => 'Авто car_title удалено',
+        'deletedLong' => "DATE в TIME авто car_title (VIN vin_number) удалено. Удалено user_role user_email",
+
+
+        'viewRequestShort1' => "Заявка на осмотр авто car_title",
+        'viewRequestLong1' => "DATE в TIME. Заявка на осмотр для авто car_title (VIN vin_number). Создал user_role user_email",
+
+        'viewRequestShort2' => 'Авто car_title осмотрено',
+        'viewRequestLong2' => "DATE в TIME. Авто car_title (VIN vin_number) осмотрено. user_role user_email",
+
+        'viewRequestShort3' => 'Авто car_title не осмотрено',
+        'viewRequestLong3' => "DATE в DATE. Авто car_title (VIN vin_number) не осмотрено.",
     ];
+
+    public static function getViewRequestMessage($item, $user){
+        $messages = Message::generateMessages($item->application, $user);
+
+        return [
+            'short' => $messages['viewRequestShort'.$item->status_id],
+            'long' => $messages['viewRequestLong'.$item->status_id],
+            'id'=>$item->application_id
+        ];
+    }
+    public static function getApplicationMessage($item, $user)
+    {
+        $messages = Message::generateMessages($item, $user);
+        $status = Status::find($item->status_id);
+        return [
+            'short' => $messages[$status->code . 'Short'],
+            'long' => $messages[$status->code . 'Long'],
+            'id'=>$item->id
+        ];
+    }
+
     public static function parseMessage($messageSearchReplace)
     {
         $arr = [];
@@ -48,26 +93,14 @@ class Message
         return $arr;
     }
 
-    public static function generateMessages($item)
+    public static function generateMessages($item, $user)
     {
-        $user = $item->acceptedBy;
-        $acceptedUserEmail = optional($user)->email;
-        $user = $item->removedBy;
-        $issuedUserEmail = optional($user)->email;
         $messages = [
             'car_title' => $item->car_title,
-            'vin_number' => $item->vin,
-            'accepted_at_date' => optional($item->arrived_at)->format('d.m.Y'),
-            'accepted_time' => optional($item->arrived_at)->format('H:m'),
-            'accepted_by' => $acceptedUserEmail,
-            'rejected_at_date' => optional($item->updated_at)->format('d.m.Y'),
-            'rejected_time' => optional($item->updated_at)->format('H:m'),
-            'issued_at_date' => optional($item->issued_at)->format('d.m.Y'),
-            'issued_time' => optional($item->issued_at)->format('H:m'),
-            'issued_by' => $issuedUserEmail,
-            'created_user' => optional($item->createdUser)->email,
-            'deleted_by' => optional($item->deletedBy)->email,
-            'rejected_by' => optional($item->rejectedBy)->email,
+            'vin_number' => $item->vin ?? $item->license_plate,
+            'VIN'=>$item->vin ? 'VIN' : 'Гос.номер ',
+            'user_email'=>$user->email,
+            'user_role' => $user->getRoleNames()->first(),
             'DATE' => Carbon::now()->format('d.m.Y'),
             'TIME' => Carbon::now()->format('H:m'),
         ];
@@ -77,15 +110,39 @@ class Message
         return $arr;
     }
 
+    public static function getPermission($status, $item)
+    {
+        $deniedStatuses = [4, 5, 6];
+        if (in_array($status->id, $deniedStatuses)) {
+            return 'notify_app_denied';
+        }
+        if ($item->issuance) {
+            return 'notify_app_issuance';
+        }
+        return 'notify_app_' . $status->code;
+    }
+
     public static function getUsers($item)
     {
-
+        $status = Status::find($item->status_id);
         $users = collect([]);
-        if ($item->partner) {
+        if ($item->partner && $item->partner->user) {
             $users = $item->partner->user->children;
             $users->push($item->partner->user);
         }
-//        $users = $users->push(User::find(self::$superAdmin));
+        if ($item->createdUser->owner) {
+            $users = $item->createdUser->owner->children;
+            $users->push($item->createdUser->owner);
+        } else {
+            $users->push($item->createdUser);
+        }
+        $users = $users->push(User::find(self::$superAdmin));
+        $users = $users->unique('id')->all();
+
+        $permission = self::getPermission($status, $item);
+        $users = collect(array_filter($users))->reject(function ($user) use ($permission) {
+            return !$user->hasPermissionTo($permission);
+        });
         return $users;
     }
 }

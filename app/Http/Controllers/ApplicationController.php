@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Enums\Message;
 use App\Enums\Color;
 use App\Filter\ApplicationFilters;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
 use App\Models\ApplicationData;
+use App\Models\ApplicationHasPending;
 use App\Models\Attachment;
 use App\Models\CarCharacteristicValue;
 use App\Models\CarGeneration;
@@ -21,6 +22,8 @@ use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,6 +57,12 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+//        $item = Application::find(3846);
+//        $m = Message::getApplicationMessage($item,auth()->user());
+//        $r = Message::getUsers($item);
+//        dump($r);
+//        dump($m);
+
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
@@ -803,13 +812,17 @@ class ApplicationController extends AppController
         }
 
         if ($client->exists) {
+
             $application->issuedBy()->associate(auth()->user());
+
             $application->update([
                 'status_id' => 3,
                 'client_id' => $client->id,
                 'issued_at' => $request->app_data['issued_at']
             ]);
-            $application->issuance()->delete();
+            if($application->issuance()){
+                $application->issuance()->delete();
+            }
             Toastr::success(__('Issued.'));
             return redirect()->route('applications.index');
         } else {
@@ -817,9 +830,14 @@ class ApplicationController extends AppController
             return redirect()->back();
         }
     }
-
-    public function getModelContent($application_id)
+    public function markNotificationAsRead(Request $request){
+        if($request->has('notification')){
+           auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
+        }
+    }
+    public function getModelContent(Request $request,$application_id)
     {
+        $this->markNotificationAsRead($request);
         $application = Application::where('id', $application_id)
             ->with('parking')
             ->with('issuedBy')
@@ -1314,7 +1332,13 @@ class ApplicationController extends AppController
             'carGears'
         );
     }
-
+    public function approved(Application $application,$id){
+        if($id==1){
+            ApplicationHasPending::where('application_id',$application->id)->delete();
+        }elseif ($id==0){
+            ApplicationHasPending::firstOrCreate(['application_id'=>$application->id,'user_id'=>$application->accepted_by]);
+        }
+    }
     public function assignStatus(Request $request): bool
     {
         if (auth()->user()->hasRole(['SuperAdmin', 'Admin'])) {
@@ -1330,8 +1354,8 @@ class ApplicationController extends AppController
     public function updateSystemData(Request $request)
     {
 
-
-        if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager'])) {
+        $app = null;
+        if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager','Moderator'])) {
 
             $app = Application::find($request->appid);
             if ($app) {

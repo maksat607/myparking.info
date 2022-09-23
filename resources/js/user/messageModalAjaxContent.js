@@ -4,8 +4,10 @@ const partnerModalAjaxContent = {
         $(`.message-user-show-modal`).on('click', {self:this}, this.getModalContent);
     },
     getModalContent(e) {
+
         let self = e.data.self
         let userId = $(this).data('user-id');
+        console.log(userId)
         axios.get(`${APP_URL}/users/message/${userId}`)
             .then(response => {
                 if(response.data.success) {

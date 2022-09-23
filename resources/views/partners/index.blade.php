@@ -4,11 +4,12 @@
         <div class="page-head partner">
             <div class="page-head__top d-flex align-items-center">
                 <h1>{{ $title }}</h1>
-                    <form id="appPartnerFilter" action="{{ url()->current() }}" method="GET"
+                <form id="appPartnerFilter" action="{{ url()->current() }}" method="GET"
                       class="d-flex align-items-center">
                     <label class="field-style blue">
                         <span>Поиск</span>
-                        <input type="text" name="search" placeholder="Поиск по столбцам" value="@if(request()->get('search')){{ request()->get('search') }}@endif">
+                        <input type="text" name="search" placeholder="Поиск по столбцам"
+                               value="@if(request()->get('search')){{ request()->get('search') }}@endif">
                     </label>
                     <label class="switch-radio-wrap " style="margin-right: 35px;">
                         <input type="checkbox" name="public" @if(request()->get('public')) checked @endif>
@@ -71,17 +72,19 @@
                             @if($partner->base_type=='public')
                                 <div>общая</div>
                                 <div>
-                                        <button type="button" class="text-grey text-btn @if(auth()->user()->hasRole('SuperAdmin')) partner-users-show-modal" @endif
-                                                data-partner-id="{{ $partner->id }}">
-                                            Организация: {{ $partner->users->count() }}</button>
-                                    </div>
-                                    @else
-                                        <div>Пользовательская</div>
-                                        <div>
-                                            <button type="button"
-                                                    class="text-grey text-btn"> {{ @$partner->created_user->email }}</button>
-                                        </div>
-
+                                    <button type="button"
+                                            class="text-grey text-btn @if(auth()->user()->hasRole('SuperAdmin')) partner-users-show-modal"
+                                            @endif
+                                            data-partner-id="{{ $partner->id }}">
+                                        Организация: {{ $partner->users->count() }}
+                                    </button>
+                                </div>
+                            @else
+                                <div>Пользовательская</div>
+                                <div>
+                                    <button type="button"
+                                            class="text-grey text-btn"> {{ @$partner->created_user->email }}</button>
+                                </div>
                             @endif
 
                         </td>

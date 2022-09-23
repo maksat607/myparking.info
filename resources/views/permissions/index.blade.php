@@ -36,7 +36,10 @@
                     @if(!empty($permissions))
                         @foreach($permissions as $permission)
                             <tr>
-                                <td class="text-left">{{ $permission }}</td>
+                                <td class="text-left d-block">
+                                    <span>{{ __($permission) }}</span>
+                                    <small><small>{{ $permission }}</small></small>
+                                </td>
                                 @if(!empty($roles))
                                     @foreach($roles as $role)
                                         <td>

@@ -63,7 +63,7 @@
             <div class="car-row__col-6 text-right">
                 <div class="fs-0">
 {{--                    new change--}}
-                    @if(auth()->user()->hasRole(['SuperAdmin', 'Admin']))
+                    @if(auth()->user()->hasRole(['SuperAdmin', 'Admin','Moderator']))
 
                     <label class="mr-0 mb-0 border-0">
                         <select class="status-select theme-back" name="app_data[status_id] @error('status_id') invalid @enderror">
@@ -114,6 +114,7 @@
                 <a class=" active" id="v-pills-tab1-tab" data-toggle="pill" href="#v-pills-tab1" role="tab"
                    aria-controls="v-pills-tab1" aria-selected="true">
                     Системные данные
+                    @can('application_update')
                     <span class="btn-systemic" id="btn-systemic">
                         <span class="edit-systemic">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -128,6 +129,7 @@
                                 </svg>
                         </span>
                     </span>
+                    @endcan
                 </a>
                 <a class="" id="v-pills-tab2-tab" data-toggle="pill" href="#v-pills-tab2" role="tab"
                    aria-controls="v-pills-tab2" aria-selected="false">Админ. данные</a>
@@ -213,7 +215,7 @@
                             </div>
 
                             <div class="info-item pseudo-field1 repeat-checkbox d-none">
-                                @if(auth()->user()->hasRole(['SuperAdmin','Admin']))
+                                @if(auth()->user()->hasRole(['SuperAdmin','Admin','Moderator']))
                                 <label class="switch-radio-wrap mt-2">
                                     <input class="" type="checkbox" id="repeat-checkbox"  name="repeat" @if($application['returned']=='1') checked @endif>
                                     <span class="switcher-radio"></span>
@@ -221,6 +223,8 @@
                                 </label>
                                 @endif
                             </div>
+
+
 
                         </div>
                         <div class="col-6">
@@ -287,7 +291,7 @@
                             </div>
                             <div class="info-item pseudo-field1 repeat-checkbox d-none">
 
-                                @if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager']))
+                                @if(auth()->user()->hasRole(['SuperAdmin','Admin','Moderator','Manager']))
                                     <label class="switch-radio-wrap mt-2">
 
                                         <input class="" type="checkbox" id="checkbox-free-parking"  name="free_parking" @if($application['free_parking']=="1") checked @endif>
@@ -603,8 +607,19 @@
     </div>
     <div class="modal-block__footer d-flex justify-content-between align-items-center">
 
+            @if(auth()->user()->hasRole('Moderator'))
+            <div>
+                <label class="switch-radio-wrap mt-2">
+                    <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"
+                           @if($application->ApplicationHasPending==null) checked @endif>
+                    <span class="switcher-radio"></span>
+                    <span>Проверено</span>
+                </label>
+            </div>
+            @endif
+
         <div>
-        @if($application->acceptions && auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager']))
+        @if($application->acceptions && auth()->user()->hasRole(['SuperAdmin', 'Admin','Moderator', 'Manager']))
             @can('application_to_accepted')
                 <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="btn btn-success">Принять</a>
                 <a href="{{ route('application.deny', ['application_id' => $application->id]) }}"
@@ -692,18 +707,19 @@
             @endcan
         </div>
             <div class="d-flex">
+
             @can('application_to_inspection')
                 <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка на осмотр</a>
             @endcan
             @can('application_to_issue')
                 @if($application->issuance)
-                    <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                    <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
                     {{ route('application.issuance.create', ['application' => $application->id]) }}
                     @else
                     {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
                     @endif" class="btn btn-success">Заявка на выдачу</a>
                 @else
-                    <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                    <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
                     {{ route('application.issuance.create', ['application' => $application->id]) }}
                     @else
                     {{ route('issue_requests.create', ['application' => $application->id]) }}

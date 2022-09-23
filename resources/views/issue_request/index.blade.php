@@ -2,6 +2,7 @@
 
 @section('content')
     @include('applications.menu.top_menu_filter')
+
     <section class="newcart">
         <div class="wrapper">
             <div class="newcart__tablewrap">
@@ -17,12 +18,12 @@
                         <th>Гос. номер <i class="fa fa-filter" aria-hidden="true"></i></th>
                         <th>Дата приезда <i class="fa fa-filter" aria-hidden="true"></i></th>
                         <th>Промежуток времени <i class="fa fa-filter" aria-hidden="true"></i></th>
-                            <div class="newcart__tablefilter">
-                                <select name="" id="">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                </select>
-                            </div>
+                        <div class="newcart__tablefilter">
+                            <select name="" id="">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
                         </th>
                         <th>Статус <i class="fa fa-filter" aria-hidden="true"></i></th>
                         <th></th>
@@ -45,7 +46,7 @@
                                             <a href="{{ route('application.issuance.create', ['application' => $issueRequest->application->id]) }}">Выдать</a>
                                         @endcan
                                         @can('application_to_inspection')
-                                            <a href="{{ route('view_requests.create', ['application' => $issueRequest->application->id]) }}" >Осмотр</a>
+                                            <a href="{{ route('view_requests.create', ['application' => $issueRequest->application->id]) }}">Осмотр</a>
                                         @endcan
                                     @endif
                                     <a href="">Скачать акт</a>

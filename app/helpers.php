@@ -1,4 +1,21 @@
 <?php
+function makeClickableApplicationNotification($str,$app_id,$user_id){
+    $part1 = explode('авто',$str);
+    $part2 = explode(')',$part1[1]);
+    $str = str_replace($part2[0],' <a href="#" class = "app-notification theme-blue" data-app-id='.$app_id.'>'.$part2[0].'</a>',$str );
+    $pattern = '/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i';
+    if(preg_match_all($pattern, $str, $matches)){
+        $str = str_replace(collect($matches[0])->first(),' <a href="#" class = "theme-blue message-user-show-modal" data-user-id='.$user_id.'>'.collect($matches[0])->first().'</a>',$str );
+    }
+    return $str;
+}
+function makeClickableUserNotification($str,$user_id){
+    $pattern = '/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i';
+    if(preg_match_all($pattern, $str, $matches)){
+        $str = str_replace(collect($matches[0])->first(),' <a href="#" class = "theme-blue message-user-show-modal" data-user-id='.$user_id.'>'.collect($matches[0])->first().'</a>',$str );
+    }
+    return $str;
+}
 
 function isNotAdminRole($role){
     if('SuperAdmin' === $role) return false;
@@ -14,6 +31,9 @@ function createPriceList($car_types, $prices = null){
                 return $price->car_type_id == $car->id;
             });
         }
+        $part2=[];
+
+        //$f1 = str_replace($part2[0],'<span class = "app-notification" data-app-id='.'23'.'>'.$part2[0].'</span>',$str )
 
         if($price) {
             return (object) [

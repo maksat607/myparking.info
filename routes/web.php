@@ -6,6 +6,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\IssueRequestController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PartnerTypeController;
@@ -35,6 +36,8 @@ use Illuminate\Support\Facades\Route;
 /*
  * Auth routes
  */
+
+
 Auth::routes([
 //    'register' => false,
 ]);
@@ -75,6 +78,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Users*/
     Route::resource('users', UserController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::resource('notifications', NotificationController::class)
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+
     Route::get('/users/{user}/parking/all', [UserController::class, 'allUserParking'])->name('user.parking.all');
     Route::get('/notifications', [UserController::class, 'notifications'])->name('notifications.list');
     Route::post('/message/{user}', [UserController::class, 'message'])->name('user.message');
@@ -212,6 +218,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
+
     Route::get('/generate-act/{application}', [ApplicationController::class, 'generateAct'])->name('application.generate-act');
     Route::get('/application/remove/attachment/{attachment}', [ApplicationController::class, 'removeAttachment']);
 
@@ -221,7 +228,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('applications.delete');
     Route::post('/application/change-status', [ApplicationController::class, 'assignStatus']);
     Route::post('/application/change-system-data', [ApplicationController::class, 'updateSystemData']);
-
+    Route::get('/application/approved/{application}/{status}', [ApplicationController::class, 'approved']);
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])

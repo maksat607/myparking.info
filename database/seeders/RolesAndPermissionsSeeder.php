@@ -53,6 +53,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'application_to_issue',
             'application_to_inspection',
             'application_issue',
+
+            "notify_app_pending","notify_app_storage","notify_app_issuance","notify_app_issued","notify_app_denied-for-storage,cancelled-by-partner,cancelled-by-us","notify_app_deleted","notify_app_viewRequest1","notify_app_viewRequest2","notify_app_viewRequest3",
+
         ];
 
         $permissions = collect($arrayOfPermissionNames)->map(function ($permission) {
@@ -67,6 +70,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 Role::create(['name' => 'Operator']);
                 Role::create(['name' => 'Partner']);
                 Role::create(['name' => 'PartnerOperator']);
+                Role::create(['name' => 'Moderator']);
         $role->givePermissionTo(Permission::all());
     }
 }

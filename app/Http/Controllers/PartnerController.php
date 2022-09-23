@@ -91,7 +91,7 @@ class PartnerController extends AppController
      */
     public function store(Request $request)
     {
-
+//        dd($request->all());
         $spartner = Partner::find($request->partner);
         $partnerData = [
             'name' => $request->name,

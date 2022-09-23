@@ -15,22 +15,30 @@
 
                 @foreach(auth()->user()->notifications as $notification)
                     @if(isset($notification->data['short']))
-                        <li>
+                        <li class="@if(!$notification->read_at) new-notif @endif ">
+
                             <span>{{ json_decode($notification)->data->short }}</span>
                             <div>{{ $notification->created_at->diffForHumans() }}</div>
-                            <p>{{ json_decode($notification)->data->long }}</p>
+                            <p>{!!   makeClickableApplicationNotification(json_decode($notification)->data->long,json_decode($notification)->data->id,21) !!}</p>
                         </li>
+
                     @endif
                     @if(isset($notification->data['message']))
-                        <li>
-                            <span>{{ json_decode($notification)->data->title }}</span>
+                        <li class="@if(!$notification->read_at) new-notif @endif ">
+                            <span>{!! makeClickableUserNotification(json_decode($notification)->data->title,json_decode($notification)->data->id) !!}</span>
                             <div>{{ $notification->created_at->diffForHumans() }}</div>
                             <p>{{ json_decode($notification)->data->message }}</p>
                         </li>
                     @endif
+                    @if($notification->markAsRead())@endif
                 @endforeach
 
             </ul>
         </div>
     </div>
+    <div class="message-to-users-modal-block">
+
+    </div>
+
+    <div class="message-to-users-overlay"></div>
 @endsection

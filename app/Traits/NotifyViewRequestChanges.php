@@ -19,32 +19,31 @@ trait NotifyViewRequestChanges
 
         });
         static::updated(function ($item) {
-            $messages = self::generateMessages($item);
+            $data = Message::getViewRequestMessage($item, auth()->user());
 
-        });
-        static::deleted(function ($item) {
-
-            Log::info('Deleted   event call: ' . $item);
-        });
-        static::created(function ($item) {
-            $data = [];
-            $messages = self::generateMessages($item);
-            if ($item->status_id == self::$statuses['Ожидает принятия']) {
-                $data = [
-                    'short' => $messages['applyForStorageShort'],
-                    'long' => $messages['applyForStorageLong'],
-                ];
-            }
-            if (!isset($item['status']) && $item->status_id == self::$statuses['Хранение']) {
-                $data = [
-                    'short' => $messages['acceptedForStorageShort'],
-                    'long' => $messages['acceptedForStorageLong'],
-                ];
-            }
             if (count($data) > 0) {
                 Notification::send(self::getUsers($item), new UserNotification(($data)));
             }
-            Log::info('Created event call: ' . $item);
+
+
+        });
+
+        static::deleted(function ($item) {
+
+            $data = Message::getViewRequestMessage($item, auth()->user());
+
+            if (count($data) > 0) {
+                Notification::send(self::getUsers($item), new UserNotification(($data)));
+            }
+        });
+        static::created(function ($item) {
+            $data = [];
+            $data = Message::getViewRequestMessage($item, auth()->user());
+
+            if (count($data) > 0) {
+                Notification::send(self::getUsers($item), new UserNotification(($data)));
+            }
+
         });
     }
 }

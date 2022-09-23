@@ -18,7 +18,6 @@ class ViewRequest extends Model
         '2'=> 'Осмотрено',
         '3'=> 'Не осмотрено',
     ];
-
     public function attachments()
     {
         return $this->morphMany(Attachment::class,'attachable');

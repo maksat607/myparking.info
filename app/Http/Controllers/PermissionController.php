@@ -40,9 +40,10 @@ class PermissionController extends AppController
      */
     public function sync(Request $request)
     {
+//        $request->dd();
         $data = $request->except('_token');
-        $roles = Role::all();
 
+        $roles = Role::all();
         foreach ($roles as $role) {
             if(array_key_exists($role->name, $data)) {
                 $role->syncPermissions($data[$role->name]);

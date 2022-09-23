@@ -13,7 +13,7 @@
                 </form>
             <div class="col-md-3 @if($application->favorite){{ 'select-favorite' }}@endif" id="application_{{ $application->id }}">
                 <div class="car-col__item">
-                    <div class="car-slide-wrap">
+                    <div class="car-slide-wrap @if($application->ApplicationHasPending) border border-danger @endif">
                         <span class="pagingInfo"></span>
                         <div class="favorite" data-app-id="{{ $application->id }}">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -38,7 +38,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="car-col__info">
+                    <div class="car-col__info @if($application->ApplicationHasPending) border border-danger @endif ">
                         <div class="car-show-modal" data-app-id="{{ $application->id }}">
                             <h3 class="car-title">
                                 <span class="car-show-info">{{ $application->car_title }}</span>
@@ -128,7 +128,7 @@
                             <div class="car-dd">
                                 <div class="car-close-dd"></div>
                                 <div class="car-dd-body">
-                                    @if($application->acceptions && $user->hasRole(['SuperAdmin', 'Admin', 'Manager']))
+                                    @if($application->acceptions && $user->hasRole(['SuperAdmin', 'Admin','Moderator', 'Manager']))
                                         @can('application_to_accepted')
                                             <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="text-success btn">Принять</a>
                                             <a href="{{ route('application.deny', ['application_id' => $application->id]) }}"
@@ -228,7 +228,7 @@
                                         @endcan
                                         @can('application_to_issue')
                                             @if($application->issuance)
-                                                <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                                                <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
                                                                 {{ route('application.issuance.create', ['application' => $application->id]) }}
                                                             @else
                                                                 {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
@@ -247,7 +247,7 @@
                                                     Выдать
                                                 </a>
                                             @else
-                                                <a href="@if(auth()->user()->hasRole(['Admin', 'Manager']))
+                                                <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
                                                         {{ route('application.issuance.create', ['application' => $application->id]) }}
                                                     @else
                                                         {{ route('issue_requests.create', ['application' => $application->id]) }}

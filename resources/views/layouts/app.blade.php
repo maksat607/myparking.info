@@ -162,7 +162,7 @@
                     <ul class="notification__dd-list">
                         @foreach(auth()->user()->unreadNotifications as $notification)
                             @if(isset($notification->data['short']))
-                                <li class="new-notif"><a
+                                <li class="new-notif app-notification" data-app-id="{{ json_decode($notification)->data->id }}" data-notification="{{ $notification->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
@@ -176,7 +176,7 @@
 
                         @foreach(auth()->user()->readNotifications->take(7) as $notification)
                             @if(isset($notification->data['short']))
-                                <li><a
+                                <li class="app-notification" data-app-id="{{ json_decode($notification)->data->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
