@@ -26,20 +26,23 @@ trait NotifyApplicationChanges
                 }
                 $data = Message::getApplicationMessage($item, auth()->user());
                 if (count($data) > 0) {
-                    Notification::send(Message::getUsers($item), new UserNotification(($data)));
+                    Log::info('Created event call: ' . collect($data));
+                    Notification::send(Message::getUsers($item), new UserNotification($data));
                 }
-                Log::info('Created event call: ' . $item);
+
             }
         });
         static::deleted(function ($item) {
             Log::info('Deleted   event call: ' . $item);
         });
         static::created(function ($item) {
+
             $data = [];
             if ($item->status_id == Message::$appStatuses['Ожидает принятия'] || $item->status_id == Message::$appStatuses['Хранение']) {
                 $data = Message::getApplicationMessage($item, auth()->user());
             }
             if (count($data) > 0) {
+                Log::info('Created event call: ' . collect($data));
                 Notification::send(Message::getUsers($item), new UserNotification(($data)));
             }
             Log::info('Created event call: ' . $item);

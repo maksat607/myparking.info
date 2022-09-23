@@ -1,13 +1,19 @@
 <?php
+use Illuminate\Support\Str;
 function makeClickableApplicationNotification($str,$app_id,$user_id){
-    $part1 = explode('авто',$str);
-    $part2 = explode(')',$part1[1]);
-    $str = str_replace($part2[0],' <a href="#" class = "app-notification theme-blue" data-app-id='.$app_id.'>'.$part2[0].'</a>',$str );
+
+    $part1 = explode("... ",$str);
+    $temp = array_pop($part1);
+
+    $part2 = explode(')',$temp);
+
+    $str = str_replace($part2[0],'<a href="#" class = "app-notification theme-blue" data-app-id='.$app_id.'>'.$part2[0].'</a>',$str );
+
     $pattern = '/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i';
     if(preg_match_all($pattern, $str, $matches)){
         $str = str_replace(collect($matches[0])->first(),' <a href="#" class = "theme-blue message-user-show-modal" data-user-id='.$user_id.'>'.collect($matches[0])->first().'</a>',$str );
     }
-    return $str;
+    return str_replace('...','.',$str);
 }
 function makeClickableUserNotification($str,$user_id){
     $pattern = '/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i';

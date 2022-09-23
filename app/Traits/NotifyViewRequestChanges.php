@@ -22,7 +22,7 @@ trait NotifyViewRequestChanges
             $data = Message::getViewRequestMessage($item, auth()->user());
 
             if (count($data) > 0) {
-                Notification::send(self::getUsers($item), new UserNotification(($data)));
+                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
             }
 
 
@@ -33,7 +33,7 @@ trait NotifyViewRequestChanges
             $data = Message::getViewRequestMessage($item, auth()->user());
 
             if (count($data) > 0) {
-                Notification::send(self::getUsers($item), new UserNotification(($data)));
+                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
             }
         });
         static::created(function ($item) {
@@ -41,7 +41,7 @@ trait NotifyViewRequestChanges
             $data = Message::getViewRequestMessage($item, auth()->user());
 
             if (count($data) > 0) {
-                Notification::send(self::getUsers($item), new UserNotification(($data)));
+                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
             }
 
         });

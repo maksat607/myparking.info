@@ -19,7 +19,8 @@
 
                             <span>{{ json_decode($notification)->data->short }}</span>
                             <div>{{ $notification->created_at->diffForHumans() }}</div>
-                            <p>{!!   makeClickableApplicationNotification(json_decode($notification)->data->long,json_decode($notification)->data->id,21) !!}</p>
+
+                            <p>{!!   makeClickableApplicationNotification(json_decode($notification)->data->long,json_decode($notification)->data->id,json_decode($notification)->data->user_id) !!}</p>
                         </li>
 
                     @endif
