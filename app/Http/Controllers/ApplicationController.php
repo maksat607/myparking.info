@@ -60,9 +60,10 @@ class ApplicationController extends AppController
         {
             $zip->addFile(public_path("uploads/{$file->name}"), $file->name);
         }
+        $hasFile = $zip->numFiles;
         $zip->close();
-        
-        return $zip->numFiles>0 ?
+
+        return $hasFile >0 ?
             response()->download(($zip_file)) :
             redirect()->back()->with('warning','Фотографии нету:(');
     }
