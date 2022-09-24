@@ -38,6 +38,11 @@ use Illuminate\Support\Facades\Route;
  */
 
 
+
+
+
+
+
 Auth::routes([
 //    'register' => false,
 ]);
@@ -229,6 +234,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::post('/application/change-status', [ApplicationController::class, 'assignStatus']);
     Route::post('/application/change-system-data', [ApplicationController::class, 'updateSystemData']);
     Route::get('/application/approved/{application}/{status}', [ApplicationController::class, 'approved']);
+    Route::get('application/download-photos/{application}', [ApplicationController::class, 'download_zipped_photos'])->name('application.photo.download');
 
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])

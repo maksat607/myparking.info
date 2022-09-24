@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Zip;
 
 class ApplicationController extends AppController
 {
@@ -49,7 +50,22 @@ class ApplicationController extends AppController
                 $this->middleware(['permission:application_update'])->only('edit', 'update');
                 $this->middleware(['permission:application_delete'])->only('destroy');*/
     }
+    public function download_zipped_photos(Application $application)
+    {
+        $zip_file = "{$application->car_title}.zip";
+        $zip = new \ZipArchive();
+        $zip->open(public_path($zip_file), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
+        foreach ($application->attachments as  $file)
+        {
+            $zip->addFile(public_path("uploads/{$file->name}"), $file->name);
+        }
+        $zip->close();
+        
+        return $zip->numFiles>0 ?
+            response()->download(($zip_file)) :
+            redirect()->back()->with('warning','Фотографии нету:(');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -57,11 +73,6 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
-//        $item = Application::find(3846);
-//        $m = Message::getApplicationMessage($item,auth()->user());
-//        $r = Message::getUsers($item);
-//        dump($r);
-//        dump($m);
 
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();

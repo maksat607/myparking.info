@@ -607,18 +607,15 @@
     </div>
     <div class="modal-block__footer d-flex justify-content-between align-items-center">
 
-            @if(auth()->user()->hasRole('Moderator'))
-            <div>
-                <label class="switch-radio-wrap mt-2">
-                    <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"
-                           @if($application->ApplicationHasPending==null) checked @endif>
-                    <span class="switcher-radio"></span>
-                    <span>Проверено</span>
-                </label>
-            </div>
-            @endif
-
         <div>
+            <a href="{{ route('application.photo.download', $application->id) }}" class="link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C12.5523 2 13 2.44772 13 3V13.5858L15.2929 11.2929C15.6834 10.9024 16.3166 10.9024 16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L7.29289 12.7071C6.90237 12.3166 6.90237 11.6834 7.29289 11.2929C7.68342 10.9024 8.31658 10.9024 8.70711 11.2929L11 13.5858V3C11 2.44772 11.4477 2 12 2ZM5 17C5.55228 17 6 17.4477 6 18V20H18V18C18 17.4477 18.4477 17 19 17C19.5523 17 20 17.4477 20 18V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V18C4 17.4477 4.44772 17 5 17Z"
+                          fill="#536E9B" />
+                </svg>
+                Фото
+            </a>
         @if($application->acceptions && auth()->user()->hasRole(['SuperAdmin', 'Admin','Moderator', 'Manager']))
             @can('application_to_accepted')
                 <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="btn btn-success">Принять</a>
@@ -707,7 +704,14 @@
             @endcan
         </div>
             <div class="d-flex">
-
+                @if(auth()->user()->hasRole('Moderator'))
+                    <label class="switch-radio-wrap mt-2">
+                        <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"
+                        @if($application->ApplicationHasPending==null) checked @endif>
+                        <span class="switcher-radio"></span>
+                        <span>Проверено</span>
+                    </label>
+                @endif
             @can('application_to_inspection')
                 <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка на осмотр</a>
             @endcan
