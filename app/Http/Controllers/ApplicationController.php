@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Zip;
+use Illuminate\Filesystem\Filesystem;
+
 
 class ApplicationController extends AppController
 {
@@ -52,7 +54,9 @@ class ApplicationController extends AppController
     }
     public function download_zipped_photos(Application $application)
     {
-        $zip_file = "{$application->car_title}.zip";
+        $file = new Filesystem;
+        $file->cleanDirectory(public_path("downloads"));
+        $zip_file = "downloads/{$application->car_title}.zip";
         $zip = new \ZipArchive();
         $zip->open(public_path($zip_file), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
