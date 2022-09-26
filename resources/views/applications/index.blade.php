@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                             <div
-                                class="car-col__info @if($application->ApplicationHasPending) border border-danger @elseif($application->vin==null&&$application->license_plate==null) border border-warning @endif ">
+                                class="car-col__info @if($application->ApplicationHasPending) border border-danger @elseif($application->vin=='не указан'&&$application->license_plate=='не указан') border border-warning @endif ">
                                 <div class="car-show-modal" data-app-id="{{ $application->id }}">
                                     <h3 class="car-title">
                                         <span class="car-show-info">{{ $application->car_title }}</span>
