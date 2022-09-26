@@ -53,6 +53,16 @@ class Application extends Model
     protected $with = ['issueAcceptions', 'status', 'acceptions'];
 
 
+    public function getVinAttribute($value)
+    {
+        return $value ?? 'не указан';
+    }
+
+    public function getLicensePlateAttribute($value)
+    {
+        return $value ?? 'не указан';
+    }
+
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachable');

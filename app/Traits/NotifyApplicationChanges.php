@@ -18,6 +18,10 @@ trait NotifyApplicationChanges
         static::retrieved(function ($item) {
 
         });
+        static::saving(function($item){
+            $item->vin = $item->vin== "не указан" ? null : $item->vin;
+            $item->license_plate = $item->license_plate== "не указан" ? null : $item->license_plate;
+        });
         static::updated(function ($item) {
             if ($item->status->id != $item->status_id) {
                 $data = [];
