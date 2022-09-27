@@ -541,12 +541,14 @@ class ApplicationController extends AppController
             'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                $returned ? '' : Rule::unique('applications', 'vin')->ignore($application->id),
+//                $returned ? '' : Rule::unique('applications', 'vin')->ignore($application->id),
+                    $returned ? '' : 'unique_custom_ignore:applications,vin,'.($application->id),
                 'nullable'
             ] : [],
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
-                $returned ? '' : Rule::unique('applications', 'license_plate')->ignore($application->id),
+//                $returned ? '' : Rule::unique('applications', 'license_plate')->ignore($application->id),
+                $returned ? '' : 'unique_custom_ignore:applications,license_plate,'.($application->id),
                 'nullable'
             ] : [],
 
