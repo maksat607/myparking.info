@@ -115,6 +115,7 @@ return [
     'string'               => 'Поле :attribute должно быть строкой.',
     'timezone'             => 'Поле :attribute должно быть действительным часовым поясом.',
     'unique'               => 'Такое значение поля :attribute уже существует.',
+    'unique_custom'               => 'Такое значение поля :attribute уже существует!',
     'uploaded'             => 'Загрузка поля :attribute не удалась.',
     'url'                  => 'Поле :attribute имеет ошибочный формат URL.',
     'uuid'                 => 'Поле :attribute должно быть корректным UUID.',

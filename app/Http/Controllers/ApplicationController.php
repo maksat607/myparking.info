@@ -233,12 +233,12 @@ class ApplicationController extends AppController
             'vin_array' => $required ? [
                 'exclude_if:returned,1',
                 'required_without:license_plate',
-                $returned ? '' : 'unique:applications,vin',
+                $returned ? '' : 'unique_custom:applications,vin',
                 'nullable'
             ] : [],
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
-                $returned ? '' : 'unique:applications,license_plate',
+                $returned ? '' : 'unique_custom:applications,license_plate',
                 'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],

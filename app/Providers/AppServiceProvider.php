@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Application;
 use App\Models\User;
 use App\View\Composers\ApplicationFilterComposer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,16 @@ class AppServiceProvider extends ServiceProvider
             ApplicationFilterComposer::class
         );
 
-        
+        Validator::extend('unique_custom', function ($attribute, $value, $parameters)
+        {
+            // Get the parameters passed to the rule
+            list($table, $field) = $parameters;
+
+            // Check the table and return true only if there are no entries matching
+            // both the first field name and the user input value as well as
+            // the second field name and the second field value
+            return DB::table($table)->where($field, $value)->where('status_id','!=', 8)->count() == 0;
+        });
+
     }
 }
