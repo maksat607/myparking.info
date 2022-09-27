@@ -56,7 +56,10 @@ class AppServiceProvider extends ServiceProvider
             // Check the table and return true only if there are no entries matching
             // both the first field name and the user input value as well as
             // the second field name and the second field value
-            return DB::table($table)->where($field, $value)->where('status_id','!=', 8)->count() == 0;
+            return DB::table($table)
+                    ->where($field, $value)
+                    ->where($field,'!=' ,'не указан')
+                    ->where('status_id','!=', 8)->count() == 0;
         });
 
 
@@ -69,7 +72,11 @@ class AppServiceProvider extends ServiceProvider
             // Check the table and return true only if there are no entries matching
             // both the first field name and the user input value as well as
             // the second field name and the second field value
-            return DB::table($table)->where($field, $value)->where('status_id','!=', 8)->where('id','!=',$ignore)->count() == 0;
+            return DB::table($table)
+                    ->where($field, $value)
+                    ->where($field,'!=' ,'не указан')
+                    ->where('status_id','!=', 8)
+                    ->where('id','!=',$ignore)->count() == 0;
         });
 
     }
