@@ -208,7 +208,6 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-//        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -303,7 +302,6 @@ class ApplicationController extends AppController
             }
         }
 
-
         /*        if (isset($applicationData['status_id'])) {
                     $applicationData['status_id'] = 1;
                 } else {
@@ -357,8 +355,9 @@ class ApplicationController extends AppController
 
             $applicationData['accepted_by'] = auth()->user()->id;
         }
-//        dd($applicationData);
+
         $application = auth()->user()->applications()->create($applicationData);
+
         if ($application->status_id == 7) {
             $application->issueAcceptions()->create([
                 'is_issue' => false,
