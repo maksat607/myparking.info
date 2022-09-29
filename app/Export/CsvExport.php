@@ -34,7 +34,11 @@ class CsvExport implements ExportInterface
 						$row[$columnKey] = $task['status']['name'];
 					}
 					else {
-						$row[$columnKey] = trim($task[$columnKey]);
+                        if(isset($task[$columnKey])){
+                            $row[$columnKey] = trim($task[$columnKey]);
+                        }else{
+                            $row[$columnKey] = null;
+                        }
 					}
 				}
 

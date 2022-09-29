@@ -285,6 +285,31 @@ class ReportController extends Controller
             $item->parkingCostInDateRange($startTime, $endTime);
         }
 
+        $arr = [
+            "id" => null,
+    "external_id" => null,
+    "car_title" => null,
+    "car_mark_name" => 'ИТОГО',
+    "car_model_name" => null,
+    "year" => null,
+    "vin" => null,
+    "license_plate" =>null,
+    "car_type_name" => null,
+    "status_name" => null,
+    "regular_price" => null,
+    "discount_price" => null,
+    "arrived_at" =>null,
+    "issued_at" => null,
+    "free_parking" => null,
+    "returned" => null,
+    "start" =>null,
+        "end" => null,
+            "parked_days" => $applications->sum('parked_days'),
+    "parked_price" => $applications->sum('parked_price'),
+        ];
+
+        $applications->push(collect(json_decode(json_encode($arr), FALSE)));
+
         return [
             'columns' => [
                 'external_id' => 'Номер убытка',

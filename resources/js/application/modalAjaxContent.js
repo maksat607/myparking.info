@@ -1,12 +1,18 @@
 const modalAjaxContent = {
     init() {
-        $(`.car-show-modal, .car-show-info, .app-notification`).on('click', {self:this}, this.getModalContent);
+        $("body").on('change', '.theme-back-white', function () {
+            //this is just getting the value that is selected
+            var title = $(this).val();
+            $('.modal-title').html(title);
+            $('#ModeratorConfirmationModal').modal('show');
+        });
+        $(`.car-show-modal, .car-show-info, .app-notification`).on('click', {self: this}, this.getModalContent);
 
-        $("body").on('click','.checkbox-approved',function() {
+        $("body").on('click', '.checkbox-approved', function () {
             let app_id = $(this).data('app-id')
-            if(this.checked) {
+            if (this.checked) {
                 axios.get(`${APP_URL}/application/approved/${app_id}/1`);
-            }else {
+            } else {
                 axios.get(`${APP_URL}/application/approved/${app_id}/0`);
             }
         })
@@ -17,13 +23,13 @@ const modalAjaxContent = {
         let applicationId = $(this).data('app-id');
         let notification = $(this).data('notification');
         let additionalVar = '';
-        if(notification){
+        if (notification) {
             $(this).removeClass('new-notif');
             additionalVar = `?notification=${notification}`
         }
         axios.get(`${APP_URL}/application/get-model-content/${applicationId}${additionalVar}`)
             .then(response => {
-                if(response.data.success) {
+                if (response.data.success) {
                     self.setHtml(response.data.html);
                     self.initSlick();
                 }
@@ -37,7 +43,7 @@ const modalAjaxContent = {
     },
     initSlick() {
         $(`.modal-block`).addClass('active')
-            .delay(50).queue(function(){
+            .delay(50).queue(function () {
             $(".car-slide", $(this)).slick({
                 dots: false,
                 infinite: false,

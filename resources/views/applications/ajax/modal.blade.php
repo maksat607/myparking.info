@@ -705,12 +705,22 @@
         </div>
             <div class="d-flex">
                 @if(auth()->user()->hasRole('Moderator'))
-                    <label class="switch-radio-wrap mt-2">
-                        <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"
-                        @if($application->ApplicationHasPending==null) checked @endif>
-                        <span class="switcher-radio"></span>
-                        <span>Проверено</span>
-                    </label>
+{{--                    <label class="switch-radio-wrap mt-2">--}}
+{{--                        <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"--}}
+{{--                        @if($application->ApplicationHasPending==null) checked @endif>--}}
+{{--                        <span class="switcher-radio"></span>--}}
+{{--                        <span>Проверено</span>--}}
+{{--                    </label>--}}
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        Launch demo modal
+                    </button>
+                    <select class="theme-back-white">
+                        <option>Выберите</option>
+                        <option value="approved"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModeratorConfirmationModal">
+                                Одобрено
+                            </button></option>
+                        <option value="reject">Вернуть с Текстом уведомления</option>
+                    </select>
                 @endif
             @can('application_to_inspection')
                 <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка на осмотр</a>
@@ -736,4 +746,25 @@
 
     </div>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+@include('applications.ajax.moderator')
+
 

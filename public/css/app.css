@@ -4009,6 +4009,24 @@ th.sortable a {
     padding: 0;
     border: none;
 }
+.theme-back-white{
+    background-color: #F7F7F7 !important;
+    color: #536e9b;
+    text-align: right;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 15px;
+    -webkit-appearance: none;
+    background: none;
+    padding: 0;
+    border: none !important;
+}
+ .lllkkk{
+    z-index: 1029;
+}
+.exampleModal.active {
+    z-index: 999;
+}
 ::-webkit-scrollbar {
     width: 5px;
 }
