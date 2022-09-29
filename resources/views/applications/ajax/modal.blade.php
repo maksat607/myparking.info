@@ -711,16 +711,16 @@
 {{--                        <span class="switcher-radio"></span>--}}
 {{--                        <span>Проверено</span>--}}
 {{--                    </label>--}}
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                        Launch demo modal
-                    </button>
-                    <select class="theme-back-white">
-                        <option>Выберите</option>
-                        <option value="approved"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModeratorConfirmationModal">
-                                Одобрено
-                            </button></option>
-                        <option value="reject">Вернуть с Текстом уведомления</option>
-                    </select>
+{{--                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">--}}
+{{--                        Launch demo modal--}}
+{{--                    </button>--}}
+{{--                    <select class="theme-back-white">--}}
+{{--                        <option>Выберите</option>--}}
+{{--                        <option value="approved"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModeratorConfirmationModal">--}}
+{{--                                Одобрено--}}
+{{--                            </button></option>--}}
+{{--                        <option value="reject">Вернуть с Текстом уведомления</option>--}}
+{{--                    </select>--}}
                 @endif
             @can('application_to_inspection')
                 <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка на осмотр</a>
@@ -765,6 +765,6 @@
         </div>
     </div>
 </div>
-@include('applications.ajax.moderator')
+{{--@include('applications.ajax.moderator')--}}
 
 
