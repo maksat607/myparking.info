@@ -8,22 +8,20 @@ use Carbon\Carbon;
 
 class Message
 {
-    public static $appStatuses = [
-        'Черновик' => 1,
-        'Хранение' => 2,
-        'Выдано' => 3,
-        'Отклонена в хранении' => 4,
-        'Ожидает принятия' => 7,
-        'Удален' => 8,
-    ];
-    public static $ViewRequestStatuses = [
+    public $users;
+    private $user;
+    private $application;
+    private $applicationView = [];
+    public $applicationMessage = [];
+    public $applicationViewMessage;
+    private $ViewRequestStatuses = [
         'В ожидании' => 1,
         'Осмотрено' => 2,
         'Не осмотрено' => 3,
     ];
-    public $status = null;
-    public static $superAdmin = 2;
-    public static $messages = [
+    private $status = null;
+    private $superAdmin = 2;
+    private $messages = [
 
 
         'pendingShort' => "Заявка на хранение для авто car_title",
@@ -64,92 +62,114 @@ class Message
         'viewRequestLong3' => "DATE в TIME... Авто car_title (VIN vin_number) не осмотрено.",
     ];
 
-    public static function getViewRequestMessage($item, $user){
-
-        $messages = Message::generateMessages($item->application, $user);
-
-        return [
-            'short' => $messages['viewRequestShort'.$item->status_id],
-            'long' => $messages['viewRequestLong'.$item->status_id],
-            'id'=>$item->application_id,
-            'user_id'=>$user->id
-        ];
-    }
-    public static function getApplicationMessage($item, $user)
+    public function __construct($application = null, $itemView = null)
     {
-
-        $messages = Message::generateMessages($item, $user);
-
-        $status = Status::find($item->status_id);
-        return [
-            'short' => $messages[$status->code . 'Short'],
-            'long' => $messages[$status->code . 'Long'],
-            'id'=>$item->id,
-            'user_id'=>$user->id
-        ];
+        $this->user = auth()->user();
+        $this->application = $application;
+        $this->applicationView = $itemView;
+        if ($application == null && $itemView != null) {
+            $this->application = $itemView->application;
+        }
+        $this->status = Status::find($this->application->status_id);
+        $this->getUsers()
+            ->getApplicationMessage()
+            ->getViewRequestMessage();
     }
 
-    public static function parseMessage($messageSearchReplace)
+    public function getViewRequestMessage()
+    {
+        if ($this->applicationView == null) {
+            return $this;
+        }
+        $messages = $this->generateMessages();
+
+        $this->applicationViewMessage = [
+            'short' => $messages['viewRequestShort' . $this->applicationView->status_id],
+            'long' => $messages['viewRequestLong' . $this->applicationView->status_id],
+            'id' => $this->applicationView->application_id,
+            'user_id' => $this->user->id
+        ];
+        return $this;
+    }
+
+    public function getApplicationMessage()
+    {
+        if ($this->applicationView != null) {
+            return $this;
+        }
+        $messages = $this->generateMessages();
+
+        $this->applicationMessage = [
+            'short' => $messages[$this->status->code . 'Short'],
+            'long' => $messages[$this->status->code . 'Long'],
+            'id' => $this->application->id,
+            'user_id' => $this->user->id
+        ];
+        return $this;
+    }
+
+    public function parseMessage($messageSearchReplace)
     {
         $arr = [];
-        foreach (self::$messages as $key => $message) {
+        foreach ($this->messages as $key => $message) {
             $arr[$key] = str_replace(array_keys($messageSearchReplace), array_values($messageSearchReplace), $message);
         }
         return $arr;
     }
 
-    public static function generateMessages($item, $user)
+    public function generateMessages()
     {
         $messages = [
-            'car_title' => $item->car_title,
-            'vin_number' => $item->vin ?? $item->license_plate,
-            'VIN'=>$item->vin ? 'VIN' : 'Гос.номер ',
-            'user_email'=>$user->email,
-            'user_role' => $user->getRoleNames()->first(),
+            'car_title' => $this->application->car_title,
+            'vin_number' => $item->vin ?? $this->application->license_plate,
+            'VIN' => $this->application->vin ? 'VIN' : 'Гос.номер ',
+            'user_email' => $this->user->email,
+            'user_role' => $this->user->getRoleNames()->first(),
             'DATE' => Carbon::now()->format('d.m.Y'),
             'TIME' => Carbon::now()->format('H:m'),
         ];
-        $arr = self::parseMessage($messages);
-        $arr['updated_at'] = $item->updated_at;
-        $arr['arrived_at'] = $item->arrived_at;
+        $arr = $this->parseMessage($messages);
+        $arr['updated_at'] = $this->application->updated_at;
+        $arr['arrived_at'] = $this->application->arrived_at;
         return $arr;
     }
 
-    public static function getPermission($status, $item)
+    public function getPermission()
     {
         $deniedStatuses = [4, 5, 6];
-        if (in_array($status->id, $deniedStatuses)) {
+        if (in_array($this->status->id, $deniedStatuses)) {
             return 'notify_app_denied';
         }
-        if ($item->issuance) {
+        if ($this->application->issuance) {
             return 'notify_app_issuance';
         }
-        return 'notify_app_' . $status->code;
+        return 'notify_app_' . $this->status->code;
     }
 
-    public static function getUsers($item)
+    public function getUsers()
     {
-        $status = Status::find($item->status_id);
+
         $users = collect([]);
-        if ($item->partner && $item->partner->user) {
-            $users = $item->partner->user->children;
-            $users->push($item->partner->user);
+        if ($this->application->partner && $this->application->partner->user) {
+            $users = $this->application->partner->user->children;
+            $users->push($this->application->partner->user);
         }
 
-        if ($item->createdUser->owner) {
-            $users = $item->createdUser->owner->children;
-            $users->push($item->createdUser->owner);
+        if ($this->application->createdUser->owner) {
+            $users = $this->application->createdUser->owner->children;
+            $users->push($this->application->createdUser->owner);
         } else {
-            $users->push($item->createdUser);
+            $users->push($this->application->createdUser);
         }
 
-        $users = $users->push(User::find(self::$superAdmin));
+        $users = $users->push(User::find($this->superAdmin));
         $users = $users->unique('id')->all();
 
-        $permission = self::getPermission($status, $item);
+        $permission = $this->getPermission();
         $users = collect(array_filter($users))->reject(function ($user) use ($permission) {
             return !$user->hasPermissionTo($permission);
         });
-        return $users;
+        $this->users = $users;
+        return $this;
     }
 }

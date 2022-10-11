@@ -19,29 +19,31 @@ trait NotifyViewRequestChanges
 
         });
         static::updated(function ($item) {
-            $data = Message::getViewRequestMessage($item, auth()->user());
+            $message = new Message(null,$item);
+            $data = $message->applicationViewMessage;
 
             if (count($data) > 0) {
-                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
+                Notification::send($message->users, new UserNotification(($data)));
             }
 
 
         });
 
         static::deleted(function ($item) {
-
-            $data = Message::getViewRequestMessage($item, auth()->user());
+            $message = new Message(null,$item);
+            $data = $message->applicationViewMessage;
 
             if (count($data) > 0) {
-                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
+                Notification::send($message->users, new UserNotification(($data)));
             }
         });
         static::created(function ($item) {
             $data = [];
-            $data = Message::getViewRequestMessage($item, auth()->user());
+            $message = new Message(null,$item);
+            $data = $message->applicationViewMessage;
 
             if (count($data) > 0) {
-                Notification::send(Message::getUsers($item->application), new UserNotification(($data)));
+                Notification::send($message->users, new UserNotification(($data)));
             }
 
         });

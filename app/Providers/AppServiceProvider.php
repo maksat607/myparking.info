@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Application;
+use App\Models\Role;
 use App\Models\User;
 use App\View\Composers\ApplicationFilterComposer;
 use Illuminate\Pagination\Paginator;
@@ -20,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
     }
 
     /**
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         if(env('APP_ENV')=='prod'){
             \URL::forceScheme('https');
             $this->app['request']->server->set('HTTPS','on');

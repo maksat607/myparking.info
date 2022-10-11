@@ -1,7 +1,7 @@
 const partnerModalAjaxContent = {
     init() {
         console.log('inside')
-        $(`.message-user-show-modal`).on('click', {self:this}, this.getModalContent);
+        $(`body`).on('click','.message-user-show-modal', {self:this}, this.getModalContent);
     },
     getModalContent(e) {
 

@@ -28,6 +28,9 @@
                         <li class="@if(!$notification->read_at) new-notif @endif ">
                             <span>{!! makeClickableUserNotification(json_decode($notification)->data->title,json_decode($notification)->data->id) !!}</span>
                             <div>{{ $notification->created_at->diffForHumans() }}</div>
+                            @if(isset($notification->data['app_id']))
+                                <p>{!!   makeClickableApplicationNotification('Авто ...'.json_decode($notification)->data->car_title,json_decode($notification)->data->app_id,null) !!}</p>
+                            @endif
                             <p>{{ json_decode($notification)->data->message }}</p>
                         </li>
                     @endif

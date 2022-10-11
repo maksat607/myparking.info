@@ -385,6 +385,9 @@
     <div class="modal-block">
 
     </div>
+    <div class="modal-block-confirm">
+        @include('applications.ajax.moderator')
+    </div>
 
     <div class="overlay"></div>
 </div>

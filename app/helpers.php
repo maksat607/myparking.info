@@ -13,7 +13,7 @@ function makeClickableApplicationNotification($str,$app_id,$user_id){
     if(preg_match_all($pattern, $str, $matches)){
         $str = str_replace(collect($matches[0])->first(),' <a href="#" class = "theme-blue message-user-show-modal" data-user-id='.$user_id.'>'.collect($matches[0])->first().'</a>',$str );
     }
-    return str_replace('...','.',$str);
+    return str_replace('...','',$str);
 }
 function makeClickableUserNotification($str,$user_id){
     $pattern = '/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i';

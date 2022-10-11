@@ -44,7 +44,7 @@
                             </div>
                             <div
                                 class="car-col__info @if($application->ApplicationHasPending) border border-danger @elseif($application->vin=='не указан'&&$application->license_plate=='не указан') border border-warning @endif ">
-                                <div class="car-show-modal" data-app-id="{{ $application->id }}">
+                                <div class="car-show-modal mk" data-app-id="{{ $application->id }}" data-app-title="{{ $application->car_title }}" data-app-user-id="{{ $application->ApplicationHasPending ? $application->ApplicationHasPending->user_id : null}}" >
                                     <h3 class="car-title">
                                         <span class="car-show-info">{{ $application->car_title }}</span>
                                         <span class="d-none">

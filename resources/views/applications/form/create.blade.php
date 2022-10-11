@@ -154,7 +154,9 @@
                                 Системная информация
                             </div>
                             <div class="row">
-                                <div class="col-6">
+                                <input type="hidden" name="app_data[partner_id]" value="{{ auth()->user()->partner->id }}">
+
+                                <div class="col-6 {{ session('PartnerHide') }}">
                                     <label class="field-style @error('partner_id') invalid @enderror">
                                         <span>Партнёр*</span>
                                         <select name="app_data[partner_id]" id="partner_id" class="partner_id page-select">
@@ -174,6 +176,7 @@
                                         </select>
                                     </label>
                                 </div>
+
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Стоянка*</span>

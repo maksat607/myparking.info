@@ -108,24 +108,43 @@ $('.date-range').flatpickr({
 
 
 /////Modal
+let startpicker;
+let endpicker;
 
 $(function() {
     $("body").delegate("#arriving_at_modal", "focusin", function(){
-        $(this).flatpickr({
+        let issued_at_modal = $('#issued_at_modal').val();
+        startpicker = $(this).flatpickr({
             defaultDate: getDateAr('#arriving_at_div'),
             altInput: true,
             altFormat: "d.m.Y",
             dateFormat: "d.m.Y",
+            maxDate:issued_at_modal,
+            onClose: function() {
+                let arriving_at_modal = $('#arriving_at_modal').val();
+                console.log("arriving_at_modal")
+                console.log(arriving_at_modal)
+                endpicker.set('minDate', arriving_at_modal);
+            },
         });
     });
 });
 $(function() {
     $("body").delegate("#issued_at_modal", "focusin", function(){
-        $(this).flatpickr({
+        let arriving_at_modal = null;
+        arriving_at_modal = $('#arriving_at_modal').val();
+        endpicker = $(this).flatpickr({
             defaultDate: getDateAr('#issued_at_div'),
             altInput: true,
             altFormat: "d.m.Y",
             dateFormat: "d.m.Y",
+            minDate: arriving_at_modal,
+            onClose: function() {
+                let issued_at_modal = $('#issued_at_modal').val();
+                console.log("issued_at_modal")
+                console.log(issued_at_modal)
+                startpicker.set('maxDate', issued_at_modal);
+            },
         });
     });
 });

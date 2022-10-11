@@ -17,7 +17,7 @@ class RoleScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        if(!auth()->user()->hasRole(['SuperAdmin'])) {
+        if(auth()->user()&&!auth()->user()->hasRole(['SuperAdmin'])) {
             $builder->whereNotIn('name', ['SuperAdmin', 'Admin', 'Partner', 'PartnerOperator']);
         }
 

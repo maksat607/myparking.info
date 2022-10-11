@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
 Auth::routes([
 //    'register' => false,
 ]);
@@ -72,7 +71,7 @@ Route::get('/', function () {
     if(Auth::check()) {
         return redirect('/applications/2');
     }
-    return view('welcome');
+    return redirect('/login');
 })->name('home');
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('check_legal')->name('home');
@@ -223,6 +222,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
+    Route::post('/application/send-chat-message/{application_id}', [ApplicationController::class, 'sendChatMessage'])
+        ->middleware(['check_legal', 'check_child_owner_legal'])
+        ->name('application.get.model.content');
+    Route::get('/application/get-model-content-app-chat/{application_id}', [ApplicationController::class, 'getModelChatContent'])
+        ->middleware(['check_legal', 'check_child_owner_legal'])
+        ->name('application.get.model.chat.content');
 
     Route::get('/generate-act/{application}', [ApplicationController::class, 'generateAct'])->name('application.generate-act');
     Route::get('/application/remove/attachment/{attachment}', [ApplicationController::class, 'removeAttachment']);
@@ -233,7 +238,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('applications.delete');
     Route::post('/application/change-status', [ApplicationController::class, 'assignStatus']);
     Route::post('/application/change-system-data', [ApplicationController::class, 'updateSystemData']);
-    Route::get('/application/approved/{application}/{status}', [ApplicationController::class, 'approved']);
+    Route::post('/application/approved', [ApplicationController::class, 'approved'])->name('application.approve');
+    Route::post('/application/rejected', [ApplicationController::class, 'rejected'])->name('application.reject');
     Route::get('application/download-photos/{application}', [ApplicationController::class, 'download_zipped_photos'])->name('application.photo.download');
 
     /*Attachments*/

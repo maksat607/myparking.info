@@ -60,8 +60,7 @@
             <span> Поиск по тексту</span>
             <input type="text" name="search" value="@if(request()->get('search')){{ request()->get('search') }}@endif ">
         </label>
-
-        <label class="field-style">
+        <label class="field-style {{ session('PartnerHide') }}">
             <span>Партнёр</span>
             <select name="partner" class="page-select">
                 <option selected value="">Выберите партнера</option>
@@ -74,6 +73,7 @@
                 @endforeach
             </select>
         </label>
+
         <label class="field-style mr-0">
             <span>Стоянка</span>
             <select name="parking" class="page-select">

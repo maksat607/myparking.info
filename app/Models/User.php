@@ -15,6 +15,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected static function booted()
     {
+        Role::all()->map(function ($role){
+//            if(auth()->user)
+        });
+
         static::deleting(function ($user) {
             //$user->children->each->roles()->detach();
             $user->children->each(function ($item, $key) {

@@ -12,7 +12,9 @@ use App\Models\Application;
 use App\Models\Pricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
+use App\Exports\ExcelExport;
 
+use Maatwebsite\Excel\Facades\Excel;
 class ReportController extends Controller
 {
     private $exporter;
@@ -47,6 +49,7 @@ class ReportController extends Controller
     public function csvByEmployee(Request $request)
     {
         $data = $this->dataByEmployee($request);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
         return $this->exporter->export($data);
     }
 
@@ -172,6 +175,7 @@ class ReportController extends Controller
     public function csvByPartner(Request $request)
     {
         $data = $this->dataByPartner($request);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
         return $this->exporter->export($data);
     }
 
@@ -350,6 +354,7 @@ class ReportController extends Controller
     public function csvAllPartner(Request $request)
     {
         $data = $this->dataAllPartner($request);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
         return $this->exporter->export($data);
     }
 

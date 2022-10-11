@@ -33,12 +33,8 @@
     padding: 0;
     border: none !important;
 }
- .lllkkk{
-    z-index: 1029;
-}
-.exampleModal.active {
-    z-index: 999;
-}
+
+
 ::-webkit-scrollbar {
     width: 5px;
 }

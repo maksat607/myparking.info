@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Zip;
 use Illuminate\Filesystem\Filesystem;
-
+use Session;
 
 class ApplicationController extends AppController
 {
@@ -208,6 +208,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -852,7 +853,27 @@ class ApplicationController extends AppController
            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
         }
     }
+    public function getModelChatContent(Request $request,$application_id)
+    {
+        $htmlRender = $this->renderModal('notifications.modalchat', $request,$application_id);
+        if($htmlRender==null){
+            return null;
+        }
+        return response()->json(['success' => true, 'html' => $htmlRender]);
+    }
+    public function sendChatMessage(Request $request,$application_id){
+
+        return $request->all();
+    }
     public function getModelContent(Request $request,$application_id)
+    {
+        $htmlRender = $this->renderModal('applications.ajax.modal', $request,$application_id);
+        if($htmlRender==null){
+            return null;
+        }
+        return response()->json(['success' => true, 'html' => $htmlRender]);
+    }
+    public function renderModal($path,Request $request,$application_id)
     {
         $this->markNotificationAsRead($request);
         $application = Application::where('id', $application_id)
@@ -879,13 +900,12 @@ class ApplicationController extends AppController
             $application['pricing'] = $pricing;
             $application->currentParkingCost = $application->currentParkingCost;
 
-            $htmlRender = view('applications.ajax.modal', compact('application'))->render();
-            return response()->json(['success' => true, 'html' => $htmlRender]);
+            $htmlRender = view($path, compact('application'))->render();
+            return $htmlRender;
 
         }
         return null;
     }
-
     public function checkDuplicate(Request $request)
     {
 
@@ -1349,12 +1369,9 @@ class ApplicationController extends AppController
             'carGears'
         );
     }
-    public function approved(Application $application,$id){
-        if($id==1){
-            ApplicationHasPending::where('application_id',$application->id)->delete();
-        }elseif ($id==0){
-            ApplicationHasPending::firstOrCreate(['application_id'=>$application->id,'user_id'=>$application->accepted_by]);
-        }
+    public function approved(Request $request){
+        ApplicationHasPending::where('application_id',$request->appId)->delete();
+        return redirect()->back();
     }
     public function assignStatus(Request $request): bool
     {

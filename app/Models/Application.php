@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -18,8 +19,8 @@ use Illuminate\Support\Str;
 
 class Application extends Model
 {
-    use HasFactory;
-//    use NotifyApplicationChanges;
+    use HasFactory,Notifiable;
+    use NotifyApplicationChanges;
     protected $fillable = [
 
         'external_id', 'internal_id', 'courier_fullname', 'courier_phone', 'parking_place_number', 'parking_car_sticker', 'arriving_method', 'arriving_interval', 'arriving_at', 'arrived_at', 'issued_at',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\CreateUserNotifications;
@@ -248,16 +249,22 @@ class UserController extends AppController
         $title = 'Уведомление';
         return view('users.notifications.index', compact('title'));
     }
-    public function message(Request $request,User $user)
+
+    public function message(Request $request, User $user)
     {
-        $title = "Сообщение от ".auth()->user()->getRoleNames()->first().' '.auth()->user()->email;
-
-
-        if($request->message){
-            $user->notify(new UserNotification(['message'=>$request->message,'title'=>$title,'id'=>auth()->user()->id]));
+        $title = "Сообщение от " . auth()->user()->getRoleNames()->first() . ' ' . auth()->user()->email;
+        if ($request->appId) {
+            $application = Application::find($request->appId);
+            $content['app_id'] = $request->appId;
+            $content['car_title'] = $application->car_title;
+        }
+        if ($request->message) {
+            $content = array_merge(['message' => $request->message, 'title' => $title, 'id' => auth()->user()->id], $content);
+            $user->notify(new UserNotification($content));
         }
         return redirect()->back()->with('success', 'Отправлено');
     }
+
     public function sendMessage(User $user)
     {
         $htmlRender = view('users.modals.message', compact('user'))->render();

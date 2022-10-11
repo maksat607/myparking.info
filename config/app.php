@@ -191,6 +191,8 @@ return [
         App\Providers\ExportServiceProvider::class,
 
         Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+
     ],
 
     /*
@@ -246,6 +248,7 @@ return [
 
         'Image' => Intervention\Image\Facades\Image::class,
         'Toastr'  => Brian2694\Toastr\Facades\Toastr::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 
