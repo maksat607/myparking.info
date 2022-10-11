@@ -13,7 +13,7 @@ const modalAjaxContent = {
 
         });
         $(`.car-show-modal, .car-show-info, .app-notification, .show-modal-chat`).on('click', {self: this}, this.getModalContent);
-        // $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
+        $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.send-mess`, {self: this}, this.sendMessage);
 
     },

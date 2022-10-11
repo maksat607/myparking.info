@@ -154,8 +154,9 @@
                                 Системная информация
                             </div>
                             <div class="row">
-                                <input type="hidden" name="app_data[partner_id]" value="{{ auth()->user()->partner->id }}">
-
+                                @if(session('PartnerHide') !='')
+                                    <input type="hidden" name="app_data[partner_id]" value="{{ auth()->user()->partner->id }}">
+                                @endif
                                 <div class="col-6 {{ session('PartnerHide') }}">
                                     <label class="field-style @error('partner_id') invalid @enderror">
                                         <span>Партнёр*</span>
