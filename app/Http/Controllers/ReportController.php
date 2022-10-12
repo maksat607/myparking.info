@@ -199,17 +199,18 @@ class ReportController extends Controller
         }
 
         $applicationQuery = Application
-            ::select(['applications.id', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
+            ::select(['applications.id','partners.shortname as partner' ,'parkings.title as parking' ,'external_id' ,'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
             ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
             ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
             ->join('car_types', 'car_types.id', '=', 'applications.car_type_id')
+            ->join('partners', 'partners.id', '=', 'applications.partner_id')
+            ->join('parkings', 'parkings.id', '=', 'applications.parking_id')
             ->leftJoin('pricings', function ($join) {
                 $join->on('pricings.partner_id', '=', 'applications.partner_id');
                 $join->on('pricings.car_type_id', '=', 'applications.car_type_id');
             })
             ->whereNotNull('arrived_at');
-
         $status_id = $request->query('status_id', 'arrived');
 
         if ($status_id == "arrived") {
@@ -291,6 +292,8 @@ class ReportController extends Controller
 
         $arr = [
             "id" => null,
+            'partner'=>null,
+            'parking'=>null,
     "external_id" => null,
     "car_title" => null,
     "car_mark_name" => 'ИТОГО',
@@ -316,6 +319,8 @@ class ReportController extends Controller
 
         return [
             'columns' => [
+                'partner' => 'Партнер',
+                'parking' => 'Город',
                 'external_id' => 'Номер убытка',
                 'car_mark_name' => 'Марка',
                 'car_model_name' => 'Модель',

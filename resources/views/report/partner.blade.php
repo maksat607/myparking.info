@@ -72,6 +72,8 @@
                 <tr>
                     <th>#</th>
                     <th>ID</th>
+                    <th>Партнер</th>
+                    <th>Город</th>
                     <th>Ном. убытка</th>
                     <th>Марка</th>
                     <th>Модель</th>
@@ -93,6 +95,8 @@
                         <input type="hidden" id="appId" value="{{ $application['id'] }}">
                         <td class="tr-id">@if($application['id']) {{ $loop->iteration }} @endif</td>
                         <td style="word-break: keep-all">{{ $application['id'] }}</td>
+                        <td>{{ $application['partner'] }}</td>
+                        <td>{{ $application['parking'] }}</td>
                         <td>{{ $application['external_id'] }}</td>
                         <td>{{ $application['car_mark_name'] }}</td>
                         <td>{{ $application['car_model_name'] }}</td>
