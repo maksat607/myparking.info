@@ -112,11 +112,7 @@
                     </tr>
 
                 @endforeach
-{{--                <tr >--}}
-{{--                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>--}}
-{{--                    <td>{{ 'ИТОГО:' }}</td>--}}
-{{--                    <td style="word-break: keep-all">{{ $data['data']->sum('parked_price') }}</td>--}}
-{{--                </tr>--}}
+
                 </tbody>
             </table>
         </div>
