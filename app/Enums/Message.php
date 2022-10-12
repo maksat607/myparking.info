@@ -164,7 +164,9 @@ class Message
             $users = $this->application->createdUser->owner->children;
             $users->push($this->application->createdUser->owner);
         } else {
+
             $users->push($this->application->createdUser);
+            $users->push($this->application->createdUser->children);
         }
 
         $users = $users->push(User::find($this->superAdmin));
