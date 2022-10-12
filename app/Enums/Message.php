@@ -62,9 +62,14 @@ class Message
         'viewRequestLong3' => "DATE в TIME... Авто car_title (VIN vin_number) не осмотрено.",
     ];
 
-    public function __construct($application = null, $itemView = null)
+    public function __construct($application = null, $itemView = null, $user = null)
     {
-        $this->user = auth()->user();
+        if($user !=null){
+            $this->user = $user;
+        }else{
+            $this->user = auth()->user();
+        }
+
         $this->application = $application;
         $this->applicationView = $itemView;
         if ($application == null && $itemView != null) {

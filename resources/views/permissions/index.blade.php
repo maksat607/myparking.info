@@ -33,6 +33,8 @@
                     </tr>
                     </thead>
                     <tbody>
+                    @dump($permissions)
+                    @dump($roles)
                     @if(!empty($permissions))
                         @foreach($permissions as $permission)
                             <tr>
