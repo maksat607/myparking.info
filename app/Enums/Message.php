@@ -9,6 +9,7 @@ use Carbon\Carbon;
 class Message
 {
     public $users;
+    public $someusers;
     private $user;
     private $application;
     private $applicationView = [];
@@ -170,7 +171,7 @@ class Message
 
         $users = $users->push(User::find($this->superAdmin));
         $users = $users->unique('id')->all();
-
+        $this->someusers = $users;
         $permission = $this->getPermission();
         $users = collect(array_filter($users))->reject(function ($user) use ($permission) {
             return !$user->hasPermissionTo($permission);
