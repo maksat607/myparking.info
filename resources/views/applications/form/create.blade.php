@@ -165,13 +165,13 @@
                                             @foreach($partners as $partner)
 
                                                 @if($loop->count == 1||$partners->count()==1)
-                                                    <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                     @continue
                                                 @elseif(old('app_data.partner_id') == $partner->id)
-                                                    <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                     @continue
                                                 @else
-                                                    <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                 @endif
                                             @endforeach
                                         </select>

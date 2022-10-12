@@ -66,9 +66,9 @@
                 <option selected value="">Выберите партнера</option>
                 @foreach($partners as $partner)
                     @if(request()->get('partner') == $partner->id||$partners->count()==1)
-                        <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                        <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                     @else
-                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                        <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                     @endif
                 @endforeach
             </select>

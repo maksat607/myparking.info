@@ -49,7 +49,7 @@
                                     <label>Партнёр</label>
                                     <select name="app_data[partner_id]" id="partner_id">
                                         @foreach($partners as $partner)
-                                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                        <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                         @endforeach
                                     </select>
                                 </div>

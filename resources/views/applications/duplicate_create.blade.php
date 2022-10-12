@@ -85,7 +85,7 @@
                                             <select name="app_data[partner_id]" class="partner_id @error('license_plate') is-invalid @enderror">
                                                 <option selected hidden value="">{{ __('Select a partner..') }}</option>
                                                 @foreach($partners as $partner)
-                                                    <option @if($application->partner_id == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                    <option @if($application->partner_id == $partner->id) selected @endif value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

@@ -190,10 +190,10 @@
                                     @foreach(\App\Models\Partner::all() as $partner)
                                         <option value="0">Не указан</option>
                                         @if($application->partner&& $partner->id == $application->partner->id)
-                                            <option value="{{ $partner->id }}" selected>{{ $partner->name }}</option>
+                                            <option value="{{ $partner->id }}" selected>{{ $partner->shortname }}</option>
                                             @continue
                                         @endif
-                                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                        <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                     @endforeach
 
                                 </select>

@@ -151,13 +151,13 @@
                                                 <option selected hidden disabled value="">{{ __('Select a partner..') }}</option>
                                                 @foreach($partners as $partner)
                                                     @if($loop->count == 1)
-                                                        <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                        <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                         @continue
                                                     @elseif($application->partner_id == $partner->id)
-                                                        <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                        <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                         @continue
                                                     @else
-                                                        <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                        <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
