@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Enums\Message;
 use App\Enums\Color;
 use App\Filter\ApplicationFilters;
@@ -52,6 +53,7 @@ class ApplicationController extends AppController
                 $this->middleware(['permission:application_update'])->only('edit', 'update');
                 $this->middleware(['permission:application_delete'])->only('destroy');*/
     }
+
     public function download_zipped_photos(Application $application)
     {
         $file = new Filesystem;
@@ -60,17 +62,17 @@ class ApplicationController extends AppController
         $zip = new \ZipArchive();
         $zip->open(public_path($zip_file), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-        foreach ($application->attachments as  $file)
-        {
+        foreach ($application->attachments as $file) {
             $zip->addFile(public_path("uploads/{$file->name}"), $file->name);
         }
         $hasFile = $zip->numFiles;
         $zip->close();
 
-        return $hasFile >0 ?
+        return $hasFile > 0 ?
             response()->download(($zip_file)) :
-            redirect()->back()->with('warning','Фотографии нету:(');
+            redirect()->back()->with('warning', 'Фотографии нету:(');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -208,7 +210,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-
+//        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -245,7 +247,7 @@ class ApplicationController extends AppController
             'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
-            'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
+            'car_key_quantity' => ['integer'],
             'status_id' => ['exists:statuses,id', Rule::in($statuses)]
         ]);
 
@@ -258,6 +260,7 @@ class ApplicationController extends AppController
             return $input->returned == 1;
         });
 
+
         $validator->validate();
 
         Validator::make($applicationRequest, [
@@ -265,7 +268,6 @@ class ApplicationController extends AppController
             'partner_id' => ['integer', 'required', 'exists:partners,id'],
             'parking_id' => ['integer', 'required', 'exists:parkings,id'],
         ])->validate();
-
 
         /*if ($carValidator->fails() || $applicationValidator->fails()) {
             return response()->json(['errors'=>['car'=>$carValidator->errors(), 'application'=>$applicationValidator->errors()]], 422);
@@ -319,7 +321,8 @@ class ApplicationController extends AppController
         }
 
 
-        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
+//        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
+        if (isset($applicationData['car_type_id']) && $applicationData['car_type_id']!=27) {
             $searchFilters = [];
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
                 $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
@@ -356,6 +359,7 @@ class ApplicationController extends AppController
 
             $applicationData['accepted_by'] = auth()->user()->id;
         }
+
 
         $application = auth()->user()->applications()->create($applicationData);
 
@@ -513,6 +517,7 @@ class ApplicationController extends AppController
     public function update(Request $request, $id)
     {
 //        $request->dump();
+
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -543,19 +548,19 @@ class ApplicationController extends AppController
                 'exclude_if:returned,1',
                 'required_without:license_plate',
 //                $returned ? '' : Rule::unique('applications', 'vin')->ignore($application->id),
-                    $returned ? '' : 'unique_custom_ignore:applications,vin,'.($application->id),
+                $returned ? '' : 'unique_custom_ignore:applications,vin,' . ($application->id),
                 'nullable'
             ] : [],
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
 //                $returned ? '' : Rule::unique('applications', 'license_plate')->ignore($application->id),
-                $returned ? '' : 'unique_custom_ignore:applications,license_plate,'.($application->id),
+                $returned ? '' : 'unique_custom_ignore:applications,license_plate,' . ($application->id),
                 'nullable'
             ] : [],
 
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
-            'car_model_id' =>isset($carRequest['car_model_id']) ? ['integer'] : '',
+            'car_model_id' => isset($carRequest['car_model_id']) ? ['integer'] : '',
             'year' => isset($carRequest['year']) ? ['integer'] : '',
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],
             'preloaded.*' => ['nullable', 'sometimes', 'exists:attachments,id']
@@ -592,7 +597,8 @@ class ApplicationController extends AppController
             }
         }
 
-        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
+//        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
+        if (isset($applicationData['car_type_id']) && ($applicationData['car_type_id'] != 27)) {
             $searchFilters = [];
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
                 $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
@@ -627,7 +633,7 @@ class ApplicationController extends AppController
         }
 
 
-        if ($application->status_id == 7 && $applicationData['status_id'] == 2 ) {
+        if ($application->status_id == 7 && $applicationData['status_id'] == 2) {
 
             $date = date('Y-m-d H:i:s', strtotime($request->app_data['arriving_at']));
             $date = Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay();
@@ -652,14 +658,14 @@ class ApplicationController extends AppController
         }
 
 
-        $car_fields = ['car_model_id','year','car_additional','car_engine_id','car_transmission_id','car_gear_id','car_generation_id','car_series_id','car_modification_id'];
+        $car_fields = ['car_model_id', 'year', 'car_additional', 'car_engine_id', 'car_transmission_id', 'car_gear_id', 'car_generation_id', 'car_series_id', 'car_modification_id'];
 
-        foreach ($car_fields as $car_field){
-            if(!isset($applicationData[$car_field])){
+        foreach ($car_fields as $car_field) {
+            if (!isset($applicationData[$car_field])) {
                 $applicationData[$car_field] = null;
             }
         }
-
+//        dump($application);
 //        dd($applicationData);
 
 
@@ -838,7 +844,7 @@ class ApplicationController extends AppController
                 'client_id' => $client->id,
                 'issued_at' => $request->app_data['issued_at']
             ]);
-            if($application->issuance()){
+            if ($application->issuance()) {
                 $application->issuance()->delete();
             }
             Toastr::success(__('Issued.'));
@@ -848,32 +854,39 @@ class ApplicationController extends AppController
             return redirect()->back();
         }
     }
-    public function markNotificationAsRead(Request $request){
-        if($request->has('notification')){
-           auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
+
+    public function markNotificationAsRead(Request $request)
+    {
+        if ($request->has('notification')) {
+            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
         }
     }
-    public function getModelChatContent(Request $request,$application_id)
+
+    public function getModelChatContent(Request $request, $application_id)
     {
-        $htmlRender = $this->renderModal('notifications.modalchat', $request,$application_id);
-        if($htmlRender==null){
+        $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
+        if ($htmlRender == null) {
             return null;
         }
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
-    public function sendChatMessage(Request $request,$application_id){
+
+    public function sendChatMessage(Request $request, $application_id)
+    {
 
         return $request->all();
     }
-    public function getModelContent(Request $request,$application_id)
+
+    public function getModelContent(Request $request, $application_id)
     {
-        $htmlRender = $this->renderModal('applications.ajax.modal', $request,$application_id);
-        if($htmlRender==null){
+        $htmlRender = $this->renderModal('applications.ajax.modal', $request, $application_id);
+        if ($htmlRender == null) {
             return null;
         }
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
-    public function renderModal($path,Request $request,$application_id)
+
+    public function renderModal($path, Request $request, $application_id)
     {
         $this->markNotificationAsRead($request);
         $application = Application::where('id', $application_id)
@@ -906,6 +919,7 @@ class ApplicationController extends AppController
         }
         return null;
     }
+
     public function checkDuplicate(Request $request)
     {
 
@@ -962,7 +976,7 @@ class ApplicationController extends AppController
                 ['car_marks.is_active', 1],
                 ['car_marks.car_type_id', $type_id],
                 ['car_generations.year_begin', '>=', 1990],
-                ['car_generations.year_end', '<=', 2020],
+                ['car_generations.year_end', '<=', 2022],
             ])
                 ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
                 ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
@@ -970,7 +984,8 @@ class ApplicationController extends AppController
                 ->groupBy('car_marks.id', 'car_marks.name')
                 ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
                 ->get();
-        } else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8) {
+//        } else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8) {
+        } else if ($type_id != 27 ) {
             $carMarks = CarMark::where([
                 ['car_marks.is_active', 1],
                 ['car_marks.car_type_id', $type_id],
@@ -981,7 +996,7 @@ class ApplicationController extends AppController
                 ->get();
         }
 
-        if (count($carMarks) > 0 && $type_id != 5) {
+        if (count($carMarks) > 0 && $type_id != 27) {
             $carMarks = CarMark::setLogo($carMarks);
             return $carMarks;
         }
@@ -1369,10 +1384,13 @@ class ApplicationController extends AppController
             'carGears'
         );
     }
-    public function approved(Request $request){
-        ApplicationHasPending::where('application_id',$request->appId)->delete();
+
+    public function approved(Request $request)
+    {
+        ApplicationHasPending::where('application_id', $request->appId)->delete();
         return redirect()->back();
     }
+
     public function assignStatus(Request $request): bool
     {
         if (auth()->user()->hasRole(['SuperAdmin', 'Admin'])) {
@@ -1389,7 +1407,7 @@ class ApplicationController extends AppController
     {
 
         $app = null;
-        if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager','Moderator'])) {
+        if (auth()->user()->hasRole(['SuperAdmin', 'Admin', 'Manager', 'Moderator'])) {
 
             $app = Application::find($request->appid);
             if ($app) {

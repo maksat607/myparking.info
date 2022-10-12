@@ -180,7 +180,7 @@ class PartnerController extends AppController
      */
     public function update(Request $request, $id)
     {
-//$request->dd();
+
         if (!$request->has('status')) {
             $request->request->add(['status' => 0]);
         } else {
