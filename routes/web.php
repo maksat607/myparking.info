@@ -17,12 +17,13 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserChildrenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewRequestController;
-use App\Models\Partner;
+use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use App\Enums\Message;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,6 +38,19 @@ use Illuminate\Support\Facades\Route;
  * Auth routes
  */
 
+Route::get('/test', function () {
+    $item = Application::find(4142);
+    $item = Application::find(4118);
+
+
+    $message = new Message($item,null,User::find(3));
+    $message->users->map(function ($item){
+        dump($item->email);
+        dump($item->getRole());
+        dump(99999999999999);
+    });
+    dd($message);
+});
 
 
 
