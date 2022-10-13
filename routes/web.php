@@ -38,12 +38,12 @@ use App\Enums\Message;
  * Auth routes
  */
 
-Route::get('/test', function () {
+Route::get('/test/{id}/{user}', function ($id,$user) {
     $item = Application::find(4142);
-    $item = Application::find(4118);
+    $item = Application::find($id);
 
 
-    $message = new Message($item,null,User::find(3));
+    $message = new Message($item,null,User::find($user));
     $message->users->map(function ($item){
         dump($item->email);
         dump($item->getRole());
