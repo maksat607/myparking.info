@@ -36,7 +36,7 @@ use Illuminate\Validation\Rule;
 use Zip;
 use Illuminate\Filesystem\Filesystem;
 use Session;
-
+use App\Helpers\ParseString;
 class ApplicationController extends AppController
 {
     protected $AttachmentController;
@@ -44,8 +44,14 @@ class ApplicationController extends AppController
 
     public function __construct(ExportInterface $exporter, AttachmentController $AttachmentController)
     {
+
+
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
+
+
+
+
 
 //        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
         /*        $this->middleware(['permission:application_view'])->only('index', 'show');
@@ -80,7 +86,6 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
-
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
@@ -871,10 +876,15 @@ class ApplicationController extends AppController
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 
-    public function sendChatMessage(Request $request, $application_id)
+    public function sendChatMessage(Request $request, Application $application)
     {
+        $message = [
+            'user_id'=>auth()->id(),
+            'message'=>$request->message
+        ];
 
-        return $request->all();
+//        $application->notify($message);
+        return ['date'=>now()->format('d.m.Y H:i'),'role'=>auth()->user()->getRole()];
     }
 
     public function getModelContent(Request $request, $application_id)

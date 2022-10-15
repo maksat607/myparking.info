@@ -23,7 +23,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Enums\Message;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,18 +38,9 @@ use App\Enums\Message;
  * Auth routes
  */
 
-Route::get('/test/{id}/{user}', function ($id,$user) {
-    $item = Application::find(4142);
-    $item = Application::find($id);
+Route::get('/test', function () {
 
-
-    $message = new Message($item,null,User::find($user));
-    $message->users->map(function ($item){
-        dump($item->email);
-        dump($item->getRole());
-        dump(99999999999999);
-    });
-    dd($message);
+//    foreach ()
 });
 
 
@@ -236,7 +227,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
-    Route::post('/application/send-chat-message/{application_id}', [ApplicationController::class, 'sendChatMessage'])
+    Route::post('/application/send-chat-message/{application}', [ApplicationController::class, 'sendChatMessage'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
     Route::get('/application/get-model-content-app-chat/{application_id}', [ApplicationController::class, 'getModelChatContent'])

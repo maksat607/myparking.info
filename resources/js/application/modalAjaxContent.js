@@ -18,6 +18,7 @@ const modalAjaxContent = {
 
     },
     sendMessage(e) {
+        let self = e.data.self;
         let applicationId = $(this).data('app-id');
         let message = $('#message').val();
 
@@ -103,14 +104,25 @@ const modalAjaxContent = {
         });
     },
     appendToModalChat(message) {
+
         let html = `
         <div class="chat__item user-mess">
-                                    <div class="chat__mess">
 
-           </div>
-        </div>
+                                    <div class="d-flex">
+                                        <div class="chat__user-img">
+                                            <img src="./assets/img/avatar.png" alt="">
+                                        </div>
+                                        <div class="chat__user-info">
+                                            <div class="chat__user-name">Менеджер (Вы)</div>
+                                            <div class="chat__date">01.01.2021 12:49</div>
+                                        </div>
+                                    </div>
+                                    <div class="chat__mess">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                                        tempor incididunt ut labore et dolore magna aliqua.
+                                    </div>
         `;
-        $('.chat__list .chat__item.user-mess')
+        $('.chat__list').append(html);
     },
     setHtml(html, classname) {
         $(`${classname}`).empty();

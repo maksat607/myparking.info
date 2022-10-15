@@ -2,16 +2,17 @@
 
 namespace App\Providers;
 
+use App\Helpers\HideUser;
 use App\Models\Application;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\TelegramNotification;
 use App\View\Composers\ApplicationFilterComposer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use DB;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,7 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->singleton(HideUser::class,function(){
+            return new HideUser();
+        });
+        $this->app->singleton(TelegramNotification::class,function(){
+            return new TelegramNotification();
+        });
     }
 
     /**
