@@ -8,7 +8,8 @@ use Carbon\Carbon;
 
 class Message
 {
-    public $users;
+    public $users = [];
+    public $someusers;
     private $user;
     private $application;
     private $applicationView = [];
@@ -62,9 +63,14 @@ class Message
         'viewRequestLong3' => "DATE в TIME... Авто car_title (VIN vin_number) не осмотрено.",
     ];
 
-    public function __construct($application = null, $itemView = null)
+    public function __construct($application = null, $itemView = null, $user = null)
     {
-        $this->user = auth()->user();
+        if($user !=null){
+            $this->user = $user;
+        }else{
+            $this->user = auth()->user();
+        }
+
         $this->application = $application;
         $this->applicationView = $itemView;
         if ($application == null && $itemView != null) {
@@ -150,22 +156,27 @@ class Message
     {
 
         $users = collect([]);
+        $permission = $this->getPermission();
+////////  Getting Users by Partner
         if ($this->application->partner && $this->application->partner->user) {
-            $users = $this->application->partner->user->children;
+            $users = $users->merge($this->application->partner->user->children);
             $users->push($this->application->partner->user);
         }
+        $users = $users->filter();
+////////  Getting Users by Parking
+        $users = $users->merge($this->application->parking->owner->children);
+        $user_managers = $this->application->parking->managers;
+        $user_managers = $user_managers->filter();
 
-        if ($this->application->createdUser->owner) {
-            $users = $this->application->createdUser->owner->children;
-            $users->push($this->application->createdUser->owner);
-        } else {
-            $users->push($this->application->createdUser);
-        }
+        $users->push($this->application->parking->owner);
+
+        $users = collect(($users->filter()))->reject(function ($user) use ($permission,$user_managers) {
+            return $user->getRole()=='Manager';
+        })->merge($user_managers);
 
         $users = $users->push(User::find($this->superAdmin));
         $users = $users->unique('id')->all();
 
-        $permission = $this->getPermission();
         $users = collect(array_filter($users))->reject(function ($user) use ($permission) {
             return !$user->hasPermissionTo($permission);
         });

@@ -17,7 +17,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserChildrenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewRequestController;
-use App\Models\Partner;
+use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,10 @@ use Illuminate\Support\Facades\Route;
  * Auth routes
  */
 
+Route::get('/test', function () {
+
+//    foreach ()
+});
 
 
 
@@ -222,7 +227,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/application/get-model-content/{application_id}', [ApplicationController::class, 'getModelContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
-    Route::post('/application/send-chat-message/{application_id}', [ApplicationController::class, 'sendChatMessage'])
+    Route::post('/application/send-chat-message/{application}', [ApplicationController::class, 'sendChatMessage'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
     Route::get('/application/get-model-content-app-chat/{application_id}', [ApplicationController::class, 'getModelChatContent'])

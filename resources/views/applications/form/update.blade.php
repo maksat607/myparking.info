@@ -291,7 +291,7 @@
                                                 </div>
                                             </fieldset>
                                             <fieldset class="tabform__cart select car_mark_id fieldset new-style-model ml-auto" id="marks" data-id="selectGroup">
-                                                <legend class="legend">=={{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
+                                                <legend class="legend">{{ __('The brand of the car...') }} <span class="mob-arrow"></span></legend>
                                                 <div class="tabform__mob-dd type-card">
                                                     <input type="text" placeholder="Поиск" class="select-search">
                                                     <ul class="tabform__ul select-list type-list car-mark" data-placeholder="Выберите тип авто">
