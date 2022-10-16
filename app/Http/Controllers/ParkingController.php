@@ -142,6 +142,7 @@ class ParkingController extends AppController
             ->without('owner')
             ->orderBy('name', 'ASC')
             ->get();
+
         $title = __('Edit parking :Parking', ['parking' => $parking->title]);
 
         return view('parkings.edit', compact('parking', 'legals', 'users', 'title'));

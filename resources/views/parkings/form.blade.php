@@ -100,12 +100,14 @@
                                 </label>
 
                             </div>
+
                             @hasanyrole('SuperAdmin|Admin')
                             <div class="col-6 mt-3">
                                 <label for="user" class="field-style">
                                     <span>{{ __('Users') }}</span>
                                     <select class="page-select multiple @error('users') is-invalid @enderror"
                                             name="users[]" id="users" multiple required>
+
                                         @foreach($users as $user)
                                             <option
                                                 value="{{ $user->id }}"
@@ -127,7 +129,7 @@
 
 
                 </div>
-     
+
             </div>
         </div>
     </div>
