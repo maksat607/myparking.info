@@ -6,6 +6,7 @@ use App\Models\Role;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\View;
 use Session;
 class LoginSuccessful
 {
@@ -35,10 +36,7 @@ class LoginSuccessful
             else
                 $sessionArr[$role."Hide"] = '';
         }
-
         session($sessionArr);
-
-
 
     }
 }

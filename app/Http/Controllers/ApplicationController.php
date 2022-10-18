@@ -23,6 +23,9 @@ use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
+use App\Models\ViewRequest;
+use App\Notifications\ApplicationNotifications;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Toastr;
@@ -78,7 +81,53 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
+    public function totals($statuses, ApplicationFilters $filters, $status_id = null){
 
+        $app_ids = [];
+        $viewRequests = ViewRequest::viewRequests()->with(['application']);
+        $viewRequests->get()->map(function ($r) use (&$app_ids){
+            if($r->applicationWithParking()!=false){
+                $app_ids[] = $r->applicationWithParking()->id;
+            }
+        });
+
+        $viewRequestsTotal = $viewRequests
+            ->whereHas('application', function(Builder $query) use ($filters){
+                $query->filter($filters);
+            })
+            ->whereIn('application_id',$app_ids)
+            ->orderBy('updated_at', 'desc')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString()->total();
+        ;
+
+        $issuanceTotal = Application::applications()
+            ->filter($filters)
+            ->where('status_id','!=',8)
+            ->whereHas('issuance')
+            ->count();
+        $totals = Application::
+        applications()
+            ->filter($filters)
+            ->when(!$status_id, function ($query) use ($statuses) {
+                return $query->whereIn('status_id', $statuses);
+            })
+            ->groupBy('status_id')
+            ->selectRaw('count(*) as total, status_id')
+            ->pluck('total','status_id')
+            ->toArray()
+            ;
+        foreach ($statuses as $status){
+            if(!isset($totals[$status])){
+                $totals[$status] = 0;
+            }
+        }
+        $totals[10] = array_sum($totals);
+        $totals[11] = $issuanceTotal;
+        $totals[12] = $viewRequestsTotal;
+        return $totals;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -92,14 +141,17 @@ class ApplicationController extends AppController
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
         $status_name = ($status) ? $status->name : 'Все';
         $status_sort = ($status) ? $status->status_sort : 'arriving_at';
+        $totals = $this->totals($statuses,  $filters, $status_id);
+//        dump($total);
+        $r = [];
         $applications = Application::
         applications()
             ->filter($filters)
-            ->when($status_id, function ($query, $status_id) {
-                return $query->where('status_id', $status_id);
-            })
             ->when(!$status_id, function ($query) use ($statuses) {
                 return $query->whereIn('status_id', $statuses);
+            })
+            ->when($status_id, function ($query, $status_id) {
+                return $query->where('status_id', $status_id);
             })
             ->with('parking')
             ->with('issuedBy')
@@ -114,7 +166,6 @@ class ApplicationController extends AppController
             ->with('viewRequests')
             ->orderBy($status_sort, 'desc')
             ->paginate(config('app.paginate_by', '25'))->withQueryString();
-
 
         foreach ($applications as $key => $item) {
             $pricing = Pricing::where([
@@ -132,11 +183,11 @@ class ApplicationController extends AppController
         $title = __($status_name);
         switch ($request->get('direction', 'column')) {
             case 'table':
-                return view('applications.index_table', compact('title', 'applications'));
+                return view('applications.index_table', compact('title', 'applications','totals'));
             case 'row':
-                return view('applications.index_row', compact('title', 'applications'));
+                return view('applications.index_row', compact('title', 'applications','totals'));
             default:
-                return view('applications.index', compact('title', 'applications'));
+                return view('applications.index', compact('title', 'applications','totals'));
         }
     }
 
@@ -482,7 +533,7 @@ class ApplicationController extends AppController
         // return $request->all();
 
         $application = Application::application($id)->firstOrFail();
-        $this->authorize('update', $application);
+//        $this->authorize('update', $application);
 
         if ($request->has('doc') && $request->doc == 'true') {
             request()->request->remove('doc');
@@ -869,6 +920,7 @@ class ApplicationController extends AppController
 
     public function getModelChatContent(Request $request, $application_id)
     {
+//
         $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
         if ($htmlRender == null) {
             return null;
@@ -876,16 +928,7 @@ class ApplicationController extends AppController
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 
-    public function sendChatMessage(Request $request, Application $application)
-    {
-        $message = [
-            'user_id'=>auth()->id(),
-            'message'=>$request->message
-        ];
 
-//        $application->notify($message);
-        return ['date'=>now()->format('d.m.Y H:i'),'role'=>auth()->user()->getRole()];
-    }
 
     public function getModelContent(Request $request, $application_id)
     {
@@ -1438,4 +1481,20 @@ class ApplicationController extends AppController
 
         return $app;
     }
+
+    public function sendChatMessage(Request $request, Application $application)
+    {
+        $message = [
+            'user_id'=>auth()->id(),
+            'message'=>$request->message
+        ];
+        $application->notify(new ApplicationNotifications($message));
+        if($request->has('moderator')){
+            return redirect()->back()->with('success', 'Отправлено');
+        }
+        $htmlRender = view('components.messages', compact('application'))->render();
+        return response()->json(['success' => true, 'html' => $htmlRender]);
+    }
+
+
 }

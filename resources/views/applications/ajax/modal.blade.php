@@ -366,7 +366,7 @@
                     <input type="hidden" id="appId" value="{{$application->id}}">
                     <input type="hidden" id="appIdModal" value="{{$application->id}}">
                     <div class="page-file-list" id="images">
-                        <div class="page-add-file add-images">
+                        <div class="page-add-file upload-file add-images">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.6"
@@ -591,7 +591,7 @@
                     </form>
 
                     <div class="page-file-list" id="images">
-                        <div class="page-add-file docs">
+                        <div class="page-add-file upload-file docs">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.6"

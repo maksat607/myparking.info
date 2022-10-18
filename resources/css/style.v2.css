@@ -1425,7 +1425,7 @@ span.car-show-info {
 
 .chat__list {
     display: flex;
-    flex-direction: column;
+    flex-direction:column-reverse;
     overflow: auto;
     padding-right: 5px;
     margin-bottom: 10px;

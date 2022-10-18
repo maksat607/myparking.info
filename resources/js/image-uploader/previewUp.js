@@ -8,9 +8,7 @@ const imageUpload = {
     docs:null,
     files:null,
     init() {
-
-
-        $(`body`).on('click', `.page-add-file`,{self:this}, function (e) {
+        $(`body`).on('click', `.upload-file`,{self:this}, function (e) {
             let self = e.data.self;
             if($(this).hasClass("docs")){
                 self.doc = true;
@@ -53,18 +51,19 @@ const imageUpload = {
             }
             self.files = this.files;
             console.log($('#appId').length)
+            console.log("$('#appId').length")
 
             if ($('#appId').length){
                 console.log('inside')
                 fd.append('doc', self.doc);
                 self.form = fd;
                 self.appId = $('#appId').val();
-
-                self.uploadImage().then( v => {
-                    console.log(v)
-                    self.docs = v;
-                    self.loopFiles();
-                });
+                console.log(fd)
+                // self.uploadImage().then( v => {
+                //     console.log(v)
+                //     self.docs = v;
+                //     self.loopFiles();
+                // });
             }
 
 

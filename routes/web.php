@@ -193,6 +193,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/car/characteristic/gear/{modification_id}', [CarController::class, 'carGearList']);
 
     /*Applications*/
+    Route::post('/message/{application}', [ApplicationController::class, 'message'])->name('application.message');
     Route::get('/applications/{status_id?}', [ApplicationController::class, 'index'])
         ->where('status_id', '[0-9]+')
         ->middleware(['check_legal', 'check_child_owner_legal'])

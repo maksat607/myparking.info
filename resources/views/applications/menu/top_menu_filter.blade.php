@@ -20,39 +20,47 @@
 
 <div class="container">
     <ul class="page-nav">
-        <li class="page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 2,'search'=>request()->get('search')]) }}"
                class="page-nav__link">Хранение</a>
+            <div class="notification__count mk">{{ $totals[2] }}</div>
         </li>
-        <li class="page-nav__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 1,'search'=>request()->get('search')]) }}"
                class="page-nav__link">Черновики</a>
+            <div class="notification__count mk">{{ $totals[1] }}</div>
         </li>
-        <li class="page-nav__item{{ (request()->route('status_id') == 7) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 7) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 7,'search'=>request()->get('search')]) }}"
                class="page-nav__link">Постановка</a>
+            <div class="notification__count mk">{{ $totals[7] }}</div>
         </li>
-        <li class="page-nav__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->routeIs('issue_requests.index')) ? ' active' : '' }}">
             <a href="{{ route('issue_requests.index',['search'=>request()->get('search')]) }}" class="page-nav__link">На
                 выдачу</a>
+            <div class="notification__count mk">{{ $totals[11] }}</div>
         </li>
-        <li class="page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
             <a href="{{ route('view_requests.index',['search'=>request()->get('search')]) }}" class="page-nav__link">Осмотр</a>
+            <div class="notification__count mk">{{ $totals[12] }}</div>
         </li>
         @unlessrole('Operator')
-        <li class="page-nav__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 3,'search'=>request()->get('search')]) }}"
                class="page-nav__link">Выдано</a>
+            <div class="notification__count mk">{{ $totals[3] }}</div>
         </li>
         @endunlessrole
-        <li class="page-nav__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
             <a href="{{ route('applications.index', ['status_id' => 6,'search'=>request()->get('search')]) }}"
                class="page-nav__link">Отклонено</a>
+            <div class="notification__count mk">{{ $totals[6] }}</div>
         </li>
-        <li class="page-nav__item{{
+        <li class="notification page-nav__item{{
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">
             <a href="{{ route('applications.index',[ 'search'=>request()->get('search') ]) }}" class="page-nav__link">Все</a>
+            <div class="notification__count mk">{{ $totals[10] }}</div>
         </li>
     </ul>
     <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">

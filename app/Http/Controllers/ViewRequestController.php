@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Filter\ApplicationFilters;
 use App\Models\Application;
+use App\Models\Status;
 use App\Models\ViewRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -18,7 +19,36 @@ class ViewRequestController extends AppController
     {
         $this->AttachmentController = $AttachmentController;
     }
+    public function totals( ApplicationFilters $filters, $status_id = null){
+        $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
+        $issuanceTotal = Application::applications()
+            ->filter($filters)
+            ->where('status_id','!=',8)
+            ->whereHas('issuance')
+            ->count();
+
+        $totals = Application::
+        applications()
+            ->filter($filters)
+            ->when(!$status_id, function ($query) use ($statuses) {
+                return $query->whereIn('status_id', $statuses);
+            })
+            ->groupBy('status_id')
+            ->selectRaw('count(*) as total, status_id')
+            ->pluck('total','status_id')
+            ->toArray()
+        ;
+        foreach ($statuses as $status){
+            if(!isset($totals[$status])){
+                $totals[$status] = 0;
+            }
+        }
+        $totals[10] = array_sum($totals);
+        $totals[11] = $issuanceTotal;
+        return $totals;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -41,9 +71,10 @@ class ViewRequestController extends AppController
             ->whereIn('application_id',$app_ids)
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString()
+            ->withQueryString();
             ;
-
+        $totals = $this->totals($filters);
+        $totals[12] = $viewRequests->total();
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )
@@ -53,7 +84,7 @@ class ViewRequestController extends AppController
         /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
         } else {*/
-            return view('view_request.index', compact('title', 'viewRequests'));
+            return view('view_request.index', compact('title', 'viewRequests','totals'));
         /*}*/
     }
 

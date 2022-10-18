@@ -6,6 +6,8 @@ use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
+use App\Models\Status;
+use App\Models\ViewRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,6 +15,58 @@ use Toastr;
 
 class IssueRequestController extends AppController
 {
+    public function totals( ApplicationFilters $filters, $status_id = null){
+        $app_ids = [];
+        $viewRequests = ViewRequest::viewRequests()->with(['application']);
+        $viewRequests->get()->map(function ($r) use (&$app_ids){
+            if($r->applicationWithParking()!=false){
+                $app_ids[] = $r->applicationWithParking()->id;
+            }
+        });
+
+        $viewRequestsTotal = $viewRequests
+            ->whereHas('application', function(Builder $query) use ($filters){
+                $query->filter($filters);
+            })
+            ->whereIn('application_id',$app_ids)
+            ->orderBy('updated_at', 'desc')
+            ->paginate( config('app.paginate_by', '25') )
+            ->withQueryString()->total()
+        ;
+
+
+
+
+        $statuses = Status::where('is_active', true)->pluck('id')->toArray();
+
+        $issuanceTotal = Application::applications()
+            ->filter($filters)
+            ->where('status_id','!=',8)
+            ->whereHas('issuance')
+            ->count();
+
+        $totals = Application::
+        applications()
+            ->filter($filters)
+            ->when(!$status_id, function ($query) use ($statuses) {
+                return $query->whereIn('status_id', $statuses);
+            })
+            ->groupBy('status_id')
+            ->selectRaw('count(*) as total, status_id')
+            ->pluck('total','status_id')
+            ->toArray()
+        ;
+        foreach ($statuses as $status){
+            if(!isset($totals[$status])){
+                $totals[$status] = 0;
+            }
+        }
+        $totals[10] = array_sum($totals);
+        $totals[11] = $issuanceTotal;
+        $totals[12] = $viewRequestsTotal;
+        return $totals;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,15 +74,7 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        /*$issueRequests = IssueAcception::issuances()
-            ->with(['application'])
-            ->where('is_issue', true)
-            ->whereHas('application', function(Builder $query) use ($filters){
-                $query->filter($filters);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();*/
+        $totals = $this->totals($filters);
         $applications = Application::applications()
             ->where('status_id','!=',8)
             ->with(['attachments', 'partner', 'parking', 'acceptions', 'issuance', 'viewRequests'])
@@ -46,11 +92,11 @@ class IssueRequestController extends AppController
         }*/
         switch ($request->get('direction', 'column')) {
             case 'table':
-                return view('applications.index_table', compact('title', 'applications'));
+                return view('applications.index_table', compact('title', 'applications','totals'));
             case 'row':
-                return view('applications.index_row', compact('title', 'applications'));
+                return view('applications.index_row', compact('title', 'applications','totals'));
             default:
-                return view('applications.index', compact('title', 'applications'));
+                return view('applications.index', compact('title', 'applications','totals'));
         }
     }
     /**
