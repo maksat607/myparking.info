@@ -42,20 +42,14 @@ class ApplicationFilterComposer
     public function filterVariables()
     {
 
-        $variables = array_filter([
+        $filters = array_filter([
             'search' => request()->get('search'),
             'partner' => request()->get('partner'),
             'parking' => request()->get('parking'),
             'favorite' => request()->get('favorite')
         ]);
-        if (request()->has('uncheckFilters')) {
-            foreach ($variables as $key=>$variable){
-                request()->request->remove($key);
-            }
-            $variables = [];
-        }
 
-        return $variables;
+        return $filters;
     }
 
     public function compose(View $view)

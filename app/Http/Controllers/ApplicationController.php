@@ -68,6 +68,9 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+        if (request()->has('uncheckFilters')) {
+              return redirect()->to(url()->current());
+        }
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 

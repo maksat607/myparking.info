@@ -27,6 +27,9 @@ class ViewRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
+        if (request()->has('uncheckFilters')) {
+            return redirect()->to(url()->current());
+        }
         $app_ids = [];
         $viewRequests = ViewRequest::viewRequests()->with(['application']);
         $viewRequests->get()->map(function ($r) use (&$app_ids){

@@ -1,4 +1,4 @@
-{{--@dump($filters)--}}
+{{--@dd($filters)--}}
 {{--@dump(request()->toArray())--}}
 <div class="container page-head-wrap">
     <div class="page-head">
@@ -23,17 +23,17 @@
 <div class="container">
     <ul class="page-nav">
         <li class="notification page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', array_merge(['status_id'=>2],$filters)) }}"
+            <a href="{{ route('applications.index', array_merge(['status_id'=>2],$filters??[])) }}"
                class="page-nav__link">Хранение</a>
             <div class="notification__count mk">{{ $totals[2] }}</div>
         </li>
         <li class="notification page-nav__item{{ (request()->route('status_id') == 1) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', array_merge(['status_id'=>1],$filters)) }}"
+            <a href="{{ route('applications.index', array_merge(['status_id'=>1],$filters??[])) }}"
                class="page-nav__link">Черновики</a>
             <div class="notification__count mk">{{ $totals[1] }}</div>
         </li>
         <li class="notification page-nav__item{{ (request()->route('status_id') == 7) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', array_merge(['status_id'=>7],$filters)) }}"
+            <a href="{{ route('applications.index', array_merge(['status_id'=>7],$filters??[])) }}"
                class="page-nav__link">Постановка</a>
             <div class="notification__count mk">{{ $totals[7] }}</div>
         </li>
@@ -43,25 +43,25 @@
             <div class="notification__count mk">{{ $totals[11] }}</div>
         </li>
         <li class="notification page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
-            <a href="{{ route('view_requests.index',$filters) }}" class="page-nav__link">Осмотр</a>
+            <a href="{{ route('view_requests.index',$filters??[]) }}" class="page-nav__link">Осмотр</a>
             <div class="notification__count mk">{{ $totals[12] }}</div>
         </li>
         @unlessrole('Operator')
         <li class="notification page-nav__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', array_merge(['status_id'=>3],$filters)) }}"
+            <a href="{{ route('applications.index', array_merge(['status_id'=>3],$filters??[])) }}"
                class="page-nav__link">Выдано</a>
             <div class="notification__count mk">{{ $totals[3] }}</div>
         </li>
         @endunlessrole
         <li class="notification page-nav__item{{ (request()->route('status_id') == 6) ? ' active' : '' }}">
-            <a href="{{ route('applications.index', array_merge(['status_id'=>6],$filters)) }}"
+            <a href="{{ route('applications.index', array_merge(['status_id'=>6],$filters??[])) }}"
                class="page-nav__link">Отклонено</a>
             <div class="notification__count mk">{{ $totals[6] }}</div>
         </li>
         <li class="notification page-nav__item{{
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">
-            <a href="{{ route('applications.index',$filters) }}" class="page-nav__link">Все</a>
+            <a href="{{ route('applications.index',$filters??[]) }}" class="page-nav__link">Все</a>
             <div class="notification__count mk">{{ $totals[10] }}</div>
         </li>
     </ul>

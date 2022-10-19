@@ -23,7 +23,9 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-
+        if (request()->has('uncheckFilters')) {
+            return redirect()->to(url()->current());
+        }
         $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
         $applications = Application::applications()
             ->where('status_id','!=',8)
