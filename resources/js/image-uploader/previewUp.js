@@ -58,12 +58,12 @@ const imageUpload = {
                 fd.append('doc', self.doc);
                 self.form = fd;
                 self.appId = $('#appId').val();
-                console.log(fd)
-                // self.uploadImage().then( v => {
-                //     console.log(v)
-                //     self.docs = v;
-                //     self.loopFiles();
-                // });
+
+                self.uploadImage().then( v => {
+                    console.log(v)
+                    self.docs = v;
+                    self.loopFiles();
+                });
             }
 
 

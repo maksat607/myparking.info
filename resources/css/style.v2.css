@@ -558,6 +558,9 @@ body {
 .checkbox-chosen:checked+svg path {
     fill: #F2994A;
 }
+svg.checkbox-chosen-filter path{
+    fill: #F2994A;
+}
 
 .custom-input-btn:checked+svg path {
     fill: #F2994A;

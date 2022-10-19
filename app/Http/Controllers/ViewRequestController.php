@@ -6,6 +6,7 @@ use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\Status;
 use App\Models\ViewRequest;
+use App\Services\ApplicationTotalsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -18,36 +19,6 @@ class ViewRequestController extends AppController
     public function __construct(AttachmentController $AttachmentController)
     {
         $this->AttachmentController = $AttachmentController;
-    }
-    public function totals( ApplicationFilters $filters, $status_id = null){
-        $statuses = Status::where('is_active', true)->pluck('id')->toArray();
-
-        $issuanceTotal = Application::applications()
-            ->filter($filters)
-            ->where('status_id','!=',8)
-            ->whereHas('issuance')
-            ->count();
-
-        $totals = Application::
-        applications()
-            ->filter($filters)
-            ->when(!$status_id, function ($query) use ($statuses) {
-                return $query->whereIn('status_id', $statuses);
-            })
-            ->groupBy('status_id')
-            ->selectRaw('count(*) as total, status_id')
-            ->pluck('total','status_id')
-            ->toArray()
-        ;
-        foreach ($statuses as $status){
-            if(!isset($totals[$status])){
-                $totals[$status] = 0;
-            }
-        }
-        $totals[10] = array_sum($totals);
-        $totals[11] = $issuanceTotal;
-        return $totals;
-
     }
     /**
      * Display a listing of the resource.
@@ -73,8 +44,7 @@ class ViewRequestController extends AppController
             ->paginate( config('app.paginate_by', '25') )
             ->withQueryString();
             ;
-        $totals = $this->totals($filters);
-        $totals[12] = $viewRequests->total();
+        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )

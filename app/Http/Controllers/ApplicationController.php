@@ -25,6 +25,7 @@ use App\Models\Status;
 use App\Models\User;
 use App\Models\ViewRequest;
 use App\Notifications\ApplicationNotifications;
+use App\Services\ApplicationTotalsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -53,9 +54,6 @@ class ApplicationController extends AppController
         $this->exporter = $exporter;
 
 
-
-
-
 //        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
         /*        $this->middleware(['permission:application_view'])->only('index', 'show');
                 $this->middleware(['permission:application_create'])->only('create', 'store');
@@ -63,71 +61,6 @@ class ApplicationController extends AppController
                 $this->middleware(['permission:application_delete'])->only('destroy');*/
     }
 
-    public function download_zipped_photos(Application $application)
-    {
-        $file = new Filesystem;
-        $file->cleanDirectory(public_path("downloads"));
-        $zip_file = "downloads/{$application->car_title}.zip";
-        $zip = new \ZipArchive();
-        $zip->open(public_path($zip_file), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-
-        foreach ($application->attachments as $file) {
-            $zip->addFile(public_path("uploads/{$file->name}"), $file->name);
-        }
-        $hasFile = $zip->numFiles;
-        $zip->close();
-
-        return $hasFile > 0 ?
-            response()->download(($zip_file)) :
-            redirect()->back()->with('warning', 'Фотографии нету:(');
-    }
-    public function totals($statuses, ApplicationFilters $filters, $status_id = null){
-
-        $app_ids = [];
-        $viewRequests = ViewRequest::viewRequests()->with(['application']);
-        $viewRequests->get()->map(function ($r) use (&$app_ids){
-            if($r->applicationWithParking()!=false){
-                $app_ids[] = $r->applicationWithParking()->id;
-            }
-        });
-
-        $viewRequestsTotal = $viewRequests
-            ->whereHas('application', function(Builder $query) use ($filters){
-                $query->filter($filters);
-            })
-            ->whereIn('application_id',$app_ids)
-            ->orderBy('updated_at', 'desc')
-            ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString()->total();
-        ;
-
-        $issuanceTotal = Application::applications()
-            ->filter($filters)
-            ->where('status_id','!=',8)
-            ->whereHas('issuance')
-            ->count();
-        $totals = Application::
-        applications()
-            ->filter($filters)
-            ->when(!$status_id, function ($query) use ($statuses) {
-                return $query->whereIn('status_id', $statuses);
-            })
-            ->groupBy('status_id')
-            ->selectRaw('count(*) as total, status_id')
-            ->pluck('total','status_id')
-            ->toArray()
-            ;
-        foreach ($statuses as $status){
-            if(!isset($totals[$status])){
-                $totals[$status] = 0;
-            }
-        }
-        $totals[10] = array_sum($totals);
-        $totals[11] = $issuanceTotal;
-        $totals[12] = $viewRequestsTotal;
-        return $totals;
-
-    }
     /**
      * Display a listing of the resource.
      *
@@ -141,8 +74,7 @@ class ApplicationController extends AppController
         $status = ($status_id) ? Status::findOrFail($status_id) : null;
         $status_name = ($status) ? $status->name : 'Все';
         $status_sort = ($status) ? $status->status_sort : 'arriving_at';
-        $totals = $this->totals($statuses,  $filters, $status_id);
-//        dump($total);
+        $totals = ApplicationTotalsService::totals($statuses,  $filters, $status_id);
         $r = [];
         $applications = Application::
         applications()
@@ -1495,6 +1427,23 @@ class ApplicationController extends AppController
         $htmlRender = view('components.messages', compact('application'))->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
+    public function download_zipped_photos(Application $application)
+    {
+        $file = new Filesystem;
+        $file->cleanDirectory(public_path("downloads"));
+        $zip_file = "downloads/{$application->car_title}.zip";
+        $zip = new \ZipArchive();
+        $zip->open(public_path($zip_file), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
+        foreach ($application->attachments as $file) {
+            $zip->addFile(public_path("uploads/{$file->name}"), $file->name);
+        }
+        $hasFile = $zip->numFiles;
+        $zip->close();
+
+        return $hasFile > 0 ?
+            response()->download(($zip_file)) :
+            redirect()->back()->with('warning', 'Фотографии нету:(');
+    }
 
 }
