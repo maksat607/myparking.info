@@ -4579,13 +4579,17 @@ body {
     opacity: 0.7;
 }
 
-.checkbox-chosen:checked+svg path {
-    fill: #F2994A;
-}
 svg.checkbox-chosen-filter path{
     fill: #F2994A;
 }
-
+.checkbox-chosen:checked+svg path {
+    fill: #F2994A;
+}
+.horizontal-scrollable{
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 .custom-input-btn:checked+svg path {
     fill: #F2994A;
 }
