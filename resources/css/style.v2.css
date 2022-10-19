@@ -558,6 +558,9 @@ body {
 .checkbox-chosen:checked+svg path {
     fill: #F2994A;
 }
+svg.checkbox-chosen-filter path{
+    fill: #F2994A;
+}
 
 .custom-input-btn:checked+svg path {
     fill: #F2994A;
@@ -1425,7 +1428,7 @@ span.car-show-info {
 
 .chat__list {
     display: flex;
-    flex-direction: column;
+    flex-direction:column-reverse;
     overflow: auto;
     padding-right: 5px;
     margin-bottom: 10px;

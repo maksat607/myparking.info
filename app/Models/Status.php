@@ -37,6 +37,9 @@ class Status extends Model
         return false;
 
     }
+    public function scopeActiveStatuses(){
+        return $this->where('is_active', true)->pluck('id')->toArray();
+    }
     public function getCanAssignAttribute($value)
     {
         if (auth()->check()) {

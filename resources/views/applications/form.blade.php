@@ -195,7 +195,7 @@
                                 <input type="text" name="car_data[sts]" id="sts" placeholder="XTA210600C000001">
                                 <label class="tabform__checkbox">
                                     <input type="checkbox" name="car_data[sts_provided]" value="1">
-                                    <span class="tabform__checkboxnew"></span> Принят на хранение
+                                    <span class="tabform__checkboxnew"></span> @if(auth()->user()->hasRole(['Partner','PartnerOperator']))Принят на хранение @else
                                 </label>
                             </div>
                             <div class="tabform__inputwrap w-100">

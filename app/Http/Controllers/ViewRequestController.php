@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Filter\ApplicationFilters;
 use App\Models\Application;
+use App\Models\Status;
 use App\Models\ViewRequest;
+use App\Services\ApplicationTotalsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -18,7 +20,6 @@ class ViewRequestController extends AppController
     {
         $this->AttachmentController = $AttachmentController;
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -26,6 +27,9 @@ class ViewRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
+        if (request()->has('uncheckFilters')) {
+            return redirect()->to(url()->current());
+        }
         $app_ids = [];
         $viewRequests = ViewRequest::viewRequests()->with(['application']);
         $viewRequests->get()->map(function ($r) use (&$app_ids){
@@ -41,9 +45,9 @@ class ViewRequestController extends AppController
             ->whereIn('application_id',$app_ids)
             ->orderBy('updated_at', 'desc')
             ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString()
+            ->withQueryString();
             ;
-
+        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
         /*$applications = Application::applications()->filter($filters)
             ->whereHas('viewRequests')
             ->paginate( config('app.paginate_by', '25') )
@@ -53,7 +57,7 @@ class ViewRequestController extends AppController
         /*if($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications'));
         } else {*/
-            return view('view_request.index', compact('title', 'viewRequests'));
+            return view('view_request.index', compact('title', 'viewRequests','totals'));
         /*}*/
     }
 

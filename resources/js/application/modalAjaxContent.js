@@ -15,24 +15,33 @@ const modalAjaxContent = {
         $(`.car-show-modal, .car-show-info, .app-notification, .show-modal-chat`).on('click', {self: this}, this.getModalContent);
         $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.send-mess`, {self: this}, this.sendMessage);
+        $('body').on('keyup', `#message`, {self: this}, this.triggerSubmit);
+    },
+    triggerSubmit(event) {
 
+            if (event.which === 13) {
+                $(".send-mess").trigger('click');
+
+            }
     },
     sendMessage(e) {
+        e.preventDefault();
         let self = e.data.self;
         let applicationId = $(this).data('app-id');
         let message = $('#message').val();
-
+        $('#message').val('');
+        if(message=='') return;
         axios.post(`${APP_URL}/application/send-chat-message/${applicationId}`, {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
             'message': message,
 
         })
             .then(response => {
-                console.log(response.data)
+                console.log(response.data.html)
                 self.appendToModalChat(message);
                 if (response.data.success) {
 
-                    // self.setHtml(response.data.html,'.modal-block');
+                    self.setHtml(response.data.html,'.chat__list');
                     // self.initSlick();
                 }
             }).catch(error => {
@@ -45,7 +54,7 @@ const modalAjaxContent = {
         let applicationId = $(this).data('app-id');
         let applicationTitle = $(this).data('app-title');
         let applicationUserId = $(this).data('app-user-id');
-        let message_url = `${APP_URL}/message/${applicationUserId}`;
+        let message_url = `${APP_URL}/application/send-chat-message/${applicationId}`;
         let notification = $(this).data('notification');
         let additionalVar = '';
 

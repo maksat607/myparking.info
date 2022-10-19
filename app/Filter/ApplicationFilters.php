@@ -4,7 +4,7 @@
 namespace App\Filter;
 
 
-class ApplicationFilters extends QueryFilter
+class   ApplicationFilters extends QueryFilter
 {
     public function partner($id)
     {
