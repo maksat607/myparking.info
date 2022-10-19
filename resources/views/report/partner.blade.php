@@ -61,7 +61,9 @@
             </div>
             <button type="submit" class="btn btn-primary ml-auto">Показать</button>
             <a href="{{ route('report.csv-by-partner', request()->query()) }}" class="btn btn-dowenload"></a>
+            <label class="field-style pl-5">Всего: {{ count($data['data']) -1 }}</label>
         </form>
+
     </div>
 
     <div class="container">

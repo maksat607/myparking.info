@@ -29,6 +29,7 @@
             <button type="submit" class="btn btn-primary ml-auto">Показать</button>
             <a href="{{ route('report.csv-all-partner', request()->query()) }}" class="btn-dowenload"></a>
         </form>
+
     </div>
 
     <div class="container">
