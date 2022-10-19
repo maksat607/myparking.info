@@ -38,6 +38,7 @@
                 <form method="POST" action="" id="messageForm">
                     @csrf
                     <input type="hidden" class="applicationToBeApproved" name="appId">
+                    <input type="hidden" name="moderator" value="true">
                     <div class="scroll-modal mt-11px">
                         <div class="table-modal-head">
                             <label class="field-style">

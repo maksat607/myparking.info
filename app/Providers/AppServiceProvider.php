@@ -28,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TelegramNotification::class,function(){
             return new TelegramNotification();
         });
+        $this->app->singleton(FilterService::class,function(){
+            return new FilterService();
+        });
     }
 
     /**

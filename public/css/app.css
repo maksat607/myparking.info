@@ -1745,10 +1745,21 @@ span.car-show-info {
     line-height: 15px;
     color: #536E9B;
 }
-
+.notification__count.mk {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #fff;
+    background: #F2994A;
+    border-radius: 30px;
+    padding: 2px 4px;
+    position: absolute;
+    top: -8px;
+    right: -23px;
+}
 .chat__list {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow: auto;
     padding-right: 5px;
     margin-bottom: 10px;
@@ -4571,6 +4582,9 @@ body {
 .checkbox-chosen:checked+svg path {
     fill: #F2994A;
 }
+svg.checkbox-chosen-filter path{
+    fill: #F2994A;
+}
 
 .custom-input-btn:checked+svg path {
     fill: #F2994A;
@@ -5440,7 +5454,7 @@ span.car-show-info {
 
 .chat__list {
     display: flex;
-    flex-direction: column;
+    flex-direction:column-reverse;
     overflow: auto;
     padding-right: 5px;
     margin-bottom: 10px;

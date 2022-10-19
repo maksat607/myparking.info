@@ -6,6 +6,9 @@ use App\Filter\ApplicationFilters;
 use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
+use App\Models\Status;
+use App\Models\ViewRequest;
+use App\Services\ApplicationTotalsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,15 +23,10 @@ class IssueRequestController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters)
     {
-        /*$issueRequests = IssueAcception::issuances()
-            ->with(['application'])
-            ->where('is_issue', true)
-            ->whereHas('application', function(Builder $query) use ($filters){
-                $query->filter($filters);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString();*/
+        if (request()->has('uncheckFilters')) {
+            return redirect()->to(url()->current());
+        }
+        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
         $applications = Application::applications()
             ->where('status_id','!=',8)
             ->with(['attachments', 'partner', 'parking', 'acceptions', 'issuance', 'viewRequests'])
@@ -46,11 +44,11 @@ class IssueRequestController extends AppController
         }*/
         switch ($request->get('direction', 'column')) {
             case 'table':
-                return view('applications.index_table', compact('title', 'applications'));
+                return view('applications.index_table', compact('title', 'applications','totals'));
             case 'row':
-                return view('applications.index_row', compact('title', 'applications'));
+                return view('applications.index_row', compact('title', 'applications','totals'));
             default:
-                return view('applications.index', compact('title', 'applications'));
+                return view('applications.index', compact('title', 'applications','totals'));
         }
     }
     /**

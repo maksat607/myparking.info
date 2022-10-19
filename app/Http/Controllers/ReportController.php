@@ -12,7 +12,7 @@ use App\Models\Application;
 use App\Models\Pricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
-use App\Exports\ExcelExport;
+use App\Export\ExcelExport;
 
 use Maatwebsite\Excel\Facades\Excel;
 class ReportController extends Controller
@@ -319,6 +319,7 @@ class ReportController extends Controller
 
         return [
             'columns' => [
+                'id' => '#',
                 'partner' => 'Партнер',
                 'parking' => 'Город',
                 'external_id' => 'Номер убытка',
