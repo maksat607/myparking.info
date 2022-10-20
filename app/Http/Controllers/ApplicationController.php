@@ -1161,6 +1161,7 @@ class ApplicationController extends AppController
      */
     public function duplicate(Request $request, ApplicationFilters $filters)
     {
+        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
         $duplicateIDs = null;
         $groupBy = $request->get('group-by', 'vin');
         if ($groupBy === 'license_plate') {
@@ -1220,9 +1221,9 @@ class ApplicationController extends AppController
 
         $title = __('Duplicate');
         if ($request->get('direction') == 'row') {
-            return view('applications.index_status', compact('title', 'applications'));
+            return view('applications.index_status', compact('title', 'applications','totals'));
         } else {
-            return view('applications.index', compact('title', 'applications'));
+            return view('applications.index', compact('title', 'applications','totals'));
         }
     }
 

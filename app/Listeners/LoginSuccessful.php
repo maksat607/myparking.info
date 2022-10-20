@@ -32,7 +32,7 @@ class LoginSuccessful
         $roles = collect(['SuperAdmin','Admin','Manager','Operator','Partner','PartnerOperator','Moderator']);
         foreach ($roles as $role){
             if($event->user->hasRole($role))
-                $sessionArr[$role."Hide"] = 'd-none';
+                $sessionArr[$role."Hide"] = 'd-remove';
             else
                 $sessionArr[$role."Hide"] = '';
         }

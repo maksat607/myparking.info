@@ -1375,7 +1375,7 @@ span.car-show-info {
     color: #536E9B;
 }
 .d-remove{
-
+    display: none;
 }
 
 .notification__count.mk {
