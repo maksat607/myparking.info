@@ -68,9 +68,10 @@ class UserPolicy
     public function issetPartnerOperator(User $user)
     {
         if($user->hasRole(['Partner', 'PartnerOperator'])) {
-            return ($user->hasRole('Partner') && $user->children()->doesntExist())
-                ? Response::allow()
-                : Response::deny(__('The user already has an Operator!'));
+//            return ($user->hasRole('Partner') && $user->children()->doesntExist())
+//                ? Response::allow()
+//                : Response::deny(__('The user already has an Operator!'));
+            return Response::allow();
         }
 
         return true;
