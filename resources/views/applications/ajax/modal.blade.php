@@ -157,8 +157,8 @@
                    aria-controls="v-pills-tab6" aria-selected="false">Тех. состояние</a>
                 <a class="" id="v-pills-tab10-tab" data-toggle="pill" href="#v-pills-tab10" role="tab"
                    aria-controls="v-pills-tab10" aria-selected="false">Документы</a>
-                <a class="" id="v-pills-tab11-tab" data-toggle="pill" href="#v-pills-tab11" role="tab"
-                   aria-controls="v-pills-tab11" aria-selected="false">Чат</a>
+{{--                <a class="" id="v-pills-tab11-tab" data-toggle="pill" href="#v-pills-tab11" role="tab"--}}
+{{--                   aria-controls="v-pills-tab11" aria-selected="false">Чат</a>--}}
                 {{--<a class="" id="v-pills-tab7-tab" data-toggle="pill" href="#v-pills-tab7" role="tab"
                    aria-controls="v-pills-tab7" aria-selected="false">Повреждения кузова</a>
                 <a class="" id="v-pills-tab8-tab" data-toggle="pill" href="#v-pills-tab8" role="tab"
@@ -631,36 +631,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="tab-pane fade" id="v-pills-tab11" role="tabpanel"
-                     aria-labelledby="v-pills-tab11-tab">
-                    <ul class="notification__list">
 
-                        @foreach(auth()->user()->notifications as $notification)
-                            @if(isset($notification->data['short']))
-                                <li class="@if(!$notification->read_at) new-notif @endif ">
-
-                                    <span>{{ json_decode($notification)->data->short }}</span>
-                                    <div>{{ $notification->created_at->diffForHumans() }}</div>
-
-                                    <p>{!!   makeClickableApplicationNotification(json_decode($notification)->data->long,json_decode($notification)->data->id,json_decode($notification)->data->user_id) !!}</p>
-                                </li>
-
-                            @endif
-                            @if(isset($notification->data['message']))
-                                <li class="@if(!$notification->read_at) new-notif @endif ">
-                                    <span>{!! makeClickableUserNotification(json_decode($notification)->data->title,json_decode($notification)->data->id) !!}</span>
-                                    <div>{{ $notification->created_at->diffForHumans() }}</div>
-                                    @if(isset($notification->data['app_id']))
-                                        <p>{!!   makeClickableApplicationNotification('Авто ...'.json_decode($notification)->data->car_title,json_decode($notification)->data->app_id,null) !!}</p>
-                                    @endif
-                                    <p>{{ json_decode($notification)->data->message }}</p>
-                                </li>
-                            @endif
-                            @if($notification->markAsRead())@endif
-                        @endforeach
-
-                    </ul>
-                </div>
 
 
             </div>

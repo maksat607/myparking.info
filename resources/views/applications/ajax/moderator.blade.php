@@ -41,6 +41,7 @@
                     <input type="hidden" name="moderator" value="true">
                     <div class="scroll-modal mt-11px">
                         <div class="table-modal-head">
+                            <input type="hidden" name="type" value="storage">
                             <label class="field-style">
                                 <span>Причина</span>
                                 <textarea rows="4" cols="55" name="message" id="message"></textarea>

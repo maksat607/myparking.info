@@ -12,10 +12,11 @@ const modalAjaxContent = {
             }
 
         });
-        $(`.car-show-modal, .car-show-info, .app-notification, .show-modal-chat`).on('click', {self: this}, this.getModalContent);
+        $(`.car-show-modal, .car-show-info, .app-notification`).on('click', {self: this}, this.getModalContent);
         $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.send-mess`, {self: this}, this.sendMessage);
-        $('body').on('keyup', `#message`, {self: this}, this.triggerSubmit);
+        $('body').on('keyup', `#storage_message`, {self: this}, this.triggerSubmit);
+        $('body').on('keyup', `#partner_message`, {self: this}, this.triggerSubmit);
     },
     triggerSubmit(event) {
 
@@ -28,20 +29,27 @@ const modalAjaxContent = {
         e.preventDefault();
         let self = e.data.self;
         let applicationId = $(this).data('app-id');
-        let message = $('#message').val();
+        let type = 'storage';
+        let message = $('#storage_message').val();
+        $('#storage_message').val('');
+        if($(this).hasClass('partner')){
+            type = 'partner';
+            message = $('#partner_message').val();
+            $('#partner_message').val('');
+        }
+        console.log(message)
+
         $('#message').val('');
         if(message=='') return;
         axios.post(`${APP_URL}/application/send-chat-message/${applicationId}`, {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
             'message': message,
-
+            'type':type
         })
             .then(response => {
-                console.log(response.data.html)
                 self.appendToModalChat(message);
                 if (response.data.success) {
-
-                    self.setHtml(response.data.html,'.chat__list');
+                    self.setHtml(response.data.html,`.chat__list.${type}`);
                     // self.initSlick();
                 }
             }).catch(error => {

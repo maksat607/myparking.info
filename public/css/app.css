@@ -4594,6 +4594,12 @@ svg.checkbox-chosen-filter path{
     overflow-x: auto;
     white-space: nowrap;
 }
+.vertical-scrollable{
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    max-height: 60vh;
+}
 .custom-input-btn:checked+svg path {
     fill: #F2994A;
 }
