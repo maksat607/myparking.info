@@ -71,7 +71,7 @@
                         <td>
                             @if($partner->base_type=='public')
                                 <div>общая</div>
-                                <div>
+                                <div class="@if(auth()->user()->hasRole('Admin')) d-none @endif">
                                     <button type="button"
                                             class="text-grey text-btn @if(auth()->user()->hasRole('SuperAdmin')) partner-users-show-modal"
                                             @endif
@@ -81,7 +81,7 @@
                                 </div>
                             @else
                                 <div>Пользовательская</div>
-                                <div>
+                                <div class="@if(auth()->user()->hasRole('Admin')) d-none @endif">
                                     <button type="button"
                                             class="text-grey text-btn"> {{ @$partner->created_user->email }}</button>
                                 </div>

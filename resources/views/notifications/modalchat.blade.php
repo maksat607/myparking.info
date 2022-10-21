@@ -142,7 +142,7 @@
                                     <div class="d-flex">
                                         <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                                         <input type="hidden" id="appId" value="{{$application->id}}">
-                                        <button name="" type="button" class="upload-file chat-file chose-file">
+                                        <button name="" type="button" class="upload-file chat-file chose-file d-none">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -173,7 +173,7 @@
                             </div>
                             <form name="message" action="" class="message-form">
                                 <div class="d-flex">
-                                    <button name="" type="button" class="chose-file">
+                                    <button name="" type="button" class="chose-file d-none">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path

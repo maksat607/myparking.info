@@ -157,8 +157,8 @@
                                             <input  type="text" value="ПОЛЬЗОВАТЕЛЬСКИЙ" readonly="readonly" >
                                         @else
                                             <select name="base">
-                                                <option value="public">Общая</option>
-                                                <option value="user">Пользовательская</option>
+                                                <option value="public" @if($partner->base_type=='public') selected @endif>Общая</option>
+                                                <option value="user" @if($partner->base_type=='user') selected @endif>Пользовательская</option>
                                             </select>
                                         @endif
                                     @endif
@@ -170,7 +170,7 @@
 
 
                 @if(auth()->user()->hasRole(['Admin'])&& isset($pricings))
-                    <div class="form-group row p-5">
+                    <div class="form-group row p-5 d-none">
                         <h4>{{ __('Price') }}</h4>
                         <table class="table">
                             <thead>
