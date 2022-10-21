@@ -339,4 +339,16 @@ class Application extends Model
     public function ApplicationHasPending(){
         return $this->hasOne(ApplicationHasPending::class);
     }
+    public function partnerNotifications(){
+        return $this->notifications->filter(
+            function($item){
+                return $item->data['type']=="partner";
+            }) ;
+    }
+    public function storageNotifications(){
+        return $this->notifications->filter(
+            function($item){
+                return $item->data['type']=="storage";
+            });
+    }
 }

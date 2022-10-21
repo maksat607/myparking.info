@@ -67,7 +67,7 @@
     <div class="container">
         <div class="inner-page">
 
-            <table class="table fs-13 sortable horizontal-scrollable">
+            <table class="table fs-13 sortable horizontal-scrollable vertical-scrollable">
                 <thead>
                 <tr>
                     <th>#</th>

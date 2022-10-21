@@ -54,6 +54,12 @@ class ApplicationController extends AppController
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
 
+//        $n = Application::find(4189)->partnerNotifications();
+//        $n = $n->countBy(function ($value) {
+//            if (($value->data['role'] == 'Partner' || $value->data['role'] == 'PartnerOperator') && $value->data['user_id'] != auth()->id() && $value->read_at==null)
+//                return 'unread';
+//        })->all();
+
 
 //        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
         /*        $this->middleware(['permission:application_view'])->only('index', 'show');
@@ -856,7 +862,6 @@ class ApplicationController extends AppController
 
     public function getModelChatContent(Request $request, $application_id)
     {
-//
         $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
         if ($htmlRender == null) {
             return null;
@@ -899,8 +904,9 @@ class ApplicationController extends AppController
 
             $application['pricing'] = $pricing;
             $application->currentParkingCost = $application->currentParkingCost;
-
-            $htmlRender = view($path, compact('application'))->render();
+            $storageNotifications = $application->storageNotifications();
+            $partnerNotifications = $application->partnerNotifications();
+            $htmlRender = view($path, compact('application', 'partnerNotifications', 'storageNotifications'))->render();
             return $htmlRender;
         }
         return null;
@@ -1161,7 +1167,7 @@ class ApplicationController extends AppController
      */
     public function duplicate(Request $request, ApplicationFilters $filters)
     {
-        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
+        $totals = ApplicationTotalsService::totals(Status::activeStatuses(), $filters);
         $duplicateIDs = null;
         $groupBy = $request->get('group-by', 'vin');
         if ($groupBy === 'license_plate') {
@@ -1221,9 +1227,9 @@ class ApplicationController extends AppController
 
         $title = __('Duplicate');
         if ($request->get('direction') == 'row') {
-            return view('applications.index_status', compact('title', 'applications','totals'));
+            return view('applications.index_status', compact('title', 'applications', 'totals'));
         } else {
-            return view('applications.index', compact('title', 'applications','totals'));
+            return view('applications.index', compact('title', 'applications', 'totals'));
         }
     }
 
@@ -1404,14 +1410,19 @@ class ApplicationController extends AppController
     public function sendChatMessage(Request $request, Application $application)
     {
         $message = [
+            'type' => $request->type,
             'user_id' => auth()->id(),
+            'role' => auth()->user()->getRole(),
             'message' => $request->message
         ];
         $application->notify(new ApplicationNotifications($message));
         if ($request->has('moderator')) {
             return redirect()->back()->with('success', 'Отправлено');
         }
-        $htmlRender = view('components.messages', compact('application'))->render();
+        $notifications = $application->notifications->filter(function ($item) use ($request) {
+            return $item->data['type'] == $request->type;
+        });
+        $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 
