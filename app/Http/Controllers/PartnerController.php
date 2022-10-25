@@ -308,7 +308,7 @@ class PartnerController extends AppController
     public function parkingList()
     {
         $title = __('Parking lots');
-        $partnerParkings = auth()->user()->partnerParkings;
+        $partnerParkings = auth()->user()->partnerParkings();
         return view('partners.parking.index', compact('title', 'partnerParkings'));
     }
 

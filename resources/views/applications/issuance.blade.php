@@ -166,7 +166,8 @@
                             <div class="inner-item-title">
                                 Документы
                             </div>
-                            Паспорт, доверенность и прочее
+                            Паспорт, доверенность и прочее=
+
                             <div class="page-file-list">
                                 <div class="page-add-file no-ajax upload-file">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
@@ -177,7 +178,6 @@
                                     </svg>
                                 </div>
                                 @php
-
                                     $type = ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
                                 @endphp
                                 @foreach($application->attachments->where('file_type','docs')->all() as $attachment)

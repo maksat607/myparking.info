@@ -161,7 +161,7 @@
                             </div>
                             Паспорт, доверенность и прочее
                             <div class="page-file-list">
-                                <div class="page-add-file">
+                                <div class="page-add-file no-ajax upload-file">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path opacity="0.6"
@@ -169,31 +169,34 @@
                                               fill="#536E9B" />
                                     </svg>
                                 </div>
-                                <div class="page-file-item">
-                                    <div class="file-icon doc-icon"></div>
-                                    <span>dogovor-na-otvetstv...</span>
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__download"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <div class="file-icon pdf-icon"></div>
-                                    <span>dogovor-na-otvetstv...</span>
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__download"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
-                                <div class="page-file-item">
-                                    <div class="file-icon xls-icon"></div>
-                                    <span>dogovor-na-otvetstv...</span>
-                                    <div class="page-file__option">
-                                        <button type="button" class="page-file__download"></button>
-                                        <button type="button" class="page-file__delete"></button>
-                                    </div>
-                                </div>
+                                @php
+                                    $type = ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
+                                @endphp
+                                @foreach($application->attachments->where('file_type','docs')->all() as $attachment)
+                                    @if(in_array(strtolower(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]),['jpg','jpeg','png','bmp']))
+                                        <div class="page-file-item" data-src="{{ $attachment->url }}">
+                                            <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                            <div class="page-file__option">
+                                                <button type="button" class="page-file__zoom" ></button>
+                                                <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
+                                            </div>
+                                        </div>
+                                    @else
+                                        {{-- @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))   --}}
+                                        @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
+                                            <div class="page-file-item doc">
+                                                <div class="file-icon {{ $type[explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]] }}"></div>
+                                                <span>{{$attachment->name}}</span>
+                                                <div class="page-file__option">
+                                                    <a href="{{ $attachment->url }}" type="button" class="page-file__download" data-img-id="{{ $attachment->id }}"></a>
+                                                    <button type="button" class="page-file__delete" data-img-id="{{ $attachment->id }}"></button>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endif
+                                @endforeach
                             </div>
+                            <input type="file" id="noAjaxFileUploader" name="docs[]" class="d-none" multiple>
                         </div>
                     </div>
                 </div>

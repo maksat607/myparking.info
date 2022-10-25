@@ -59,6 +59,7 @@ class IssueRequestController extends AppController
     public function create($application_id)
     {
         $application = Application::application($application_id)->firstOrFail();
+//        dd($application);
         if($application->status->code != 'storage') {
             return redirect()->back()->with('warning', __('The car is not yet in storage'));
         }
@@ -152,7 +153,7 @@ class IssueRequestController extends AppController
         $individualLegalOptions = Client::issuanceIndividualLegalOptions();
 
         $title = __('Editing an application for issuance');
-        dd(1);
+
         return view('issue_request.edit', compact(
             'title', 'issueRequest', 'client', 'application', 'individualLegalOptions'
         ));
