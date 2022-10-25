@@ -143,6 +143,7 @@
                                     <label class="field-style">
                                         <span>Телефон собствениика</span>
                                         <input type="tel" name="app_data[courier_phone]"
+                                                    id="tel"
                                                value="{{ old('app_data.courier_phone') }}"
                                                placeholder="+7 (___) ___-__-__">
                                     </label>
@@ -154,10 +155,11 @@
                                 Системная информация
                             </div>
                             <div class="row">
-                                @if(session('PartnerHide') !='')
+                                @if(in_array(auth()->user()->getRole(),['Partner','PartnerOperator']))
                                     <input type="hidden" name="app_data[partner_id]" value="{{ auth()->user()->partner->id }}">
                                 @endif
-                                <div class="col-6 {{ session('PartnerHide') }}">
+                                @if(!in_array(auth()->user()->getRole(),['Partner','PartnerOperator']))
+                                <div class="col-6 ">
                                     <label class="field-style @error('partner_id') invalid @enderror">
                                         <span>Партнёр*</span>
                                         <select name="app_data[partner_id]" id="partner_id" class="partner_id page-select">
@@ -177,7 +179,7 @@
                                         </select>
                                     </label>
                                 </div>
-
+                                @endif
                                 <div class="col-6">
                                     <label class="field-style">
                                         <span>Стоянка*</span>
@@ -197,7 +199,7 @@
                                 <div class="col-12 mt-3">
                                     <label class="field-style w-100">
                                         <span>Номер убытка или лизингового договора*</span>
-                                        <input type="text" id="external_id" name="app_data[external_id]"
+                                        <input type="text" id="external_id" name="app_data[external_id]" id="external"
                                                value="{{ old('app_data.external_id') }}" placeholder="Не указан">
                                     </label>
                                 </div>
@@ -420,7 +422,7 @@
                                     <label class="field-style">
                                         <span>Гос. номер</span>
 {{--                                        <input class="license_plate" type="text" placeholder="Не указан" value="А001АА177">--}}
-                                        <input class="license_plate" type="text" placeholder="Не указан">
+                                        <input class="license_plate" id="plate" type="text" placeholder="Не указан">
                                     </label>
                                 </div>
                             </div>

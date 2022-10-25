@@ -50,11 +50,19 @@ class Partner extends Model
         );
     }
 
+    public function parkings(){
+        $arr = collect([]);
+        $this->users()->each(function ($item) use (&$arr){
+            $arr = $arr->merge($item->parkings);
+        });
+        return $arr->unique('id');
+    }
+
     public function created_user()
     {
         return $this->belongsTo(User::class, 'created_user_id', 'id');
     }
-//    public function
+
     public function pricings()
     {
         return $this->hasMany(Pricing::class, 'partner_id', 'id');

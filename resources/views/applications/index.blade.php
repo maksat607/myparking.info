@@ -144,10 +144,11 @@
                                     @endif
                                     {{--                            <span>{{ $application->partner->name }}</span>--}}
                                     <span>{{ $application->external_id }}</span>
-
+{{--                                    @dump($application)--}}
                                     <div class="car-dd">
                                         <div class="car-close-dd"></div>
                                         <div class="car-dd-body">
+
                                             @if($application->acceptions && $user->hasRole(['SuperAdmin', 'Admin','Moderator', 'Manager']))
                                                 @can('application_to_accepted')
                                                     <a href="{{ route('applications.edit', ['application' => $application->id]) }}"

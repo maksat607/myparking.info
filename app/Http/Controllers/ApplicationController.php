@@ -145,10 +145,10 @@ class ApplicationController extends AppController
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
 
-        if (auth()->user()->partner || auth()->user()->hasRole(['Partner'])) {
+        if (auth()->user()->partner || auth()->user()->hasRole(['Partner']) || auth()->user()->hasRole(['PartnerOperator'])) {
             $partners = auth()->user()->partner()->get();
-//            $parkings = auth()->user()->partnerParkings;
-            $parkings = Parking::all();
+            $parkings = auth()->user()->partnerParkings();
+//            $parkings = Parking::all();
         } else {
             $partners = Partner::all();
             $parkings = Parking::parkings()->get();
@@ -168,6 +168,7 @@ class ApplicationController extends AppController
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
         $statuses = Status::statuses($application)->get();
+
 
 
         $title = __('Create a Request');
@@ -513,7 +514,7 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
-//        $request->dump();
+
 
         $required = true;
         $returned = false;
@@ -665,9 +666,13 @@ class ApplicationController extends AppController
                 $applicationData[$car_field] = null;
             }
         }
-//        dump($application);
-//        dd($applicationData);
 
+        if ($applicationData['status_id'] != 3) {
+            $applicationData['issued_at'] = null;
+        }
+        if ($applicationData['status_id'] == 3) {
+            $applicationData['issued_by'] = auth()->id();
+        }
 
         $isUpdate = $application->update($applicationData);
 
@@ -677,6 +682,7 @@ class ApplicationController extends AppController
                 'user_id' => auth()->id()
             ]);
         }
+
 
         /*  if ($applicationData['status_id'] != 1) {
               $application->issueAcceptions()->create([

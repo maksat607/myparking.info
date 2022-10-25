@@ -60,7 +60,7 @@ class ApplicationPolicy
 
         if(
             $user->can('application_update') &&
-            ($application->acceptions ||
+            ($application ||
                 $application->status->code == 'draft' ||
                 $application->status->code == 'cancelled-by-us'
             ) &&

@@ -58,9 +58,9 @@ class Parking extends Model
         } elseif(auth()->user()->hasRole(['Operator'])) {
             return $query->where ('user_id', auth()->user()->owner->id);
         }elseif (auth()->user()->hasRole(['Partner'])) {
-            return $query->whereIn('id', auth()->user()->partnerParkings->modelKeys());
+            return $query->whereIn('id', auth()->user()->partnerParkings()->pluck('id'));
         } elseif (auth()->user()->hasRole(['PartnerOperator'])) {
-            return $query->whereIn('id', auth()->user()->owner->partnerParkings->modelKeys());
+            return $query->whereIn('id', auth()->user()->owner->partnerParkings()->pluck('id'));
         }
         return $query;
 

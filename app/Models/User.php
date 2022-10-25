@@ -72,7 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function partnerParkings()
     {
-
+        return optional($this->partner)->parkings();
         return $this->belongsToMany(Parking::class);
     }
 
@@ -108,6 +108,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function partner()
     {
+        if($this->hasRole('PartnerOperator')){
+            return $this->owner->hasOne(Partner::class, 'user_id', 'id');
+        }
         return $this->hasOne(Partner::class, 'user_id', 'id');
     }
 
