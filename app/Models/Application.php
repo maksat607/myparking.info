@@ -336,7 +336,8 @@ class Application extends Model
     {
         return $filters->apply($builder);
     }
-    public function ApplicationHasPending(){
+    public function ApplicationHasPending()
+    {
         return $this->hasOne(ApplicationHasPending::class);
     }
     public function partnerNotifications(){

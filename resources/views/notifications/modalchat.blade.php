@@ -117,15 +117,19 @@
         </div>
         <div class="modal-block__body">
             <div class="modal-block__sidebar">
-                <h3 class="modal-sidebar-title">Чат по автомобилю</h3>
-
+                <h3 class="modal-sidebar-title">Чат по автомобилю
+                    @if(auth()->user()->hasRole('PartnerOperator') || auth()->user()->hasRole('Partner'))
+                        <span class="cunter-info partner {{ $application->id }}">{{ $partnerNotifications->count() }}</span>
+                    @endif
+                </h3>
                 @if(!auth()->user()->hasRole('PartnerOperator') && !auth()->user()->hasRole('Partner'))
                     <div class="nav flex-column" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         <a class="active" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-1" role="tab"
-                           aria-controls="v-pills-settings" aria-selected="true">Стоянка</a>
+                           aria-controls="v-pills-settings" aria-selected="true">Стоянка
+                            <span class="cunter-info storage {{ $application->id }}">{{ $storageNotifications->count() }}</span></a>
                         <a class="" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-3" role="tab"
-                           aria-controls="v-pills-settings" aria-selected="false">Партнёр<span
-                                class="cunter-info">{{ $partnerNotifications->count() }}</span></a>
+                           aria-controls="v-pills-settings" aria-selected="false">Партнёр
+                            <span class="cunter-info partner {{ $application->id }}">{{ $partnerNotifications->count() }}</span></a>
                     </div>
                 @endif
             </div>
@@ -135,7 +139,7 @@
                         <div class="tab-pane fade active show"
                              id="v-pills-1">
                             <div class="chat">
-                                <div class="chat__list storage">
+                                <div class="chat__list storage {{ $application->id }}">
                                     @include('components.storage-messages')
                                 </div>
                                 <div name="message" class="message-form">
@@ -168,7 +172,7 @@
                     <div class="tab-pane fade  @if(auth()->user()->hasRole('PartnerOperator') ||  auth()->user()->hasRole('Partner')) active show @endif" id="v-pills-3">
                         <div class="chat">
 {{--                            <div class="chat__date">01.01.21</div>--}}
-                            <div class="chat__list partner">
+                            <div class="chat__list partner {{ $application->id }}">
                                 @include('components.partner-messages')
                             </div>
                             <form name="message" action="" class="message-form">

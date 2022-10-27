@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppUsers;
 use App\Enums\Message;
 use App\Enums\Color;
+use App\Events\ApplicationChat;
+use App\Events\NewNotification;
 use App\Filter\ApplicationFilters;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
@@ -25,6 +28,7 @@ use App\Models\Status;
 use App\Models\User;
 use App\Models\ViewRequest;
 use App\Notifications\ApplicationNotifications;
+use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notification;
@@ -1421,9 +1425,7 @@ class ApplicationController extends AppController
             'role' => auth()->user()->getRole(),
             'message' => $request->message
         ];
-//        event(new \App\Events\Message($application->id,$request->message, auth()->user()->getRole()));
-        event(new \App\Events\Message(1234,1234, 1234124));
-//        broadcast(new \App\Events\Message($application->id,$request->message, auth()->user()->getRole()));
+
         $application->notify(new ApplicationNotifications($message));
         if ($request->has('moderator')) {
             return redirect()->back()->with('success', 'Отправлено');
@@ -1431,6 +1433,30 @@ class ApplicationController extends AppController
         $notifications = $application->notifications->filter(function ($item) use ($request) {
             return $item->data['type'] == $request->type;
         });
+        event(new ApplicationChat(
+            array_merge(
+                [
+                'date' => now()->format('d.m.Y H:i'),
+                'app_id' => $application->id,
+                'count' => $notifications->count(),
+                ],
+                $message
+            )
+        ));
+        $userMessage =
+            [
+                'short' =>  auth()->user()->getRole().' '. auth()->user()->email.' написал сообщение'." Авто {$application->car_title} (VIN {$application->vin})",
+                'long' =>  now()->format('d.m.Y H:i')."... Авто {$application->car_title} (VIN {$application->vin}). Написал ".auth()->user()->getRole()." ".auth()->user()->email,
+                'id' => $application->id,
+                'user_id' => auth()->id(),
+                'chat'=>true
+            ];
+        $userapp = new AppUsers($application);
+        $request->type == 'partner'
+            ? \Illuminate\Support\Facades\Notification::send($userapp->allUsers(), new UserNotification($userMessage))
+            : \Illuminate\Support\Facades\Notification::send($userapp->storageUsers(), new UserNotification($userMessage));
+        event(new NewNotification($userMessage));
+
         $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
