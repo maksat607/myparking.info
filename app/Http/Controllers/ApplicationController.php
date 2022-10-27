@@ -1421,6 +1421,9 @@ class ApplicationController extends AppController
             'role' => auth()->user()->getRole(),
             'message' => $request->message
         ];
+//        event(new \App\Events\Message($application->id,$request->message, auth()->user()->getRole()));
+        event(new \App\Events\Message(1234,1234, 1234124));
+//        broadcast(new \App\Events\Message($application->id,$request->message, auth()->user()->getRole()));
         $application->notify(new ApplicationNotifications($message));
         if ($request->has('moderator')) {
             return redirect()->back()->with('success', 'Отправлено');

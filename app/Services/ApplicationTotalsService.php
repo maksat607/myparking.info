@@ -41,6 +41,7 @@ class ApplicationTotalsService
             ->where('status_id', '!=', 8)
             ->whereHas('issuance')
             ->count();
+
         $totals = Application::
         applications()
             ->filter($filters)
@@ -58,7 +59,8 @@ class ApplicationTotalsService
         }
         $totals[10] = array_sum($totals);
         $totals[11] = $issuanceTotal;
-        $totals[12] = $viewRequestsTotal;
+//        $totals[12] = $viewRequestsTotal;
+
         return $totals;
     }
 

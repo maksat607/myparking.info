@@ -42,37 +42,7 @@
                     <label class="field-style">
                         <input type="text" class="inner-page-search" placeholder="Название или юр. данные">
                     </label>
-                    <div class="d-dowen-body">
-                        <ul class="d-dowen-select">
-                            <li>
-                                <span>ООО “А-Приори”</span>
-                                <div>
-                                    <span>ИНН: 6449013711</span>
-                                    <span>КПП: 644901001</span>
-                                </div>
-                            </li>
-                            <li>
-                                <span>ООО “А-Приори”</span>
-                                <div>
-                                    <span>ИНН: 6449013711</span>
-                                    <span>КПП: 644901001</span>
-                                </div>
-                            </li>
-                            <li>
-                                <span>ООО “А-Приори”</span>
-                                <div>
-                                    <span>ИНН: 6449013711</span>
-                                    <span>КПП: 644901001</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <button type="submit">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.6" d="M8 0C8.55228 0 9 0.447715 9 1V7H15C15.5523 7 16 7.44772 16 8C16 8.55229 15.5523 9 15 9H9V15C9 15.5523 8.55228 16 8 16C7.44772 16 7 15.5523 7 15V9H1C0.447715 9 0 8.55229 0 8C0 7.44772 0.447715 7 1 7H7V1C7 0.447715 7.44772 0 8 0Z" fill="#536E9B"></path>
-                            </svg>
-                            Добавить своего
-                        </button>
-                    </div>
+
                 </div>
             </div>
 
@@ -151,10 +121,9 @@
                                value="@if(isset($partner)){{ $partner->kpp }}@else{{ old('kpp') }}@endif"
                                required autofocus placeholder="Не указан">
 
-
-
                     </label>
                 </div>
+
                 <div class="col-6 mt-3">
                     <label class="field-style span">
                         <span>База</span>

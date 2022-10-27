@@ -27,5 +27,13 @@ $(function() {
     require('./common');
     require('./custom.v2');
     require('./custom');
+
+
 });
+
+window.Echo.channel('chat')
+    .listen('.message',(e) => {
+        console.log(e);
+        console.log('sending');
+    });
 

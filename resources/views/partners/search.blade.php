@@ -164,6 +164,13 @@
                                     @endif
                                 </label>
                             </div>
+                            <div class="col-6 mt-3">
+                                <label class="switch-radio-wrap mt-11px   >
+                                    <input type="checkbox" name="status" @if(isset($partner)&&($partner->status==0)) value="0"  @else value="1"  checked @endif @if(isset($partner)&&$disabled) onclick="return false;" @endif>
+                                    <span class="switcher-radio"></span>
+                                    <span>Активен</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 

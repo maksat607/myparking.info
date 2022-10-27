@@ -24,6 +24,7 @@ class StatusSeeder extends Seeder
             ['name' =>'Отклонена нами',                 'code' => 'cancelled-by-us', 'color'=> null, 'rank'=>0],
             ['name' =>'Ожидает принятия',               'code' => 'pending', 'color'=> null, 'rank'=>0],
             ['name' =>'Удален',                         'code' => 'deleted', 'color'=> null, 'rank'=>0],
+            ['name' =>'Модерация',                         'code' => 'moderation', 'color'=> null, 'rank'=>0],
         ]);
     }
 }

@@ -37,14 +37,15 @@ const modalAjaxContent = {
             message = $('#partner_message').val();
             $('#partner_message').val('');
         }
-        console.log(message)
+
 
         $('#message').val('');
         if(message=='') return;
         axios.post(`${APP_URL}/application/send-chat-message/${applicationId}`, {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
             'message': message,
-            'type':type
+            'type':type,
+
         })
             .then(response => {
                 self.appendToModalChat(message);
@@ -52,9 +53,11 @@ const modalAjaxContent = {
                     self.setHtml(response.data.html,`.chat__list.${type}`);
                     // self.initSlick();
                 }
+
             }).catch(error => {
             console.log('error:', error);
         });
+
     },
     getModalContent(e) {
 
