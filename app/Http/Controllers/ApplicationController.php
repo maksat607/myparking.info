@@ -1453,12 +1453,13 @@ class ApplicationController extends AppController
                 'chat' => true,
             ];
 
-        $users = collect($users)->pluck('id')->reject(function ($item){
-            return $item==auth()->id();
+
+        $users = collect($users)->reject(function ($item){
+            return $item->id==auth()->id();
         });
         \Illuminate\Support\Facades\Notification::send($users, new UserNotification($userMessage));
 
-        event(new NewNotification(array_merge(['users' => $users], $userMessage)));
+        event(new NewNotification(array_merge(['users' => collect($users)->pluck('id')], $userMessage)));
 
         $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
