@@ -30,15 +30,19 @@ const modalAjaxContent = {
             ;
     },
     appendToNotification(data) {
-        let count = $('.bell.notification__count').text();
-        console.log(count);
-        $('.bell.notification__count').empty();
-        $('.bell.notification__count').html(Number(count)+1);
+        console.log(data.users);
+
         let html = `
         <li class="new-notif app-notification chat" data-app-id="${data.id}"><a href="#">${data.short}</a><span>сейчас</span>
-                                </li>
+        </li>
         `;
-        $('ul.notification__dd-list').prepend(html);
+        data.users.forEach(id =>{
+                $(`ul.notification__dd-list.${id}`).prepend(html);
+                let count = $(`.bell.notification__count.${id}`).text();
+                $(`.bell.notification__count.${id}`).empty();
+                $(`.bell.notification__count.${id}`).html(Number(count)+1);
+        });
+
     },
     triggerSubmit(event) {
 

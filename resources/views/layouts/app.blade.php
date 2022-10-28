@@ -159,7 +159,7 @@
                             fill="#011A3F"></path>
                     </svg>
                     <div class="bell notification__count {{ auth()->id() }}">{{auth()->user()->unreadNotifications->count()}}</div>
-                    <ul class="notification__dd-list">
+                    <ul class="notification__dd-list {{ auth()->id() }}">
                         @foreach(auth()->user()->unreadNotifications as $notification)
                             @if(isset($notification->data['short']))
                                 <li class="new-notif app-notification @if(isset($notification->data['chat'])) chat @endif"

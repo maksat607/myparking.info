@@ -10,7 +10,8 @@ use function React\Promise\all;
 class AppUsers
 {
     public function __construct(
-        public $application
+        public $application,
+        public $exceptions = [],
     ) {
     }
 
@@ -39,13 +40,16 @@ class AppUsers
         $users = collect(($users->filter()))->reject(function ($user) use ($user_managers) {
             return $user->getRole()=='Manager';
         })->merge($user_managers);
+        $users = collect(($users->filter()))->reject(function ($user) use ($user_managers) {
+            return in_array($user->getRole(),$this->exceptions);
+        });
         return $users->filter()->unique('id')->all();
 
     }
     public function allUsers()
     {
         $users = $this->partnerUsers();
-        $users = $users->merge($this->storageUsers());
-        return $users->filter()->unique('id')->all();
+        $users = array_merge($users,$this->storageUsers());
+        return $users;
     }
 }

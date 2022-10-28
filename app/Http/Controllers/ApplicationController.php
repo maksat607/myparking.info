@@ -174,7 +174,6 @@ class ApplicationController extends AppController
         $statuses = Status::statuses($application)->get();
 
 
-
         $title = __('Create a Request');
 
         if ($application->exists) {
@@ -1433,29 +1432,33 @@ class ApplicationController extends AppController
         $notifications = $application->notifications->filter(function ($item) use ($request) {
             return $item->data['type'] == $request->type;
         });
+        $userapp = new AppUsers($application);
+        $users = $request->type == 'partner' ? $userapp->allUsers() : $userapp->storageUsers();
         event(new ApplicationChat(
             array_merge(
                 [
-                'date' => now()->format('d.m.Y H:i'),
-                'app_id' => $application->id,
-                'count' => $notifications->count(),
+                    'date' => now()->format('d.m.Y H:i'),
+                    'app_id' => $application->id,
+                    'count' => $notifications->count(),
                 ],
                 $message
             )
         ));
         $userMessage =
             [
-                'short' =>  auth()->user()->getRole().' '. auth()->user()->email.' написал сообщение'." Авто {$application->car_title} (VIN {$application->vin})",
-                'long' =>  now()->format('d.m.Y H:i')."... Авто {$application->car_title} (VIN {$application->vin}). Написал ".auth()->user()->getRole()." ".auth()->user()->email,
+                'short' => auth()->user()->getRole() . ' ' . auth()->user()->email . ' написал сообщение' . " Авто {$application->car_title} (VIN {$application->vin})",
+                'long' => now()->format('d.m.Y H:i') . "... Авто {$application->car_title} (VIN {$application->vin}). Написал " . auth()->user()->getRole() . " " . auth()->user()->email,
                 'id' => $application->id,
                 'user_id' => auth()->id(),
-                'chat'=>true
+                'chat' => true,
             ];
-        $userapp = new AppUsers($application);
-        $request->type == 'partner'
-            ? \Illuminate\Support\Facades\Notification::send($userapp->allUsers(), new UserNotification($userMessage))
-            : \Illuminate\Support\Facades\Notification::send($userapp->storageUsers(), new UserNotification($userMessage));
-        event(new NewNotification($userMessage));
+
+
+        \Illuminate\Support\Facades\Notification::send($users, new UserNotification($userMessage));
+        $users = collect($users)->pluck('id')->reject(function ($item){
+            return $item==auth()->id();
+        });
+        event(new NewNotification(array_merge(['users' => $users], $userMessage)));
 
         $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
