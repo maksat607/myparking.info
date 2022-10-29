@@ -86,7 +86,9 @@ const modalAjaxContent = {
 
     },
     getModalContent(e) {
-
+        if($(this).hasClass('chat')){
+            return;
+        }
         let self = e.data.self
         let applicationId = $(this).data('app-id');
         let applicationTitle = $(this).data('app-title');
