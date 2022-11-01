@@ -179,6 +179,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/partner/search', [PartnerController::class, 'search'])->name('partners.search');
     Route::post('/partner/user/{user}', [PartnerController::class, 'togglePartnerUser']);
     Route::get('/partner/add-user/{partner}/{user}', [PartnerController::class, 'addPartnerUser'])->name('add.partner.user');
+    Route::get('/partner/remove-user/{partner}/{user}', [PartnerController::class, 'destroyPartnerUser'])->name('destroy.partner.user');
 
 
     /*Cars select AJAX*/

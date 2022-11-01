@@ -25,6 +25,9 @@ class Message
     private $messages = [
 
 
+        'moderationShort' => "Заявка на модерацию для авто car_title",
+        'moderationLong' => "DATE в TIME... Заявка на модерацию для авто car_title (VIN vin_number). Создал user_role user_email",
+
         'pendingShort' => "Заявка на хранение для авто car_title",
         'pendingLong' => "DATE в TIME... Заявка на хранение для авто car_title (VIN vin_number). Создал user_role user_email",
 

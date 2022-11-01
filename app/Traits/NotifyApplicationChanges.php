@@ -19,7 +19,9 @@ trait NotifyApplicationChanges
         'Отклонена в хранении' => 4,
         'Ожидает принятия' => 7,
         'Удален' => 8,
+        'Модерация' => 9,
     ];
+
     public static function boot()
     {
 
@@ -27,45 +29,45 @@ trait NotifyApplicationChanges
 
 
         static::retrieved(function ($item) {
-//            $item->notify(new ApplicationNotifications(['name'=>'Maksat']));
-//dd($item->notifications);
         });
         static::saving(function ($item) {
-            Log::info('being updated: ' . ($item));
             $item->vin = $item->vin == "не указан" ? null : $item->vin;
             $item->license_plate = $item->license_plate == "не указан" ? null : $item->license_plate;
+
+            if (!$item->ApplicationHasPending && $item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1 && isset($item['id'])) {
+                ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
+                $item->status_id = self::$appStatuses['Модерация'];
+                $item->arrived_at = null;
+            }
         });
         static::updated(function ($item) {
 
-            if ($item->status->id != $item->status_id) {
+            if (($item->status->id != $item->status_id)) {
                 $data = [];
-                if (($item->status_id == self::$appStatuses['Выдано'] || $item->status_id == self::$appStatuses['Хранение'] || ($item->issuance)) && !auth()->user()->hasRole('Moderator')) {
-                    ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
-                }
+
                 $message = new Message($item);
                 $data = $message->applicationMessage;
                 if (count($data) > 0) {
                     Notification::send($message->users, new UserNotification($data));
                 }
-
             }
         });
         static::deleted(function ($item) {
-
         });
         static::created(function ($item) {
             $message = new Message($item);
             $data = [];
+            if ($item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1 ) {
+                ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
+                $item->status_id = self::$appStatuses['Модерация'];
+                $item->save();
+            }
             if ($item->status_id == self::$appStatuses['Ожидает принятия'] || $item->status_id == self::$appStatuses['Хранение']) {
                 $data = $message->applicationMessage;
-            }
-            if (($item->status_id == self::$appStatuses['Выдано'] || $item->status_id == self::$appStatuses['Хранение'] || ($item->issuance)) && !auth()->user()->hasRole('Moderator')) {
-                ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
             }
             if (count($data) > 0) {
                 Notification::send($message->users, new UserNotification(($data)));
             }
-
         });
     }
 }

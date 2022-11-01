@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Toastr;
 use App\Filter\PartnerFilters;
 use App\Models\CarType;
 use App\Models\Parking;
@@ -105,7 +105,6 @@ class PartnerController extends AppController
         $this->validator($request->all(), $request)->validate();
 
         if ($request->has('partner') && isset($request->beingAdded) && $request->beingAdded == 'frompublic' && auth()->user()->hasRole(['Admin'])) {
-
             if (PartnerUser::where('user_id', auth()->user()->id)->where('partner_id', $request->partner)->count() > 0) {
                 return redirect()->back()->with('error', 'Уже есть в списке партнёров');
             } else {
@@ -161,7 +160,6 @@ class PartnerController extends AppController
             $disabled = false;
         }
         if ((auth()->user()->hasRole('Admin')) && ($partner->base_type == 'user')) {
-
             $personal = true;
             $disabled = false;
         }
@@ -180,7 +178,6 @@ class PartnerController extends AppController
      */
     public function update(Request $request, $id)
     {
-
         if (!$request->has('status')) {
             $request->request->add(['status' => 0]);
         } else {
@@ -203,6 +200,7 @@ class PartnerController extends AppController
 
         $request->request->add(['partner_type_id' => $request->partner_type]);
         $request->request->add(['base_type' => $request->base]);
+        $request->request->add(['moderation' => $request->has('moderation')]);
         $is_update = $partner->update($request->except(['partner_type']));
 
 
@@ -259,7 +257,9 @@ class PartnerController extends AppController
 
     public function getParkings(Request $request)
     {
-        if (!$request->ajax()) abort(404);
+        if (!$request->ajax()) {
+            abort(404);
+        }
 
         if ($request->has('q')) {
             $search = $request->q;
@@ -299,10 +299,23 @@ class PartnerController extends AppController
         return $partnerUser->active;
     }
 
-    public function addPartnerUser(Partner $partner, User $user)
+    public function addPartnerUser(Request $request, Partner $partner, User $user)
     {
-        PartnerUser::create(['user_id'=>$user->id,'partner_id'=>$partner->id]);
+        PartnerUser::create(['user_id' => $user->id,'partner_id' => $partner->id]);
+        if ($request->has('role')) {
+            Toastr::success('Добавлено');
+            return redirect()->back();
+        }
         return true;
+    }
+
+    public function destroyPartnerUser(Request $request, Partner $partner, User $user)
+    {
+        PartnerUser::where('user_id', $user->id)->where('partner_id', $partner->id)->delete();
+        if ($request->has('role')) {
+            Toastr::success('Удалено');
+            return redirect()->back();
+        }
     }
 
     public function parkingList()
@@ -326,7 +339,6 @@ class PartnerController extends AppController
             DB::commit();
 
             return redirect()->route('partner.parkings')->with('success', __('Saved.'));
-
         } catch (QueryException $e) {
             DB::rollBack();
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
@@ -363,10 +375,11 @@ class PartnerController extends AppController
     public function addNewPartner()
     {
         $disabled = false;
-        if (auth()->user()->hasRole('Admin'))
+        if (auth()->user()->hasRole('Admin')) {
             $personal = true;
-        else
+        } else {
             $personal = false;
+        }
         $car_types = CarType::where('is_active', 1)
             ->select('id', 'name')
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
@@ -397,7 +410,9 @@ class PartnerController extends AppController
 
     private function groupInns()
     {
-        if (empty($this->parkingAjax)) return $this->parkingAjax;
+        if (empty($this->parkingAjax)) {
+            return $this->parkingAjax;
+        }
         $temps = [];
         $this->parkingAjax->each(function ($item, $key) use (&$temps) {
             if (Arr::exists($temps, $item->id)) {
@@ -405,7 +420,6 @@ class PartnerController extends AppController
             } else {
                 $temps[$item->id] = $item;
             }
-
         });
 
         return array_values(Arr::sort($temps, function ($value) {

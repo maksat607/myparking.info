@@ -5,10 +5,15 @@ const modalAjaxContent = {
         $("body").on('change', '.theme-back-white', function (e) {
             //this is just getting the value that is selected
             var value = $(this).val();
-            if (value == 'approved')
+            if (value == 'approved'){
                 $('#ModeratorConfirmationModal').modal('show');
+                console.log($(this).data('app-id'));
+                $('.applicationToBeApproved').val($(this).data('app-id'));
+            }
             if (value == 'reject') {
                 $('#ModeratorRejectionModal').modal('show');
+                let message_url = `${APP_URL}/application/send-chat-message/${$(this).data('app-id')}`;
+                $('#messageForm').attr('action', message_url);
                 console.log('populated');
             }
 
@@ -120,7 +125,8 @@ const modalAjaxContent = {
         console.log('chat')
         let self = e.data.self
         let applicationId = $(this).data('app-id');
-        let additionalVar = '';
+        let notification = $(this).data('notification');
+        let additionalVar = '?notification='+notification;
         axios.get(`${APP_URL}/application/get-model-content-app-chat/${applicationId}${additionalVar}`)
             .then(response => {
                 if (response.data.success) {

@@ -43,18 +43,29 @@
                                 </div>
                             </div>
                             <div
-                                class="car-col__info @if($application->ApplicationHasPending) border border-danger @elseif($application->vin=='не указан'&&$application->license_plate=='не указан') border border-warning @endif ">
-                                <div class="car-show-modal mk"  >
+                                class="car-col__info @if($application->vin=='не указан'&&$application->license_plate=='не указан') border border-warning @endif ">
+                                <div class="car-show-modal mk">
                                     <h3 class="car-title">
-                                        <span class="car-show-info mk" data-app-id="{{ $application->id }}" data-app-title="{{ $application->car_title }}" data-app-user-id="{{ $application->ApplicationHasPending ? $application->ApplicationHasPending->user_id : null}}">
+                                        <span class="car-show-info mk" data-app-id="{{ $application->id }}"
+                                              data-app-title="{{ $application->car_title }}"
+                                              data-app-user-id="{{ $application->ApplicationHasPending ? $application->ApplicationHasPending->user_id : null}}">
                                             {{ $application->car_title }}
                                         </span>
                                         <span class="show-modal-chat" data-app-id="{{ $application->id }}">
-                                                <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M0.5 1.5C0.5 0.671573 1.17157 0 2 0H14C14.8284 0 15.5 0.671572 15.5 1.5V9.75C15.5 10.5784 14.8284 11.25 14 11.25H10.5607L8.53033 13.2803C8.23744 13.5732 7.76256 13.5732 7.46967 13.2803L5.43934 11.25H2C1.17157 11.25 0.5 10.5784 0.5 9.75V1.5ZM14 1.5H2V9.75H5.75C5.94891 9.75 6.13968 9.82902 6.28033 9.96967L8 11.6893L9.71967 9.96967C9.86032 9.82902 10.0511 9.75 10.25 9.75H14V1.5Z" fill="#536E9B"></path>
-                                                    <path d="M9.125 5.625C9.125 6.24632 8.62132 6.75 8 6.75C7.37868 6.75 6.875 6.24632 6.875 5.625C6.875 5.00368 7.37868 4.5 8 4.5C8.62132 4.5 9.125 5.00368 9.125 5.625Z" fill="#536E9B"></path>
-                                                    <path d="M12.125 5.625C12.125 6.24632 11.6213 6.75 11 6.75C10.3787 6.75 9.875 6.24632 9.875 5.625C9.875 5.00368 10.3787 4.5 11 4.5C11.6213 4.5 12.125 5.00368 12.125 5.625Z" fill="#536E9B"></path>
-                                                    <path d="M6.125 5.625C6.125 6.24632 5.62132 6.75 5 6.75C4.37868 6.75 3.875 6.24632 3.875 5.625C3.875 5.00368 4.37868 4.5 5 4.5C5.62132 4.5 6.125 5.00368 6.125 5.625Z" fill="#536E9B"></path>
+                                                <svg width="16" height="14" viewBox="0 0 16 14" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M0.5 1.5C0.5 0.671573 1.17157 0 2 0H14C14.8284 0 15.5 0.671572 15.5 1.5V9.75C15.5 10.5784 14.8284 11.25 14 11.25H10.5607L8.53033 13.2803C8.23744 13.5732 7.76256 13.5732 7.46967 13.2803L5.43934 11.25H2C1.17157 11.25 0.5 10.5784 0.5 9.75V1.5ZM14 1.5H2V9.75H5.75C5.94891 9.75 6.13968 9.82902 6.28033 9.96967L8 11.6893L9.71967 9.96967C9.86032 9.82902 10.0511 9.75 10.25 9.75H14V1.5Z"
+                                                        fill="#536E9B"></path>
+                                                    <path
+                                                        d="M9.125 5.625C9.125 6.24632 8.62132 6.75 8 6.75C7.37868 6.75 6.875 6.24632 6.875 5.625C6.875 5.00368 7.37868 4.5 8 4.5C8.62132 4.5 9.125 5.00368 9.125 5.625Z"
+                                                        fill="#536E9B"></path>
+                                                    <path
+                                                        d="M12.125 5.625C12.125 6.24632 11.6213 6.75 11 6.75C10.3787 6.75 9.875 6.24632 9.875 5.625C9.875 5.00368 10.3787 4.5 11 4.5C11.6213 4.5 12.125 5.00368 12.125 5.625Z"
+                                                        fill="#536E9B"></path>
+                                                    <path
+                                                        d="M6.125 5.625C6.125 6.24632 5.62132 6.75 5 6.75C4.37868 6.75 3.875 6.24632 3.875 5.625C3.875 5.00368 4.37868 4.5 5 4.5C5.62132 4.5 6.125 5.00368 6.125 5.625Z"
+                                                        fill="#536E9B"></path>
                                                 </svg>
                                  </span>
                                         <span class="d-none">
@@ -93,9 +104,9 @@
                                 </div>
 
                                 <div class="car-col__info-item">
-                                    <div @if($application->status->id==7) class="arrived-date-class" @endif>
+                                    <div @if($application->status->id==7 || $application->status->id==9) class="arrived-date-class" @endif>
                                         <span>Дата постановки</span>
-                                        @if($application->status->id==7)
+                                        @if($application->status->id==7 || $application->status->id==9)
                                             @php
                                                 $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d.m.Y') : now()->format('d.m.Y');
                                                 $dateTime =$dateDataApplication.' '.str_replace(' ', '', $application->arriving_interval);
@@ -124,9 +135,9 @@
                                 </div>
                                 <div class="car-col__info-item">
                                     <div class="car-status-wrap">
-{{--                                        @if($application->viewRequests->last())--}}
-{{--                                            <span class="car-status status-new">Есть осмотр</span>--}}
-{{--                                        @endif--}}
+                                        {{--                                        @if($application->viewRequests->last())--}}
+                                        {{--                                            <span class="car-status status-new">Есть осмотр</span>--}}
+                                        {{--                                        @endif--}}
                                         @if($application->issuance)
                                             <span class="car-status status-new">На выдачу</span>
                                         @endif
@@ -144,7 +155,7 @@
                                     @endif
                                     {{--                            <span>{{ $application->partner->name }}</span>--}}
                                     <span>{{ $application->external_id }}</span>
-{{--                                    @dump($application)--}}
+                                    {{--                                    @dump($application)--}}
                                     <div class="car-dd">
                                         <div class="car-close-dd"></div>
                                         <div class="car-dd-body">
@@ -244,21 +255,21 @@
 
                                                 <span class="right-btn-group d-flex">
 {{--                                        @can('application_to_inspection')--}}
-{{--                                                        <a href="{{ route('view_requests.create', ['application' => $application->id]) }}"--}}
-{{--                                                           class="link text-warning">--}}
-{{--                                            <svg class="car-dd-icon" width="20" height="20" viewBox="0 0 20 20"--}}
-{{--                                                 fill="none"--}}
-{{--                                                 xmlns="http://www.w3.org/2000/svg">--}}
-{{--                                                <path--}}
-{{--                                                    d="M12.5003 9.99984C12.5003 11.3806 11.381 12.4998 10.0003 12.4998C8.61961 12.4998 7.50033 11.3806 7.50033 9.99984C7.50033 8.61913 8.61961 7.49984 10.0003 7.49984C11.381 7.49984 12.5003 8.61913 12.5003 9.99984Z"--}}
-{{--                                                    fill="#F2994A"/>--}}
-{{--                                                <path--}}
-{{--                                                    d="M18.2457 9.62716C16.4472 6.03013 13.2529 4.1665 10.0003 4.1665C6.74772 4.1665 3.55349 6.03013 1.75497 9.62716C1.63767 9.86177 1.63767 10.1379 1.75497 10.3725C3.55349 13.9695 6.74772 15.8332 10.0003 15.8332C13.2529 15.8332 16.4472 13.9695 18.2457 10.3725C18.363 10.1379 18.363 9.86177 18.2457 9.62716ZM10.0003 14.1665C7.52634 14.1665 4.99871 12.8159 3.44171 9.99984C4.99871 7.18382 7.52634 5.83317 10.0003 5.83317C12.4743 5.83317 15.0019 7.18382 16.5589 9.99984C15.0019 12.8159 12.4743 14.1665 10.0003 14.1665Z"--}}
-{{--                                                    fill="#F2994A"/>--}}
-{{--                                            </svg>--}}
-{{--                                            Осмотр--}}
-{{--                                        </a>--}}
-{{--                                                    @endcan--}}
+                                                    {{--                                                        <a href="{{ route('view_requests.create', ['application' => $application->id]) }}"--}}
+                                                    {{--                                                           class="link text-warning">--}}
+                                                    {{--                                            <svg class="car-dd-icon" width="20" height="20" viewBox="0 0 20 20"--}}
+                                                    {{--                                                 fill="none"--}}
+                                                    {{--                                                 xmlns="http://www.w3.org/2000/svg">--}}
+                                                    {{--                                                <path--}}
+                                                    {{--                                                    d="M12.5003 9.99984C12.5003 11.3806 11.381 12.4998 10.0003 12.4998C8.61961 12.4998 7.50033 11.3806 7.50033 9.99984C7.50033 8.61913 8.61961 7.49984 10.0003 7.49984C11.381 7.49984 12.5003 8.61913 12.5003 9.99984Z"--}}
+                                                    {{--                                                    fill="#F2994A"/>--}}
+                                                    {{--                                                <path--}}
+                                                    {{--                                                    d="M18.2457 9.62716C16.4472 6.03013 13.2529 4.1665 10.0003 4.1665C6.74772 4.1665 3.55349 6.03013 1.75497 9.62716C1.63767 9.86177 1.63767 10.1379 1.75497 10.3725C3.55349 13.9695 6.74772 15.8332 10.0003 15.8332C13.2529 15.8332 16.4472 13.9695 18.2457 10.3725C18.363 10.1379 18.363 9.86177 18.2457 9.62716ZM10.0003 14.1665C7.52634 14.1665 4.99871 12.8159 3.44171 9.99984C4.99871 7.18382 7.52634 5.83317 10.0003 5.83317C12.4743 5.83317 15.0019 7.18382 16.5589 9.99984C15.0019 12.8159 12.4743 14.1665 10.0003 14.1665Z"--}}
+                                                    {{--                                                    fill="#F2994A"/>--}}
+                                                    {{--                                            </svg>--}}
+                                                    {{--                                            Осмотр--}}
+                                                    {{--                                        </a>--}}
+                                                    {{--                                                    @endcan--}}
                                                     @can('application_to_issue')
                                                         @if($application->issuance)
                                                             <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))

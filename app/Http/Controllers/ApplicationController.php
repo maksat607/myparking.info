@@ -871,6 +871,12 @@ class ApplicationController extends AppController
 
     public function getModelChatContent(Request $request, $application_id)
     {
+        if ($request->has('notification') && $application = Application::find($application_id)) {
+            $notification = $application->notifications()->find($request->notification);
+            if($notification) {
+                $notification->markAsRead();
+            }
+        }
         $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
         if ($htmlRender == null) {
             return null;
@@ -1375,8 +1381,13 @@ class ApplicationController extends AppController
 
     public function approved(Request $request)
     {
+        $application = Application::findOrFail($request->appId);
+        $application->status_id = 2;
+        $application->arrived_at = now()->format('Y-m-d H:i:s');
+        $application->save();
         ApplicationHasPending::where('application_id', $request->appId)->delete();
-        return redirect()->back();
+        Toastr::success(__('Updated.'));
+        return redirect()->route('applications.index', ['status_id' => $application->status->id]);
     }
 
     public function assignStatus(Request $request): bool
@@ -1426,9 +1437,7 @@ class ApplicationController extends AppController
         ];
 
         $application->notify(new ApplicationNotifications($message));
-        if ($request->has('moderator')) {
-            return redirect()->back()->with('success', 'Отправлено');
-        }
+
         $notifications = $application->notifications->filter(function ($item) use ($request) {
             return $item->data['type'] == $request->type;
         });
@@ -1454,12 +1463,16 @@ class ApplicationController extends AppController
             ];
 
 
-        $users = collect($users)->reject(function ($item){
-            return $item->id==auth()->id();
+        $users = collect($users)->reject(function ($item) {
+            return $item->id == auth()->id();
         });
         \Illuminate\Support\Facades\Notification::send($users, new UserNotification($userMessage));
 
         event(new NewNotification(array_merge(['users' => collect($users)->pluck('id')], $userMessage)));
+
+        if ($request->has('moderator')) {
+            return redirect()->back()->with('success', 'Отправлено');
+        }
 
         $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);

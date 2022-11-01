@@ -26,7 +26,8 @@ class Partner extends Model
         'inn',
         'kpp',
         'user_id',
-        'created_user_id'
+        'created_user_id',
+        'moderation'
     ];
     public $sortable = ['shortname', 'name', 'inn', 'kpp', 'base_type','partner_type_id'];
     public function partnerType()
@@ -81,4 +82,5 @@ class Partner extends Model
     {
         return $filters->apply($builder);
     }
+//    public function
 }
