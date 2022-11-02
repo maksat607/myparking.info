@@ -78,6 +78,7 @@ class AttachmentController extends AppController
                 'thumbnail_url' => $thumbnail_url
             ]);
         }
+
         return $attachments;
     }
     /**
@@ -89,7 +90,7 @@ class AttachmentController extends AppController
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
 //        dd($fileKey);
-//        dd($request->file);
+//        dd($request->all());
 //        dump($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
@@ -134,6 +135,7 @@ class AttachmentController extends AppController
                 'thumbnail_url' => Storage::disk('uploads')->url('thumbnails/' . $fileName)
             ]);
         }
+
         return $attachments;
     }
 

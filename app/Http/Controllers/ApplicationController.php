@@ -111,6 +111,7 @@ class ApplicationController extends AppController
             ->with('issuance')
             ->with('viewRequests')
             ->orderBy($status_sort, 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(config('app.paginate_by', '25'))->withQueryString();
 
         foreach ($applications as $key => $item) {
@@ -211,7 +212,6 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-//        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -362,25 +362,32 @@ class ApplicationController extends AppController
             $applicationData['accepted_by'] = auth()->user()->id;
         }
 
+//=========
+        $application = null;
+        DB::transaction(function () use ($request, $applicationData,&$application) {
+            $application = auth()->user()->applications()->create($applicationData);
 
-        $application = auth()->user()->applications()->create($applicationData);
+            if ($application->status_id == 7) {
+                $application->issueAcceptions()->create([
+                    'is_issue' => false,
+                    'user_id' => auth()->id()
+                ]);
+            }
 
-        if ($application->status_id == 7) {
-            $application->issueAcceptions()->create([
-                'is_issue' => false,
-                'user_id' => auth()->id()
-            ]);
-        }
 
-//        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
+//            $attachments = $this->AttachmentController->storeToModel($request, 'images');
+////            $attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs');
 
-        $attachments = $this->AttachmentController->storeToModel($request, 'images');
+            if (count($attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
+                $application->attachments()->saveMany($attachmentsDoc);
+            }
+            if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
+                $application->attachments()->saveMany($attachments);
+            }
 
-        if (count($attachments) > 0) {
-            $application->attachments()->saveMany($attachments);
-        }
+        });
 
-        if ($application->exists) {
+        if ($application) {
             Toastr::success(__('Saved.'));
             return redirect()->route('applications.index')->with('success', __('Saved.'));
         }
@@ -873,7 +880,7 @@ class ApplicationController extends AppController
     {
         if ($request->has('notification') && $application = Application::find($application_id)) {
             $notification = $application->notifications()->find($request->notification);
-            if($notification) {
+            if ($notification) {
                 $notification->markAsRead();
             }
         }
@@ -934,8 +941,10 @@ class ApplicationController extends AppController
             ?
             Application::with('status')
                 ->where(function ($query) {
-                    $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                        ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    if (!auth()->user()->hasRole('SuperAdmin')) {
+                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    }
                 })
                 ->where('license_plate', 'like', '%' . $request->license_plate . '%')
                 ->get()->toArray()
@@ -956,8 +965,10 @@ class ApplicationController extends AppController
                 $singleVin = $vinArray[0];
                 $vinQuery = Application::with('status')
                     ->where(function ($query) {
-                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        if (!auth()->user()->hasRole('SuperAdmin')) {
+                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        }
                     })
                     ->where('vin', 'like', '%' . $singleVin . '%');
 
@@ -1224,7 +1235,7 @@ class ApplicationController extends AppController
                 ->with('acceptions')
                 ->with('issuance')
                 ->with('viewRequests')
-                ->orderBy('arrived_at', 'desc');
+                ->orderBy('id', 'desc');
 
             $applications = $applicationQuery->paginate(config('app.paginate_by', '25'))->withQueryString();
             foreach ($applications as $key => $item) {

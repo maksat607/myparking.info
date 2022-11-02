@@ -104,6 +104,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->middleware(['check_legal', 'check_child_owner_legal']);
     Route::post('/permissions/sync', [PermissionController::class, 'sync'])->name('permissions.sync')
         ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/permissions/buttons', [PermissionController::class, 'buttons'])->name('permissions.buttons')
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store')
+        ->middleware(['check_legal', 'check_child_owner_legal']);
 
     /*Legal*/
 //    Route::get('legal', [LegalController::class, 'edit'])->name('legal');

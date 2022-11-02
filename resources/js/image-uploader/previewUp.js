@@ -5,7 +5,7 @@ const imageUpload = {
     images:null,
     form:null,
     doc:false,
-    docs:null,
+    docs:[],
     files:null,
     init() {
         $(`body`).on('click', `.upload-file`,{self:this}, function (e) {
@@ -16,7 +16,10 @@ const imageUpload = {
             }
             self.imageDiv = $(this).parent();
             if($(this).hasClass("no-ajax")){
-                console.log(9999)
+                if($(this).hasClass("doc")){
+                    $(`#noAjaxFileUploaderDoc`).trigger('click');
+                    return;
+                }
                 $(`#noAjaxFileUploader`).trigger('click');
                 return;
             }
@@ -29,12 +32,23 @@ const imageUpload = {
             var fd = new FormData();
             let self = e.data.self;
 
+            fileList.push.apply(fileList,self.files);
+
             for (let i = 0; i < this.files.length; i++) {
                 let file = this.files.item(i);
                 self.writeImage(file);
             }
             self.files = this.files;
 
+        });
+        $(`body`).on('change',`#noAjaxFileUploaderDoc`,{self:this}, function (e) {
+            var fd = new FormData();
+            self.docs.push(fileList,this.files);
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files.item(i);
+                self.writeImage(file);
+            }
+            self.docs = this.files;
         });
         $(`body`).on('change',`#uploader`,{self:this}, function (e) {
             var fd = new FormData();

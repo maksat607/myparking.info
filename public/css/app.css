@@ -4000,6 +4000,17 @@ th.sortable a {
 }
 
 
+.permission-head{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 69px;
+    background-color: white;
+    z-index: 1;
+}
+
+
+
+
 .theme-back option{
     text-align: right;
     color: rgb(255 255 255);

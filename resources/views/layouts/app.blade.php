@@ -41,6 +41,7 @@
                             <a href="{{ route('applications.create') }}" class="nav__link">{{ __('Add a car') }}</a>
                         @endcan
                     </li>
+                    @unlessrole('Partner|PartnerOperator')
                     <li class="nav__item nav__item-dd">
                         <a href="{{ route('applications.index') }}"
                            class="nav__link{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">{{ __('Applications') }}</a>
@@ -59,6 +60,7 @@
                         </ul>
                         @endunlessrole
                     </li>
+                    @endhasanyrole
 
                     @hasanyrole('SuperAdmin|Admin|Manager|Partner')
                     <li class="nav__item nav__item-dd">
@@ -87,13 +89,6 @@
                                 </li>
                             @endcanany
                             @endhasanyrole
-                            @hasanyrole('Partner')
-                            <li class="{{ (request()->routeIs('partner.parkings')) ? 'active' : '' }}">
-                                <a href="{{ route('partner.parkings') }}">
-                                    {{ __('Parking lots') }}
-                                </a>
-                            </li>
-                            @endhasanyrole
                             @canany(['user_view', 'user_create', 'user_update', 'user_delete'])
 
                                 <li class="{{ (request()->routeIs('users.index')) ? 'active' : '' }}">
@@ -103,7 +98,7 @@
                         </ul>
                     </li>
                     @endhasanyrole
-                    @hasanyrole('SuperAdmin|Admin|Manager')
+                    @hasanyrole('SuperAdmin|Admin|Manager|Partner|PartnerOperator')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">{{ __('Report') }}</a>
                         <ul class="nav__item-dd-list">
@@ -143,6 +138,9 @@
                                     <a href="{{ route('permissions.index') }}">{{ __('Permissions') }}</a>
                                 </li>
                             @endcan
+                                <li>
+                                    <a href="{{ route('permissions.buttons') }}">Элементы html</a>
+                                </li>
 
                         </ul>
                     </li>

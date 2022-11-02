@@ -324,5 +324,6 @@
 
     "notify_app_viewRequest1":"Уведовление о создании заявок на осмотр",
     "notify_app_viewRequest2":"Уведовление об осмотре заявок",
-    "notify_app_viewRequest3":"Уведовление о снятии заявок на осмотр"
+    "notify_app_viewRequest3":"Уведовление о снятии заявок на осмотр",
+    "Moderation": "Модерация"
 }

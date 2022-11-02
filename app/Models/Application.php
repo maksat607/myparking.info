@@ -9,18 +9,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
-
 class Application extends Model
 {
-    use HasFactory,Notifiable;
+    use HasFactory;
+    use Notifiable;
     use NotifyApplicationChanges;
+
     protected $fillable = [
 
         'external_id', 'internal_id', 'courier_fullname', 'courier_phone', 'parking_place_number', 'parking_car_sticker', 'arriving_method', 'arriving_interval', 'arriving_at', 'arrived_at', 'issued_at',
@@ -157,7 +157,8 @@ class Application extends Model
     {
         return $this->hasMany(ViewRequest::class);
     }
-    public function free(){
+    public function free()
+    {
         return $this->attributes['free_parking'];
     }
 
@@ -198,7 +199,6 @@ class Application extends Model
         $this->end = $issuedAt <= $endDate ? $issuedAt : $endDate;
         $this->parked_days = $this->attributes['free_parking'] ? "БХ" : $this->end->diffInDays($this->start) + 1;
         $this->parked_price = $this->attributes['free_parking'] ? "БХ" : $this->parked_days * $price;
-
     }
 
     public function getDuplicates()
@@ -266,15 +266,21 @@ class Application extends Model
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->whereIn('parking_id', $parkingsIds);
-        }elseif ($authUser->hasRole(['Moderator'])) {
-            $childrenIds = $authUser->owner->children()->pluck('id')->toArray();
-            $childrenIds[] = $authUser->id;
-            $childrenIds[] = $authUser->owner->id;
+        } elseif ($authUser->hasRole(['Moderator'])) {
+            if ($authUser->owner->hasRole('Admin')) {
+                $childrenIds = $authUser->owner->children()->pluck('id')->toArray();
+                $childrenIds[] = $authUser->id;
+                $childrenIds[] = $authUser->owner->id;
+            }
+            if ($authUser->owner->hasRole('SuperAdmin')) {
+                $childrenIds = User::all()->filter(function ($user) {
+                    return $user->getRole() == 'Admin';
+                })->pluck('id');
+            }
             $parkingsIds = Parking::whereIn('user_id', $childrenIds)->pluck('id')->toArray();
             return $query
                 ->whereIn('parking_id', $parkingsIds);
-        }
-        elseif ($authUser->hasRole(['Partner'])) {
+        } elseif ($authUser->hasRole(['Partner'])) {
             return $query
                 ->where('partner_id', $authUser->partner->id);
         } elseif ($authUser->hasRole(['Manager'])) {
@@ -340,16 +346,20 @@ class Application extends Model
     {
         return $this->hasOne(ApplicationHasPending::class);
     }
-    public function partnerNotifications(){
+    public function partnerNotifications()
+    {
         return $this->notifications->filter(
-            function($item){
-                return $item->data['type']=="partner";
-            }) ;
+            function ($item) {
+                return $item->data['type'] == "partner";
+            }
+        ) ;
     }
-    public function storageNotifications(){
+    public function storageNotifications()
+    {
         return $this->notifications->filter(
-            function($item){
-                return $item->data['type']=="storage";
-            });
+            function ($item) {
+                return $item->data['type'] == "storage";
+            }
+        );
     }
 }
