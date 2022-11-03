@@ -102,6 +102,10 @@
                             <option value="button">Button</option>
                             <option value="checkbox">Checkbox</option>
                             <option value="radio">Radio</option>
+                            <option value="status">DropdownStatus</option>
+                            <option value="menu">Menus</option>
+                            <option value="icons">Icons</option>
+
                         </select>
                     </div>
                     <div class="form-group d-flex align-items-center flex-column w-75">

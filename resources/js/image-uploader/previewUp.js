@@ -32,7 +32,7 @@ const imageUpload = {
             var fd = new FormData();
             let self = e.data.self;
 
-            fileList.push.apply(fileList,self.files);
+            // fileList.push.apply(fileList,self.files);
 
             for (let i = 0; i < this.files.length; i++) {
                 let file = this.files.item(i);
@@ -43,7 +43,8 @@ const imageUpload = {
         });
         $(`body`).on('change',`#noAjaxFileUploaderDoc`,{self:this}, function (e) {
             var fd = new FormData();
-            self.docs.push(fileList,this.files);
+            let self = e.data.self;
+            // self.docs.push(fileList,this.files);
             for (let i = 0; i < this.files.length; i++) {
                 let file = this.files.item(i);
                 self.writeImage(file);

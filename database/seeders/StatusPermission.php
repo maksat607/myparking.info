@@ -17,9 +17,12 @@ class StatusPermission extends Seeder
             'name' =>'Модерация',
             'code' => 'moderation',
         ]);
+
         DB::table('permissions')->insert([
             'name' =>'notify_app_moderation',
             'guard_name' => 'web',
         ]);
+
+
     }
 }
