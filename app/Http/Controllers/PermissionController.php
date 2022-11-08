@@ -44,16 +44,21 @@ class PermissionController extends AppController
     public function sync(Request $request)
     {
         $data = $request->except(['_token', 'buttons']);
-        $exists = Role::with('permissions')->get()->filterPermissions($request->has('buttons'));
+//        $exists = Role::with('permissions')->get()->filterPermissions($request->has('buttons'));
+
+        if($request->has('buttons')){
+            return redirect()->back()->with('success', __('Saved.'));
+        }
 
         $roles = Role::all();
         foreach ($roles as $role) {
             if (array_key_exists($role->name, $data)) {
                 $role->syncPermissions(
-                    array_merge(
-                        $data[$role->name],
-                        $exists[$role->name] ?? []
-                    )
+                    $data[$role->name]
+//                    array_merge(
+//                        $data[$role->name],
+//                        $exists[$role->name] ?? []
+//                    )
                 );
             } else {
                 $role->syncPermissions([]);
