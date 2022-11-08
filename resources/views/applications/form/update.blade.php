@@ -27,7 +27,7 @@
                                     @continue
                                 @endif
                                 <option value="{{ $status->id }}"
-                                        @if($application->status->id==7) disabled @endif>{{ $status->name }}</option>
+                                        @if($application->status->id==7 || auth()->user()->hasRole('Manager')) disabled @endif>{{ $status->name }}</option>
                             @endforeach
                         </select>
                     </label>
