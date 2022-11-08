@@ -193,6 +193,8 @@ return [
         Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        \App\Providers\MacrosServiceProvider::class,
+
     ],
 
     /*

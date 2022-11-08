@@ -73,7 +73,7 @@
                         <label class="mr-0 mb-0 border-0">
                             <select class="status-select theme-back"
                                     name="app_data[status_id] @error('status_id') invalid @enderror">
-                                @foreach(\App\Models\Status::all() as $status)
+                                @foreach(\App\Models\Status::all()->filterStatusesByRole() as $status)
 
                                     @if($application->status->id == $status->id)
                                         <option value="{{ $status->id }}" selected>{{ $status->name }}</option>

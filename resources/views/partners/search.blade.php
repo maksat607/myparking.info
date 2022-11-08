@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@dump(234234234)
 @section('content')
 
     <form method="POST" class="mkmk"
@@ -216,7 +216,8 @@
 
 
 
-                    @if(auth()->user()->hasRole(['Admin'])&& isset($pricings))
+{{--                    @if(auth()->user()->hasRole(['Admin'])&& isset($pricings))--}}
+                    @if(true)
                         <div class="form-group row p-5 d-none">
                             <h4>{{ __('Price') }}</h4>
                             <table class="table">

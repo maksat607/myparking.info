@@ -26,19 +26,14 @@ use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
-use App\Models\ViewRequest;
+
 use App\Notifications\ApplicationNotifications;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 use Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Zip;
@@ -172,7 +167,7 @@ class ApplicationController extends AppController
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::statuses($application)->get();
+        $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
 
         $title = __('Create a Request');
@@ -440,7 +435,7 @@ class ApplicationController extends AppController
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
 
-        $statuses = Status::statuses($application)->get();
+        $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
         extract($this->applicationUpdateData($application));
 

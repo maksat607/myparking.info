@@ -77,7 +77,7 @@ class PartnerController extends AppController
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
-//dd($pricings);
+
         $title = __('Create new Partner');
 
         return view('partners.create', compact('title', 'partner_types', 'pricings'));

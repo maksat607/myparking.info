@@ -28,7 +28,9 @@ class PermissionController extends AppController
     public function index()
     {
         $roles = Role::with('permissions')->get();
-        $permissions = Permission::all();
+        $permissions = Permission::all()->reject(function ($item) {
+            return str_starts_with($item->name, 'el_');
+        });
 
         $title = __('Permissions');
         return view('permissions.index', compact('roles', 'permissions', 'title'));
@@ -41,13 +43,18 @@ class PermissionController extends AppController
      */
     public function sync(Request $request)
     {
-//        $request->dd();
-        $data = $request->except('_token');
-//        dd($data);
+        $data = $request->except(['_token', 'buttons']);
+        $exists = Role::with('permissions')->get()->filterPermissions($request->has('buttons'));
+
         $roles = Role::all();
         foreach ($roles as $role) {
             if (array_key_exists($role->name, $data)) {
-                $role->syncPermissions($data[$role->name]);
+                $role->syncPermissions(
+                    array_merge(
+                        $data[$role->name],
+                        $exists[$role->name] ?? []
+                    )
+                );
             } else {
                 $role->syncPermissions([]);
             }
@@ -59,10 +66,9 @@ class PermissionController extends AppController
     public function buttons()
     {
         $roles = Role::with('permissions')->get();
-        $permissions = Permission::all()
-            ->filter(function ($item) {
-                return substr($item->name, 0, 2) == 'el';
-            });
+        $permissions = Permission::all()->filter(function ($item) {
+            return str_starts_with($item->name, 'el_');
+        });
         $title = __('Permissions');
         $type = 'buttons';
         return view('permissions.index', compact('roles', 'permissions', 'title', 'type'));
@@ -87,7 +93,7 @@ class PermissionController extends AppController
     public function store(Request $request)
     {
         Permission::create([
-            'name' => 'el_' . $request->element ."_". $request->code,
+            'name' => 'el_' . $request->element . "_" . $request->code,
             'guard_name' => 'web',
             'ru' => $request->text
         ]);

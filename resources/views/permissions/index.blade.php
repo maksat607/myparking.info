@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container d-flex justify-content-end">
+
         @if(isset($type))
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#permissionModal"
                     data-whatever="@mdo">Add
@@ -10,6 +11,9 @@
     </div>
     <form action="{{ route('permissions.sync') }}" method="POST" id="savePermissions">
         @csrf
+        @if(isset($type))
+            <input type="hidden" name="{{ $type }}">
+        @endif
         <div class="container page-head-wrap">
             <div class="page-head">
                 <div class="page-head__top d-flex align-items-center">
@@ -44,7 +48,7 @@
                             <tr>
                                 <td class="text-left d-block">
                                     @if(Lang::hasForLocale($permission->name, 'ru'))
-                                    <span>{{ __($permission->name) }}</span>
+                                        <span>{{ __($permission->name) }}</span>
                                     @else
                                         <span>{{ $permission->ru }}</span>
                                     @endif
@@ -103,6 +107,7 @@
                             <option value="checkbox">Checkbox</option>
                             <option value="radio">Radio</option>
                             <option value="status">DropdownStatus</option>
+                            <option value="dropdown">Dropdown</option>
                             <option value="menu">Menus</option>
                             <option value="icons">Icons</option>
 

@@ -135,6 +135,7 @@
                 </div>
             </div>
         </div>
+
         @if(auth()->user()->hasRole(['Admin']))
         <div class="form-group row p-5 d-none">
             <h4>{{ __('Price') }}</h4>

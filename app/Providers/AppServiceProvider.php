@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use DB;
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -90,6 +91,5 @@ class AppServiceProvider extends ServiceProvider
                     ->where('status_id', '!=', 8)
                     ->where('id', '!=', $ignore)->count() == 0;
         });
-
     }
 }
