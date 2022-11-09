@@ -40,10 +40,10 @@ use Spatie\Permission\Models\Permission;
  * Auth routes
  */
 
-Route::get('/test', function () {
-    $data = \App\Models\Status::all()->filterStatusesByRole();
+Route::get('/test', function (Request $request) {
+//    $data = \App\Models\Status::all()->filterStatusesByRole();
 
-    dd($data);
+    dd($request->url());
 });
 
 
