@@ -19,7 +19,7 @@ class LogRequest
     public function handle(Request $request, Closure $next)
     {
 
-        Log::channel('requests')->notice(['user'=>optional($request->user())->email,'request' => $request->all(), 'url' => $request->url()]);
+        Log::channel('requests')->notice(['type'=>$request->method(),'user'=>optional($request->user())->email,'request' => $request->all(), 'url' => $request->url()]);
 
         return $next($request);
     }
