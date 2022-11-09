@@ -23,6 +23,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,12 +41,10 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/test', function () {
+    $data = \App\Models\Status::all()->filterStatusesByRole();
 
-//    foreach ()
+    dd($data);
 });
-
-
-
 
 
 Auth::routes([
@@ -73,7 +73,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 
 Route::get('/', function () {
-    if(Auth::check()) {
+    if (Auth::check()) {
         return redirect('/applications/2');
     }
     return redirect('/login');
@@ -83,7 +83,7 @@ Route::get('/', function () {
 
 
 /*Auth Group*/
-Route::middleware(['auth', 'verified'])->group(function(){
+Route::middleware(['auth', 'verified'])->group(function () {
     /*Users*/
     Route::resource('users', UserController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
@@ -102,7 +102,11 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Permissions*/
     Route::resource('permissions', PermissionController::class)->only('index')
         ->middleware(['check_legal', 'check_child_owner_legal']);
-    Route::post('/permissions/sync', [PermissionController::class, 'sync'])->name('permissions.sync')
+    Route::post('/permissions/sync', [PermissionController::class, 'sync'])->name('permissions.sync');
+//        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/permissions/buttons', [PermissionController::class, 'buttons'])->name('permissions.buttons')
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store')
         ->middleware(['check_legal', 'check_child_owner_legal']);
 
     /*Legal*/
@@ -131,7 +135,6 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Partners*/
 
 
-
     Route::resource('partners', PartnerController::class)
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->except(['show', 'destroy']);
@@ -156,7 +159,6 @@ Route::middleware(['auth', 'verified'])->group(function(){
         ->name('get.model.users.content');
 
 
-
     Route::get('/partner/parkings/', [PartnerController::class, 'parkingList'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('partner.parkings');
@@ -179,6 +181,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/partner/search', [PartnerController::class, 'search'])->name('partners.search');
     Route::post('/partner/user/{user}', [PartnerController::class, 'togglePartnerUser']);
     Route::get('/partner/add-user/{partner}/{user}', [PartnerController::class, 'addPartnerUser'])->name('add.partner.user');
+    Route::get('/partner/remove-user/{partner}/{user}', [PartnerController::class, 'destroyPartnerUser'])->name('destroy.partner.user');
 
 
     /*Cars select AJAX*/
@@ -251,55 +254,54 @@ Route::middleware(['auth', 'verified'])->group(function(){
     /*Attachments*/
     Route::get('/destroy/{attachment}', [AttachmentController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'attachment.destroy');
+        ->name('attachment.destroy');
 
     /*View Request*/
     Route::get('view-requests', [ViewRequestController::class, 'index'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.index');
+        ->name('view_requests.index');
     Route::get('applications/{application}/view-requests/create', [ViewRequestController::class, 'create'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.create');
+        ->name('view_requests.create');
     Route::post('applications/{application}/view-requests', [ViewRequestController::class, 'store'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.store');
+        ->name('view_requests.store');
     Route::get('view-requests/{view_request}/edit', [ViewRequestController::class, 'edit'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.edit');
+        ->name('view_requests.edit');
     Route::put('view-requests/{view_request}', [ViewRequestController::class, 'update'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.update');
+        ->name('view_requests.update');
     Route::delete('view-requests/{view_request}', [ViewRequestController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'view_requests.destroy');
+        ->name('view_requests.destroy');
 
     /*IssueRequest*/
     Route::get('issue-requests', [IssueRequestController::class, 'index'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.index');
+        ->name('issue_requests.index');
     Route::get('applications/{application}/issue-requests/create', [IssueRequestController::class, 'create'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.create');
+        ->name('issue_requests.create');
     Route::post('applications/{application}/issue-requests', [IssueRequestController::class, 'store'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.store');
+        ->name('issue_requests.store');
     Route::get('issue-requests/{issue_request}/edit', [IssueRequestController::class, 'edit'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.edit');
+        ->name('issue_requests.edit');
     Route::put('issue-requests/{issue_request}', [IssueRequestController::class, 'update'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.update');
+        ->name('issue_requests.update');
     Route::delete('issue-requests/{issue_request}', [IssueRequestController::class, 'destroy'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name( 'issue_requests.destroy');
+        ->name('issue_requests.destroy');
 
 
     /*Report*/
-    Route::get('/csv-by-partner', [ReportController::class, 'csvByPartner'])->name( 'report.csv-by-partner');
-    Route::get('/report-by-partner', [ReportController::class, 'reportByPartner'])->name( 'report.report-by-partner');
-    Route::get('/csv-by-employee', [ReportController::class, 'csvByEmployee'])->name( 'report.csv-by-employee');
-    Route::get('/report-by-employee', [ReportController::class, 'reportByEmployee'])->name( 'report.report-by-employee');
-    Route::get('/csv-all-partner', [ReportController::class, 'csvAllPartner'])->name( 'report.csv-all-partner');
-    Route::get('/report-all-partner', [ReportController::class, 'reportAllPartner'])->name( 'report.report-all-partner');
-
+    Route::get('/csv-by-partner', [ReportController::class, 'csvByPartner'])->name('report.csv-by-partner');
+    Route::get('/report-by-partner', [ReportController::class, 'reportByPartner'])->name('report.report-by-partner');
+    Route::get('/csv-by-employee', [ReportController::class, 'csvByEmployee'])->name('report.csv-by-employee');
+    Route::get('/report-by-employee', [ReportController::class, 'reportByEmployee'])->name('report.report-by-employee');
+    Route::get('/csv-all-partner', [ReportController::class, 'csvAllPartner'])->name('report.csv-all-partner');
+    Route::get('/report-all-partner', [ReportController::class, 'reportAllPartner'])->name('report.report-all-partner');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\AppUsers;
 use App\Helpers\HideUser;
 use App\Models\Application;
 use App\Models\Role;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use DB;
+
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -22,13 +25,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(HideUser::class,function(){
+        $this->app->singleton(HideUser::class, function () {
             return new HideUser();
         });
-        $this->app->singleton(TelegramNotification::class,function(){
+        $this->app->singleton(TelegramNotification::class, function () {
             return new TelegramNotification();
         });
-        $this->app->singleton(FilterService::class,function(){
+
+        $this->app->singleton(FilterService::class, function () {
             return new FilterService();
         });
     }
@@ -41,9 +45,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        if(env('APP_ENV')=='prod'){
+        if (env('APP_ENV') == 'prod') {
             \URL::forceScheme('https');
-            $this->app['request']->server->set('HTTPS','on');
+            $this->app['request']->server->set('HTTPS', 'on');
         }
         Paginator::useBootstrap();
 //        Paginator::useBootstrapThree();
@@ -59,8 +63,7 @@ class AppServiceProvider extends ServiceProvider
             ApplicationFilterComposer::class
         );
 
-        Validator::extend('unique_custom', function ($attribute, $value, $parameters)
-        {
+        Validator::extend('unique_custom', function ($attribute, $value, $parameters) {
             // Get the parameters passed to the rule
             list($table, $field) = $parameters;
 
@@ -69,26 +72,24 @@ class AppServiceProvider extends ServiceProvider
             // the second field name and the second field value
             return DB::table($table)
                     ->where($field, $value)
-                    ->where($field,'!=' ,'не указан')
-                    ->where('status_id','!=', 8)->count() == 0;
+                    ->where($field, '!=', 'не указан')
+                    ->where('status_id', '!=', 8)->count() == 0;
         });
 
 
-        Validator::extend('unique_custom_ignore', function ($attribute, $value, $parameters)
-        {
+        Validator::extend('unique_custom_ignore', function ($attribute, $value, $parameters) {
             // Get the parameters passed to the rule
 
-            list($table, $field,$ignore) = $parameters;
+            list($table, $field, $ignore) = $parameters;
 
             // Check the table and return true only if there are no entries matching
             // both the first field name and the user input value as well as
             // the second field name and the second field value
             return DB::table($table)
                     ->where($field, $value)
-                    ->where($field,'!=' ,'не указан')
-                    ->where('status_id','!=', 8)
-                    ->where('id','!=',$ignore)->count() == 0;
+                    ->where($field, '!=', 'не указан')
+                    ->where('status_id', '!=', 8)
+                    ->where('id', '!=', $ignore)->count() == 0;
         });
-
     }
 }

@@ -113,11 +113,23 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $this->hasOne(Partner::class, 'user_id', 'id');
     }
+    public function adminPartners(){
+
+        return $this->hasManyThrough(
+            Partner::class,//deplo
+            PartnerUser::class,//env
+            'user_id', // Foreign key on the environments table...
+            'id', // Foreign key on the deployments table...
+            'id', // Local key on the projects table...
+            'partner_id' // Local key on the environments table...
+        );
+    }
 
     public function applications()
     {
         return $this->hasMany(Application::class, 'user_id', 'id');
     }
+
 
 
     public function getRole()

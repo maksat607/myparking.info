@@ -17,7 +17,7 @@ class ApplicationFilterComposer
 
     public function __construct(Partner $partners, Parking $parkings, User $user)
     {
-//        dd($parkings->parkings());
+        //        dd($parkings->parkings());
         if (auth()->user()->hasRole(['Partner'])) {
             $partners = collect([auth()->user()->partner]);
         }
@@ -41,20 +41,16 @@ class ApplicationFilterComposer
 
     public function filterVariables()
     {
-
         $filters = array_filter([
             'search' => request()->get('search'),
             'partner' => request()->get('partner'),
             'parking' => request()->get('parking'),
             'favorite' => request()->get('favorite')
         ]);
-
         return $filters;
     }
-
     public function compose(View $view)
     {
-
         $view
             ->with('partners', $this->partners)
             ->with('parkings', $this->parkings)

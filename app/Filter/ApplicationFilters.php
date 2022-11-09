@@ -28,6 +28,7 @@ class   ApplicationFilters extends QueryFilter
                 $query->where('car_title', 'like', '%' . $keyword . '%')
                     ->orWhere('vin', 'like', '%' . $keyword . '%')
                     ->orWhere('license_plate', 'like', '%' . $keyword . '%')
+                    ->orWhere('external_id', 'like', '%' . $keyword . '%')
                     ->orWhere('id', 'like', '%' . $keyword . '%');
             });
     }

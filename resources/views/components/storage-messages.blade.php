@@ -4,7 +4,7 @@
         <div class="chat__item user-mess">
             <div class="d-flex">
                 <div class="chat__user-img">
-                    <img src="./assets/img/avatar.png" alt="">
+                    <img src="{{ asset('img/avatar.png') }}" alt="">
                 </div>
                 <div class="chat__user-info">
                     <div
@@ -26,7 +26,7 @@
 
             <div class="d-flex">
                 <div class="chat__user-img">
-                    <img src="./assets/img/avatar.png" alt="">
+                    <img src="{{ asset('img/avatar.png') }}" alt="">
                 </div>
                 <div class="chat__user-info">
                     <div

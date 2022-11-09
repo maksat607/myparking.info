@@ -20,6 +20,7 @@ class ProfileController extends AppController
 
     public function update(Request $request)
     {
+//        $request->dd();
         $user = \auth()->user();
 
         Validator::make($request->all(), [
@@ -35,6 +36,9 @@ class ProfileController extends AppController
 
 
         $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->partner->moderation = $request->has('moderation');
+        $user->partner->save();
 
         if(!is_null($request->password)) {
             $user->password = Hash::make($request->password);

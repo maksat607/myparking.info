@@ -27,7 +27,7 @@
                                     @continue
                                 @endif
                                 <option value="{{ $status->id }}"
-                                        @if($application->status->id==7) disabled @endif>{{ $status->name }}</option>
+                                        @if($application->status->id==7 || auth()->user()->hasRole('Manager')) disabled @endif>{{ $status->name }}</option>
                             @endforeach
                         </select>
                     </label>
@@ -227,17 +227,23 @@
                                                    class="@if(auth()->user()->hasRole(['SuperAdmin','Admin','Manager'])) date-manager-start @else date @endif"
                                                    placeholder="Не указан">
                                         </label>
-                                        @push('scripts')
-                                            @if($application->status_id==7)
-                                                const dateDataApplication =
-                                                '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}
-                                                ';
-                                            @else
-                                                const dateDataApplication =
-                                                '{{ ($application->arrived_at) ? $application->arrived_at->format('d-m-Y') : now()->format('d-m-Y') }}
-                                                ';
-                                            @endif
-                                        @endpush
+                                        @if($application->status_id==7)
+                                            <input type="hidden" value=" {{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}" id="dateDataApplication">
+                                        @else
+                                            <input type="hidden" value="{{ ($application->arrived_at) ? $application->arrived_at->format('d-m-Y') : now()->format('d-m-Y') }}" id="dateDataApplication">
+                                        @endif
+
+{{--                                        @push('scripts')--}}
+{{--                                            @if($application->status_id==7)--}}
+{{--                                                const dateDataApplication =--}}
+{{--                                                '{{ ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y') }}--}}
+{{--                                                ';--}}
+{{--                                            @else--}}
+{{--                                                const dateDataApplication =--}}
+{{--                                                '{{ ($application->arrived_at) ? $application->arrived_at->format('d-m-Y') : now()->format('d-m-Y') }}--}}
+{{--                                                ';--}}
+{{--                                            @endif--}}
+{{--                                        @endpush--}}
 
                                     </div>
                                     @if($application->status_id!=2)
@@ -276,11 +282,13 @@
                                                 </div>
                                             </div>
                                         </label>
-                                        @push('scripts')
-                                            const dateDataIssuedApplication =
-                                            '{{ ($application->issued_at) ? $application->issued_at->format('d-m-Y') : null }}
-                                            ';
-                                        @endpush
+                                        <input type="hidden" id="dateDataIssuedApplication" value="{{ ($application->issued_at) ? $application->issued_at->format('d-m-Y') : null }}">
+
+{{--                                        @push('scripts')--}}
+{{--                                            const dateDataIssuedApplication =--}}
+{{--                                            '{{ ($application->issued_at) ? $application->issued_at->format('d-m-Y') : null }}--}}
+{{--                                            ';--}}
+{{--                                        @endpush--}}
                                     </div>
                                     <div class="col-6 mt-3">
                                         <label class="field-style">

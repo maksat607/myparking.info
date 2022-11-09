@@ -42,10 +42,15 @@
                 выдачу</a>
             <div class="notification__count mk">{{ $totals[11] }}</div>
         </li>
-        <li class="notification page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">
-            <a href="{{ route('view_requests.index',$filters??[]) }}" class="page-nav__link">Осмотр</a>
-            <div class="notification__count mk">{{ $totals[12] }}</div>
+        <li class="notification page-nav__item{{ (request()->route('status_id') == 9) ? ' active' : '' }}">
+            <a href="{{ route('applications.index', array_merge(['status_id'=>9],$filters??[])) }}"
+               class="page-nav__link">Модерация</a>
+            <div class="notification__count mk">{{ $totals[9] }}</div>
         </li>
+{{--        <li class="notification page-nav__item{{ (request()->routeIs('view_requests.index')) ? ' active' : '' }}">--}}
+{{--            <a href="{{ route('view_requests.index',$filters??[]) }}" class="page-nav__link">Осмотр</a>--}}
+{{--            <div class="notification__count mk">{{ $totals[12] }}</div>--}}
+{{--        </li>--}}
         @unlessrole('Operator')
         <li class="notification page-nav__item{{ (request()->route('status_id') == 3) ? ' active' : '' }}">
             <a href="{{ route('applications.index', array_merge(['status_id'=>3],$filters??[])) }}"

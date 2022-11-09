@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppUsers;
 use App\Enums\Message;
 use App\Enums\Color;
+use App\Events\ApplicationChat;
+use App\Events\NewNotification;
 use App\Filter\ApplicationFilters;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
@@ -23,18 +26,14 @@ use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
-use App\Models\ViewRequest;
+
 use App\Notifications\ApplicationNotifications;
+use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 use Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Zip;
@@ -107,6 +106,7 @@ class ApplicationController extends AppController
             ->with('issuance')
             ->with('viewRequests')
             ->orderBy($status_sort, 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(config('app.paginate_by', '25'))->withQueryString();
 
         foreach ($applications as $key => $item) {
@@ -167,8 +167,7 @@ class ApplicationController extends AppController
 
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::statuses($application)->get();
-
+        $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
 
         $title = __('Create a Request');
@@ -208,7 +207,6 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-//        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -359,25 +357,32 @@ class ApplicationController extends AppController
             $applicationData['accepted_by'] = auth()->user()->id;
         }
 
+//=========
+        $application = null;
+        DB::transaction(function () use ($request, $applicationData,&$application) {
+            $application = auth()->user()->applications()->create($applicationData);
 
-        $application = auth()->user()->applications()->create($applicationData);
+            if ($application->status_id == 7) {
+                $application->issueAcceptions()->create([
+                    'is_issue' => false,
+                    'user_id' => auth()->id()
+                ]);
+            }
 
-        if ($application->status_id == 7) {
-            $application->issueAcceptions()->create([
-                'is_issue' => false,
-                'user_id' => auth()->id()
-            ]);
-        }
 
-//        event(new ApplicationUpdated(Application::find($application['id']), $applicationData));
+//            $attachments = $this->AttachmentController->storeToModel($request, 'images');
+////            $attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs');
 
-        $attachments = $this->AttachmentController->storeToModel($request, 'images');
+            if (count($attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
+                $application->attachments()->saveMany($attachmentsDoc);
+            }
+            if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
+                $application->attachments()->saveMany($attachments);
+            }
 
-        if (count($attachments) > 0) {
-            $application->attachments()->saveMany($attachments);
-        }
+        });
 
-        if ($application->exists) {
+        if ($application) {
             Toastr::success(__('Saved.'));
             return redirect()->route('applications.index')->with('success', __('Saved.'));
         }
@@ -430,7 +435,7 @@ class ApplicationController extends AppController
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
 
-        $statuses = Status::statuses($application)->get();
+        $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
         extract($this->applicationUpdateData($application));
 
@@ -868,6 +873,12 @@ class ApplicationController extends AppController
 
     public function getModelChatContent(Request $request, $application_id)
     {
+        if ($request->has('notification') && $application = Application::find($application_id)) {
+            $notification = $application->notifications()->find($request->notification);
+            if ($notification) {
+                $notification->markAsRead();
+            }
+        }
         $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
         if ($htmlRender == null) {
             return null;
@@ -925,8 +936,10 @@ class ApplicationController extends AppController
             ?
             Application::with('status')
                 ->where(function ($query) {
-                    $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                        ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    if (!auth()->user()->hasRole('SuperAdmin')) {
+                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    }
                 })
                 ->where('license_plate', 'like', '%' . $request->license_plate . '%')
                 ->get()->toArray()
@@ -947,8 +960,10 @@ class ApplicationController extends AppController
                 $singleVin = $vinArray[0];
                 $vinQuery = Application::with('status')
                     ->where(function ($query) {
-                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        if (!auth()->user()->hasRole('SuperAdmin')) {
+                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        }
                     })
                     ->where('vin', 'like', '%' . $singleVin . '%');
 
@@ -1215,7 +1230,7 @@ class ApplicationController extends AppController
                 ->with('acceptions')
                 ->with('issuance')
                 ->with('viewRequests')
-                ->orderBy('arrived_at', 'desc');
+                ->orderBy('id', 'desc');
 
             $applications = $applicationQuery->paginate(config('app.paginate_by', '25'))->withQueryString();
             foreach ($applications as $key => $item) {
@@ -1372,8 +1387,13 @@ class ApplicationController extends AppController
 
     public function approved(Request $request)
     {
+        $application = Application::findOrFail($request->appId);
+        $application->status_id = 2;
+        $application->arrived_at = now()->format('Y-m-d H:i:s');
+        $application->save();
         ApplicationHasPending::where('application_id', $request->appId)->delete();
-        return redirect()->back();
+        Toastr::success(__('Updated.'));
+        return redirect()->route('applications.index', ['status_id' => $application->status->id]);
     }
 
     public function assignStatus(Request $request): bool
@@ -1421,13 +1441,45 @@ class ApplicationController extends AppController
             'role' => auth()->user()->getRole(),
             'message' => $request->message
         ];
+
         $application->notify(new ApplicationNotifications($message));
-        if ($request->has('moderator')) {
-            return redirect()->back()->with('success', 'Отправлено');
-        }
+
         $notifications = $application->notifications->filter(function ($item) use ($request) {
             return $item->data['type'] == $request->type;
         });
+        $userapp = new AppUsers($application);
+        $users = $request->type == 'partner' ? $userapp->allUsers() : $userapp->storageUsers();
+        event(new ApplicationChat(
+            array_merge(
+                [
+                    'date' => now()->format('d.m.Y H:i'),
+                    'app_id' => $application->id,
+                    'count' => $notifications->count(),
+                ],
+                $message
+            )
+        ));
+        $userMessage =
+            [
+                'short' => auth()->user()->getRole() . ' ' . auth()->user()->email . ' написал сообщение' . " Авто {$application->car_title} (VIN {$application->vin})",
+                'long' => now()->format('d.m.Y H:i') . "... Авто {$application->car_title} (VIN {$application->vin}). Написал " . auth()->user()->getRole() . " " . auth()->user()->email,
+                'id' => $application->id,
+                'user_id' => auth()->id(),
+                'chat' => true,
+            ];
+
+
+        $users = collect($users)->reject(function ($item) {
+            return $item->id == auth()->id();
+        });
+        \Illuminate\Support\Facades\Notification::send($users, new UserNotification($userMessage));
+
+        event(new NewNotification(array_merge(['users' => collect($users)->pluck('id')], $userMessage)));
+
+        if ($request->has('moderator')) {
+            return redirect()->back()->with('success', 'Отправлено');
+        }
+
         $htmlRender = view('components.' . $request->type . '-messages', [$request->type . 'Notifications' => $notifications])->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }

@@ -2,6 +2,8 @@ let dataDefault = null;
 let dataIssuedDefault = null;
 let dataReportRangeDefault = null;
 
+let dateDataApplication = $('#dateDataApplication').val();
+let dateDataIssuedApplication = $('#dateDataIssuedApplication').val();
 if (typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
     dataDefault = dateDataViewRequest;
 } else if (typeof dateDataApplication !== 'undefined' && dateDataApplication) {
@@ -9,7 +11,7 @@ if (typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
 } else if (typeof dateDataIssue !== 'undefined' && dateDataIssue) {
     dataDefault = dateDataIssue;
 }
-
+console.log("===="+$('#dateDataApplication').val())
 if (typeof dateDataIssuedApplication !== 'undefined' && dateDataIssuedApplication) {
     dataIssuedDefault = dateDataIssuedApplication;
 }
@@ -39,7 +41,7 @@ function getDate() {
     }
 
     let todayFormat = dd + '/' + mm + '/' + yyyy;
-    console.log(todayFormat)
+    console.log("today:"+todayFormat)
     return todayFormat;
 }
 

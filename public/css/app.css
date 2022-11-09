@@ -3728,7 +3728,6 @@ span.serch-overlap {
     line-height: 19px;
     color: #536E9B;
     margin-bottom: 20px;
-    display: flex;
     align-items: center;
 }
 
@@ -3999,6 +3998,17 @@ th.sortable a {
     color: hsla(218, 30%, 47%, 0.699);
     text-decoration: none;
 }
+
+
+.permission-head{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 69px;
+    background-color: white;
+    z-index: 1;
+}
+
+
 
 
 .theme-back option{

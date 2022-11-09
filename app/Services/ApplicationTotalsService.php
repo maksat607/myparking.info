@@ -21,26 +21,27 @@ class ApplicationTotalsService
     {
 
         $app_ids = [];
-        $viewRequests = ViewRequest::viewRequests()->with(['application']);
-        $viewRequests->get()->map(function ($r) use (&$app_ids) {
-            if ($r->applicationWithParking() != false) {
-                $app_ids[] = $r->applicationWithParking()->id;
-            }
-        });
-
-        $viewRequestsTotal = $viewRequests
-            ->whereHas('application', function (Builder $query) use ($filters) {
-                $query->filter($filters);
-            })
-            ->whereIn('application_id', $app_ids)
-            ->orderBy('updated_at', 'desc')
-            ->paginate(config('app.paginate_by', '25'))
-            ->withQueryString()->total();
+//        $viewRequests = ViewRequest::viewRequests()->with(['application']);
+//        $viewRequests->get()->map(function ($r) use (&$app_ids) {
+//            if ($r->applicationWithParking() != false) {
+//                $app_ids[] = $r->applicationWithParking()->id;
+//            }
+//        });
+//
+//        $viewRequestsTotal = $viewRequests
+//            ->whereHas('application', function (Builder $query) use ($filters) {
+//                $query->filter($filters);
+//            })
+//            ->whereIn('application_id', $app_ids)
+//            ->orderBy('updated_at', 'desc')
+//            ->paginate(config('app.paginate_by', '25'))
+//            ->withQueryString()->total();
         $issuanceTotal = Application::applications()
             ->filter($filters)
             ->where('status_id', '!=', 8)
             ->whereHas('issuance')
             ->count();
+
         $totals = Application::
         applications()
             ->filter($filters)
@@ -58,7 +59,8 @@ class ApplicationTotalsService
         }
         $totals[10] = array_sum($totals);
         $totals[11] = $issuanceTotal;
-        $totals[12] = $viewRequestsTotal;
+//        $totals[12] = $viewRequestsTotal;
+
         return $totals;
     }
 

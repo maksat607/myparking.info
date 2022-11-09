@@ -320,8 +320,10 @@
     "notify_app_issued":"Уведовление о снятии с хранения",
     "notify_app_denied":"Уведовление об отказе на хранения",
     "notify_app_deleted":"Уведовление о удалении заявок",
+    "notify_app_moderation":"Уведовление о модерации",
 
     "notify_app_viewRequest1":"Уведовление о создании заявок на осмотр",
     "notify_app_viewRequest2":"Уведовление об осмотре заявок",
-    "notify_app_viewRequest3":"Уведовление о снятии заявок на осмотр"
+    "notify_app_viewRequest3":"Уведовление о снятии заявок на осмотр",
+    "Moderation": "Модерация"
 }

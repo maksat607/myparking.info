@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\User;
 use Carbon\Carbon;
@@ -154,11 +155,19 @@ class ReportController extends Controller
      */
     public function reportByPartner(Request $request)
     {
-        $partners = Partner::orderBy('name', 'ASC')->get();
-        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
-        $parking = $user->parkings()->orderBy('title', 'ASC')->get();
 
-        $data = $this->dataByPartner($request,);
+//        $partners = Partner::orderBy('name', 'ASC')->get();
+        $partners = auth()->user()->adminPartners->sortBy('name');
+        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+
+        $parking = $user->parkings()->orderBy('title', 'ASC')->get();
+        $partner = null;
+        if(auth()->user()->hasRole('Partner|PartnerOperator')){
+            $parking = auth()->user()->partner->parkings();
+            $partner = auth()->user()->partner;
+        }
+
+        $data = $this->dataByPartner($request,$parking,$partner);
 
         $orderBy = $request->get('order-by', 'asc');
         $orderBy = $orderBy == 'asc' ? 'desc' : 'asc';
@@ -174,12 +183,22 @@ class ReportController extends Controller
      */
     public function csvByPartner(Request $request)
     {
-        $data = $this->dataByPartner($request);
+
+        $partners = auth()->user()->adminPartners->sortBy('name');
+        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+
+        $parking = $user->parkings()->orderBy('title', 'ASC')->get();
+        $partner = null;
+        if(auth()->user()->hasRole('Partner|PartnerOperator')){
+            $parking = auth()->user()->partner->parkings();
+            $partner = auth()->user()->partner;
+        }
+        $data = $this->dataByPartner($request,$parking,$partner);
         return Excel::download(new ExcelExport($data), 'report.xlsx');
         return $this->exporter->export($data);
     }
 
-    private function dataByPartner(Request $request)
+    private function dataByPartner(Request $request,$parkings=[],$partner=null)
     {
         $sortBy = 'applications.arrived_at';
 
@@ -270,6 +289,8 @@ class ReportController extends Controller
         if (isset($request->parking_id)) {
 //            $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
             $applicationQuery->whereIn('applications.parking_id', $request->parking_id);
+        }else{
+            $applicationQuery->whereIn('applications.parking_id',count($parkings)>0 ? $parkings->pluck('id') : []);
         }
 
         if (isset($request->favorite)) {
@@ -277,7 +298,13 @@ class ReportController extends Controller
         }
 
 
+        if($partner){
+
+            $applicationQuery->where('applications.partner_id', $partner->id);
+        }
+
         $applications = $applicationQuery->get();
+
 
 //        print_r($applicationQuery
 //            ->orderBy($sortBy, 'desc')->toSql());

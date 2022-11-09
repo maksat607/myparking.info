@@ -67,13 +67,13 @@
             </div>
             <div class="car-row__col-6 text-right">
                 <div class="fs-0">
-                    {{--                    new change--}}
+                    {{-- new change--}}
                     @if(auth()->user()->hasRole(['SuperAdmin', 'Admin','Moderator']))
 
                         <label class="mr-0 mb-0 border-0">
                             <select class="status-select theme-back"
                                     name="app_data[status_id] @error('status_id') invalid @enderror">
-                                @foreach(\App\Models\Status::all() as $status)
+                                @foreach(\App\Models\Status::all()->filterStatusesByRole() as $status)
 
                                     @if($application->status->id == $status->id)
                                         <option value="{{ $status->id }}" selected>{{ $status->name }}</option>
@@ -85,7 +85,7 @@
                         </label>
 
 
-                        {{--                    end new change--}}
+                        {{-- end new change--}}
                     @else
                         <span class="car-row__status">{{$application->status->name}}</span>
                     @endif
@@ -112,8 +112,6 @@
                     </div>
                 </div>
             </div>
-
-
 
 
         </div>
@@ -157,10 +155,10 @@
                    aria-controls="v-pills-tab6" aria-selected="false">Тех. состояние</a>
                 <a class="" id="v-pills-tab10-tab" data-toggle="pill" href="#v-pills-tab10" role="tab"
                    aria-controls="v-pills-tab10" aria-selected="false">Документы</a>
-{{--                <a class="" id="v-pills-tab11-tab" data-toggle="pill" href="#v-pills-tab11" role="tab"--}}
-{{--                   aria-controls="v-pills-tab11" aria-selected="false">Чат</a>--}}
+                {{-- <a class="" id="v-pills-tab11-tab" data-toggle="pill" href="#v-pills-tab11" role="tab" --}}
+                {{-- aria-controls="v-pills-tab11" aria-selected="false">Чат</a>--}}
                 {{--<a class="" id="v-pills-tab7-tab" data-toggle="pill" href="#v-pills-tab7" role="tab"
-                   aria-controls="v-pills-tab7" aria-selected="false">Повреждения кузова</a>
+                       aria-controls="v-pills-tab7" aria-selected="false">Повреждения кузова</a>
                 <a class="" id="v-pills-tab8-tab" data-toggle="pill" href="#v-pills-tab8" role="tab"
                    aria-controls="v-pills-tab8" aria-selected="false">Повреждения салона</a>
                 <a class="" id="v-pills-tab9-tab" data-toggle="pill" href="#v-pills-tab9" role="tab"
@@ -190,7 +188,8 @@
                                     @foreach(\App\Models\Partner::all() as $partner)
                                         <option value="0">Не указан</option>
                                         @if($application->partner&& $partner->id == $application->partner->id)
-                                            <option value="{{ $partner->id }}" selected>{{ $partner->shortname }}</option>
+                                            <option value="{{ $partner->id }}"
+                                                    selected>{{ $partner->shortname }}</option>
                                             @continue
                                         @endif
                                         <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
@@ -251,7 +250,8 @@
                                        placeholder="Не указан">
                                 <div class="dropdownEditible pt-0">
                                     <div contenteditable="false"
-                                         id="arriving_at_div">{{ $application->formated_arrived_at }}</div>
+                                         id="arriving_at_div">{{ $application->formated_arrived_at }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -286,7 +286,8 @@
                                        placeholder="Не указан">
                                 <div class="dropdownEditible pt-0">
                                     <div contenteditable="false"
-                                         id="issued_at_div">{{ $application->formated_issued_at }}</div>
+                                         id="issued_at_div">{{ $application->formated_issued_at }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -306,7 +307,8 @@
                                 <div class="dropdownEditible issued pt-0">
                                     @if($application->issuedBy)
                                         <div contenteditable="false" id="issuedBy"
-                                             data-id="{{$application->issuedBy->id}}">{{ $application->issuedBy->name }}</div>
+                                             data-id="{{$application->issuedBy->id}}">{{ $application->issuedBy->name }}
+                                        </div>
                                     @else
                                         <div contenteditable="false" id="issuedBy" data-id="no">Не указан</div>
                                     @endif
@@ -411,7 +413,8 @@
                         <div class="col-6">
                             <div class="info-item">
                                 <span>Кол-во владельцев</span>
-                                @if($application->owner_number < 3) {{ $application->owner_number }} @else {{ $application->owner_number }}
+                                @if($application->owner_number < 3) {{ $application->owner_number }} @else {{
+                                $application->owner_number }}
                                 и более @endif
                             </div>
                             <div class="info-item">
@@ -425,22 +428,27 @@
                      aria-labelledby="v-pills-tab6-tab">
                     <div class="info-item">
                         <span>Электроника</span>
-                        @if(!is_null($application->condition_electric)) {{ implode(', ', $application->condition_electric) }} @endif
+                        @if(!is_null($application->condition_electric)) {{ implode(', ',
+                        $application->condition_electric) }} @endif
                     </div>
                     <div class="info-item">
                         <span>Трансмиссия</span>
-                        @if(!is_null($application->condition_transmission)) {{ implode(', ', $application->condition_transmission) }} @endif
+                        @if(!is_null($application->condition_transmission)) {{ implode(', ',
+                        $application->condition_transmission) }} @endif
                     </div>
                     <div class="info-item">
                         <span>Двигатель</span>
-                        @if(!is_null($application->condition_engine)) {{ implode(', ', $application->condition_engine) }} @endif
+                        @if(!is_null($application->condition_engine)) {{ implode(', ', $application->condition_engine)
+                        }} @endif
                     </div>
                     <div class="info-item">
                         <span>Ходовая</span>
-                        @if(!is_null($application->condition_gear)) {{ implode(', ', $application->condition_gear) }} @endif
+                        @if(!is_null($application->condition_gear)) {{ implode(', ', $application->condition_gear) }}
+                        @endif
                     </div>
                 </div>
-                {{--<div class="tab-pane fade" id="v-pills-tab7" role="tabpanel"
+                {{--
+                <div class="tab-pane fade" id="v-pills-tab7" role="tabpanel"
                      aria-labelledby="v-pills-tab7-tab">
                     <div class="info-item">
                         <span>Переднее левое крыло</span>
@@ -469,8 +477,10 @@
                         <span>Заднее сидение</span>
                         Порез
                     </div>
-                </div>--}}
-                {{--<div class="tab-pane fade" id="v-pills-tab9" role="tabpanel"
+                </div>
+                --}}
+                {{--
+                <div class="tab-pane fade" id="v-pills-tab9" role="tabpanel"
                      aria-labelledby="v-pills-tab9-tab">
                     <div class="modal-history">
                         <div class="d-flex mb-3">
@@ -580,7 +590,8 @@
                             </div>
                         </div>
                     </div>
-                </div>--}}
+                </div>
+                --}}
 
 
                 <div class="tab-pane fade" id="v-pills-tab10" role="tabpanel"
@@ -600,7 +611,8 @@
                             </svg>
                         </div>
                         @php
-                            $type = ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
+                            $type =
+                            ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
                         @endphp
                         @foreach($application->attachments->where('file_type','docs')->all() as $attachment)
                             @if(in_array(strtolower(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]),['jpg','jpeg','png','bmp']))
@@ -613,7 +625,9 @@
                                     </div>
                                 </div>
                             @else
-                                {{-- @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))   --}}
+                                {{--
+                                @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
+                                --}}
                                 @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
                                     <div class="page-file-item doc">
                                         <div
@@ -631,7 +645,6 @@
                         @endforeach
                     </div>
                 </div>
-
 
 
             </div>
@@ -662,10 +675,10 @@
                 @endcan
         </div>
         @elseif(
-                ($application->acceptions ||
-                    $application->status->code == 'draft' ||
-                    $application->status->code == 'cancelled-by-us'
-                ))
+        ($application->acceptions ||
+        $application->status->code == 'draft' ||
+        $application->status->code == 'cancelled-by-us'
+        ))
             @can('update', $application)
                 <a href="{{ route('applications.edit', ['application' => $application->id]) }}" class="link">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -741,20 +754,14 @@
                 @method('DELETE')
             </form>
         @endcan
+    @endif
 </div>
 <div class="d-flex">
     @if(auth()->user()->hasRole('Moderator'))
-        {{--                    <label class="switch-radio-wrap mt-2">--}}
-        {{--                        <input class="checkbox-approved" data-app-id="{{ $application->id }}" type="checkbox"  name="car_data[vin_status]" value="1"--}}
-        {{--                        @if($application->ApplicationHasPending==null) checked @endif>--}}
-        {{--                        <span class="switcher-radio"></span>--}}
-        {{--                        <span>Проверено</span>--}}
-        {{--                    </label>--}}
-
         @if($application->ApplicationHasPending)
-            <select class="theme-back-white">
-                <option>Выберите</option>
-                <option value="approved">
+            <select class="theme-back-white" data-app-id="{{$application->id}}" >
+                <option>Опции для Модератора</option>
+                <option value="approved" >
                     <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#ModeratorConfirmationModal">
                         Одобрено
@@ -765,27 +772,28 @@
         @endif
         <input type="hidden" id="messageModalPopulate" class="theme-blue message-user-show-modal" data-user-id="8">
     @endif
-    @can('application_to_inspection')
-        <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка
-            на осмотр</a>
-    @endcan
-    @can('application_to_issue')
-        @if($application->issuance)
-            <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
-            {{ route('application.issuance.create', ['application' => $application->id]) }}
+    @if($application->status->code == 'storage')
+        @can('application_to_inspection')
+            <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка
+                на осмотр</a>
+        @endcan
+        @can('application_to_issue')
+            @if($application->issuance)
+                <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
+                {{ route('application.issuance.create', ['application' => $application->id]) }}
+                @else
+                {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
+                @endif" class="btn btn-success">Заявка на выдачу</a>
             @else
-            {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
-            @endif" class="btn btn-success">Заявка на выдачу</a>
-        @else
-            <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
-            {{ route('application.issuance.create', ['application' => $application->id]) }}
-            @else
-            {{ route('issue_requests.create', ['application' => $application->id]) }}
-            @endif" class="btn btn-success">Заявка на выдачу</a>
-        @endif
-    @endcan
+                <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
+                {{ route('application.issuance.create', ['application' => $application->id]) }}
+                @else
+                {{ route('issue_requests.create', ['application' => $application->id]) }}
+                @endif" class="btn btn-success">Заявка на выдачу</a>
+            @endif
+        @endcan
+    @endif
 </div>
-@endif
 
 
 </div>

@@ -54,7 +54,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'application_to_inspection',
             'application_issue',
 
-            "notify_app_pending","notify_app_storage","notify_app_issuance","notify_app_issued","notify_app_denied-for-storage,cancelled-by-partner,cancelled-by-us","notify_app_deleted","notify_app_viewRequest1","notify_app_viewRequest2","notify_app_viewRequest3",
+            "notify_app_pending","notify_app_storage","notify_app_issuance","notify_app_issued",
+            "notify_app_denied-for-storage,cancelled-by-partner,cancelled-by-us","notify_app_deleted",
+            "notify_app_viewRequest1","notify_app_viewRequest2","notify_app_viewRequest3","notify_app_moderation",
 
         ];
 

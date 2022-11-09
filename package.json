@@ -27,6 +27,8 @@
         "flatpickr": "^4.6.9",
         "font-awesome": "^4.7.0",
         "inputmask": "^5.0.6",
+        "laravel-echo": "^1.14.1",
+        "pusher-js": "^7.4.0",
         "select2": "^4.1.0-rc.0",
         "toastr": "^2.1.4"
     }

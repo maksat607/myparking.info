@@ -1,22 +1,53 @@
 const modalAjaxContent = {
     init() {
+
+
         $("body").on('change', '.theme-back-white', function (e) {
             //this is just getting the value that is selected
             var value = $(this).val();
-            if (value == 'approved')
+            if (value == 'approved'){
                 $('#ModeratorConfirmationModal').modal('show');
+                console.log($(this).data('app-id'));
+                $('.applicationToBeApproved').val($(this).data('app-id'));
+            }
             if (value == 'reject') {
                 $('#ModeratorRejectionModal').modal('show');
+                let message_url = `${APP_URL}/application/send-chat-message/${$(this).data('app-id')}`;
+                $('#messageForm').attr('action', message_url);
                 console.log('populated');
-
             }
 
         });
         $(`.car-show-modal, .car-show-info, .app-notification`).on('click', {self: this}, this.getModalContent);
+        $('body').on('click', `.app-notification.chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.send-mess`, {self: this}, this.sendMessage);
         $('body').on('keyup', `#storage_message`, {self: this}, this.triggerSubmit);
         $('body').on('keyup', `#partner_message`, {self: this}, this.triggerSubmit);
+    },
+    listen(){
+        window.Echo.channel('chat')
+            .listen('.message',(e) => {
+                this.appendToModalChat(e.data);
+            }).listen('.notification',(e) => {
+                this.appendToNotification(e.message);
+            })
+            ;
+    },
+    appendToNotification(data) {
+        console.log(data.users);
+
+        let html = `
+        <li class="new-notif app-notification chat" data-app-id="${data.id}"><a href="#">${data.short}</a><span>сейчас</span>
+        </li>
+        `;
+        data.users.forEach(id =>{
+                $(`ul.notification__dd-list.${id}`).prepend(html);
+                let count = $(`.bell.notification__count.${id}`).text();
+                $(`.bell.notification__count.${id}`).empty();
+                $(`.bell.notification__count.${id}`).html(Number(count)+1);
+        });
+
     },
     triggerSubmit(event) {
 
@@ -37,27 +68,32 @@ const modalAjaxContent = {
             message = $('#partner_message').val();
             $('#partner_message').val('');
         }
-        console.log(message)
+
 
         $('#message').val('');
         if(message=='') return;
         axios.post(`${APP_URL}/application/send-chat-message/${applicationId}`, {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
             'message': message,
-            'type':type
+            'type':type,
+
         })
             .then(response => {
-                self.appendToModalChat(message);
+                // self.appendToModalChat(message);
                 if (response.data.success) {
-                    self.setHtml(response.data.html,`.chat__list.${type}`);
+                    // self.setHtml(response.data.html,`.chat__list.${type}`);
                     // self.initSlick();
                 }
+
             }).catch(error => {
             console.log('error:', error);
         });
+
     },
     getModalContent(e) {
-
+        if($(this).hasClass('chat')){
+            return;
+        }
         let self = e.data.self
         let applicationId = $(this).data('app-id');
         let applicationTitle = $(this).data('app-title');
@@ -89,7 +125,8 @@ const modalAjaxContent = {
         console.log('chat')
         let self = e.data.self
         let applicationId = $(this).data('app-id');
-        let additionalVar = '';
+        let notification = $(this).data('notification');
+        let additionalVar = '?notification='+notification;
         axios.get(`${APP_URL}/application/get-model-content-app-chat/${applicationId}${additionalVar}`)
             .then(response => {
                 if (response.data.success) {
@@ -113,38 +150,123 @@ const modalAjaxContent = {
         axios.get(`${APP_URL}/application/get-confirm-model-content/${applicationId}${additionalVar}`)
             .then(response => {
                 if (response.data.success) {
-                    self.setHtml(response.data.html, '.modal-block');
+                    // self.setHtml(response.data.html, '.modal-block');
                     self.initSlick();
                 }
             }).catch(error => {
             console.log('error:', error);
         });
     },
-    appendToModalChat(message) {
+    appendToModalChat(data) {
+        let html = '';
+        let classname = '.chat__list.'+data.type+'.'+data.app_id;
+        let user_id = $('#app').data('user-id');
+        if(user_id == data.user_id){
+             html = `
+                <div class="chat__item user-mess">
+                    <div class="d-flex">
+                        <div class="chat__user-img">
+                            <img src="${window.location.origin}/img/avatar.png" alt="">
+                        </div>
+                        <div class="chat__user-info">
+                            <div
+                                class="chat__user-name">${data.role}
+                                (Вы)
+                            </div>
+                            <div class="chat__date">${data.date}</div>
+                        </div>
+                    </div>
+                    <div class="chat__mess">
+                        ${data.message}
+                    </div>
+                    <div>
+                    </div>
+                </div>
 
-        let html = `
-        <div class="chat__item user-mess">
 
-                                    <div class="d-flex">
-                                        <div class="chat__user-img">
-                                            <img src="./assets/img/avatar.png" alt="">
-                                        </div>
-                                        <div class="chat__user-info">
-                                            <div class="chat__user-name">Менеджер (Вы)</div>
-                                            <div class="chat__date">01.01.2021 12:49</div>
-                                        </div>
-                                    </div>
-                                    <div class="chat__mess">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua.
-                                    </div>
         `;
-        $('.chat__list').append(html);
+        }else {
+             html = `
+             <div class="chat__item">
+
+                    <div class="d-flex">
+                        <div class="chat__user-img">
+                            <img src="${window.location.origin}/img/avatar.png" alt="">
+                        </div>
+                        <div class="chat__user-info">
+                            <div
+                                class="chat__user-name">${data.role}</div>
+                             <div class="chat__date">${data.date}</div>
+                        </div>
+                    </div>
+                    <div class="chat__mess">
+                        ${data.message}
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            `;
+        }
+        $('.cunter-info.'+data.type+'.'+data.app_id).empty();
+        $('.cunter-info.'+data.type+'.'+data.app_id).html(data.count);
+        $(classname).prepend(html);
     },
     setHtml(html, classname) {
         $(`${classname}`).empty();
         $(`${classname}`).html(html);
         $(`.overlay`);
+    },
+    appendHtml(html,classname){
+        $(`${classname}`).append(html);
+
+        html = `
+                <div class="chat__item user-mess">
+                    <div class="d-flex">
+                        <div class="chat__user-img">
+                            <img src="./assets/img/avatar.png" alt="">
+                        </div>
+                        <div class="chat__user-info">
+                            <div
+                                class="chat__user-name">{{ auth()->user()->getRole() }}
+                                (Вы)
+                            </div>
+                            <div class="chat__date">{{ ($notification->created_at->format('d.m.Y H:i')) }}</div>
+                        </div>
+                    </div>
+                    <div class="chat__mess">
+                        {{ json_decode($notification)->data->message }}
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            @else
+
+                <div class="chat__item">
+
+                    <div class="d-flex">
+                        <div class="chat__user-img">
+                            <img src="./assets/img/avatar.png" alt="">
+                        </div>
+                        <div class="chat__user-info">
+                            <div
+                                class="chat__user-name">{{ optional(json_decode($notification)->data)->role }}</div>
+                            <div class="chat__date">{{ ($notification->created_at->format('d.m.Y H:i')) }}</div>
+                        </div>
+                    </div>
+                    <div class="chat__mess">
+                        {{ json_decode($notification)->data->message }}
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+        <div>
+
+        </div>
+
+
+        `;
     },
     initSlick() {
         $(`.modal-block`).addClass('active')
@@ -162,3 +284,4 @@ const modalAjaxContent = {
     }
 }
 modalAjaxContent.init();
+modalAjaxContent.listen();

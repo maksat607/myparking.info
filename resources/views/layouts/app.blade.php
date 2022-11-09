@@ -28,7 +28,7 @@
 </head>
 
 <body>
-<header class="header" id="app">
+<header class="header" id="app" data-user-id="{{ auth()->id() }}">
     <div class="container header__wrap">
         <a href="/">
             <img src="{{ asset('img/new_logo.svg') }}" alt="" class="logo">
@@ -41,6 +41,7 @@
                             <a href="{{ route('applications.create') }}" class="nav__link">{{ __('Add a car') }}</a>
                         @endcan
                     </li>
+                    @unlessrole('Partner|PartnerOperator')
                     <li class="nav__item nav__item-dd">
                         <a href="{{ route('applications.index') }}"
                            class="nav__link{{ (request()->routeIs('applications.index')) ? ' active' : '' }}">{{ __('Applications') }}</a>
@@ -59,6 +60,7 @@
                         </ul>
                         @endunlessrole
                     </li>
+                    @endhasanyrole
 
                     @hasanyrole('SuperAdmin|Admin|Manager|Partner')
                     <li class="nav__item nav__item-dd">
@@ -87,13 +89,6 @@
                                 </li>
                             @endcanany
                             @endhasanyrole
-                            @hasanyrole('Partner')
-                            <li class="{{ (request()->routeIs('partner.parkings')) ? 'active' : '' }}">
-                                <a href="{{ route('partner.parkings') }}">
-                                    {{ __('Parking lots') }}
-                                </a>
-                            </li>
-                            @endhasanyrole
                             @canany(['user_view', 'user_create', 'user_update', 'user_delete'])
 
                                 <li class="{{ (request()->routeIs('users.index')) ? 'active' : '' }}">
@@ -103,7 +98,7 @@
                         </ul>
                     </li>
                     @endhasanyrole
-                    @hasanyrole('SuperAdmin|Admin|Manager')
+                    @hasanyrole('SuperAdmin|Admin|Manager|Partner|PartnerOperator')
                     <li class="nav__item nav__item-dd">
                         <a href="" class="nav__link">{{ __('Report') }}</a>
                         <ul class="nav__item-dd-list">
@@ -143,6 +138,9 @@
                                     <a href="{{ route('permissions.index') }}">{{ __('Permissions') }}</a>
                                 </li>
                             @endcan
+                                <li>
+                                    <a href="{{ route('permissions.buttons') }}">Элементы html</a>
+                                </li>
 
                         </ul>
                     </li>
@@ -158,11 +156,12 @@
                             d="M9.52819 2.33066C9.92441 1.35472 10.8818 0.666504 12 0.666504C13.1182 0.666504 14.0756 1.35472 14.4718 2.33066C18.4269 3.41413 21.3333 7.03423 21.3333 11.3332V17.5961L23.7761 21.2602C24.0488 21.6694 24.0743 22.1954 23.8422 22.629C23.6102 23.0625 23.1584 23.3332 22.6667 23.3332H16.6194C16.2959 25.5947 14.351 27.3332 12 27.3332C9.64902 27.3332 7.70408 25.5947 7.38059 23.3332H1.33334C0.841608 23.3332 0.389795 23.0625 0.157769 22.629C-0.0742561 22.1954 -0.0488261 21.6694 0.223935 21.2602L2.66667 17.5961V11.3332C2.66667 7.03423 5.57311 3.41413 9.52819 2.33066ZM10.1138 23.3332C10.3884 24.11 11.1292 24.6665 12 24.6665C12.8708 24.6665 13.6116 24.11 13.8862 23.3332H10.1138ZM12 4.6665C8.3181 4.6665 5.33334 7.65127 5.33334 11.3332V17.9998C5.33334 18.2631 5.25542 18.5204 5.1094 18.7394L3.82469 20.6665H20.1753L18.8906 18.7394C18.7446 18.5204 18.6667 18.2631 18.6667 17.9998V11.3332C18.6667 7.65127 15.6819 4.6665 12 4.6665Z"
                             fill="#011A3F"></path>
                     </svg>
-                    <div class="notification__count">{{auth()->user()->unreadNotifications->count()}}</div>
-                    <ul class="notification__dd-list">
+                    <div class="bell notification__count {{ auth()->id() }}">{{auth()->user()->unreadNotifications->count()}}</div>
+                    <ul class="notification__dd-list {{ auth()->id() }}">
                         @foreach(auth()->user()->unreadNotifications as $notification)
                             @if(isset($notification->data['short']))
-                                <li class="new-notif app-notification" data-app-id="{{ json_decode($notification)->data->id }}" data-notification="{{ $notification->id }}"><a
+                                <li class="new-notif app-notification @if(isset($notification->data['chat'])) chat @endif"
+                                    data-app-id="{{ json_decode($notification)->data->id }}" data-notification="{{ $notification->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
@@ -176,7 +175,8 @@
 
                         @foreach(auth()->user()->readNotifications->take(7) as $notification)
                             @if(isset($notification->data['short']))
-                                <li class="app-notification" data-app-id="{{ json_decode($notification)->data->id }}"><a
+                                <li class="app-notification @if(isset($notification->data['chat'])) chat @endif"
+                                    data-app-id="{{ json_decode($notification)->data->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
