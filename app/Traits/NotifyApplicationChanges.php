@@ -60,6 +60,7 @@ trait NotifyApplicationChanges
             if ($item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1 ) {
                 ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
                 $item->status_id = self::$appStatuses['Модерация'];
+                $item->arrived_at = null;
                 $item->save();
             }
             if ($item->status_id == self::$appStatuses['Ожидает принятия'] || $item->status_id == self::$appStatuses['Хранение']) {

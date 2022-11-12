@@ -289,6 +289,7 @@ class ApplicationController extends AppController
 //        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
 //        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
 //        dd($applicationData['vin_array']);
+//        dd($applicationData);
         if ($required) {
             $applicationData['vin'] = $applicationData['vin_array'];
         }
@@ -359,7 +360,7 @@ class ApplicationController extends AppController
 
 //=========
         $application = null;
-        DB::transaction(function () use ($request, $applicationData,&$application) {
+        DB::transaction(function () use ($request, $applicationData, &$application) {
             $application = auth()->user()->applications()->create($applicationData);
 
             if ($application->status_id == 7) {
@@ -373,7 +374,7 @@ class ApplicationController extends AppController
 //            $attachments = $this->AttachmentController->storeToModel($request, 'images');
 ////            $attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs');
 
-            if (count($attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
+            if (count($attachmentsDoc = $this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
                 $application->attachments()->saveMany($attachmentsDoc);
             }
             if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
@@ -1387,9 +1388,16 @@ class ApplicationController extends AppController
 
     public function approved(Request $request)
     {
+
         $application = Application::findOrFail($request->appId);
         $application->status_id = 2;
-        $application->arrived_at = now()->format('Y-m-d H:i:s');
+        if ($request->has('notChangeDate')) {
+            $date = date('Y-m-d H:i:s', strtotime($application->arriving_at));
+            $date = Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay();
+            $application->arrived_at = $date;
+        }else{
+            $application->arrived_at = now()->format('Y-m-d H:i:s');
+        }
         $application->save();
         ApplicationHasPending::where('application_id', $request->appId)->delete();
         Toastr::success(__('Updated.'));

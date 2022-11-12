@@ -2,7 +2,7 @@
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header border-0">
                 <h5 class="modal-title" id="exampleModalLabel">Вы точно хотите одобрить?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -10,8 +10,13 @@
             </div>
             <form method="POST" action="{{ route('application.approve') }}">
                 @csrf
+                <label class="switch-radio-wrap mt-2 justify-content-end pr-3">
+                    <input class="checkbox-unknown clicense" type="checkbox" data-for="license_plate" name="notChangeDate" value="1" checked>
+                    <span class="switcher-radio"></span>
+                    <span>Hе менять дату</span>
+                </label>
                 <input type="hidden" class="applicationToBeApproved" name="appId">
-                <div class="modal-footer">
+                <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
                     <button type="submit" class="btn btn-primary">Да</button>
                 </div>
