@@ -207,7 +207,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-        $request->dd();
+//        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
