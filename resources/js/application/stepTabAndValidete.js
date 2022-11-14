@@ -52,6 +52,8 @@ const stepTab = {
 
         },
         changeVinLicenseInputs(){
+            // console.log($('.checkbox-unknown.clicense').is(":checked"));
+            // console.log($(`.checkbox-unknown.cvin`).is(":checked"))
             if($('.checkbox-unknown.clicense').is(":checked")){
                 $('.license_plate').parent().addClass('disabled');
                 $('.license_plate').attr("disabled", true);
@@ -273,6 +275,7 @@ stepTab.init();
 $('a[data-id="v-pills-2"]').on('click',function(){
     $('#tabNext').trigger('click');
 });
+
 
 
 $('a[data-id="v-pills-1"]').on('click',function(){

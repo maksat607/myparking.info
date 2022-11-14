@@ -11,7 +11,7 @@
             <form method="POST" action="{{ route('application.approve') }}">
                 @csrf
                 <label class="switch-radio-wrap mt-2 justify-content-end pr-3">
-                    <input class="checkbox-unknown clicense" type="checkbox" data-for="license_plate" name="notChangeDate" value="1" checked>
+                    <input class="" type="checkbox"  value="1" checked>
                     <span class="switcher-radio"></span>
                     <span>Hе менять дату</span>
                 </label>
