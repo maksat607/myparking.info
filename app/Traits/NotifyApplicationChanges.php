@@ -2,12 +2,9 @@
 
 namespace App\Traits;
 
-use App\Models\Application;
-use App\Models\ApplicationHasPending;
-use App\Notifications\ApplicationNotifications;
-use App\Notifications\UserNotification;
 use App\Enums\Message;
-use Illuminate\Support\Facades\Log;
+use App\Models\ApplicationHasPending;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Notification;
 
 trait NotifyApplicationChanges
@@ -34,7 +31,17 @@ trait NotifyApplicationChanges
             $item->vin = $item->vin == "не указан" ? null : $item->vin;
             $item->license_plate = $item->license_plate == "не указан" ? null : $item->license_plate;
 
-            if (!$item->ApplicationHasPending && $item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1 && isset($item['id'])) {
+//            dump($item->status->id);
+//            dd($item->status_id);
+            if (
+                !$item->ApplicationHasPending &&
+                $item->status_id == self::$appStatuses['Хранение'] &&
+                $item->partner->moderation == 1 &&
+                isset($item['id']) &&
+                ($item->status->id != $item->status_id) ||
+                $item->status_id == self::$appStatuses['Модерация']
+
+            ) {
                 ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
                 $item->status_id = self::$appStatuses['Модерация'];
                 $item->arrived_at = null;
@@ -57,7 +64,7 @@ trait NotifyApplicationChanges
         static::created(function ($item) {
             $message = new Message($item);
             $data = [];
-            if ($item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1 ) {
+            if ($item->status_id == self::$appStatuses['Хранение'] && $item->partner->moderation == 1) {
                 ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
                 $item->status_id = self::$appStatuses['Модерация'];
                 $item->arrived_at = null;
