@@ -11,7 +11,7 @@
             <form method="POST" action="{{ route('application.approve') }}">
                 @csrf
                 <label class="switch-radio-wrap mt-2 justify-content-end pr-3">
-                    <input class="" type="checkbox"  value="1" checked>
+                    <input name="notChangeDate" type="checkbox"  value="1" checked>
                     <span class="switcher-radio"></span>
                     <span>Hе менять дату</span>
                 </label>

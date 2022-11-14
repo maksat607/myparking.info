@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AppUsers;
-use App\Enums\Message;
 use App\Enums\Color;
 use App\Events\ApplicationChat;
 use App\Events\NewNotification;
 use App\Filter\ApplicationFilters;
+use App\Helpers\ParseString;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
 use App\Models\ApplicationData;
@@ -26,20 +26,18 @@ use App\Models\Partner;
 use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
-
 use App\Notifications\ApplicationNotifications;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
-use Toastr;
 use Carbon\Carbon;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Zip;
-use Illuminate\Filesystem\Filesystem;
 use Session;
-use App\Helpers\ParseString;
+use Toastr;
+use Zip;
 
 class ApplicationController extends AppController
 {
@@ -196,6 +194,254 @@ class ApplicationController extends AppController
                 'statuses',
                 'colors'
             ));
+        }
+    }
+
+    protected function applicationUpdateData($application)
+    {
+        $carMarks = null;
+        $carModels = null;
+        $carYears = null;
+        $carGenerations = null;
+        $carSeriess = null;
+        $carModifications = null;
+        $carEngines = null;
+        $carTransmissions = null;
+        $carGears = null;
+
+        if ($application->car_type_id) {
+            $carMarks = $this->getCarMarkList($application->car_type_id);
+        }
+        if ($application->car_mark_id) {
+            $carModels = $this->getCarModelList($application->car_mark_id);
+        }
+        if ($application->car_model_id) {
+            $carYears = $this->filteredItems($this->getCarYearList($application->car_model_id));
+        }
+        if ($application->year) {
+            $carGenerations = $this->getCarGenerationList($application->car_model_id, $application->year);
+        }
+        if ($application->car_generation_id) {
+            $carSeriess = $this->getCarSeriesList($application->car_model_id, $application->car_generation_id);
+        }
+        if ($application->car_series_id) {
+            $carModifications = $this->getCarModificationList($application->car_model_id, $application->car_series_id, $application->year);
+        }
+        if ($application->car_modification_id) {
+            $carEngines = $this->getCarEngineList($application->car_modification_id);
+        }
+        if ($application->car_engine_id) {
+            $carTransmissions = $this->getCarTransmissionList($application->car_modification_id);
+        }
+        if ($application->car_gear_id) {
+            $carGears = $this->getCarGearList($application->car_modification_id);
+        }
+
+        $attachments = $application->attachments()->select('id', 'thumbnail_url', 'url')->get();
+        $dataApplication = [
+            'modelId' => $application->car_model_id,
+            'car_mark_id' => $application->car_mark_id,
+            'modificationId' => $application->car_modification_id,
+            'year' => $application->year
+        ];
+
+        return compact(
+            'application',
+            'attachments',
+            'dataApplication',
+            'carMarks',
+            'carModels',
+            'carYears',
+            'carGenerations',
+            'carSeriess',
+            'carModifications',
+            'carEngines',
+            'carTransmissions',
+            'carGears'
+        );
+    }
+
+    public function getCarMarkList($type_id)
+    {
+        $carMarks = [];
+        if ($type_id == 1) {
+            $carMarks = CarMark::where([
+                ['car_marks.is_active', 1],
+                ['car_marks.car_type_id', $type_id],
+                ['car_generations.year_begin', '>=', 1990],
+                ['car_generations.year_end', '<=', 2022],
+            ])
+                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
+                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
+                ->select('car_marks.id as id', 'car_marks.name as name')
+                ->groupBy('car_marks.id', 'car_marks.name')
+                ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
+                ->get();
+//        } else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8) {
+        } elseif ($type_id != 27) {
+            $carMarks = CarMark::where([
+                ['car_marks.is_active', 1],
+                ['car_marks.car_type_id', $type_id],
+            ])
+                ->select('car_marks.id as id', 'car_marks.name as name')
+                ->groupBy('car_marks.id', 'car_marks.name')
+                ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
+                ->get();
+        }
+
+        if (count($carMarks) > 0 && $type_id != 27) {
+            $carMarks = CarMark::setLogo($carMarks);
+            return $carMarks;
+        }
+    }
+
+    public function getCarModelList($mark_id)
+    {
+        if (isset($mark_id) && is_numeric($mark_id)) {
+            $carModels = CarModel::where(['car_mark_id' => $mark_id])
+                ->select('id', 'name')
+                ->orderBy('rank', 'asc')->orderBy('name', 'ASC')->get();
+
+            if (count($carModels) > 0) {
+                return $carModels;
+            } else {
+                return ['id' => 0, 'name' => __('Unknown Model')];
+            }
+        }
+    }
+
+    public function filteredItems($carYears)
+    {
+        if (!empty($carYears)) {
+            $filteredItems = [];
+            if (isset($carYears->year_begin) && isset($carYears->year_end)) {
+                $currentYear = $carYears->year_end;
+                while ($currentYear >= $carYears->year_begin) {
+                    $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
+                    $currentYear--;
+                }
+            } elseif (isset($carYears->year_begin)) {
+                $currentYear = date('Y');
+                while ($currentYear >= $carYears->year_begin) {
+                    $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
+                    $currentYear--;
+                }
+            } else {
+                $filteredItems[] = (object)['name' => 'Год Не Указан', 'id' => 0];
+            }
+
+            return $filteredItems;
+        } else {
+            return (object)['name' => 'Год Не Указан', 'id' => 0];
+        }
+    }
+
+    public function getCarYearList($model_id)
+    {
+        if (isset($model_id) && is_numeric($model_id)) {
+            $carYears = CarGeneration::where(['car_model_id' => $model_id])
+                ->select(DB::raw("min(year_begin) as year_begin,max(year_end) as year_end"))
+                ->groupBy('car_model_id')
+                ->first();
+
+            return isset($carYears->year_begin) ? $carYears : (object)['year_begin' => 1950, 'year_end' => Carbon::now()->year];
+        }
+    }
+
+    public function getCarGenerationList($model_id, $year)
+    {
+
+        if (isset($model_id) && is_numeric($model_id)) {
+            $searchFilter = [['car_model_id', $model_id]];
+            if (isset($year) && is_numeric($year) && $year > 0) {
+                $searchFilter[] = ['year_begin', '<=', $year];
+                $searchFilter[] = ['year_end', '>=', $year];
+            }
+            $carGenerations = CarGeneration::where($searchFilter)
+                ->select('id', 'name')
+                ->get();
+            return $carGenerations;
+        }
+    }
+
+    public function getCarSeriesList($model_id, $generation_id)
+    {
+        if (isset($model_id) && is_numeric($model_id)) {
+            $searchFilter[] = ['car_model_id', $model_id];
+            if (isset($generation_id) && is_numeric($generation_id) && $generation_id > 0) {
+                $searchFilter[] = ['car_generation_id', $generation_id];
+            }
+
+            $carSeries = CarSeries::where($searchFilter)
+                ->select('id', 'name')
+                ->get();
+            $returnValues = [];
+            foreach ($carSeries as $singleSeries) {
+                $returnValues[] = (object)['id' => $singleSeries->id, 'name' => $singleSeries->name, 'body' => $singleSeries->body_name];
+            }
+            return $returnValues;
+        }
+    }
+
+    public function getCarModificationList($model_id, $series_id, $year)
+    {
+        if (isset($model_id) && is_numeric($model_id) && isset($series_id) && is_numeric($series_id)) {
+            $yearFilter = [];
+            if (isset($year) && is_numeric($year) && $year > 0) {
+                $yearFilter[] = ['year_begin', '<=', $year];
+                $yearFilter[] = ['year_end', '>=', $year];
+            }
+            $carModifications = CarModification::where([
+                ['car_model_id', $model_id],
+                ['car_series_id', $series_id]
+            ])
+                ->where(function ($q) use ($yearFilter) {
+                    $q->where($yearFilter)
+                        ->orWhereNull('year_begin')
+                        ->orWhereNull('year_end');
+                })
+                ->select('id', 'name')
+                ->get();
+            return $carModifications;
+        }
+    }
+
+    public function getCarEngineList($modification_id)
+    {
+        if (isset($modification_id) && is_numeric($modification_id)) {
+            $carEngines = CarCharacteristicValue::where([
+                ['car_modification_id', $modification_id],
+                ['car_characteristic_id', 12]
+            ])
+                ->select('id', 'value as name')
+                ->get();
+            return $carEngines;
+        }
+    }
+
+    public function getCarTransmissionList($modification_id)
+    {
+        if (isset($modification_id) && is_numeric($modification_id)) {
+            $carTransmissions = CarCharacteristicValue::where([
+                ['car_modification_id', $modification_id],
+                ['car_characteristic_id', 24]
+            ])
+                ->select('id', 'value as name')
+                ->get();
+            return $carTransmissions;
+        }
+    }
+
+    public function getCarGearList($modification_id)
+    {
+        if (isset($modification_id) && is_numeric($modification_id)) {
+            $carGears = CarCharacteristicValue::where([
+                ['car_modification_id', $modification_id],
+                ['car_characteristic_id', 27]
+            ])
+                ->select('id', 'value as name')
+                ->get();
+            return $carGears;
         }
     }
 
@@ -715,12 +961,10 @@ class ApplicationController extends AppController
         return redirect()->back()->with('error', __('Error'));
     }
 
-
     public function removeAttachment($attachment)
     {
         return Attachment::where('id', $attachment)->delete();
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -866,13 +1110,6 @@ class ApplicationController extends AppController
         }
     }
 
-    public function markNotificationAsRead(Request $request)
-    {
-        if ($request->has('notification')) {
-            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
-        }
-    }
-
     public function getModelChatContent(Request $request, $application_id)
     {
         if ($request->has('notification') && $application = Application::find($application_id)) {
@@ -882,16 +1119,6 @@ class ApplicationController extends AppController
             }
         }
         $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
-        if ($htmlRender == null) {
-            return null;
-        }
-        return response()->json(['success' => true, 'html' => $htmlRender]);
-    }
-
-
-    public function getModelContent(Request $request, $application_id)
-    {
-        $htmlRender = $this->renderModal('applications.ajax.modal', $request, $application_id);
         if ($htmlRender == null) {
             return null;
         }
@@ -929,6 +1156,22 @@ class ApplicationController extends AppController
             return $htmlRender;
         }
         return null;
+    }
+
+    public function markNotificationAsRead(Request $request)
+    {
+        if ($request->has('notification')) {
+            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
+        }
+    }
+
+    public function getModelContent(Request $request, $application_id)
+    {
+        $htmlRender = $this->renderModal('applications.ajax.modal', $request, $application_id);
+        if ($htmlRender == null) {
+            return null;
+        }
+        return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 
     public function checkDuplicate(Request $request)
@@ -977,190 +1220,6 @@ class ApplicationController extends AppController
             'license_plate' => $licensePlateDuplicates,
             'vin' => $vinDuplicates,
         ]);
-    }
-
-    public function getCarMarkList($type_id)
-    {
-        $carMarks = [];
-        if ($type_id == 1) {
-            $carMarks = CarMark::where([
-                ['car_marks.is_active', 1],
-                ['car_marks.car_type_id', $type_id],
-                ['car_generations.year_begin', '>=', 1990],
-                ['car_generations.year_end', '<=', 2022],
-            ])
-                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
-                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-                ->select('car_marks.id as id', 'car_marks.name as name')
-                ->groupBy('car_marks.id', 'car_marks.name')
-                ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
-                ->get();
-//        } else if ($type_id == 2 || $type_id == 6 || $type_id == 7 || $type_id == 8) {
-        } elseif ($type_id != 27) {
-            $carMarks = CarMark::where([
-                ['car_marks.is_active', 1],
-                ['car_marks.car_type_id', $type_id],
-            ])
-                ->select('car_marks.id as id', 'car_marks.name as name')
-                ->groupBy('car_marks.id', 'car_marks.name')
-                ->orderBy('car_marks.rank', 'asc')->orderBy('car_marks.name', 'ASC')
-                ->get();
-        }
-
-        if (count($carMarks) > 0 && $type_id != 27) {
-            $carMarks = CarMark::setLogo($carMarks);
-            return $carMarks;
-        }
-    }
-
-    public function getCarModelList($mark_id)
-    {
-        if (isset($mark_id) && is_numeric($mark_id)) {
-            $carModels = CarModel::where(['car_mark_id' => $mark_id])
-                ->select('id', 'name')
-                ->orderBy('rank', 'asc')->orderBy('name', 'ASC')->get();
-
-            if (count($carModels) > 0) {
-                return $carModels;
-            } else {
-                return ['id' => 0, 'name' => __('Unknown Model')];
-            }
-        }
-    }
-
-    public function getCarYearList($model_id)
-    {
-        if (isset($model_id) && is_numeric($model_id)) {
-            $carYears = CarGeneration::where(['car_model_id' => $model_id])
-                ->select(DB::raw("min(year_begin) as year_begin,max(year_end) as year_end"))
-                ->groupBy('car_model_id')
-                ->first();
-
-            return isset($carYears->year_begin) ? $carYears : (object)['year_begin' => 1950, 'year_end' => Carbon::now()->year];
-        }
-    }
-
-    public function getCarGenerationList($model_id, $year)
-    {
-
-        if (isset($model_id) && is_numeric($model_id)) {
-            $searchFilter = [['car_model_id', $model_id]];
-            if (isset($year) && is_numeric($year) && $year > 0) {
-                $searchFilter[] = ['year_begin', '<=', $year];
-                $searchFilter[] = ['year_end', '>=', $year];
-            }
-            $carGenerations = CarGeneration::where($searchFilter)
-                ->select('id', 'name')
-                ->get();
-            return $carGenerations;
-        }
-    }
-
-    public function getCarSeriesList($model_id, $generation_id)
-    {
-        if (isset($model_id) && is_numeric($model_id)) {
-            $searchFilter[] = ['car_model_id', $model_id];
-            if (isset($generation_id) && is_numeric($generation_id) && $generation_id > 0) {
-                $searchFilter[] = ['car_generation_id', $generation_id];
-            }
-
-            $carSeries = CarSeries::where($searchFilter)
-                ->select('id', 'name')
-                ->get();
-            $returnValues = [];
-            foreach ($carSeries as $singleSeries) {
-                $returnValues[] = (object)['id' => $singleSeries->id, 'name' => $singleSeries->name, 'body' => $singleSeries->body_name];
-            }
-            return $returnValues;
-        }
-    }
-
-    public function getCarModificationList($model_id, $series_id, $year)
-    {
-        if (isset($model_id) && is_numeric($model_id) && isset($series_id) && is_numeric($series_id)) {
-            $yearFilter = [];
-            if (isset($year) && is_numeric($year) && $year > 0) {
-                $yearFilter[] = ['year_begin', '<=', $year];
-                $yearFilter[] = ['year_end', '>=', $year];
-            }
-            $carModifications = CarModification::where([
-                ['car_model_id', $model_id],
-                ['car_series_id', $series_id]
-            ])
-                ->where(function ($q) use ($yearFilter) {
-                    $q->where($yearFilter)
-                        ->orWhereNull('year_begin')
-                        ->orWhereNull('year_end');
-                })
-                ->select('id', 'name')
-                ->get();
-            return $carModifications;
-        }
-    }
-
-    public function getCarEngineList($modification_id)
-    {
-        if (isset($modification_id) && is_numeric($modification_id)) {
-            $carEngines = CarCharacteristicValue::where([
-                ['car_modification_id', $modification_id],
-                ['car_characteristic_id', 12]
-            ])
-                ->select('id', 'value as name')
-                ->get();
-            return $carEngines;
-        }
-    }
-
-    public function getCarTransmissionList($modification_id)
-    {
-        if (isset($modification_id) && is_numeric($modification_id)) {
-            $carTransmissions = CarCharacteristicValue::where([
-                ['car_modification_id', $modification_id],
-                ['car_characteristic_id', 24]
-            ])
-                ->select('id', 'value as name')
-                ->get();
-            return $carTransmissions;
-        }
-    }
-
-    public function getCarGearList($modification_id)
-    {
-        if (isset($modification_id) && is_numeric($modification_id)) {
-            $carGears = CarCharacteristicValue::where([
-                ['car_modification_id', $modification_id],
-                ['car_characteristic_id', 27]
-            ])
-                ->select('id', 'value as name')
-                ->get();
-            return $carGears;
-        }
-    }
-
-    public function filteredItems($carYears)
-    {
-        if (!empty($carYears)) {
-            $filteredItems = [];
-            if (isset($carYears->year_begin) && isset($carYears->year_end)) {
-                $currentYear = $carYears->year_end;
-                while ($currentYear >= $carYears->year_begin) {
-                    $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
-                    $currentYear--;
-                }
-            } elseif (isset($carYears->year_begin)) {
-                $currentYear = date('Y');
-                while ($currentYear >= $carYears->year_begin) {
-                    $filteredItems[] = (object)['name' => $currentYear, 'id' => $currentYear];
-                    $currentYear--;
-                }
-            } else {
-                $filteredItems[] = (object)['name' => 'Год Не Указан', 'id' => 0];
-            }
-
-            return $filteredItems;
-        } else {
-            return (object)['name' => 'Год Не Указан', 'id' => 0];
-        }
     }
 
     public function toggleFavorite(Request $request, Application $application)
@@ -1323,80 +1382,15 @@ class ApplicationController extends AppController
         ]);
     }
 
-    protected function applicationUpdateData($application)
-    {
-        $carMarks = null;
-        $carModels = null;
-        $carYears = null;
-        $carGenerations = null;
-        $carSeriess = null;
-        $carModifications = null;
-        $carEngines = null;
-        $carTransmissions = null;
-        $carGears = null;
-
-        if ($application->car_type_id) {
-            $carMarks = $this->getCarMarkList($application->car_type_id);
-        }
-        if ($application->car_mark_id) {
-            $carModels = $this->getCarModelList($application->car_mark_id);
-        }
-        if ($application->car_model_id) {
-            $carYears = $this->filteredItems($this->getCarYearList($application->car_model_id));
-        }
-        if ($application->year) {
-            $carGenerations = $this->getCarGenerationList($application->car_model_id, $application->year);
-        }
-        if ($application->car_generation_id) {
-            $carSeriess = $this->getCarSeriesList($application->car_model_id, $application->car_generation_id);
-        }
-        if ($application->car_series_id) {
-            $carModifications = $this->getCarModificationList($application->car_model_id, $application->car_series_id, $application->year);
-        }
-        if ($application->car_modification_id) {
-            $carEngines = $this->getCarEngineList($application->car_modification_id);
-        }
-        if ($application->car_engine_id) {
-            $carTransmissions = $this->getCarTransmissionList($application->car_modification_id);
-        }
-        if ($application->car_gear_id) {
-            $carGears = $this->getCarGearList($application->car_modification_id);
-        }
-
-        $attachments = $application->attachments()->select('id', 'thumbnail_url', 'url')->get();
-        $dataApplication = [
-            'modelId' => $application->car_model_id,
-            'car_mark_id' => $application->car_mark_id,
-            'modificationId' => $application->car_modification_id,
-            'year' => $application->year
-        ];
-
-        return compact(
-            'application',
-            'attachments',
-            'dataApplication',
-            'carMarks',
-            'carModels',
-            'carYears',
-            'carGenerations',
-            'carSeriess',
-            'carModifications',
-            'carEngines',
-            'carTransmissions',
-            'carGears'
-        );
-    }
-
     public function approved(Request $request)
     {
-
         $application = Application::findOrFail($request->appId);
         $application->status_id = 2;
         if ($request->has('notChangeDate')) {
             $date = date('Y-m-d H:i:s', strtotime($application->arriving_at));
             $date = Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay();
             $application->arrived_at = $date;
-        }else{
+        } else {
             $application->arrived_at = now()->format('Y-m-d H:i:s');
         }
         $application->save();
