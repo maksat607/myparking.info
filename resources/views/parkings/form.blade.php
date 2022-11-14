@@ -135,6 +135,22 @@
     </div>
 
 </form>
+<div class="container">
+    <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">
+    <label class="field-style {{ session('PartnerHide') }}">
+        <span>Партнёр</span>
+        <select name="partner" class="page-select">
+            <option selected value="">Базовые цены</option>
+            @foreach(auth()->user()->adminPartners as $partner)
+                <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+            @endforeach
+        </select>
+    </label>
+    </form>
+</div>
+
+
+        @include('pricings.pricing')
 
 
 {{--

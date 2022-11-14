@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 class Parking extends Model
 {
@@ -22,10 +20,14 @@ class Parking extends Model
         'address',
         'timezone',
     ];
-    public function applications(){
+
+    public function applications()
+    {
 //        return $this->belongsTo(Parking::class);
         return $this->hasMany(Application::class);
     }
+
+
     public function legals()
     {
         return $this->belongsToMany(Legal::class);
@@ -38,7 +40,7 @@ class Parking extends Model
 
     public function managers()
     {
-        return $this->belongsToMany(User::class, 'manager_parking', 'parking_id', 'manager_id' );
+        return $this->belongsToMany(User::class, 'manager_parking', 'parking_id', 'manager_id');
     }
 
     public function owner()
@@ -48,27 +50,26 @@ class Parking extends Model
 
     public function scopeParkings($query)
     {
-        if(auth()->user()->hasRole(['Admin'])) {
+        if (auth()->user()->hasRole(['Admin'])) {
             $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
             $childrenIds[] = auth()->user()->id;
             $childrenWithOwnerId = $childrenIds;
             return $query->whereIn('user_id', $childrenWithOwnerId);
         } elseif (auth()->user()->hasRole(['Manager'])) {
             return $query->whereIn('id', auth()->user()->managerParkings->modelKeys());
-        } elseif(auth()->user()->hasRole(['Operator'])) {
-            return $query->where ('user_id', auth()->user()->owner->id);
-        }elseif (auth()->user()->hasRole(['Partner'])) {
+        } elseif (auth()->user()->hasRole(['Operator'])) {
+            return $query->where('user_id', auth()->user()->owner->id);
+        } elseif (auth()->user()->hasRole(['Partner'])) {
             return $query->whereIn('id', auth()->user()->partnerParkings()->pluck('id'));
         } elseif (auth()->user()->hasRole(['PartnerOperator'])) {
             return $query->whereIn('id', auth()->user()->owner->partnerParkings()->pluck('id'));
         }
         return $query;
-
     }
 
     public function scopeParking($query, $id)
     {
-        if(auth()->user()->hasRole(['Admin'])) {
+        if (auth()->user()->hasRole(['Admin'])) {
             $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
             $childrenIds[] = auth()->user()->id;
             $childrenWithOwnerId = $childrenIds;
@@ -81,16 +82,21 @@ class Parking extends Model
         return $query->where('id', $id);
     }
 
-    /*public function scopeParkingsFilter($query)
+    public function prices()
     {
-        if(auth()->user()->hasRole(['Admin'])) {
-            $childrenIds = auth()->user()->children()->without('owner')->get()->modelKeys();
-            $childrenIds[] = auth()->user()->id;
-            $childrenWithOwnerId = $childrenIds;
-            return $query->whereIn('user_id', $childrenWithOwnerId);
-        } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
-            return $query->where('user_id', auth()->user()->id);
+
+    }
+
+    public function getprices($partner_id = 0)
+    {
+        if ($this->hasPriceFor($partner_id)->count()) {
+            return $this->hasPriceFor($partner_id)->get();
         }
-        return $query;
-    }*/
+        return $this->hasMany(Price::class);
+    }
+
+    public function hasPriceFor($partner_id)
+    {
+        return PriceForPartner::where('partner_id', $partner_id)->where('parking_id', $this->attributes['id']);
+    }
 }

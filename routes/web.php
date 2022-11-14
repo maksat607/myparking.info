@@ -89,6 +89,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['check_legal', 'check_child_owner_legal']);
     Route::resource('notifications', NotificationController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::resource('parking.prices', \App\Http\Controllers\PriceController::class)
+        ->middleware(['check_legal', 'check_child_owner_legal']);
 
     Route::get('/users/{user}/parking/all', [UserController::class, 'allUserParking'])->name('user.parking.all');
     Route::get('/notifications', [UserController::class, 'notifications'])->name('notifications.list');

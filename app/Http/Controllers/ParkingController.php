@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarType;
 use App\Models\Parking;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -145,7 +146,15 @@ class ParkingController extends AppController
 
         $title = __('Edit parking :Parking', ['parking' => $parking->title]);
 
-        return view('parkings.edit', compact('parking', 'legals', 'users', 'title'));
+        $car_types = CarType::where('is_active', 1)
+            ->select('id', 'name')
+            ->orderBy('rank', 'desc')
+            ->orderBy('name', 'ASC')
+            ->get();
+        $pricings = createPriceList($car_types);
+        $personal = false;
+
+        return view('parkings.edit', compact('parking', 'legals', 'users', 'title','pricings','personal'));
     }
 
     /**
