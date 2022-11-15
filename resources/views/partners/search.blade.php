@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@dump(234234234)
+
 @section('content')
 
     <form method="POST" class="mkmk"

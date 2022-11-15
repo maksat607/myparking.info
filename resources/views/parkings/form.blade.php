@@ -139,10 +139,14 @@
     <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">
     <label class="field-style {{ session('PartnerHide') }}">
         <span>Партнёр</span>
-        <select name="partner" class="page-select">
-            <option selected value="">Базовые цены</option>
+        <select name="partner_id" class="page-select">
+            <option selected value="0">Базовые цены</option>
             @foreach(auth()->user()->adminPartners as $partner)
-                <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+                @if(request()->get('partner_id') == $partner->id)
+                    <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+                @else
+                    <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+                @endif
             @endforeach
         </select>
     </label>

@@ -11,5 +11,14 @@ class Price extends Model
 
     protected $guarded = [];
 
+    public function carType()
+    {
+        return $this->belongsTo(CarType::class);
+    }
+
+    public function scopePartner($query, $partner_id)
+    {
+        return $query->where('partner_id', $partner_id);
+    }
 
 }

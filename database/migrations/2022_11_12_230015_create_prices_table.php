@@ -15,12 +15,12 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
-            $table->double('discount_price')->default(0);
-            $table->double('regular_price')->default(0);
+            $table->double('discount_price')->default(500);
+            $table->double('regular_price')->default(500);
             $table->integer('free_days')->default(0);
             $table->foreignId('car_type_id');
-            $table->foreignId('parking_id');
-            $table->foreignId('partner_id');
+            $table->foreignId('parking_id')->default(0);
+            $table->foreignId('partner_id')->default(0);
             $table->timestamps();
         });
     }

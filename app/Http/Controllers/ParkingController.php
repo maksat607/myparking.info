@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CarType;
 use App\Models\Parking;
+use App\Models\Price;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -24,7 +26,7 @@ class ParkingController extends AppController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -37,7 +39,7 @@ class ParkingController extends AppController
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -60,8 +62,8 @@ class ParkingController extends AppController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -82,7 +84,7 @@ class ParkingController extends AppController
             'status' => $request->input('status', 0),
         ];
 
-        if(!is_null($request->timezone)) {
+        if (!is_null($request->timezone)) {
             $parkingData['timezone'] = $request->timezone;
         }
 
@@ -102,7 +104,6 @@ class ParkingController extends AppController
             DB::commit();
 
             return redirect()->route('parkings.index')->with('success', __('Saved.'));
-
         } catch (QueryException $e) {
             DB::rollBack();
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
@@ -112,8 +113,8 @@ class ParkingController extends AppController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function show($id)
     {
@@ -127,8 +128,8 @@ class ParkingController extends AppController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function edit($id)
     {
@@ -151,18 +152,43 @@ class ParkingController extends AppController
             ->orderBy('rank', 'desc')
             ->orderBy('name', 'ASC')
             ->get();
-        $pricings = createPriceList($car_types);
+//        $pricings = createPriceList($car_types);
+
+        $this->syncBasePrices($car_types);
+        $prices = $parking->getprices((int)\request()->get('partner_id'));
+
+
         $personal = false;
 
-        return view('parkings.edit', compact('parking', 'legals', 'users', 'title','pricings','personal'));
+        return view('parkings.edit', compact('parking', 'legals', 'users', 'title', 'prices', 'personal'));
+    }
+
+    /**
+     * @param $car_types
+     * @return void
+     */
+    public function syncBasePrices($car_types)
+    {
+        $existings = Price::where('partner_id', 0)->where('parking_id', 0)->pluck('car_type_id');
+        if (
+            $car_types->pluck('id')
+                ->diff($existings)
+                ->count() != 0
+        ) {
+            Price::where('partner_id', 0)->where('parking_id', 0)->delete();
+            $car_types = $car_types->map(function ($i) {
+                return ['car_type_id' => $i];
+            })->toArray();
+            Price::insert($car_types);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -187,7 +213,7 @@ class ParkingController extends AppController
             $parking->address = $request->address;
             $parking->status = $request->input('status', 0);
 
-            if(!is_null($request->timezone)) {
+            if (!is_null($request->timezone)) {
                 $parking->timezone = $request->timezone;
             }
 
@@ -198,7 +224,6 @@ class ParkingController extends AppController
             DB::commit();
 
             return redirect()->route('parkings.index')->with('success', __('Saved.'));
-
         } catch (QueryException $e) {
             DB::rollBack();
             return redirect()->back()->with('error', __('Error') . ': ' . __('Failed to save'));
@@ -208,8 +233,8 @@ class ParkingController extends AppController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {

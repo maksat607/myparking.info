@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Parking;
 use App\Models\Price;
+use App\Models\PriceForPartner;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class PriceController extends Controller
 {
@@ -37,8 +39,13 @@ class PriceController extends Controller
      */
     public function store(Request $request, Parking $parking)
     {
-        dump($parking->prices($request->partner));
-        $request->dd();
+        DB::transaction(function () use ($request, $parking) {
+            Price::where('partner_id', (int)$request->get('partner_id'))->where('parking_id', $parking->id)->delete();
+            Price::insert($request->pricings);
+            PriceForPartner::where('partner_id', (int)$request->get('partner_id'))->where('parking_id', $parking->id)->delete();
+            PriceForPartner::create(['partner_id' => (int)$request->get('partner_id'), 'parking_id' => $parking->id]);
+        });
+        return redirect()->back()->with('success', __('Saved.'));
     }
 
     /**

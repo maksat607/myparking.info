@@ -84,18 +84,23 @@ class Parking extends Model
 
     public function prices()
     {
-
+        return $this->hasMany(Price::class);
     }
+
 
     public function getprices($partner_id = 0)
     {
         if ($this->hasPriceFor($partner_id)->count()) {
-            return $this->hasPriceFor($partner_id)->get();
+            return $this->prices->where('partner_id', $partner_id);
         }
-        return $this->hasMany(Price::class);
+        if ($this->prices->count() > 0 && $this->prices->where('partner_id', 0)->count() > 0) {
+            return $this->prices->where('partner_id', 0);
+        }
+
+        return Price::where('partner_id', 0)->where('parking_id', 0)->get();
     }
 
-    public function hasPriceFor($partner_id)
+    public function hasPriceFor($partner_id = 0)
     {
         return PriceForPartner::where('partner_id', $partner_id)->where('parking_id', $this->attributes['id']);
     }

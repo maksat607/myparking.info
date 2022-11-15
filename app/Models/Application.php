@@ -362,4 +362,8 @@ class Application extends Model
             }
         );
     }
+    public function parkingPrice(){
+//        $this->parking->getprices($this->attributes['partner_id'])->
+//        $a->arrived_at->diffInDays($a->issued_at)
+    }
 }
