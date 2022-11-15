@@ -177,7 +177,7 @@ class ParkingController extends AppController
         ) {
             Price::where('partner_id', 0)->where('parking_id', 0)->delete();
             $car_types = $car_types->map(function ($i) {
-                return ['car_type_id' => $i];
+                return ['car_type_id' => $i->id];
             })->toArray();
             Price::insert($car_types);
         }
