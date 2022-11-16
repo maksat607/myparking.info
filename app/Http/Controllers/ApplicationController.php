@@ -27,6 +27,7 @@ use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
 use App\Notifications\ApplicationNotifications;
+use App\Notifications\TelegramNotification;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
 use Carbon\Carbon;
@@ -75,6 +76,7 @@ class ApplicationController extends AppController
         if (request()->has('uncheckFilters')) {
             return redirect()->to(url()->current());
         }
+
         $this->authorize('viewAny', Application::class);
         $statuses = Status::where('is_active', true)->pluck('id')->toArray();
 
@@ -627,7 +629,6 @@ class ApplicationController extends AppController
             if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
                 $application->attachments()->saveMany($attachments);
             }
-
         });
 
         if ($application) {

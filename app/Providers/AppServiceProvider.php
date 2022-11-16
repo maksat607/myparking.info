@@ -91,5 +91,7 @@ class AppServiceProvider extends ServiceProvider
                     ->where('status_id', '!=', 8)
                     ->where('id', '!=', $ignore)->count() == 0;
         });
+
+
     }
 }
