@@ -23,7 +23,7 @@ class TelegramNotification
     public function send($message)
     {
         $data = ["companycode" => $this->code, "data" => [["message" => $message]]];
-        Http::post('https://t.kuleshov.studio/api/getmessages', $data);
+//        Http::post('https://t.kuleshov.studio/api/getmessages', $data);
     }
 
 }
