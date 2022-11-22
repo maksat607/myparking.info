@@ -773,10 +773,10 @@
         <input type="hidden" id="messageModalPopulate" class="theme-blue message-user-show-modal" data-user-id="8">
     @endif
     @if($application->status->code == 'storage')
-        @can('application_to_inspection')
-            <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка
-                на осмотр</a>
-        @endcan
+{{--        @can('application_to_inspection')--}}
+{{--            <a href="{{ route('view_requests.create', ['application' => $application->id]) }}" class="btn btn-warning">Заявка--}}
+{{--                на осмотр</a>--}}
+{{--        @endcan--}}
         @can('application_to_issue')
             @if($application->issuance)
                 <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
