@@ -1,5 +1,6 @@
 
-const CAR_URL = 'http://127.0.0.1:8002/api/v1'
+// const CAR_URL = 'http://127.0.0.1:8002/api/v1'
+const CAR_URL = 'http://188.225.44.64:8001/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
@@ -159,8 +160,9 @@ const carSelectAjax = {
 
         if(self.dataId) {
 
-            // await axios.get(`${CAR_URL}/models/${self.modelId}/years/${self.dataId}/generations`)
-            await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
+            await axios.get(`${CAR_URL}/models/${self.modelId}/years/${self.dataId}/generations`)
+
+            // await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
                 .then(response => {
                     self.items = response.data;
                 }).catch(error => {
@@ -181,7 +183,8 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series']);
 
         if(self.dataId) {
-            await axios.get(`${CAR_URL}/car/series/list/${self.modelId}/${self.dataId}`)
+
+            await axios.get(`${CAR_URL}/generations/${self.dataId}/series`)
                 .then(response => {
                     self.items = response.data;
                 }).catch(error => {
@@ -202,7 +205,8 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications']);
 
         if(self.dataId) {
-            await axios.get(`${CAR_URL}/car/modification/list/${self.modelId}/${self.dataId}/${self.year}`)
+
+            await axios.get(`${CAR_URL}/model/${self.modelId}/series/${self.dataId}/${self.year}`)
                 .then(response => {
                     self.items = response.data;
                 }).catch(error => {
@@ -225,7 +229,8 @@ const carSelectAjax = {
             '#engines']);
 
         if(self.dataId) {
-            await axios.get(`${CAR_URL}/car/characteristic/engine/${self.dataId}`)
+
+            await axios.get(`${CAR_URL}/modifications/${self.dataId}/engines`)
                 .then(response => {
                     self.items = response.data;
                 }).catch(error => {
@@ -247,7 +252,8 @@ const carSelectAjax = {
             '#engines', '#transmissions']);
 
         if(self.dataId) {
-            await axios.get(`${CAR_URL}/car/characteristic/transmission/${self.modificationId}`)
+
+            await axios.get(`${CAR_URL}/modifications/${self.modificationId}/transmissions`)
                 .then(response => {
                     self.items = response.data;
 
@@ -270,7 +276,8 @@ const carSelectAjax = {
             '#engines', '#transmissions', '#gears']);
 
         if(self.dataId) {
-            await axios.get(`${CAR_URL}/car/characteristic/gear/${self.modificationId}`)
+
+            await axios.get(`${CAR_URL}/modifications/${self.modificationId}/gears`)
                 .then(response => {
                     self.items = response.data;
 
