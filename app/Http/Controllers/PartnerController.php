@@ -152,6 +152,7 @@ class PartnerController extends AppController
             ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
             ->get();
         $pricings = createPriceList($car_types);
+
         if ($partner->base_type == "public") {
             $disabled = true;
         }

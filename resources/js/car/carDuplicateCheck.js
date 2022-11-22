@@ -139,6 +139,7 @@ const checkDuplicate = {
             $(`#vin`).removeClass('invalid');
         }
 
+
         if(this.licensePlateDuplicates.length) {
             $(`#license_plate`).addClass('invalid');
         } else {

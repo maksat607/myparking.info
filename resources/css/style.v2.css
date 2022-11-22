@@ -6,7 +6,9 @@
 }
 
 
-
+.main-color{
+    background: #536E9B !important;
+}
 
 .theme-back option{
     text-align: right;

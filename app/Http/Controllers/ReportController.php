@@ -155,14 +155,22 @@ class ReportController extends Controller
      */
     public function reportByPartner(Request $request)
     {
+        $partner = null;
 
-//        $partners = Partner::orderBy('name', 'ASC')->get();
-        $partners = auth()->user()->adminPartners->sortBy('name');
+//
+//        $partners = auth()->user()->adminPartners->sortBy('name');
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
 
+        $partners = $user->adminPartners->sortBy('name');
+
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
-        $partner = null;
+
+        if(auth()->user()->hasRole('SuperAdmin')) {
+            $partners = Partner::orderBy('name', 'ASC')->get();
+        }
+
         if(auth()->user()->hasRole('Partner|PartnerOperator')){
+            $partner = null;
             $parking = auth()->user()->partner->parkings();
             $partner = auth()->user()->partner;
         }
