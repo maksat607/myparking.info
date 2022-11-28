@@ -20,6 +20,7 @@ const modalAjaxContent = {
         });
         $(`.car-show-modal, .car-show-info, .app-notification`).on('click', {self: this}, this.getModalContent);
         $('body').on('click', `.app-notification.chat`, {self: this}, this.getModalContentChat);
+        $('body').on('click', `.car-show-modal-back`, {self: this}, this.getModalContent);
         $('body').on('click', `.show-modal-chat`, {self: this}, this.getModalContentChat);
         $('body').on('click', `.send-mess`, {self: this}, this.sendMessage);
         $('body').on('keyup', `#storage_message`, {self: this}, this.triggerSubmit);
@@ -91,9 +92,11 @@ const modalAjaxContent = {
 
     },
     getModalContent(e) {
+        console.log('clicked')
         if($(this).hasClass('chat')){
             return;
         }
+
         let self = e.data.self
         let applicationId = $(this).data('app-id');
         let applicationTitle = $(this).data('app-title');

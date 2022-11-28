@@ -74,6 +74,7 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
+
         if (request()->has('uncheckFilters')) {
             return redirect()->to(url()->current());
         }
@@ -456,6 +457,8 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+        $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
+        $noTypeCar = json_decode($response->body(), true);
 
         $required = true;
         $returned = false;
@@ -490,7 +493,7 @@ class ApplicationController extends AppController
                 $returned ? '' : 'unique_custom:applications,license_plate',
                 'nullable'] : [],
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
+            'car_mark_id' => ($car_type == $noTypeCar) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => ['integer'],
             'year' => ['integer'],
             'car_key_quantity' => ['integer'],
@@ -781,6 +784,8 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
+        $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
+        $noTypeCar = json_decode($response->body(), true);
 
 
         $required = true;
@@ -824,7 +829,7 @@ class ApplicationController extends AppController
             ] : [],
 
             'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type == 27) ? ['integer'] : ['integer', 'required'],
+            'car_mark_id' => ($car_type == $noTypeCar) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => isset($carRequest['car_model_id']) ? ['integer'] : '',
             'year' => isset($carRequest['year']) ? ['integer'] : '',
             'car_key_quantity' => ['integer', 'required', 'max:4', 'min:0'],

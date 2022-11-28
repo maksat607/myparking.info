@@ -3,12 +3,13 @@ const CAR_URL = 'https://lk2.bitok.kg/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
+    dataString: null,
     modelId: null,
     year: null,
     modificationId: null,
     items: null,
     // excluded: [5, 3],
-    excluded: [27],
+    excluded: ['Прочее'],
     timeoutPromise: 500,
     fieldsNeedsToBeCleared: ['car_model_id', 'year', 'car_generation_id', 'car_series_id', 'car_modification_id', 'car_engine_id', 'car_transmission_id', 'car_gear_id'],
     init() {
@@ -44,7 +45,7 @@ const carSelectAjax = {
             let self = e.data.self;
             self.scrollActive($(`.select:visible`));
         });
-        if ($('ul.type-list li.active a').data('id') == 27) {
+        if ($('ul.type-list li.active a').text() == 'Прочее') {
             $('ul.type-list li.active a').trigger('click');
         }
 
@@ -64,6 +65,7 @@ const carSelectAjax = {
         e.preventDefault();
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
+        self.dataString = $(this).text();
 
         self.setActive(this);
         self.addHiddenInput();
@@ -373,7 +375,7 @@ const carSelectAjax = {
     },
     toggleTextArea() {
         let self = this;
-        if (self.excluded.includes(self.dataId)) {
+        if (self.excluded.includes(self.dataString)) {
             $(`.new-style-model[data-id="selectGroup"]`).addClass(`d-none`);
             $(`#textArea`).removeClass(`d-none`);
             self.resetLists(['#types']);
