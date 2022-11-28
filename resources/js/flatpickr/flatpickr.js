@@ -11,7 +11,7 @@ if (typeof dateDataViewRequest !== 'undefined' && dateDataViewRequest) {
 } else if (typeof dateDataIssue !== 'undefined' && dateDataIssue) {
     dataDefault = dateDataIssue;
 }
-console.log("===="+$('#dateDataApplication').val())
+console.log("====" + $('#dateDataApplication').val())
 if (typeof dateDataIssuedApplication !== 'undefined' && dateDataIssuedApplication) {
     dataIssuedDefault = dateDataIssuedApplication;
 }
@@ -41,7 +41,7 @@ function getDate() {
     }
 
     let todayFormat = dd + '/' + mm + '/' + yyyy;
-    console.log("today:"+todayFormat)
+    console.log("today:" + todayFormat)
     return todayFormat;
 }
 
@@ -68,20 +68,26 @@ $('.date').flatpickr({
     // minDate: (dataDefault) ? dataDefault : "today",
     defaultDate: getDate(),
     disable: [
-        function (date) {
-            return (date.getDay() === 0 || date.getDay() === 6);
-        }
+        // function (date) {
+        //     return (date.getDay() === 0 || date.getDay() === 6);
+        // }
     ],
 
 });
 
 console.log('mk')
+let today = null;
+if ($('#status-selection').val() == 2) {
+    today = 'today';
+}
 
-$('.date-manager').flatpickr({
+let dateManager = $('.date-manager').flatpickr({
     altInput: true,
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
+    maxDate: today,
     defaultDate: getDate(),
+
 });
 
 let dateAdmin = $('.date-admin').flatpickr({
@@ -92,14 +98,35 @@ let dateAdmin = $('.date-admin').flatpickr({
 });
 
 
-
-
-$('.date-range').flatpickr({
+let dateRange = $('.date-range').flatpickr({
     mode: "range",
     altInput: true,
     altFormat: "d/m/Y",
     dateFormat: "d-m-Y",
     defaultDate: (dataReportRangeDefault) ? dataReportRangeDefault : getOneMonthDate()
+});
+if ($("#time-interval").val() == 'instorage') {
+
+    dateRange.setDate('today');
+    $('.date-range.input.form-control').prop('disabled', true);
+}
+
+
+$("#time-interval").change(function () {
+
+    if ($(this).val() == 'instorage') {
+        console.log('instorage')
+        dateRange.set('mode', 'single');
+        dateRange.setDate('today');
+        $('.date-range.input.form-control').prop('disabled', true);
+
+    } else {
+        console.log('else')
+        $('.date-range.input.form-control').prop('disabled', false);
+        dateRange.set('mode', 'range');
+        dateRange.setDate((dataReportRangeDefault) ? dataReportRangeDefault : getOneMonthDate())
+    }
+
 });
 
 
@@ -165,9 +192,12 @@ startpicker2 = $('.date-manager-start').flatpickr({
 });
 
 
-$( "#statusSelectUpdateApplication" ).change(function() {
-    if($(this).val()==3){
-
+$("#status-selection").change(function () {
+    console.log($(this).val())
+    if ($(this).val() != 7) {
+        dateManager.set('maxDate', 'today');
+    } else {
+        dateManager.set('maxDate', null)
     }
 
 });

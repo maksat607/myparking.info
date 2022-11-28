@@ -142,6 +142,8 @@
       <path value="$PROJECT_DIR$/vendor/pusher/pusher-php-server" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/vendor/spatie/period" />
+      <path value="$PROJECT_DIR$/vendor/awobaz/compoships" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

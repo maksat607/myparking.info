@@ -151,40 +151,75 @@
         @auth
             <div class="header__user ml-auto d-flex align-items-center">
                 <div class="notification">
-                    <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M9.52819 2.33066C9.92441 1.35472 10.8818 0.666504 12 0.666504C13.1182 0.666504 14.0756 1.35472 14.4718 2.33066C18.4269 3.41413 21.3333 7.03423 21.3333 11.3332V17.5961L23.7761 21.2602C24.0488 21.6694 24.0743 22.1954 23.8422 22.629C23.6102 23.0625 23.1584 23.3332 22.6667 23.3332H16.6194C16.2959 25.5947 14.351 27.3332 12 27.3332C9.64902 27.3332 7.70408 25.5947 7.38059 23.3332H1.33334C0.841608 23.3332 0.389795 23.0625 0.157769 22.629C-0.0742561 22.1954 -0.0488261 21.6694 0.223935 21.2602L2.66667 17.5961V11.3332C2.66667 7.03423 5.57311 3.41413 9.52819 2.33066ZM10.1138 23.3332C10.3884 24.11 11.1292 24.6665 12 24.6665C12.8708 24.6665 13.6116 24.11 13.8862 23.3332H10.1138ZM12 4.6665C8.3181 4.6665 5.33334 7.65127 5.33334 11.3332V17.9998C5.33334 18.2631 5.25542 18.5204 5.1094 18.7394L3.82469 20.6665H20.1753L18.8906 18.7394C18.7446 18.5204 18.6667 18.2631 18.6667 17.9998V11.3332C18.6667 7.65127 15.6819 4.6665 12 4.6665Z"
-                            fill="#011A3F"></path>
+                    <svg width="30" height="25" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.5 1.5C0.5 0.671573 1.17157 0 2 0H14C14.8284 0 15.5 0.671572 15.5 1.5V9.75C15.5 10.5784 14.8284 11.25 14 11.25H10.5607L8.53033 13.2803C8.23744 13.5732 7.76256 13.5732 7.46967 13.2803L5.43934 11.25H2C1.17157 11.25 0.5 10.5784 0.5 9.75V1.5ZM14 1.5H2V9.75H5.75C5.94891 9.75 6.13968 9.82902 6.28033 9.96967L8 11.6893L9.71967 9.96967C9.86032 9.82902 10.0511 9.75 10.25 9.75H14V1.5Z" fill="#536E9B"></path>
+                        <path d="M9.125 5.625C9.125 6.24632 8.62132 6.75 8 6.75C7.37868 6.75 6.875 6.24632 6.875 5.625C6.875 5.00368 7.37868 4.5 8 4.5C8.62132 4.5 9.125 5.00368 9.125 5.625Z" fill="#536E9B"></path>
+                        <path d="M12.125 5.625C12.125 6.24632 11.6213 6.75 11 6.75C10.3787 6.75 9.875 6.24632 9.875 5.625C9.875 5.00368 10.3787 4.5 11 4.5C11.6213 4.5 12.125 5.00368 12.125 5.625Z" fill="#536E9B"></path>
+                        <path d="M6.125 5.625C6.125 6.24632 5.62132 6.75 5 6.75C4.37868 6.75 3.875 6.24632 3.875 5.625C3.875 5.00368 4.37868 4.5 5 4.5C5.62132 4.5 6.125 5.00368 6.125 5.625Z" fill="#536E9B"></path>
                     </svg>
-                    <div class="bell notification__count {{ auth()->id() }}">{{auth()->user()->unreadNotifications->count()}}</div>
-                    <ul class="notification__dd-list {{ auth()->id() }}">
+                    <div class="chats bell notification__count {{ auth()->id() }}">
+                        {{
+                           auth()->user()->unreadNotifications->reject(function($notification){
+                               return !isset($notification->data['chat']);
+                           })->count()
+                        }}
+                    </div>
+                    <ul class="chats notification__dd-list {{ auth()->id() }}">
                         @foreach(auth()->user()->unreadNotifications as $notification)
-                            @if(isset($notification->data['short']))
+                            @if(isset($notification->data['chat']))
                                 <li class="new-notif app-notification @if(isset($notification->data['chat'])) chat @endif"
                                     data-app-id="{{ json_decode($notification)->data->id }}" data-notification="{{ $notification->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
-                                </li>
-                            @endif
-                            @if(isset($notification->data['message']))
-                                <li class="new-notif"><a
-                                        href="#">{{ json_decode($notification)->data->message }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
                         @endforeach
 
 
                         @foreach(auth()->user()->readNotifications->take(7) as $notification)
-                            @if(isset($notification->data['short']))
+                            @if(isset($notification->data['chat']))
                                 <li class="app-notification @if(isset($notification->data['chat'])) chat @endif"
                                     data-app-id="{{ json_decode($notification)->data->id }}"><a
                                         href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
-                            @if(isset($notification->data['message']))
-                                <li><a
-                                        href="#">{{ json_decode($notification)->data->message }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
+                        @endforeach
+                        <li><a href="{{ route('notifications.list') }}" class="all-notif">Все уведомления</a></li>
+                    </ul>
+                </div>
+
+                <div class="notification">
+                    <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M9.52819 2.33066C9.92441 1.35472 10.8818 0.666504 12 0.666504C13.1182 0.666504 14.0756 1.35472 14.4718 2.33066C18.4269 3.41413 21.3333 7.03423 21.3333 11.3332V17.5961L23.7761 21.2602C24.0488 21.6694 24.0743 22.1954 23.8422 22.629C23.6102 23.0625 23.1584 23.3332 22.6667 23.3332H16.6194C16.2959 25.5947 14.351 27.3332 12 27.3332C9.64902 27.3332 7.70408 25.5947 7.38059 23.3332H1.33334C0.841608 23.3332 0.389795 23.0625 0.157769 22.629C-0.0742561 22.1954 -0.0488261 21.6694 0.223935 21.2602L2.66667 17.5961V11.3332C2.66667 7.03423 5.57311 3.41413 9.52819 2.33066ZM10.1138 23.3332C10.3884 24.11 11.1292 24.6665 12 24.6665C12.8708 24.6665 13.6116 24.11 13.8862 23.3332H10.1138ZM12 4.6665C8.3181 4.6665 5.33334 7.65127 5.33334 11.3332V17.9998C5.33334 18.2631 5.25542 18.5204 5.1094 18.7394L3.82469 20.6665H20.1753L18.8906 18.7394C18.7446 18.5204 18.6667 18.2631 18.6667 17.9998V11.3332C18.6667 7.65127 15.6819 4.6665 12 4.6665Z"
+                            fill="#011A3F"></path>
+                    </svg>
+                    <div class="bell notification__count {{ auth()->id() }}">
+                        {{
+                            auth()->user()->unreadNotifications->reject(function($notification){
+                                return isset($notification->data['chat']);
+                            })->count()
+                         }}
+                    </div>
+                    <ul class="notification__dd-list {{ auth()->id() }}">
+                        @foreach(auth()->user()->unreadNotifications as $notification)
+                            @if(!isset($notification->data['chat']))
+                                <li class="new-notif app-notification @if(isset($notification->data['chat'])) chat @endif"
+                                    data-app-id="{{ json_decode($notification)->data->id }}" data-notification="{{ $notification->id }}"><a
+                                        href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
                                 </li>
                             @endif
+
+                        @endforeach
+
+
+                        @foreach(auth()->user()->readNotifications->take(7) as $notification)
+                            @if(!isset($notification->data['chat']))
+                                <li class="app-notification @if(isset($notification->data['chat'])) chat @endif"
+                                    data-app-id="{{ json_decode($notification)->data->id }}"><a
+                                        href="#">{{ json_decode($notification)->data->short }}</a><span>{{ $notification->created_at->diffForHumans() }}.</span>
+                                </li>
+                            @endif
+
                         @endforeach
                             <li><a href="{{ route('notifications.list') }}" class="all-notif">Все уведомления</a></li>
                     </ul>

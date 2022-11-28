@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.1",
+        "awobaz/compoships": "^2.1",
         "brian2694/laravel-toastr": "^5.56",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -19,6 +20,7 @@
         "phpoffice/phpword": "dev-master",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^4.0",
+        "spatie/period": "^2.3",
         "stechstudio/laravel-zipstream": "^4.8"
     },
     "require-dev": {

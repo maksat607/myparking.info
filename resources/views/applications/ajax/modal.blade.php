@@ -759,9 +759,9 @@
 <div class="d-flex">
     @if(auth()->user()->hasRole('Moderator'))
         @if($application->ApplicationHasPending)
-            <select class="theme-back-white" data-app-id="{{$application->id}}" >
+            <select class="theme-back-white" data-app-id="{{$application->id}}">
                 <option>Опции для Модератора</option>
-                <option value="approved" >
+                <option value="approved">
                     <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#ModeratorConfirmationModal">
                         Одобрено

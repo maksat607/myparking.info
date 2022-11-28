@@ -20,6 +20,9 @@
                 <div class="ml-auto d-flex">
                     <label class="field-style">
                         <span class="field-style-title">Статус</span>
+                        @if (auth()->user()->hasRole(['Operator', 'PartnerOperator', 'Partner']))
+                            <input type="hidden" name="app_data[status_id]" value="{{ $application->status->id }}">
+                        @endif
                         <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror" id="statusSelectUpdateApplication">
                             @foreach($statuses as $status)
                                 @if($application->status->nextStatus() == $status->id)
@@ -351,7 +354,7 @@
                                             <fieldset
                                                 class="tabform__cart select car_mark_id fieldset new-style-model ml-auto"
                                                 id="marks" data-id="selectGroup">
-                                                <legend class="legend">{{ __('The brand of the car...') }} <span
+                                                <legend class="legend">Марка авто... <span
                                                         class="mob-arrow"></span></legend>
                                                 <div class="tabform__mob-dd type-card">
                                                     <input type="text" placeholder="Поиск" class="select-search">
@@ -362,6 +365,7 @@
                                                             <li class="placeholder statuspink">Выберите тип авто</li>
                                                         @else
                                                             @foreach($carMarks as $carMark)
+
                                                                 @if($application->car_mark_id === $carMark->id)
                                                                     <li class="select-item tabform__li active">
                                                                         <a href="" data-name-id="car_mark_id"
@@ -994,6 +998,59 @@
                                 </div>
                                 <input type="file" id="noAjaxFileUploader" name="images[]" class="d-none" multiple>
                             </div>
+
+                            <div class="inner-page__item">
+                                <div class="inner-item-title">
+                                    Документы
+                                </div>
+                                Паспорт, доверенность и прочее
+                                <div class="page-file-list" id='images'>
+                                    <div class="page-add-file no-ajax upload-file doc">
+                                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.6"
+                                                  d="M20.0013 6.6665C20.9218 6.6665 21.668 7.4127 21.668 8.33317V18.3332H31.668C32.5884 18.3332 33.3346 19.0794 33.3346 19.9998C33.3346 20.9203 32.5884 21.6665 31.668 21.6665H21.668V31.6665C21.668 32.587 20.9218 33.3332 20.0013 33.3332C19.0808 33.3332 18.3346 32.587 18.3346 31.6665V21.6665H8.33464C7.41416 21.6665 6.66797 20.9203 6.66797 19.9998C6.66797 19.0794 7.41416 18.3332 8.33464 18.3332H18.3346V8.33317C18.3346 7.4127 19.0808 6.6665 20.0013 6.6665Z"
+                                                  fill="#536E9B" />
+                                        </svg>
+                                    </div>
+                                    @php
+                                        $type =
+                                        ['pdf'=>'pdf-icon','doc'=>'doc-icon','docx'=>'doc-icon','xls'=>'xls-icon','xlsx'=>'xls-icon','csv'=>'xls-icon'];
+                                    @endphp
+                                    @foreach($application->attachments->where('file_type','docs')->all() as $attachment)
+                                        @if(in_array(strtolower(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]),['jpg','jpeg','png','bmp']))
+                                            <div class="page-file-item" data-src="{{ $attachment->url }}">
+                                                <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                                <div class="page-file__option">
+                                                    <button type="button" class="page-file__zoom"></button>
+                                                    <button type="button" class="page-file__delete"
+                                                            data-img-id="{{ $attachment->id }}"></button>
+                                                </div>
+                                            </div>
+                                        @else
+                                            {{--
+                                            @dump(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
+                                            --}}
+                                            @if(array_key_exists(explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))],$type))
+                                                <div class="page-file-item doc">
+                                                    <div
+                                                        class="file-icon {{ $type[explode('.',$attachment->name)[array_key_last(explode('.',$attachment->name))]] }}"></div>
+                                                    <span>{{$attachment->name}}</span>
+                                                    <div class="page-file__option">
+                                                        <a href="{{ $attachment->url }}" type="button" class="page-file__download"
+                                                           data-img-id="{{ $attachment->id }}"></a>
+                                                        <button type="button" class="page-file__delete"
+                                                                data-img-id="{{ $attachment->id }}"></button>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                </div>
+                                <input type="file" id="noAjaxFileUploaderDoc" name="docs[]" class="d-none" multiple>
+                            </div>
+
+
                             <div class="inner-page__item">
                                 <div class="inner-item-title">
                                     Дополнительно

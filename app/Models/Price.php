@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Price extends Model
 {
     use HasFactory;
+    use \Awobaz\Compoships\Compoships;
 
     protected $guarded = [];
 
@@ -20,5 +21,7 @@ class Price extends Model
     {
         return $query->where('partner_id', $partner_id);
     }
+
+
 
 }

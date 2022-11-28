@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\TelegramNotification;
+use App\Services\TimeIntervalIntersection;
 use App\View\Composers\ApplicationFilterComposer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(TelegramNotification::class, function () {
             return new TelegramNotification();
+        });
+
+        $this->app->singleton(TimeIntervalIntersection::class, function () {
+            return new TimeIntervalIntersection();
         });
 
         $this->app->singleton(FilterService::class, function () {

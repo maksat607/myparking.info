@@ -42,10 +42,10 @@ const modalAjaxContent = {
         </li>
         `;
         data.users.forEach(id =>{
-                $(`ul.notification__dd-list.${id}`).prepend(html);
-                let count = $(`.bell.notification__count.${id}`).text();
-                $(`.bell.notification__count.${id}`).empty();
-                $(`.bell.notification__count.${id}`).html(Number(count)+1);
+                $(`ul.chats.notification__dd-list.${id}`).prepend(html);
+                let count = $(`.chats.bell.notification__count.${id}`).text();
+                $(`.chats.bell.notification__count.${id}`).empty();
+                $(`.chats.bell.notification__count.${id}`).html(Number(count)+1);
         });
 
     },

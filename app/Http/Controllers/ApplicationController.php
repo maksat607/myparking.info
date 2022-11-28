@@ -34,6 +34,7 @@ use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Session;
@@ -171,9 +172,9 @@ class ApplicationController extends AppController
 
 
         $title = __('Create a Request');
-
         if ($application->exists) {
             $updateData = array_merge(
+
                 $this->applicationUpdateData($application),
                 compact(
                     'title',
@@ -182,7 +183,7 @@ class ApplicationController extends AppController
                     'parkings',
                     'managers',
                     'statuses',
-                    'colors'
+                    'colors',
                 )
             );
             return view('applications.duplicate_create', $updateData);
@@ -455,7 +456,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-//        $request->dd();
+        $request->dd();
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -581,13 +582,17 @@ class ApplicationController extends AppController
             if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
-            $carTitleData = DB::table('car_types')
-                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
-                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
-                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-                ->where($searchFilters)
-                ->first();
+            $response = Http::post('http://188.225.44.64:8001/api/v1/title',$searchFilters);
+
+            $carTitleData = json_decode($response->body());
+//            $carTitleData = DB::table('car_types')
+//                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
+//                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
+//                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
+//                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
+//                ->where($searchFilters)
+//                ->first();
+
 
             $applicationData['car_title'] = '';
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
@@ -667,6 +672,7 @@ class ApplicationController extends AppController
     public function edit($id)
     {
 
+
         $application = Application::application($id)->firstOrFail();
 
 
@@ -686,8 +692,15 @@ class ApplicationController extends AppController
 
         $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
-        extract($this->applicationUpdateData($application));
+        $response = Http::post('http://188.225.44.64:8001/api/v1/app',$application->toArray());
 
+
+        $result = json_decode(json_encode(json_decode($response->body())));
+
+
+
+         extract((array)$result);
+        $attachments = $application->attachments()->select('id', 'thumbnail_url', 'url')->get();
 
 //        $exterior_damage = $application->exterior_damage;
 //        $interior_damage = $application->interior_damage;
@@ -837,6 +850,7 @@ class ApplicationController extends AppController
         $applicationDataArray = get_object_vars(new ApplicationData());
         $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
 
+
         if (isset($applicationData['vin_array'])) {
             $applicationData['vin'] = $applicationData['vin_array'];
         }
@@ -865,13 +879,19 @@ class ApplicationController extends AppController
             if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
-            $carTitleData = DB::table('car_types')
-                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
-                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
-                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-                ->where($searchFilters)
-                ->first();
+//dump($searchFilters);
+            $response = Http::post('http://188.225.44.64:8001/api/v1/title',$searchFilters);
+
+            $carTitleData = json_decode($response->body());
+
+//            $carTitleData = DB::table('car_types')
+//                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
+//                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
+//                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
+//                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
+//                ->where($searchFilters)
+//                ->first();
+
 
             $applicationData['car_title'] = '';
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
@@ -912,7 +932,10 @@ class ApplicationController extends AppController
             unset($applicationData['license_plate_status']);
         }
 
+        if (count($attachmentsDoc = $this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
+            $application->attachments()->saveMany($attachmentsDoc);
 
+        }
         $car_fields = ['car_model_id', 'year', 'car_additional', 'car_engine_id', 'car_transmission_id', 'car_gear_id', 'car_generation_id', 'car_series_id', 'car_modification_id'];
 
         foreach ($car_fields as $car_field) {

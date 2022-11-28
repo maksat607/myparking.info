@@ -234,8 +234,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.content');
     Route::post('/application/send-chat-message/{application}', [ApplicationController::class, 'sendChatMessage'])
-        ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name('application.get.model.content');
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+
     Route::get('/application/get-model-content-app-chat/{application_id}', [ApplicationController::class, 'getModelChatContent'])
         ->middleware(['check_legal', 'check_child_owner_legal'])
         ->name('application.get.model.chat.content');

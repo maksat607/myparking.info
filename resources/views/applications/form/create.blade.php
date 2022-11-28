@@ -22,7 +22,7 @@
             <div class="ml-auto d-flex">
                 <label class="field-style">
                     <span class="field-style-title">Статус</span>
-                    <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror">
+                    <select class="custom-select" name="app_data[status_id] @error('status_id') invalid @enderror" id="status-selection">
                         @foreach($statuses as $status)
                             @if(old('app_data.status_id') == $status->id)
                                 <option value="{{ $status->id }}" selected >{{ $status->name }}</option>
@@ -439,6 +439,7 @@
                                                value="{{ old('car_data.sts') }}"
                                                id="sts" placeholder="Не указан">
                                     </label>
+                                    @if(!auth()->user()->hasRole(['Partner','PartnerOperator','Operator']))
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
                                             <input @if(old('car_data.sts_provided') == 1){{ 'checked' }}@endif type="checkbox" name="car_data[sts_provided]" value="1">
@@ -446,6 +447,7 @@
                                             <span>Принят на хранение</span>
                                         </label>
                                     </div>
+                                    @endif
                                 </div>
                                 <div class="col-6">
                                     <label class="field-style">
@@ -460,6 +462,7 @@
                                             </select>
                                         </div>
                                     </label>
+                                    @if(!auth()->user()->hasRole(['Partner','PartnerOperator','Operator']))
                                     <div class="mt-2">
                                         <label class="switch-radio-wrap">
                                             <input @if(old('car_data.pts_provided') == 1){{ 'checked' }}@endif type="checkbox" name="car_data[pts_provided]" value="1">
@@ -467,6 +470,7 @@
                                             <span>Принят на хранение</span>
                                         </label>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

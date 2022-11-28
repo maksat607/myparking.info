@@ -1,6 +1,5 @@
-
 // const CAR_URL = 'http://127.0.0.1:8002/api/v1'
-const CAR_URL = 'http://188.225.44.64:8001/api/v1'
+const CAR_URL = 'https://lk2.bitok.kg/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
@@ -11,11 +10,11 @@ const carSelectAjax = {
     // excluded: [5, 3],
     excluded: [27],
     timeoutPromise: 500,
-    fieldsNeedsToBeCleared:['car_model_id','year','car_generation_id','car_series_id','car_modification_id','car_engine_id','car_transmission_id','car_gear_id'],
+    fieldsNeedsToBeCleared: ['car_model_id', 'year', 'car_generation_id', 'car_series_id', 'car_modification_id', 'car_engine_id', 'car_transmission_id', 'car_gear_id'],
     init() {
-        if(typeof carDataApplication == 'undefined' || carDataApplication == null) {
+        if (typeof carDataApplication == 'undefined' || carDataApplication == null) {
             $.when(`#types .select-item.active a`).then((response) => {
-                $(`${response}`).trigger('click', {self:this});
+                $(`${response}`).trigger('click', {self: this});
             });
         } else {
             this.modelId = carDataApplication.modelId;
@@ -25,37 +24,37 @@ const carSelectAjax = {
         }
 
 
-        $(`#types .select-item a`).on('click', {self:this}, this.getMarks);
-        $(`body`).on('click', `#marks .select-item a`, {self:this}, this.getModels);
-        $(`body`).on('click', `#models .select-item a`, {self:this}, this.getYears);
-        $(`body`).on('click', `#years .select-item a`, {self:this}, this.getGenerations);
-        $(`body`).on('click', `#generations .select-item a`, {self:this}, this.getSeries);
-        $(`body`).on('click', `#series .select-item a`, {self:this}, this.getModifications);
-        $(`body`).on('click', `#modifications .select-item a`, {self:this}, this.getEngines);
-        $(`body`).on('click', `#engines .select-item a`, {self:this}, this.getTransmissions);
-        $(`body`).on('click', `#transmissions .select-item a`, {self:this}, this.getGears);
-        $(`body`).on('click', `#gears .select-item a`, {self:this}, function(e) {
+        $(`#types .select-item a`).on('click', {self: this}, this.getMarks);
+        $(`body`).on('click', `#marks .select-item a`, {self: this}, this.getModels);
+        $(`body`).on('click', `#models .select-item a`, {self: this}, this.getYears);
+        $(`body`).on('click', `#years .select-item a`, {self: this}, this.getGenerations);
+        $(`body`).on('click', `#generations .select-item a`, {self: this}, this.getSeries);
+        $(`body`).on('click', `#series .select-item a`, {self: this}, this.getModifications);
+        $(`body`).on('click', `#modifications .select-item a`, {self: this}, this.getEngines);
+        $(`body`).on('click', `#engines .select-item a`, {self: this}, this.getTransmissions);
+        $(`body`).on('click', `#transmissions .select-item a`, {self: this}, this.getGears);
+        $(`body`).on('click', `#gears .select-item a`, {self: this}, function (e) {
             e.preventDefault();
             let self = e.data.self;
             self.setActive(this);
             self.addHiddenInput();
         });
 
-        $(`body`).on('click', `.tabform__btn`, {self:this}, function(e) {
+        $(`body`).on('click', `.tabform__btn`, {self: this}, function (e) {
             let self = e.data.self;
             self.scrollActive($(`.select:visible`));
         });
-        if($('ul.type-list li.active a').data('id')==27){
+        if ($('ul.type-list li.active a').data('id') == 27) {
             $('ul.type-list li.active a').trigger('click');
         }
 
     },
     scrollActive(selects) {
-        selects.each(function(index, element){
+        selects.each(function (index, element) {
             $.when(element).then(response => {
                 let topEl = $(`.select-item.active`, element).position().top;
-                if(topEl !== 0) {
-                    $('ul.select-list', $(element)).scrollTop( topEl );
+                if (topEl !== 0) {
+                    $('ul.select-list', $(element)).scrollTop(topEl);
                 }
             });
         });
@@ -66,17 +65,18 @@ const carSelectAjax = {
         let self = e.data.self;
         self.dataId = $(this).data(`id`);
 
-         self.setActive(this);
+        self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks']);
 
-        if(self.toggleTextArea()) return;
+        if (self.toggleTextArea()) return;
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/types/${self.dataId}/marks`)
                 .then(response => {
                     self.items = response.data;
+
                 }).catch(error => {
                     self.items = null;
                     self.resetLists(['#types']);
@@ -84,7 +84,7 @@ const carSelectAjax = {
         }
         self.setHTML(`marks`, `car_mark_id`);
     },
-    clearFields(start){
+    clearFields(start) {
         // this.fieldsNeedsToBeCleared.forEach((item, index)=> {
         //     if((index)>start){
         //         $(`#${item}`).val('');
@@ -99,14 +99,13 @@ const carSelectAjax = {
         self.clearFields(-1);
 
 
-
         self.setActive(this);
         self.addHiddenInput();
 
 
         self.resetLists(['#types', '#marks', '#models']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
 
             await axios.get(`${CAR_URL}/marks/${self.dataId}/models`)
@@ -117,7 +116,7 @@ const carSelectAjax = {
                 });
         }
         self.setHTML(`models`, `car_model_id`);
-        if($('#triggerNumber').val()==1){
+        if ($('#triggerNumber').val() == 1) {
             $('#triggerNumber').val('')
             $('ul.car-mark li.active a').trigger('click');
 
@@ -134,10 +133,10 @@ const carSelectAjax = {
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years']);
 
-        if(self.dataId) {
+        if (self.dataId) {
             await axios.get(`${CAR_URL}/models/${self.dataId}/years`)
                 .then(response => {
-                    console.log(response.data)
+
                     self.items = response.data;
                 }).catch(error => {
                     self.items = null;
@@ -158,11 +157,11 @@ const carSelectAjax = {
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/models/${self.modelId}/years/${self.dataId}/generations`)
 
-            // await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
+                // await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
                 .then(response => {
                     self.items = response.data;
                 }).catch(error => {
@@ -182,7 +181,7 @@ const carSelectAjax = {
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/generations/${self.dataId}/series`)
                 .then(response => {
@@ -204,7 +203,7 @@ const carSelectAjax = {
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/model/${self.modelId}/series/${self.dataId}/${self.year}`)
                 .then(response => {
@@ -228,7 +227,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
             '#engines']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/modifications/${self.dataId}/engines`)
                 .then(response => {
@@ -251,7 +250,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
             '#engines', '#transmissions']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/modifications/${self.modificationId}/transmissions`)
                 .then(response => {
@@ -275,7 +274,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
             '#engines', '#transmissions', '#gears']);
 
-        if(self.dataId) {
+        if (self.dataId) {
 
             await axios.get(`${CAR_URL}/modifications/${self.modificationId}/gears`)
                 .then(response => {
@@ -293,12 +292,12 @@ const carSelectAjax = {
         let self = this;
         let html = '';
 
-        if(!self.items.length) return;
+        if (!self.items.length) return;
 
-        self.items.forEach((element)=>{
+        self.items.forEach((element) => {
             let bodyData = (element.body) ? element.body : null;
             html += `<li class="select-item">`;
-                html += `<a href="" data-name-id="${nameId}" data-id="${element.id}" ${(bodyData)?`data-body="${bodyData}"`:''}>${element.name}</a>`;
+            html += `<a href="" data-name-id="${nameId}" data-id="${element.id}" ${(bodyData) ? `data-body="${bodyData}"` : ''}>${element.name}</a>`;
             html += `</li>`;
         });
 
@@ -308,9 +307,9 @@ const carSelectAjax = {
     activeOneElement(selectId) {
         $.when($(`#${selectId} .select-list`))
             .then((response) => {
-                    if(response.find('li').length == 1) {
-                        response.find('a').trigger('click');
-                    }
+                if (response.find('li').length == 1) {
+                    response.find('a').trigger('click');
+                }
             });
     },
     filteredItems() {
@@ -323,22 +322,19 @@ const carSelectAjax = {
                     filteredItems.push({'name': currentYear, 'id': currentYear});
                     currentYear--;
                 }
-            }
-            else if ("year_begin" in self.items) {
+            } else if ("year_begin" in self.items) {
                 let endYear = new Date();
                 let currentYear = endYear.getFullYear();
                 while (currentYear >= self.items.year_begin) {
                     filteredItems.push({'name': currentYear, 'id': currentYear});
                     currentYear--;
                 }
-            }
-            else {
+            } else {
                 filteredItems.push({'name': 'Год Не Указан', 'id': 0});
             }
 
             return filteredItems;
-        }
-        else {
+        } else {
             return [{'name': 'Год Не Указан', 'id': 0}];
         }
     },
@@ -369,7 +365,7 @@ const carSelectAjax = {
             let id = $(element).data('id');
             let body = $(element).data('body');
             inputs += `<input type="hidden" id="${name}" name="car_data[${name}]" value="${id}">`;
-            if(body) {
+            if (body) {
                 inputs += `<input type="hidden" id="car_series_body" name="car_data[car_series_body]" value="${body}">`;
             }
         });
@@ -377,7 +373,7 @@ const carSelectAjax = {
     },
     toggleTextArea() {
         let self = this;
-        if(self.excluded.includes(self.dataId)) {
+        if (self.excluded.includes(self.dataId)) {
             $(`.new-style-model[data-id="selectGroup"]`).addClass(`d-none`);
             $(`#textArea`).removeClass(`d-none`);
             self.resetLists(['#types']);

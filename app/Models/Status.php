@@ -2,30 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Status extends Model
 {
-    protected $fillable = ['name', 'color','is_active', 'rank'];
+    protected $fillable = ['name', 'color', 'is_active', 'rank'];
     protected $appends = ['can_view', 'can_assign'];
     protected static $nextstatus = [7 => 2, 2 => 2];
-    public static function viewableStatuses() {
+
+    public static function viewableStatuses()
+    {
         foreach (auth()->user()->getAllPermissions() as $key => $permission) {
-            if ( strpos( $permission->name, 'status-can-view__') !== false ) {
+            if (strpos($permission->name, 'status-can-view__') !== false) {
                 $viewableStatuses[] = str_replace('status-can-view__', '', $permission->name);
             }
         }
-        return Status::whereIn('code' ,$viewableStatuses)->get();
+        return Status::whereIn('code', $viewableStatuses)->get();
     }
 
-    public static function setableStatuses() {
+    public static function setableStatuses()
+    {
         foreach (auth()->user()->getAllPermissions() as $key => $permission) {
-            if ( strpos( $permission->name, 'status-can-assign__') !== false ) {
+            if (strpos($permission->name, 'status-can-assign__') !== false) {
                 $setableStatuses[] = str_replace('status-can-assign__', '', $permission->name);
             }
         }
-        return Status::whereIn('code' ,$setableStatuses)->get();
+        return Status::whereIn('code', $setableStatuses)->get();
     }
 
     public function getCanViewAttribute($value)
@@ -35,11 +37,13 @@ class Status extends Model
             return in_array('status-can-view__' . $this->code, $permissions);
         }
         return false;
-
     }
-    public function scopeActiveStatuses(){
+
+    public function scopeActiveStatuses()
+    {
         return $this->where('is_active', true)->pluck('id')->toArray();
     }
+
     public function getCanAssignAttribute($value)
     {
         if (auth()->check()) {
@@ -48,7 +52,9 @@ class Status extends Model
         }
         return false;
     }
-    public function getStatusSortAttribute() {
+
+    public function getStatusSortAttribute()
+    {
         if ($this->id == 2) {
             return 'arrived_at';
         }
@@ -61,9 +67,11 @@ class Status extends Model
 
         return 'arriving_at';
     }
-    public function getColorClass() {
+
+    public function getColorClass()
+    {
         $color = 'status-primary';
-        if($this->code == 'storage') {
+        if ($this->code == 'storage') {
             $color = 'status-success';
         } elseif ($this->code != 'storage' && $this->code != 'draft') {
             $color = 'status-danger';
@@ -73,11 +81,13 @@ class Status extends Model
 
     public function scopeStatuses($query, $application = null)
     {
-        if(auth()->user()->hasRole(['Admin', 'SuperAdmin'])  &&
-            !in_array($application->status->id, [1, 7, 4, 5, 6]) ) {
+        if (
+            auth()->user()->hasRole(['Admin', 'SuperAdmin']) &&
+            !in_array($application->status->id, [1, 7, 4, 5, 6])
+        ) {
             return $query->where('code', '<>', 'draft')
                 ->orderBy('name', 'asc');
-        } elseif(auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin']) && $application->acceptions) {
+        } elseif (auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin']) && $application->acceptions) {
             return $query->where('code', '<>', 'draft')
                 ->where('code', '<>', 'deleted')
                 ->orderBy('name', 'asc');
@@ -88,13 +98,15 @@ class Status extends Model
         }
         return $query->orderBy('name', 'asc');
     }
+
     public function nextStatus()
     {
+
         if (array_key_exists($this->id, self::$nextstatus)) {
             return self::$nextstatus[$this->id];
-        }else{
+        } else {
             return false;
         }
-
     }
+
 }

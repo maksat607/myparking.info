@@ -59,10 +59,13 @@ class ApplicationPolicy
     {
 
         if(
-            $user->can('application_update') &&
-            ($application ||
+            ($user->can('application_update') || ($user->can('application_to_accept_update') && $application->status->code=='pending') )
+            && ($application ||
                 $application->status->code == 'draft' ||
-                $application->status->code == 'cancelled-by-us'
+                $application->status->code == 'cancelled-by-us'||
+                $application->status->code == 'pending'
+
+
             ) &&
             $user->hasRole(['Operator', 'Partner', 'PartnerOperator'])
         ) {

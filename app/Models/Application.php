@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Filter\QueryFilter;
 use App\Notifications\CarStatusChangeNotification;
+use App\Services\TimeIntervalIntersection;
 use App\Traits\NotifyApplicationChanges;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,15 +12,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
 
 class Application extends Model
 {
     use HasFactory;
     use Notifiable;
     use NotifyApplicationChanges;
+    use \Awobaz\Compoships\Compoships;
 
     protected $fillable = [
 
@@ -29,7 +28,7 @@ class Application extends Model
 
         'car_title', 'vin', 'license_plate', 'sts', 'pts', 'pts_type', 'pts_provided', 'sts_provided', 'car_key_quantity', 'year', 'milage', 'owner_number', 'color', 'price', 'on_sale', 'favorite', 'returned', 'services', 'exterior_damage', 'interior_damage', 'condition_gear', 'condition_engine', 'condition_electric', 'condition_transmission', 'car_additional',
 
-        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking','rejected_by','deleted_by','approved'
+        'car_type_id', 'car_mark_id', 'car_model_id', 'car_generation_id', 'car_series_id', 'car_series_body', 'car_modification_id', 'car_gear_id', 'car_engine_id', 'car_transmission_id', 'free_parking', 'rejected_by', 'deleted_by', 'approved'
     ];
 
     protected $dates = ['arriving_at', 'arrived_at', 'issued_at'];
@@ -50,10 +49,12 @@ class Application extends Model
         'favorite' => 'boolean',
         'returned' => 'boolean'
     ];
-
-
     protected $with = ['issueAcceptions', 'status', 'acceptions'];
 
+    public function getZeroAttribute()
+    {
+        return 0;
+    }
 
     public function getVinAttribute($value)
     {
@@ -68,11 +69,6 @@ class Application extends Model
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachable');
-    }
-
-    public function parking()
-    {
-        return $this->belongsTo(Parking::class);
     }
 
     public function partner()
@@ -114,10 +110,12 @@ class Application extends Model
     {
         return $this->belongsTo(User::class, 'issued_by');
     }
+
     public function deletedBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
+
     public function rejectedBy()
     {
         return $this->belongsTo(User::class, 'rejected_by');
@@ -138,14 +136,14 @@ class Application extends Model
         return $this->belongsTo(CarModel::class, 'car_model_id');
     }
 
-    public function issueAcceptions()
-    {
-        return $this->hasOne(IssueAcception::class, 'application_id');
-    }
-
     public function acceptions()
     {
         return $this->issueAcceptions()->where('is_issue', false);
+    }
+
+    public function issueAcceptions()
+    {
+        return $this->hasOne(IssueAcception::class, 'application_id');
     }
 
     public function issuance()
@@ -157,6 +155,7 @@ class Application extends Model
     {
         return $this->hasMany(ViewRequest::class);
     }
+
     public function free()
     {
         return $this->attributes['free_parking'];
@@ -190,15 +189,41 @@ class Application extends Model
 
     public function parkingCostInDateRange($startDate, $endDate)
     {
-        $test = Carbon::createFromDate('2021', '01', '06');
-        $arrivedAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->arrived_at)->startOfDay();
-        $issuedAt = isset($this->issued_at) ? Carbon::createFromFormat('Y-m-d H:i:s', $this->issued_at)->endOfDay() : $endDate;
-        $price = isset($this->discount_price) ? $this->discount_price : 500;
+//        $test = Carbon::createFromDate('2021', '01', '06');
+//        $arrivedAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->arrived_at)->startOfDay();
+//        $issuedAt = isset($this->issued_at) ? Carbon::createFromFormat('Y-m-d H:i:s', $this->issued_at)->endOfDay() : $endDate;
+//
+//        $this->start = $arrivedAt <= $startDate ? $startDate : $arrivedAt;
+//        $this->end = $issuedAt <= $endDate ? $issuedAt : $endDate;
+//        $this->parked_days = $this->attributes['free_parking'] ? "БХ" : $this->end->diffInDays($this->start) + 1;
+//        parkingPartnerPrice,parkingBasicPrice,basicPrice
+        $price = 0;
+        if ($this->parkingPartnerPrice) {
+            $price = $this->parkingPartnerPrice->regular_price;
+        }
+        if ($this->parkingBasicPrice) {
+            $price = $this->parkingBasicPrice->regular_price;
+        }
+        if ($this->basicPrice) {
+            $price = $this->basicPrice->regular_price;
+        }
 
-        $this->start = $arrivedAt <= $startDate ? $startDate : $arrivedAt;
-        $this->end = $issuedAt <= $endDate ? $issuedAt : $endDate;
-        $this->parked_days = $this->attributes['free_parking'] ? "БХ" : $this->end->diffInDays($this->start) + 1;
+        $this->parked_days = $this->status_id == 2
+            ? $this->arrived_at->diff(now())->days + 1
+            : $this->arrived_at->diff($this->issued_at)->days + 1;
+        if (
+            (request()->get('status_id') && request()->get('status_id') != 'instorage')
+        ) {
+            $end = $this->issued_at ?? now();
+            $this->parked_days_in_period = TimeIntervalIntersection::getDays([$this->arrived_at, $end], [$startDate, $endDate]);
+            $this->parked_price_in_period = $this->parked_days_in_period * $price;
+        }
         $this->parked_price = $this->attributes['free_parking'] ? "БХ" : $this->parked_days * $price;
+    }
+
+    public function parking()
+    {
+        return $this->belongsTo(Parking::class);
     }
 
     public function getDuplicates()
@@ -342,18 +367,21 @@ class Application extends Model
     {
         return $filters->apply($builder);
     }
+
     public function ApplicationHasPending()
     {
         return $this->hasOne(ApplicationHasPending::class);
     }
+
     public function partnerNotifications()
     {
         return $this->notifications->filter(
             function ($item) {
                 return $item->data['type'] == "partner";
             }
-        ) ;
+        );
     }
+
     public function storageNotifications()
     {
         return $this->notifications->filter(
@@ -362,8 +390,32 @@ class Application extends Model
             }
         );
     }
-    public function parkingPrice(){
-//        $this->parking->getprices($this->attributes['partner_id'])->
-//        $a->arrived_at->diffInDays($a->issued_at)
+
+
+    public function parkingPartnerPrice()
+    {
+        return $this->hasOne(
+            Price::class,
+            ['car_type_id', 'parking_id', 'partner_id'],
+            ['car_type_id', 'parking_id', 'partner_id']
+        );
+    }
+
+    public function parkingBasicPrice()
+    {
+        return $this->hasOne(
+            Price::class,
+            ['car_type_id', 'parking_id', 'partner_id'],
+            ['car_type_id', 'parking_id', 'zero']
+        );
+    }
+
+    public function basicPrice()
+    {
+        return $this->hasOne(
+            Price::class,
+            ['car_type_id', 'parking_id', 'partner_id'],
+            ['car_type_id', 'zero', 'zero']
+        );
     }
 }
