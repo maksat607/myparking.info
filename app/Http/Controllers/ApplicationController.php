@@ -585,7 +585,7 @@ class ApplicationController extends AppController
             if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
-            $response = Http::post(env('CAR_API').'/api/v1/title',$searchFilters);
+            $response = Http::post(env('CAR_API').'/title',$searchFilters);
 
             $carTitleData = json_decode($response->body());
 //            $carTitleData = DB::table('car_types')
@@ -596,6 +596,7 @@ class ApplicationController extends AppController
 //                ->where($searchFilters)
 //                ->first();
 
+            dd($carTitleData);
 
             $applicationData['car_title'] = '';
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
@@ -695,7 +696,7 @@ class ApplicationController extends AppController
 
         $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
-        $response = Http::post(env('CAR_API').'/api/v1/app',$application->toArray());
+        $response = Http::post(env('CAR_API').'/app',$application->toArray());
 
 
         $result = json_decode(json_encode(json_decode($response->body())));
@@ -885,7 +886,7 @@ class ApplicationController extends AppController
                 $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
             }
 //dump($searchFilters);
-            $response = Http::post(env('CAR_API').'/api/v1/title',$searchFilters);
+            $response = Http::post(env('CAR_API').'/title',$searchFilters);
 
             $carTitleData = json_decode($response->body());
 
