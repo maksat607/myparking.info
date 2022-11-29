@@ -1,5 +1,5 @@
-// const CAR_URL = 'http://127.0.0.1:8002/api/v1'
-const CAR_URL = 'https://lk2.bitok.kg/api/v1'
+const CAR_URL = 'http://127.0.0.1:8001/api/v1'
+// const CAR_URL = 'https://lk2.bitok.kg/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
@@ -136,6 +136,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years']);
 
         if (self.dataId) {
+            // console.log(`${CAR_URL}/models/${self.dataId}/years`)
             await axios.get(`${CAR_URL}/models/${self.dataId}/years`)
                 .then(response => {
 
@@ -160,18 +161,26 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations']);
 
         if (self.dataId) {
-
+            console.log(`${CAR_URL}/models/${self.modelId}/years/${self.dataId}/generations`)
             await axios.get(`${CAR_URL}/models/${self.modelId}/years/${self.dataId}/generations`)
 
                 // await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
                 .then(response => {
-                    self.items = response.data;
+                    if (response.data.length == 0){
+                        console.log('zero')
+                        let model = $('.car_model_id ul li.select-item.active a').data('id');
+                        self.getSeriesNoGenererations(model)
+                    }else {
+                        self.items = response.data;
+                        self.setHTML(`generations`, `car_generation_id`);
+                    }
                 }).catch(error => {
                     self.items = null;
                 });
         }
 
-        self.setHTML(`generations`, `car_generation_id`);
+
+
 
     },
     async getSeries(e) {
@@ -184,7 +193,7 @@ const carSelectAjax = {
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series']);
 
         if (self.dataId) {
-
+            console.log(`${CAR_URL}/generations/${self.dataId}/series`)
             await axios.get(`${CAR_URL}/generations/${self.dataId}/series`)
                 .then(response => {
                     self.items = response.data;
@@ -194,6 +203,28 @@ const carSelectAjax = {
         }
 
         self.setHTML(`series`, `car_series_id`);
+
+    },
+    async getSeriesNoGenererations(model) {
+        console.log(213535235)
+
+        this.clearFields(2);
+        this.setActive(this);
+        this.addHiddenInput();
+        this.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series']);
+
+        if (model) {
+            console.log(`${CAR_URL}/models/${model}/series`)
+            await axios.get(`${CAR_URL}/models/${model}/series`)
+                .then(response => {
+                    console.log(response.data)
+                    this.items = response.data;
+                }).catch(error => {
+                    this.items = null;
+                });
+        }
+
+        this.setHTML(`series`, `car_series_id`);
 
     },
     async getModifications(e) {

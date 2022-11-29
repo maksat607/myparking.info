@@ -505,13 +505,13 @@
                                                                     <li class="select-item tabform__li active">
                                                                         <a href="" data-name-id="car_series_id"
                                                                            data-id="{{ $carSeries->id }}"
-                                                                           data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                                           data-body="{{ optional($carSeries)->body }}">{{ $carSeries->name }}</a>
                                                                     </li>
                                                                 @else
                                                                     <li class="select-item tabform__li">
                                                                         <a href="" data-name-id="car_series_id"
                                                                            data-id="{{ $carSeries->id }}"
-                                                                           data-body="{{ $carSeries->body }}">{{ $carSeries->name }}</a>
+                                                                           data-body="{{ optional($carSeries)->body }}">{{ $carSeries->name }}</a>
                                                                     </li>
                                                                 @endif
                                                             @endforeach
