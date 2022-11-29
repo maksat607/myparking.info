@@ -596,7 +596,7 @@ class ApplicationController extends AppController
 //                ->where($searchFilters)
 //                ->first();
 
-            dd($carTitleData);
+
 
             $applicationData['car_title'] = '';
             if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
