@@ -1,5 +1,5 @@
-// const CAR_URL = 'http://127.0.0.1:8001/api/v1'
-const CAR_URL = 'https://lk2.bitok.kg/api/v1'
+const CAR_URL = 'http://127.0.0.1:8001/api/v1'
+// const CAR_URL = 'https://lk2.bitok.kg/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
@@ -15,7 +15,9 @@ const carSelectAjax = {
     init() {
         if (typeof carDataApplication == 'undefined' || carDataApplication == null) {
             $.when(`#types .select-item.active a`).then((response) => {
-                $(`${response}`).trigger('click', {self: this});
+                $(`${response}`).trigger('click', {
+                    self: this
+                });
             });
         } else {
             this.modelId = carDataApplication.modelId;
@@ -25,23 +27,45 @@ const carSelectAjax = {
         }
 
 
-        $(`#types .select-item a`).on('click', {self: this}, this.getMarks);
-        $(`body`).on('click', `#marks .select-item a`, {self: this}, this.getModels);
-        $(`body`).on('click', `#models .select-item a`, {self: this}, this.getYears);
-        $(`body`).on('click', `#years .select-item a`, {self: this}, this.getGenerations);
-        $(`body`).on('click', `#generations .select-item a`, {self: this}, this.getSeries);
-        $(`body`).on('click', `#series .select-item a`, {self: this}, this.getModifications);
-        $(`body`).on('click', `#modifications .select-item a`, {self: this}, this.getEngines);
-        $(`body`).on('click', `#engines .select-item a`, {self: this}, this.getTransmissions);
-        $(`body`).on('click', `#transmissions .select-item a`, {self: this}, this.getGears);
-        $(`body`).on('click', `#gears .select-item a`, {self: this}, function (e) {
+        $(`#types .select-item a`).on('click', {
+            self: this
+        }, this.getMarks);
+        $(`body`).on('click', `#marks .select-item a`, {
+            self: this
+        }, this.getModels);
+        $(`body`).on('click', `#models .select-item a`, {
+            self: this
+        }, this.getYears);
+        $(`body`).on('click', `#years .select-item a`, {
+            self: this
+        }, this.getGenerations);
+        $(`body`).on('click', `#generations .select-item a`, {
+            self: this
+        }, this.getSeries);
+        $(`body`).on('click', `#series .select-item a`, {
+            self: this
+        }, this.getModifications);
+        $(`body`).on('click', `#modifications .select-item a`, {
+            self: this
+        }, this.getEngines);
+        $(`body`).on('click', `#engines .select-item a`, {
+            self: this
+        }, this.getTransmissions);
+        $(`body`).on('click', `#transmissions .select-item a`, {
+            self: this
+        }, this.getGears);
+        $(`body`).on('click', `#gears .select-item a`, {
+            self: this
+        }, function(e) {
             e.preventDefault();
             let self = e.data.self;
             self.setActive(this);
             self.addHiddenInput();
         });
 
-        $(`body`).on('click', `.tabform__btn`, {self: this}, function (e) {
+        $(`body`).on('click', `.tabform__btn`, {
+            self: this
+        }, function(e) {
             let self = e.data.self;
             self.scrollActive($(`.select:visible`));
         });
@@ -51,7 +75,7 @@ const carSelectAjax = {
 
     },
     scrollActive(selects) {
-        selects.each(function (index, element) {
+        selects.each(function(index, element) {
             $.when(element).then(response => {
                 let topEl = $(`.select-item.active`, element).position().top;
                 if (topEl !== 0) {
@@ -166,11 +190,11 @@ const carSelectAjax = {
 
                 // await axios.get(`${APP_URL}/car/generation/list/${self.modelId}/${self.dataId}`)
                 .then(response => {
-                    if (response.data.length == 0){
+                    if (response.data.length == 0) {
                         console.log('zero')
                         let model = $('.car_model_id ul li.select-item.active a').data('id');
                         self.getSeriesNoGenererations(model)
-                    }else {
+                    } else {
                         self.items = response.data;
                         self.setHTML(`generations`, `car_generation_id`);
                     }
@@ -258,7 +282,8 @@ const carSelectAjax = {
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
-            '#engines']);
+            '#engines'
+        ]);
 
         if (self.dataId) {
 
@@ -281,7 +306,8 @@ const carSelectAjax = {
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
-            '#engines', '#transmissions']);
+            '#engines', '#transmissions'
+        ]);
 
         if (self.dataId) {
 
@@ -305,7 +331,8 @@ const carSelectAjax = {
         self.setActive(this);
         self.addHiddenInput();
         self.resetLists(['#types', '#marks', '#models', '#years', '#generations', '#series', '#modifications',
-            '#engines', '#transmissions', '#gears']);
+            '#engines', '#transmissions', '#gears'
+        ]);
 
         if (self.dataId) {
 
@@ -352,23 +379,35 @@ const carSelectAjax = {
             if (("year_begin" in self.items) && ("year_end" in self.items)) {
                 let currentYear = self.items.year_end;
                 while (currentYear >= self.items.year_begin) {
-                    filteredItems.push({'name': currentYear, 'id': currentYear});
+                    filteredItems.push({
+                        'name': currentYear,
+                        'id': currentYear
+                    });
                     currentYear--;
                 }
             } else if ("year_begin" in self.items) {
                 let endYear = new Date();
                 let currentYear = endYear.getFullYear();
                 while (currentYear >= self.items.year_begin) {
-                    filteredItems.push({'name': currentYear, 'id': currentYear});
+                    filteredItems.push({
+                        'name': currentYear,
+                        'id': currentYear
+                    });
                     currentYear--;
                 }
             } else {
-                filteredItems.push({'name': 'Год Не Указан', 'id': 0});
+                filteredItems.push({
+                    'name': 'Год Не Указан',
+                    'id': 0
+                });
             }
 
             return filteredItems;
         } else {
-            return [{'name': 'Год Не Указан', 'id': 0}];
+            return [{
+                'name': 'Год Не Указан',
+                'id': 0
+            }];
         }
     },
     resetLists(not = []) {

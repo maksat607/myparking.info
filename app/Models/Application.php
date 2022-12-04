@@ -189,24 +189,17 @@ class Application extends Model
 
     public function parkingCostInDateRange($startDate, $endDate)
     {
-//        $test = Carbon::createFromDate('2021', '01', '06');
-//        $arrivedAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->arrived_at)->startOfDay();
-//        $issuedAt = isset($this->issued_at) ? Carbon::createFromFormat('Y-m-d H:i:s', $this->issued_at)->endOfDay() : $endDate;
-//
-//        $this->start = $arrivedAt <= $startDate ? $startDate : $arrivedAt;
-//        $this->end = $issuedAt <= $endDate ? $issuedAt : $endDate;
-//        $this->parked_days = $this->attributes['free_parking'] ? "БХ" : $this->end->diffInDays($this->start) + 1;
-//        parkingPartnerPrice,parkingBasicPrice,basicPrice
         $price = 0;
-        if ($this->parkingPartnerPrice) {
-            $price = $this->parkingPartnerPrice->regular_price;
+        if ($this->basicPrice) {
+            $price = $this->basicPrice->regular_price;
         }
         if ($this->parkingBasicPrice) {
             $price = $this->parkingBasicPrice->regular_price;
         }
-        if ($this->basicPrice) {
-            $price = $this->basicPrice->regular_price;
+        if ($this->parkingPartnerPrice) {
+            $price = $this->parkingPartnerPrice->regular_price;
         }
+
 
         $this->parked_days = $this->status_id == 2
             ? $this->arrived_at->diff(now())->days + 1
@@ -219,6 +212,7 @@ class Application extends Model
             $this->parked_price_in_period = $this->parked_days_in_period * $price;
         }
         $this->parked_price = $this->attributes['free_parking'] ? "БХ" : $this->parked_days * $price;
+//        dd($this->parked_price);
     }
 
     public function parking()
