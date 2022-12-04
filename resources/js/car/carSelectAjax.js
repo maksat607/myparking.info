@@ -1,5 +1,5 @@
-const CAR_URL = 'http://127.0.0.1:8001/api/v1'
-// const CAR_URL = 'https://lk2.bitok.kg/api/v1'
+// const CAR_URL = 'http://127.0.0.1:8001/api/v1'
+const CAR_URL = 'https://lk2.bitok.kg/api/v1'
 const carSelectAjax = {
     selectId: null,
     dataId: null,
