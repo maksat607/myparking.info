@@ -1,4 +1,5 @@
-<form method="POST" action="@if(isset($parking)) {{ route('parkings.update', ['parking'=>$parking->id]) }} @else {{ route('parkings.store') }} @endif">
+<form method="POST"
+      action="@if(isset($parking)) {{ route('parkings.update', ['parking'=>$parking->id]) }} @else {{ route('parkings.store') }} @endif">
     @csrf
     @if(isset($parking)) @method('PUT') @endif
 
@@ -28,9 +29,9 @@
                                 <label class="field-style">
                                     <span>Название</span>
                                     <input type="text"
-                                       class="@error('title') is-invalid @enderror" name="title"
-                                       value="@if(isset($parking)){{ $parking->title }}@else{{ old('title') }}@endif"
-                                       required placeholder="Не указан">
+                                           class="@error('title') is-invalid @enderror" name="title"
+                                           value="@if(isset($parking)){{ $parking->title }}@else{{ old('title') }}@endif"
+                                           required placeholder="Не указан">
 
                                     @error('title')
                                     <span class="invalid-feedback" role="alert">
@@ -42,7 +43,7 @@
                             <div class="col-6">
                                 <label class="switch-radio-wrap mt-11px">
                                     <input type="checkbox" name="status" value="1"
-                                           @if(isset($parking) && !$parking->status){{ '' }}@else {{ 'checked' }}@endif>
+                                    @if(isset($parking) && !$parking->status){{ '' }}@else {{ 'checked' }}@endif>
                                     <span class="switcher-radio"></span>
                                     <span>Активен</span>
                                 </label>
@@ -51,9 +52,9 @@
                                 <label class="field-style">
                                     <span>Регион</span>
                                     <input type="text"
-                                       class="form-control @error('code') is-invalid @enderror" name="code"
-                                       value="@if(isset($parking)){{ $parking->code }}@else{{ old('code') }}@endif"
-                                       placeholder="Не указан">
+                                           class="form-control @error('code') is-invalid @enderror" name="code"
+                                           value="@if(isset($parking)){{ $parking->code }}@else{{ old('code') }}@endif"
+                                           placeholder="Не указан">
 
                                     @error('code')
                                     <span class="invalid-feedback" role="alert">
@@ -66,9 +67,9 @@
                                 <label class="field-style">
                                     <span>Адрес</span>
                                     <input type="text"
-                                       class="form-control @error('address') is-invalid @enderror" name="address"
-                                       value="@if(isset($parking)){{ $parking->address }}@else{{ old('address') }}@endif"
-                                       placeholder="Не указан">
+                                           class="form-control @error('address') is-invalid @enderror" name="address"
+                                           value="@if(isset($parking)){{ $parking->address }}@else{{ old('address') }}@endif"
+                                           placeholder="Не указан">
 
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
@@ -127,7 +128,6 @@
                     </div>
 
 
-
                 </div>
 
             </div>
@@ -135,26 +135,28 @@
     </div>
 
 </form>
-<div class="container">
-    <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">
-    <label class="field-style {{ session('PartnerHide') }}">
-        <span>Партнёр</span>
-        <select name="partner_id" class="page-select">
-            <option selected value="0">Базовые цены</option>
-            @foreach(auth()->user()->adminPartners as $partner)
-                @if(request()->get('partner_id') == $partner->id)
-                    <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
-                @else
-                    <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
-                @endif
-            @endforeach
-        </select>
-    </label>
-    </form>
-</div>
+@isset($parking)
+    <div class="container">
+        <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">
+            <label class="field-style {{ session('PartnerHide') }}">
+                <span>Партнёр</span>
+                <select name="partner_id" class="page-select">
+                    <option selected value="0">Базовые цены</option>
+                    @foreach(auth()->user()->adminPartners as $partner)
+                        @if(request()->get('partner_id') == $partner->id)
+                            <option selected value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+                        @else
+                            <option value="{{ $partner->id }}">{{ $partner->shortname }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </label>
+        </form>
+    </div>
+@endisset
 
 
-        @include('pricings.pricing')
+@include('pricings.pricing')
 
 
 {{--

@@ -1,3 +1,4 @@
+@if(isset($parking))
 <div class="container">
     <div class="inner-page">
         <form method="POST" action="{{route('parking.prices.store',[$parking->id,'partner_id'=>request()->get('partner_id')])}}">
@@ -82,3 +83,4 @@
         </form>
     </div>
 </div>
+@endif
