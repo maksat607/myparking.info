@@ -144,6 +144,7 @@
       <path value="$PROJECT_DIR$/vendor/ezyang/htmlpurifier" />
       <path value="$PROJECT_DIR$/vendor/spatie/period" />
       <path value="$PROJECT_DIR$/vendor/awobaz/compoships" />
+      <path value="$PROJECT_DIR$/vendor/avto-dev/extended-laravel-validator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

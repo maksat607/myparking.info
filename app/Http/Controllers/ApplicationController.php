@@ -457,6 +457,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+//        $request->dd();
         $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
         $noTypeCar = json_decode($response->body(), true);
         $required = true;
@@ -483,6 +484,8 @@ class ApplicationController extends AppController
         $validator = Validator::make($carRequest, [
             'vin_array' => $required ? [
                 'exclude_if:returned,1',
+                'vin_code',
+//                'size:8',
                 'required_without:license_plate',
                 $returned ? '' : 'unique_custom:applications,vin',
                 'nullable'

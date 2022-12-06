@@ -146,6 +146,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/ezyang/htmlpurifier" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/period" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/awobaz/compoships" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/avto-dev/extended-laravel-validator" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

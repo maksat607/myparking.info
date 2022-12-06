@@ -35,9 +35,16 @@ const checkDuplicate = {
             }
             let self = e.data.self;
             self.vin = $(`#vin`).val().split(',');
-            console.log(self.vin);
+
             self.licensePlate = $(`#license_plate`).val();
             self.duplicateExist();
+        });
+        $("#repeat-checkbox").change(function() {
+            if(this.checked) {
+                console.log('Repeated on')
+            }else {
+                console.log('Repeated off')
+            }
         });
     },
     duplicateExist() {
@@ -49,9 +56,6 @@ const checkDuplicate = {
                     id: this.application_id
                 }
             }).then(response => {
-                console.log('response')
-                console.log(response.data)
-                console.log(response.data.license_plate)
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
                 this.setHtml();
