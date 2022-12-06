@@ -459,7 +459,6 @@ class ApplicationController extends AppController
     {
         $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
         $noTypeCar = json_decode($response->body(), true);
-
         $required = true;
         $returned = false;
         if (isset($request->car_data['returned'])) {
@@ -542,10 +541,11 @@ class ApplicationController extends AppController
 //        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
 //        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
 //        dd($applicationData['vin_array']);
-//        dd($applicationData);
-        if ($required) {
+
+        if (isset($applicationData['vin_array'])) {
             $applicationData['vin'] = $applicationData['vin_array'];
         }
+
         unset($applicationData['car_series_body']);
 
         foreach ($applicationData as $key => $value) {
