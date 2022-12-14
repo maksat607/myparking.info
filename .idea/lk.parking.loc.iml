@@ -147,6 +147,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/period" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/awobaz/compoships" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/avto-dev/extended-laravel-validator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/namshi/jose" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lcobucci/jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lcobucci/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/stella-maris/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-open-source-saver/jwt-auth" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/clock" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

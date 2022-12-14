@@ -493,7 +493,8 @@ class ApplicationController extends AppController
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
                 $returned ? '' : 'unique_custom:applications,license_plate',
-                'nullable'] : [],
+                'nullable'
+            ] : [],
             'car_type_id' => ['integer', 'required'],
             'car_mark_id' => ($car_type == $noTypeCar) ? ['integer'] : ['integer', 'required'],
             'car_model_id' => ['integer'],

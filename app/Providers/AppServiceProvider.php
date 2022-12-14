@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\AppUsers;
 use App\Helpers\HideUser;
+use App\Http\Resources\UserResource;
 use App\Models\Application;
 use App\Models\Role;
 use App\Models\User;
@@ -15,8 +16,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use DB;
-
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -49,7 +48,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         if (env('APP_ENV') == 'prod') {
             \URL::forceScheme('https');
             $this->app['request']->server->set('HTTPS', 'on');

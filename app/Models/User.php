@@ -7,25 +7,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasRoles;
-
-    protected static function booted()
-    {
-        Role::all()->map(function ($role){
-//            if(auth()->user)
-        });
-
-        static::deleting(function ($user) {
-            //$user->children->each->roles()->detach();
-            $user->children->each(function ($item, $key) {
-                $item->roles()->detach();
-            });
-        });
-    }
+    use HasFactory;
+    use Notifiable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -40,7 +29,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'status',
         'parent_id',
     ];
-
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -50,7 +38,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
-
     /**
      * The attributes that should be cast to native types.
      *
@@ -59,6 +46,20 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected static function booted()
+    {
+        Role::all()->map(function ($role) {
+//            if(auth()->user)
+        });
+
+        static::deleting(function ($user) {
+            //$user->children->each->roles()->detach();
+            $user->children->each(function ($item, $key) {
+                $item->roles()->detach();
+            });
+        });
+    }
 
     public function sendPasswordResetNotification($token)
     {
@@ -78,27 +79,23 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function parkings()
     {
-        if($this->hasRole(['SuperAdmin'])){
+        if ($this->hasRole(['SuperAdmin'])) {
             return new Parking();
         }
         return $this->hasMany(Parking::class, 'user_id', 'id');
     }
-    public function cars(){
-        return $this->hasManyThrough(
-            Application::class,//dep
-            Parking::class,//env
 
+    public function cars()
+    {
+        return $this->hasManyThrough(
+            Application::class, //dep
+            Parking::class, //env
         );
     }
 
     public function managerParkings()
     {
         return $this->belongsToMany(Parking::class, 'manager_parking', 'manager_id', 'parking_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(self::class, 'parent_id')->with(['roles', 'owner']);
     }
 
     public function legals()
@@ -108,16 +105,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function partner()
     {
-        if($this->hasRole('PartnerOperator')){
+        if ($this->hasRole('PartnerOperator')) {
             return $this->owner->hasOne(Partner::class, 'user_id', 'id');
         }
         return $this->hasOne(Partner::class, 'user_id', 'id');
     }
-    public function adminPartners(){
+
+    public function adminPartners()
+    {
 
         return $this->hasManyThrough(
-            Partner::class,//deplo
-            PartnerUser::class,//env
+            Partner::class, //deplo
+            PartnerUser::class, //env
             'user_id', // Foreign key on the environments table...
             'id', // Foreign key on the deployments table...
             'id', // Local key on the projects table...
@@ -129,8 +128,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Application::class, 'user_id', 'id');
     }
-
-
 
     public function getRole()
     {
@@ -153,7 +150,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function scopeUsers($query)
     {
-        if(auth()->user()->hasRole('SuperAdmin')) {
+        if (auth()->user()->hasRole('SuperAdmin')) {
             return $query->whereNull('parent_id')->with(['roles'])->withCount('children');
         } elseif (auth()->user()->hasRole(['Manager', 'Operator'])) {
             return $query->where('parent_id', auth()->user()->parent_id)->where('id', '<>', auth()->id())->with(['roles']);
@@ -162,19 +159,21 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return $query;
     }
+
     public function scopeUser($query, $id)
     {
-        if(auth()->user()->hasRole('Admin|Partner')) {
+        if (auth()->user()->hasRole('Admin|Partner')) {
             return $query->where('id', $id)->where('parent_id', auth()->user()->id);
         } else {
             return $query->where('id', $id);
         }
         return $query;
     }
+
     public function usersFilter()
     {
         $auth = auth()->user();
-        if($auth->hasRole(['SuperAdmin'])) {
+        if ($auth->hasRole(['SuperAdmin'])) {
             $users = static::where('id', '<>', auth()->id())->get();
             $auth->kids = $users;
             return $auth;
@@ -182,6 +181,12 @@ class User extends Authenticatable implements MustVerifyEmail
         $auth->kids = $auth->children()->orderBy('name', 'ASC')->get();
         return $auth;
     }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id')->with(['roles', 'owner']);
+    }
+
     public function getParentUser()
     {
         if (auth()->user()->hasRole(['Manager', 'Operator', 'PertnerOperator'])) {
@@ -195,6 +200,26 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function partners()
     {
-        return $this->belongsToMany(Partner::class)->withPivot('active')->wherePivot('active',1);;
+        return $this->belongsToMany(Partner::class)->withPivot('active')->wherePivot('active', 1);;
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
