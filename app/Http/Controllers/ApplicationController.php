@@ -30,6 +30,7 @@ use App\Notifications\ApplicationNotifications;
 use App\Notifications\TelegramNotification;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationTotalsService;
+use App\Services\ApplicationService;
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -45,6 +46,7 @@ class ApplicationController extends AppController
 {
     protected $AttachmentController;
     private $exporter;
+    private ApplicationService $applicationService;
 
     public function __construct(ExportInterface $exporter, AttachmentController $AttachmentController)
     {
@@ -53,18 +55,7 @@ class ApplicationController extends AppController
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
 
-//        $n = Application::find(4189)->partnerNotifications();
-//        $n = $n->countBy(function ($value) {
-//            if (($value->data['role'] == 'Partner' || $value->data['role'] == 'PartnerOperator') && $value->data['user_id'] != auth()->id() && $value->read_at==null)
-//                return 'unread';
-//        })->all();
-
-
-//        $this->middleware('can:viewAny,App\Models\Application')->only('index', 'show');
-        /*        $this->middleware(['permission:application_view'])->only('index', 'show');
-                $this->middleware(['permission:application_create'])->only('create', 'store');
-                $this->middleware(['permission:application_update'])->only('edit', 'update');
-                $this->middleware(['permission:application_delete'])->only('destroy');*/
+        $this->applicationService = new ApplicationService();
     }
 
     /**
@@ -74,63 +65,18 @@ class ApplicationController extends AppController
      */
     public function index(Request $request, ApplicationFilters $filters, $status_id = null)
     {
-
         if (request()->has('uncheckFilters')) {
             return redirect()->to(url()->current());
         }
-
         $this->authorize('viewAny', Application::class);
-        $statuses = Status::where('is_active', true)->pluck('id')->toArray();
-
-        $status = ($status_id) ? Status::findOrFail($status_id) : null;
-        $status_name = ($status) ? $status->name : 'Все';
-        $status_sort = ($status) ? $status->status_sort : 'arriving_at';
-        $totals = ApplicationTotalsService::totals($statuses, $filters, $status_id);
-        $r = [];
-        $applications = Application::
-        applications()
-            ->filter($filters)
-            ->when(!$status_id, function ($query) use ($statuses) {
-                return $query->whereIn('status_id', $statuses);
-            })
-            ->when($status_id, function ($query, $status_id) {
-                return $query->where('status_id', $status_id);
-            })
-            ->with('parking')
-            ->with('issuedBy')
-            ->with('acceptedBy')
-            ->with('status')
-            ->with('attachments')
-            ->with('carType')
-            ->with('partner')
-            ->with('issueAcceptions')
-            ->with('acceptions')
-            ->with('issuance')
-            ->with('viewRequests')
-            ->orderBy($status_sort, 'desc')
-            ->orderBy('id', 'desc')
-            ->paginate(config('app.paginate_by', '25'))->withQueryString();
-
-        foreach ($applications as $key => $item) {
-            $pricing = Pricing::where([
-                ['partner_id', $item->partner_id],
-                ['car_type_id', $item->car_type_id]
-            ])
-                ->select('discount_price', 'regular_price', 'free_days')
-                ->first();
-
-            $applications[$key]['pricing'] = $pricing;
-            $item->currentParkingCost = $item->currentParkingCost;
-        }
-
-        $title = __($status_name);
+        $result = $this->applicationService->index($request, $filters, $status_id);
         switch ($request->get('direction', 'column')) {
             case 'table':
-                return view('applications.index_table', compact('title', 'applications', 'totals'));
+                return view('applications.index_table', $result);
             case 'row':
-                return view('applications.index_row', compact('title', 'applications', 'totals'));
+                return view('applications.index_row', $result);
             default:
-                return view('applications.index', compact('title', 'applications', 'totals'));
+                return view('applications.index', $result);
         }
     }
 
@@ -700,7 +646,8 @@ class ApplicationController extends AppController
 
         $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
-        $response = Http::post(env('CAR_API').'/app',$application->toArray());
+
+        $response = Http::post(env('CAR_API','https://lk2.bitok.kg/api/v1').'/app',$application->toArray());
 
 
         $result = json_decode(json_encode(json_decode($response->body())));
@@ -789,6 +736,7 @@ class ApplicationController extends AppController
      */
     public function update(Request $request, $id)
     {
+
         $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
         $noTypeCar = json_decode($response->body(), true);
 

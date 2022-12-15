@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\Api\Auth\AuthController;
+use \App\Http\Controllers\Api\ApiApplicationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,10 +13,15 @@ use \App\Http\Controllers\Api\Auth\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/login', [AuthController::class, 'login']);
-Route::group(['middleware' => 'auth:api','prefix' => 'v1'], function ($router) {
+Route::post('/v1/login', [AuthController::class, 'login']);
+Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) {
     Route::post('/me', [AuthController::class, 'me']);
-    Route::apiResource('applications', \App\Http\Controllers\Api\ApiApplicationController::class,array("as" => "api"));
+//    Route::get('applications', ApiApplicationController::class,array("as" => "api"));
+
+    Route::get('/applications/{status_id?}', [ApiApplicationController::class, 'index'])
+        ->where('status_id', '[0-9]+')
+        ->middleware(['check_legal', 'check_child_owner_legal'])
+        ->name('api.applications.index');
 });
 
 //Route::middleware('auth:api')->get('/users', function (Request $request) {

@@ -399,7 +399,7 @@
                         <div class="col-6">
                             <div class="info-item">
                                 <span>ПТС</span>
-                                {{ $application->pts }} <span>({{ $application->pts_type }})</span>
+                                {{ $application->pts }} <span>{{ $application->pts_type }}</span>
                             </div>
                             <div class="info-item">
                                 <span>СТС</span>
