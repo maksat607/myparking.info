@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Export\ExcelExport;
+use App\Interfaces\ExportInterface;
+use App\Models\Application;
 use App\Models\Partner;
 use App\Models\User;
 use Carbon\Carbon;
-use App\Interfaces\ExportInterface;
 use Illuminate\Http\Request;
-
-use App\Models\Application;
-use App\Models\Pricing;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Query\Builder;
-use App\Export\ExcelExport;
-
+use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
+
 class ReportController extends Controller
 {
     private $exporter;
@@ -38,19 +36,6 @@ class ReportController extends Controller
         $data = $this->dataByEmployee($request);
         $title = __('Employee Report');
         return view('report.employee', compact('data', 'parking', 'title'));
-
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function csvByEmployee(Request $request)
-    {
-        $data = $this->dataByEmployee($request);
-        return Excel::download(new ExcelExport($data), 'report.xlsx');
-        return $this->exporter->export($data);
     }
 
     private function dataByEmployee(Request $request)
@@ -150,15 +135,45 @@ class ReportController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function csvByEmployee(Request $request)
+    {
+        $data = $this->dataByEmployee($request);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
+        return $this->exporter->export($data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function reportByPartner(Request $request)
     {
-        $partners = Partner::orderBy('name', 'ASC')->get();
+
+
+        $partner = null;
+
+//
+//        $partners = auth()->user()->adminPartners->sortBy('name');
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+
+        $partners = $user->adminPartners->sortBy('name');
+
         $parking = $user->parkings()->orderBy('title', 'ASC')->get();
 
-        $data = $this->dataByPartner($request,);
+        if (auth()->user()->hasRole('SuperAdmin')) {
+            $partners = Partner::orderBy('name', 'ASC')->get();
+        }
+
+        if (auth()->user()->hasRole('Partner|PartnerOperator')) {
+            $partner = null;
+            $parking = auth()->user()->partner->parkings();
+            $partner = auth()->user()->partner;
+        }
+
+        $data = $this->dataByPartner($request, $parking, $partner);
 
         $orderBy = $request->get('order-by', 'asc');
         $orderBy = $orderBy == 'asc' ? 'desc' : 'asc';
@@ -167,19 +182,7 @@ class ReportController extends Controller
         return view('report.partner', compact('data', 'partners', 'parking', 'title', 'orderBy'));
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function csvByPartner(Request $request)
-    {
-        $data = $this->dataByPartner($request);
-        return Excel::download(new ExcelExport($data), 'report.xlsx');
-        return $this->exporter->export($data);
-    }
-
-    private function dataByPartner(Request $request)
+    private function dataByPartner(Request $request, $parkings = [], $partner = null)
     {
         $sortBy = 'applications.arrived_at';
 
@@ -198,20 +201,57 @@ class ReportController extends Controller
             $endTime = $now;
         }
 
-        $applicationQuery = Application
-            ::select(['applications.id','partners.shortname as partner' ,'parkings.title as parking' ,'external_id' ,'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
-            ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
-            ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
+
+        $arr [0] = [];
+        $arr [1] = [];
+        $arr [2] = [];
+        $apps = Application::applications()->whereIn('status_id', [2,3]);
+
+        $apps->whereNotNull('arrived_at')->get()->map(function ($item) use (&$arr) {
+            if (!in_array($item->car_type_id, $arr[0]) && $item->car_type_id) {
+                $arr['types'][] = $item->car_type_id;
+            }
+            if (!in_array($item->car_mark_id, $arr[1]) && $item->car_mark_id) {
+                $arr['marks'][] = $item->car_mark_id;
+            }
+            if (!in_array($item->car_model_id, $arr[2]) && $item->car_model_id) {
+                $arr['models'][] = $item->car_model_id;
+            }
+        });
+
+
+        $response = Http::post(env('CAR_API') . '/get-cars', $arr);
+
+        $carData = json_decode($response->body(), true);
+
+
+//        $applicationQuery = Application
+//            ::select(['applications.id', 'partners.shortname as partner', 'parkings.title as parking', 'external_id', 'car_title', 'car_marks.name as car_mark_name', 'car_models.name as car_model_name', 'year', 'vin', 'license_plate', 'car_types.name as car_type_name', 'statuses.name as status_name', 'pricings.regular_price', 'pricings.discount_price', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
+//            ->leftJoin('car_marks', 'car_marks.id', '=', 'applications.car_mark_id')
+//            ->leftJoin('car_models', 'car_models.id', '=', 'applications.car_model_id')
+//            ->join('statuses', 'statuses.id', '=', 'applications.status_id')
+//            ->join('car_types', 'car_types.id', '=', 'applications.car_type_id')
+//            ->join('partners', 'partners.id', '=', 'applications.partner_id')
+//            ->join('parkings', 'parkings.id', '=', 'applications.parking_id')
+//            ->leftJoin('pricings', function ($join) {
+//                $join->on('pricings.partner_id', '=', 'applications.partner_id');
+//                $join->on('pricings.car_type_id', '=', 'applications.car_type_id');
+//            })
+//            ->whereNotNull('arrived_at');
+////        dump($applicationQuery->count());
+////        dd($r->count());
+        $applicationQuery = $apps->with('parking', 'parkingPartnerPrice', 'parkingBasicPrice', 'basicPrice')
+            ->select(['applications.id', 'applications.parking_id', 'applications.car_type_id as car_type_name',
+                'applications.car_mark_id as car_mark_name', 'applications.car_model_id as car_model_name',
+                'partners.shortname as partner', 'parkings.title as parking', 'external_id', 'car_title','partner_id','car_type_id',
+                'year', 'vin', 'license_plate', 'statuses.name as status_name', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
-            ->join('car_types', 'car_types.id', '=', 'applications.car_type_id')
             ->join('partners', 'partners.id', '=', 'applications.partner_id')
             ->join('parkings', 'parkings.id', '=', 'applications.parking_id')
-            ->leftJoin('pricings', function ($join) {
-                $join->on('pricings.partner_id', '=', 'applications.partner_id');
-                $join->on('pricings.car_type_id', '=', 'applications.car_type_id');
-            })
             ->whereNotNull('arrived_at');
         $status_id = $request->query('status_id', 'arrived');
+
+
 
         if ($status_id == "arrived") {
             //arrived at filter
@@ -225,7 +265,6 @@ class ReportController extends Controller
                     });
             });
         } elseif ($status_id == "issued") {
-
             /*$applicationQuery->whereBetween('issued_at', [
                 $startTime->format('Y-m-d H:i:s'),
                 $endTime->format('Y-m-d H:i:s')
@@ -248,9 +287,8 @@ class ReportController extends Controller
 //                            ->where('arriving_at', '>=', $startTime->format('Y-m-d H:i:s'));
                     });
             });
-
         } elseif ($status_id == 'instorage') {
-            $applicationQuery->where('status_id',2);
+            $applicationQuery->where('status_id', 2);
         }
 
 
@@ -270,6 +308,8 @@ class ReportController extends Controller
         if (isset($request->parking_id)) {
 //            $applicationQuery->whereIn('applications.parking_id', explode(',', $request->parking_id));
             $applicationQuery->whereIn('applications.parking_id', $request->parking_id);
+        } else {
+            $applicationQuery->whereIn('applications.parking_id', count($parkings) > 0 ? $parkings->pluck('id') : []);
         }
 
         if (isset($request->favorite)) {
@@ -277,47 +317,58 @@ class ReportController extends Controller
         }
 
 
-        $applications = $applicationQuery->get();
-
-//        print_r($applicationQuery
-//            ->orderBy($sortBy, 'desc')->toSql());
-//        die;
-
-        foreach ($applications as $key => $item) {
-            if (empty($item->car_mark_name) && empty($item->car_model_name)) {
-                $item->car_mark_name = $item->car_title;
-            }
-            $item->parkingCostInDateRange($startTime, $endTime);
+        if ($partner) {
+            $applicationQuery->where('applications.partner_id', $partner->id);
         }
+
+
+        $applications = $applicationQuery->get()
+            ->each(function ($item, $key) use ($carData, $startTime, $endTime) {
+                $item->parkingCostInDateRange($startTime, $endTime);
+                $item->car_type_name = $carData['types'][$item->car_type_name] ?? '';
+                $item->car_mark_name = $carData['marks'][$item->car_mark_name] ?? '';
+                $item->car_model_name = $carData['models'][$item->car_model_name] ?? '';
+
+                if (empty($item->car_mark_name) && empty($item->car_model_name)) {
+                    $item->car_mark_name = $item->car_title;
+                }
+            });
+
 
         $arr = [
             "id" => null,
-            'partner'=>null,
-            'parking'=>null,
-    "external_id" => null,
-    "car_title" => null,
-    "car_mark_name" => 'ИТОГО',
-    "car_model_name" => null,
-    "year" => null,
-    "vin" => null,
-    "license_plate" =>null,
-    "car_type_name" => null,
-    "status_name" => null,
-    "regular_price" => null,
-    "discount_price" => null,
-    "arrived_at" =>null,
-    "issued_at" => null,
-    "free_parking" => null,
-    "returned" => null,
-    "start" =>null,
-        "end" => null,
+            'partner' => null,
+            'parking' => null,
+            "external_id" => null,
+            "car_title" => null,
+            "car_mark_name" => 'ИТОГО',
+            "car_model_name" => null,
+            "year" => null,
+            "vin" => null,
+            "license_plate" => null,
+            "car_type_name" => null,
+            "status_name" => null,
+            "regular_price" => null,
+            "discount_price" => null,
+            "arrived_at" => null,
+            "issued_at" => null,
+            "free_parking" => null,
+            "returned" => null,
+            "start" => null,
+            "end" => null,
             "parked_days" => $applications->sum('parked_days'),
-    "parked_price" => $applications->sum('parked_price'),
+            "parked_price" => $applications->sum('parked_price'),
+            "parked_days_in_period" => $applications->sum('parked_days_in_period'),
+            "parked_price_in_period" => $applications->sum('parked_price_in_period'),
+
         ];
+        if ((request()->get('status_id') && request()->get('status_id') == 'instorage') || (count(request()->all()) == 0)) {
+            unset($arr['parked_days_in_period']);
+            unset($arr['parked_price_in_period']);
+        }
+        $applications->push(collect(json_decode(json_encode($arr), false)));
 
-        $applications->push(collect(json_decode(json_encode($arr), FALSE)));
-
-        return [
+        $result = [
             'columns' => [
                 'id' => '#',
                 'partner' => 'Партнер',
@@ -333,11 +384,41 @@ class ReportController extends Controller
                 'formated_arrived_at' => 'Постановка',
                 'formated_issued_at' => 'Выдано',
                 'parked_days' => 'Кол-во дней',
-                'parked_price' => 'Сумма'],
+                'parked_price' => 'Сумма',
+                'parked_days_in_period' => 'Кол-во дней в период',
+                'parked_price_in_period' => 'Сумма в период'
+            ],
             'sss' => $applicationQuery
                 ->orderBy($sortBy, 'desc')->toSql(),
             'data' => $applications,
         ];
+        if ((request()->get('status_id') && request()->get('status_id') == 'instorage') || (count(request()->all()) == 0)) {
+            unset($result['parked_days_in_period']);
+            unset($result['parked_price_in_period']);
+        }
+        return $result;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function csvByPartner(Request $request)
+    {
+
+        $partners = auth()->user()->adminPartners->sortBy('name');
+        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
+
+        $parking = $user->parkings()->orderBy('title', 'ASC')->get();
+        $partner = null;
+        if (auth()->user()->hasRole('Partner|PartnerOperator')) {
+            $parking = auth()->user()->partner->parkings();
+            $partner = auth()->user()->partner;
+        }
+        $data = $this->dataByPartner($request, $parking, $partner);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
+        return $this->exporter->export($data);
     }
 
     public function reportAllPartner(Request $request)
@@ -350,18 +431,6 @@ class ReportController extends Controller
 
         $title = __('All Partners Report');
         return view('report.all-partner', compact('data', 'parking', 'total', 'title'));
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function csvAllPartner(Request $request)
-    {
-        $data = $this->dataAllPartner($request);
-        return Excel::download(new ExcelExport($data), 'report.xlsx');
-        return $this->exporter->export($data);
     }
 
     private function dataAllPartner(Request $request)
@@ -451,5 +520,17 @@ class ReportController extends Controller
             ],
             'data' => $applications,
         ];
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function csvAllPartner(Request $request)
+    {
+        $data = $this->dataAllPartner($request);
+        return Excel::download(new ExcelExport($data), 'report.xlsx');
+        return $this->exporter->export($data);
     }
 }
