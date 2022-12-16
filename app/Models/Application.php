@@ -200,14 +200,15 @@ class Application extends Model
             $price = $this->parkingPartnerPrice->regular_price;
         }
 
+        $end = $this->issued_at ?? now();
 
-        $this->parked_days = $this->status_id == 2
-            ? $this->arrived_at->diff(now())->days + 1
-            : $this->arrived_at->diff($this->issued_at)->days + 1;
+        $this->parked_days = $this->status_id === 2
+            ? $this->arrived_at->diff(now())->days + 2
+            : $this->arrived_at->diff($end)->days + 2;
+
         if (
             (request()->get('status_id') && request()->get('status_id') != 'instorage')
         ) {
-            $end = $this->issued_at ?? now();
             $this->parked_days_in_period = TimeIntervalIntersection::getDays([$this->arrived_at, $end], [$startDate, $endDate]);
             $this->parked_price_in_period = $this->parked_days_in_period * $price;
         }
