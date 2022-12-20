@@ -6,8 +6,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.1|^8.2",
+        "andreaselia/laravel-api-to-postman": "^1.13",
         "awobaz/compoships": "^2.1",
         "brian2694/laravel-toastr": "^5.56",
+        "errorname/vin-decoder": "dev-master",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -17,12 +19,14 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "maatwebsite/excel": "^3.1",
+        "mattsplat/vin-decode": "dev-master",
         "php-open-source-saver/jwt-auth": "^2.0",
         "phpoffice/phpword": "dev-master",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^4.0",
         "spatie/period": "^2.3",
-        "stechstudio/laravel-zipstream": "^4.8"
+        "stechstudio/laravel-zipstream": "^4.8",
+        "sunrise/vin": "^1.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",

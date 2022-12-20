@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attachment;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -29,22 +28,22 @@ class AttachmentController extends AppController
     {
         //
     }
-   /**
+
+    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function storeToModelDoc(Request $request, $fileKey = 'docs', $fileType = 'docs', $fileNameExtension = '_doc')
     {
-//dd($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:doc,docx,xls,xlsx,pdf,csv,jpg,jpeg,png,bmp',
         ]);
 
         $files = $request->file($fileKey);
 
-        if($fileKey =="docspopup"){
+        if ($fileKey == "docspopup") {
             $files = $request->all();
         }
 
@@ -55,20 +54,19 @@ class AttachmentController extends AppController
         if (!is_array($files)) {
             $files = [$files];
         }
-        if ( !is_dir( public_path('/uploads') ) ) {
+        if (!is_dir(public_path('/uploads'))) {
             mkdir(public_path('/uploads'), 0777);
         }
         $thumbnail_url = null;
-        foreach($files as $key=>$singleFile)
-        {
+        foreach ($files as $key => $singleFile) {
 
-            $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
-            Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
-            if(in_array(strtolower($singleFile->getClientOriginalExtension()),['jpg','jpeg','png','bmp'])){
-                Image::make( $singleFile->path() )->resize(300, null, function ($constraint) {
+            $fileName = uniqid() . $fileNameExtension . '^' . $singleFile->getClientOriginalName();
+            Storage::disk('uploads')->put($fileName, file_get_contents($singleFile));
+            if (in_array(strtolower($singleFile->getClientOriginalExtension()), ['jpg', 'jpeg', 'png', 'bmp'])) {
+                Image::make($singleFile->path())->resize(300, null, function ($constraint) {
                     $constraint->aspectRatio();
-                })->save( Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
-                $thumbnail_url = Storage::disk('uploads')->url('thumbnails/' . $fileName) ;
+                })->save(Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
+                $thumbnail_url = Storage::disk('uploads')->url('thumbnails/' . $fileName);
             }
 
             $attachments[] = new Attachment([
@@ -81,17 +79,15 @@ class AttachmentController extends AppController
 
         return $attachments;
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function storeToModel(Request $request, $fileKey = 'images', $fileType = 'image', $fileNameExtension = '_image.')
     {
-//        dd($fileKey);
-//        dd($request->all());
-//        dump($request->all());
         $this->validate($request, [
             $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
         ]);
@@ -99,7 +95,7 @@ class AttachmentController extends AppController
         $files = $request->file($fileKey);
 
 
-        if($fileKey =="imagespopup"){
+        if ($fileKey == "imagespopup") {
             $files = $request->all();
         }
 
@@ -109,24 +105,22 @@ class AttachmentController extends AppController
         if (!is_array($files)) {
             $files = [$files];
         }
-        if ( !is_dir( public_path('/uploads') ) ) {
+        if (!is_dir(public_path('/uploads'))) {
             mkdir(public_path('/uploads'), 0777);
         }
-        if ( !is_dir( public_path('/uploads/thumbnails') ) ) {
+        if (!is_dir(public_path('/uploads/thumbnails'))) {
             mkdir(public_path('/uploads/thumbnails'), 0777);
         }
 
-        foreach($files as $key=>$singleFile)
-        {
+        foreach ($files as $key => $singleFile) {
+            $fileName = uniqid() . $fileNameExtension . '^' . $singleFile->getClientOriginalName();
 
-//            $fileName = Carbon::now()->format('Y-m-d') . "-" . uniqid() . $fileNameExtension . $singleFile->getClientOriginalExtension();
-            $fileName = uniqid() . $fileNameExtension.'^'.$singleFile->getClientOriginalName();
 
-            Storage::disk('uploads')->put( $fileName, file_get_contents($singleFile) );
+            Storage::disk('uploads')->put($fileName, file_get_contents($singleFile));
 
-            Image::make( $singleFile->path() )->resize(300, null, function ($constraint) {
+            Image::make($singleFile->path())->resize(300, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save( Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
+            })->save(Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
 
             $attachments[] = new Attachment([
                 'name' => $fileName,
@@ -142,7 +136,7 @@ class AttachmentController extends AppController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -187,6 +181,25 @@ class AttachmentController extends AppController
     /**
      * Remove the specified resource from storage.
      *
+     * @param Attachment $attac
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function destroy(Attachment $attachment)
+    {
+        $result = $this->delete($attachment);
+        return ($result)
+            ? response()->json([
+                ['message' => __('Attachment deleted'), 'class' => 'is-success']
+            ])
+            : response()->json([
+                ['message' => __('Attachment not deleted'), 'class' => 'is-danger']
+            ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
      * @param Attachment $attachment
      * @return bool
      * @throws \Exception
@@ -197,24 +210,5 @@ class AttachmentController extends AppController
         Storage::disk('uploads')->delete('thumbnails/' . $attachment->name);
 
         return $attachment->delete();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param Attachment $attac
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
-    public function destroy(Attachment $attachment)
-    {
-        $result = $this->delete($attachment);
-        return ( $result )
-            ? response()->json([
-                ['message'=>__('Attachment deleted'), 'class' => 'is-success']
-            ])
-            : response()->json([
-                ['message'=>__('Attachment not deleted'), 'class' => 'is-danger']
-            ]);
     }
 }

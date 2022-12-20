@@ -27,17 +27,15 @@ use App\Models\Pricing;
 use App\Models\Status;
 use App\Models\User;
 use App\Notifications\ApplicationNotifications;
-use App\Notifications\TelegramNotification;
 use App\Notifications\UserNotification;
-use App\Services\ApplicationTotalsService;
 use App\Services\ApplicationService;
+use App\Services\ApplicationTotalsService;
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Session;
 use Toastr;
 use Zip;
@@ -50,7 +48,6 @@ class ApplicationController extends AppController
 
     public function __construct(ExportInterface $exporter, AttachmentController $AttachmentController)
     {
-
 
         $this->AttachmentController = $AttachmentController;
         $this->exporter = $exporter;
@@ -87,63 +84,18 @@ class ApplicationController extends AppController
      */
     public function create(Application $application)
     {
+
         $this->authorize('create', Application::class);
-        $carTypes = CarType::where('is_active', 1)
-            ->select('id', 'name')
-            ->orderBy('rank', 'desc')->orderBy('name', 'ASC')
-            ->get();
-
-        if (auth()->user()->partner || auth()->user()->hasRole(['Partner']) || auth()->user()->hasRole(['PartnerOperator'])) {
-            $partners = auth()->user()->partner()->get();
-            $parkings = auth()->user()->partnerParkings();
-//            $parkings = Parking::all();
-        } else {
-            $partners = Partner::all();
-            $parkings = Parking::parkings()->get();
-        }
-        if (auth()->user()->hasRole(['Admin'])) {
-            $partners = auth()->user()->partners;
-        }
-        if (auth()->user()->hasRole(['SuperAdmin'])) {
-            $partners = Partner::all();
-        }
-
-        if (!auth()->user()->hasRole(['SuperAdmin|Admin|Partner'])) {
-            $partners = auth()->user()->owner->partners;
-        }
-        $colors = Color::getColors();
-
-        $user = User::where('id', auth()->user()->getUserOwnerId())->first();
-        $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
-        $statuses = Status::statuses($application)->get()->filterStatusesByRole();
-
-
-        $title = __('Create a Request');
+        $result = $this->applicationService->userDatasForNewApplication($application);
         if ($application->exists) {
             $updateData = array_merge(
 
                 $this->applicationUpdateData($application),
-                compact(
-                    'title',
-                    'carTypes',
-                    'partners',
-                    'parkings',
-                    'managers',
-                    'statuses',
-                    'colors',
-                )
+                $result
             );
             return view('applications.duplicate_create', $updateData);
         } else {
-            return view('applications.create', compact(
-                'title',
-                'carTypes',
-                'partners',
-                'parkings',
-                'managers',
-                'statuses',
-                'colors'
-            ));
+            return view('applications.create', $result);
         }
     }
 
@@ -403,193 +355,8 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-//        $request->dd();
-        $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
-        $noTypeCar = json_decode($response->body(), true);
-        $required = true;
-        $returned = false;
-        if (isset($request->car_data['returned'])) {
-            $returned = true;
-        }
-        if (isset($request->car_data['vin_status']) && isset($request->car_data['license_plate_status'])) {
-            $required = false;
-        }
         $this->authorize('create', Application::class);
-        $carRequest = $request->car_data;
-        $applicationRequest = $request->app_data;
-        $statuses = [1, 7];
-        if (auth()->user()->hasRole(['Manager', 'Admin', 'SuperAdmin'])) {
-            $statuses = [1, 2, 3, 4, 5, 6, 7];
-        }
-        $car_type = null;
-
-        if (isset($request->car_data['car_type_id'])) {
-            $car_type = $request->car_data['car_type_id'];
-        }
-
-        $validator = Validator::make($carRequest, [
-            'vin_array' => $required ? [
-                'exclude_if:returned,1',
-                'vin_code',
-//                'size:8',
-                'required_without:license_plate',
-                $returned ? '' : 'unique_custom:applications,vin',
-                'nullable'
-            ] : [],
-            'license_plate' => $required ? [
-                'exclude_if:returned,1',
-                $returned ? '' : 'unique_custom:applications,license_plate',
-                'nullable'
-            ] : [],
-            'car_type_id' => ['integer', 'required'],
-            'car_mark_id' => ($car_type == $noTypeCar) ? ['integer'] : ['integer', 'required'],
-            'car_model_id' => ['integer'],
-            'year' => ['integer'],
-            'car_key_quantity' => ['integer'],
-            'status_id' => ['exists:statuses,id', Rule::in($statuses)]
-        ]);
-
-        $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
-            $count = Application::where('vin', $carRequest['vin_array'])->count();
-            if ($count < 1) {
-                $fail('Нет такого дубликата!');
-            }
-        }, function ($input) {
-            return $input->returned == 1;
-        });
-
-
-        $validator->validate();
-
-        Validator::make($applicationRequest, [
-            'external_id' => ['required'],
-            'partner_id' => ['integer', 'required', 'exists:partners,id'],
-            'parking_id' => ['integer', 'required', 'exists:parkings,id'],
-        ])->validate();
-
-        /*if ($carValidator->fails() || $applicationValidator->fails()) {
-            return response()->json(['errors'=>['car'=>$carValidator->errors(), 'application'=>$applicationValidator->errors()]], 422);
-        }*/
-        /*if (auth()->user()->hasRole('doer')) {
-            $applicationValidator = Validator::make($applicationRequest, [
-                'status_id' => 'required',
-            ]);
-            if ($applicationValidator->fails()) {
-                return response()->json(['errors'=>['application'=>$applicationValidator->errors()]], 422);
-            }
-            $applicationRequest['parking_id'] = auth()->user()->parking_id;
-        }*/
-
-        $applicationDataArray = get_object_vars(new ApplicationData());
-        $applicationData = array_merge($applicationDataArray, $applicationRequest, $carRequest);
-
-        /*$applicationData['condition_gear'] = json_encode($applicationData['condition_gear']);
-        $applicationData['condition_engine'] = json_encode($applicationData['condition_engine']);
-        $applicationData['condition_electric'] = json_encode($applicationData['condition_electric']);
-        $applicationData['condition_transmission'] = json_encode($applicationData['condition_transmission']);*/
-//        $applicationData['services'] = json_encode($applicationData['services']);
-//        $applicationData['exterior_damage'] = json_encode($applicationData['exterior_damage']);
-//        $applicationData['interior_damage'] = json_encode($applicationData['interior_damage']);
-//        dd($applicationData['vin_array']);
-
-        if (isset($applicationData['vin_array'])) {
-            $applicationData['vin'] = $applicationData['vin_array'];
-        }
-
-        unset($applicationData['car_series_body']);
-
-        foreach ($applicationData as $key => $value) {
-            if ($value === '' || $value === null || $value === 'null') {
-                if ($key == 'issued_by' || $key == 'issued_at') {
-                    continue;
-                }
-                unset($applicationData[$key]);
-            }
-        }
-
-        /*        if (isset($applicationData['status_id'])) {
-                    $applicationData['status_id'] = 1;
-                } else {
-                    $applicationData['status_id'] = 7;
-                }
-                if(auth()->user()->hasRole('Admin')) {
-                    if(isset($applicationData['status_admin'])) {
-                        $applicationData['status_id'] = $applicationData['status_admin'];
-                    }
-                }*/
-
-        if (!in_array($applicationData['status_id'], [1, 7])) {
-            $applicationData['arrived_at'] = Carbon::now()->format('Y-m-d H:i:s');
-        }
-
-
-//        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
-        if (isset($applicationData['car_type_id']) && $applicationData['car_type_id'] != 27) {
-            $searchFilters = [];
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
-                $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
-            }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0) {
-                $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
-            }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
-                $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
-            }
-            $response = Http::post(env('CAR_API').'/title',$searchFilters);
-
-            $carTitleData = json_decode($response->body());
-//            $carTitleData = DB::table('car_types')
-//                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-//                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
-//                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
-//                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-//                ->where($searchFilters)
-//                ->first();
-
-
-
-            $applicationData['car_title'] = '';
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
-                $applicationData['car_title'] .= "{$carTitleData->car_mark}";
-            }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
-                $applicationData['car_title'] .= " {$carTitleData->car_model}";
-            }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
-                $applicationData['car_title'] .= " {$carTitleData->car_generation}";
-            }
-            if (isset($applicationData['year'])) {
-                $applicationData['car_title'] .= " {$applicationData['year']}";
-            }
-        }
-        if ($applicationData['status_id'] == 2 && auth()->user()->hasRole(['Manager'])) {
-            $applicationData['accepted_by'] = auth()->user()->id;
-        }
-
-//=========
-        $application = null;
-        DB::transaction(function () use ($request, $applicationData, &$application) {
-            $application = auth()->user()->applications()->create($applicationData);
-
-            if ($application->status_id == 7) {
-                $application->issueAcceptions()->create([
-                    'is_issue' => false,
-                    'user_id' => auth()->id()
-                ]);
-            }
-
-
-//            $attachments = $this->AttachmentController->storeToModel($request, 'images');
-////            $attachmentsDoc=$this->AttachmentController->storeToModelDoc($request, 'docs');
-
-            if (count($attachmentsDoc = $this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
-                $application->attachments()->saveMany($attachmentsDoc);
-            }
-            if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
-                $application->attachments()->saveMany($attachments);
-            }
-        });
-
+        $application = $this->applicationService->store($request,$this->AttachmentController);
         if ($application) {
             Toastr::success(__('Saved.'));
             return redirect()->route('applications.index')->with('success', __('Saved.'));
@@ -647,14 +414,13 @@ class ApplicationController extends AppController
         $statuses = Status::statuses($application)->get()->filterStatusesByRole();
 
 
-        $response = Http::post(env('CAR_API','https://lk2.bitok.kg/api/v1').'/app',$application->toArray());
+        $response = Http::post(env('CAR_API', 'https://lk2.bitok.kg/api/v1') . '/app', $application->toArray());
 
 
         $result = json_decode(json_encode(json_decode($response->body())));
 
 
-
-         extract((array)$result);
+        extract((array)$result);
         $attachments = $application->attachments()->select('id', 'thumbnail_url', 'url')->get();
 
 //        $exterior_damage = $application->exterior_damage;
@@ -694,7 +460,7 @@ class ApplicationController extends AppController
     public function addAttachmentsFromPopup(Request $request, $id)
     {
 
-        // return $request->all();
+//         return $request->all();
 
         $application = Application::application($id)->firstOrFail();
 //        $this->authorize('update', $application);
@@ -737,7 +503,7 @@ class ApplicationController extends AppController
     public function update(Request $request, $id)
     {
 
-        $response = Http::get(env('CAR_API') . '/cars?name=Прочее');
+        $response = Http::get(config('app.carapi') . '/cars?name=Прочее');
         $noTypeCar = json_decode($response->body(), true);
 
 
@@ -826,44 +592,8 @@ class ApplicationController extends AppController
         }
 
 //        if (isset($applicationData['car_type_id']) && in_array($applicationData['car_type_id'], [1, 2, 6, 7, 8])) {
-        if (isset($applicationData['car_type_id']) && ($applicationData['car_type_id'] != 27)) {
-            $searchFilters = [];
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
-                $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
-            }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0) {
-                $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
-            }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
-                $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
-            }
-//dump($searchFilters);
-            $response = Http::post(env('CAR_API').'/title',$searchFilters);
-
-            $carTitleData = json_decode($response->body());
-
-//            $carTitleData = DB::table('car_types')
-//                ->select('car_types.name as car_type', 'car_marks.name as car_mark', 'car_models.name as car_model', 'car_generations.name as car_generation')
-//                ->leftJoin('car_marks', 'car_types.id', '=', 'car_marks.car_type_id')
-//                ->leftJoin('car_models', 'car_marks.id', '=', 'car_models.car_mark_id')
-//                ->leftJoin('car_generations', 'car_models.id', '=', 'car_generations.car_model_id')
-//                ->where($searchFilters)
-//                ->first();
-
-
-            $applicationData['car_title'] = '';
-            if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
-                $applicationData['car_title'] .= "{$carTitleData->car_mark}";
-            }
-            if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
-                $applicationData['car_title'] .= " {$carTitleData->car_model}";
-            }
-            if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
-                $applicationData['car_title'] .= " {$carTitleData->car_generation}";
-            }
-            if (isset($applicationData['year'])) {
-                $applicationData['car_title'] .= " {$applicationData['year']}";
-            }
+        if (isset($applicationData['car_type_id']) && ($applicationData['car_type_id'] != $noTypeCar)) {
+            $applicationData['car_title'] = $this->getCarTitle($applicationData);
         }
 
 
@@ -941,6 +671,44 @@ class ApplicationController extends AppController
 
         Toastr::error(__('Error'));
         return redirect()->back()->with('error', __('Error'));
+    }
+
+    /**
+     * @param array $applicationData
+     * @return array
+     */
+    public function getCarTitle(array $applicationData): array
+    {
+        $searchFilters = [];
+        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
+            $searchFilters[] = ['car_marks.id', $applicationData['car_mark_id']];
+        }
+        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && $applicationData['car_model_id'] > 0) {
+            $searchFilters[] = ['car_models.id', $applicationData['car_model_id']];
+        }
+        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && $applicationData['car_generation_id'] > 0) {
+            $searchFilters[] = ['car_generations.id', $applicationData['car_generation_id']];
+        }
+
+        $response = Http::post(config('app.carapi') . '/title', $searchFilters);
+
+        $carTitleData = json_decode($response->body());
+
+
+        $applicationData['car_title'] = '';
+        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
+            $applicationData['car_title'] .= "{$carTitleData->car_mark}";
+        }
+        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
+            $applicationData['car_title'] .= " {$carTitleData->car_model}";
+        }
+        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
+            $applicationData['car_title'] .= " {$carTitleData->car_generation}";
+        }
+        if (isset($applicationData['year'])) {
+            $applicationData['car_title'] .= " {$applicationData['year']}";
+        }
+        return $applicationData;
     }
 
     public function removeAttachment($attachment)
@@ -1487,4 +1255,6 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
+
+
 }

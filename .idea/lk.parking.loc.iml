@@ -153,6 +153,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/stella-maris/clock" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-open-source-saver/jwt-auth" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/andreaselia/laravel-api-to-postman" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sunrise/vin" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mattsplat/vin-decode" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/errorname/vin-decoder" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

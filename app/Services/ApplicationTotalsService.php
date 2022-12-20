@@ -57,8 +57,8 @@ class ApplicationTotalsService
                 $totals[$status] = 0;
             }
         }
-        $totals[10] = array_sum($totals);
-        $totals[11] = $issuanceTotal;
+        $totals['all'] = array_sum($totals);
+        $totals['issue_requests'] = $issuanceTotal;
 //        $totals[12] = $viewRequestsTotal;
 
         return $totals;

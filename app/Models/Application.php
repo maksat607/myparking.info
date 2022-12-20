@@ -201,11 +201,20 @@ class Application extends Model
         }
 
         $end = $this->issued_at ?? now();
+//        dump($this->arrived_at);
+//        dump($end);
 
-        $this->parked_days = $this->status_id === 2
-            ? $this->arrived_at->diff(now())->days + 2
-            : $this->arrived_at->diff($end)->days + 2;
+//        dd($this);
+        $this->parked_days = $this->status_name === "Хранение"
+            ? $this->arrived_at->diff(now())->days + 1
+            : TimeIntervalIntersection::getDays([$this->arrived_at, $end], [$this->arrived_at, $end]);
 
+//        $this->parked_days = $this->status_id === 2
+//            ? $this->arrived_at->diff(now())->days + 2
+//            : $this->arrived_at->diff($end)->days + 2;
+//        if (!((request()->get('status_id') && request()->get('status_id') == 'instorage') || (count(request()->all()) == 0))) {
+//            $this->parked_days = $this->parked_days + 1;
+//        }
         if (
             (request()->get('status_id') && request()->get('status_id') != 'instorage')
         ) {

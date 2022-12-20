@@ -205,7 +205,7 @@ class ReportController extends Controller
         $arr [0] = [];
         $arr [1] = [];
         $arr [2] = [];
-        $apps = Application::applications()->whereIn('status_id', [2,3]);
+        $apps = Application::applications()->whereIn('status_id', [2, 3]);
 
         $apps->whereNotNull('arrived_at')->get()->map(function ($item) use (&$arr) {
             if (!in_array($item->car_type_id, $arr[0]) && $item->car_type_id) {
@@ -220,7 +220,7 @@ class ReportController extends Controller
         });
 
 
-        $response = Http::post(env('CAR_API') . '/get-cars', $arr);
+        $response = Http::post(config('app.carapi') . '/get-cars', $arr);
 
         $carData = json_decode($response->body(), true);
 
@@ -243,14 +243,13 @@ class ReportController extends Controller
         $applicationQuery = $apps->with('parking', 'parkingPartnerPrice', 'parkingBasicPrice', 'basicPrice')
             ->select(['applications.id', 'applications.parking_id', 'applications.car_type_id as car_type_name',
                 'applications.car_mark_id as car_mark_name', 'applications.car_model_id as car_model_name',
-                'partners.shortname as partner', 'parkings.title as parking', 'external_id', 'car_title','partner_id','car_type_id',
+                'partners.shortname as partner', 'parkings.title as parking', 'external_id', 'car_title', 'partner_id', 'car_type_id',
                 'year', 'vin', 'license_plate', 'statuses.name as status_name', 'arrived_at', 'issued_at', 'free_parking', 'returned'])
             ->join('statuses', 'statuses.id', '=', 'applications.status_id')
             ->join('partners', 'partners.id', '=', 'applications.partner_id')
             ->join('parkings', 'parkings.id', '=', 'applications.parking_id')
             ->whereNotNull('arrived_at');
         $status_id = $request->query('status_id', 'arrived');
-
 
 
         if ($status_id == "arrived") {

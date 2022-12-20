@@ -4,8 +4,82 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d5360dc30008cbedab1a98ebb68adc1",
+    "content-hash": "3c1be59cdb66a67e5069184e153a7691",
     "packages": [
+        {
+            "name": "andreaselia/laravel-api-to-postman",
+            "version": "v1.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andreaselia/laravel-api-to-postman.git",
+                "reference": "ec35f26a8237e53c45d12c2bd0902490f91b1952"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andreaselia/laravel-api-to-postman/zipball/ec35f26a8237e53c45d12c2bd0902490f91b1952",
+                "reference": "ec35f26a8237e53c45d12c2bd0902490f91b1952",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/config": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/console": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/routing": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.12",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AndreasElia\\PostmanGenerator\\PostmanGeneratorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AndreasElia\\PostmanGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Elia",
+                    "email": "andreaselia@live.co.uk"
+                }
+            ],
+            "description": "Generate a Postman collection automatically from your Laravel API",
+            "keywords": [
+                "Postman",
+                "api",
+                "collection",
+                "generate",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/andreaselia/laravel-api-to-postman/issues",
+                "source": "https://github.com/andreaselia/laravel-api-to-postman/tree/v1.13.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/andreaselia",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/tomirons",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-09-02T14:08:48+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.1.1",
@@ -610,6 +684,48 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
+        },
+        {
+            "name": "errorname/vin-decoder",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Errorname/vin-decoder.git",
+                "reference": "6db4202c7d42b6082d4cbce753883982097387d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Errorname/vin-decoder/zipball/6db4202c7d42b6082d4cbce753883982097387d3",
+                "reference": "6db4202c7d42b6082d4cbce753883982097387d3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Errorname\\VINDecoder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thibaud Courtoison",
+                    "email": "do.not.press.enter@gmail.com",
+                    "homepage": "https://thibaudcourtoison.fr"
+                }
+            ],
+            "description": "VIN (Vehicle Identification Number) decoder using Vincario API",
+            "support": {
+                "issues": "https://github.com/Errorname/vin-decoder/issues",
+                "source": "https://github.com/Errorname/vin-decoder/tree/master"
+            },
+            "time": "2017-09-05T17:35:16+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -2507,6 +2623,35 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.1"
             },
             "time": "2022-12-02T22:17:43+00:00"
+        },
+        {
+            "name": "mattsplat/vin-decode",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mattsplat/vin-decoder.git",
+                "reference": "32ecc13d39cb477751434d73f7c609e3232caafa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mattsplat/vin-decoder/zipball/32ecc13d39cb477751434d73f7c609e3232caafa",
+                "reference": "32ecc13d39cb477751434d73f7c609e3232caafa",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "VinDecode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Wrapper to get VIN information",
+            "support": {
+                "issues": "https://github.com/mattsplat/vin-decoder/issues",
+                "source": "https://github.com/mattsplat/vin-decoder/tree/master"
+            },
+            "time": "2019-05-07T03:30:04+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4627,6 +4772,76 @@
                 "source": "https://github.com/stella-maris-solutions/clock/tree/0.1.7"
             },
             "time": "2022-11-25T16:15:06+00:00"
+        },
+        {
+            "name": "sunrise/vin",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sunrise-php/vin.git",
+                "reference": "721e36239d001d89a6f6a02b8c2a79b2655c79cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sunrise-php/vin/zipball/721e36239d001d89a6f6a02b8c2a79b2655c79cf",
+                "reference": "721e36239d001d89a6f6a02b8c2a79b2655c79cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.5.20|9.5.0",
+                "sunrise/coding-standard": "1.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "data/manufacturers.php",
+                    "data/regions.php",
+                    "data/years.php"
+                ],
+                "psr-4": {
+                    "Sunrise\\Vin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anatoly Fenric",
+                    "email": "afenric@gmail.com",
+                    "homepage": "https://github.com/fenric"
+                },
+                {
+                    "name": "李昀陞 (Peter)",
+                    "email": "peter279k@gmail.com",
+                    "homepage": "https://github.com/peter279k"
+                },
+                {
+                    "name": "Saud bin Mohammed",
+                    "email": "saud@samaphp.com",
+                    "homepage": "https://github.com/samaphp"
+                }
+            ],
+            "description": "VIN decoder for PHP 7.1+ based on ISO-3779",
+            "homepage": "https://github.com/sunrise-php/vin",
+            "keywords": [
+                "PHP7",
+                "decoder",
+                "fenric",
+                "iso-3779",
+                "php8",
+                "sunrise",
+                "vin"
+            ],
+            "support": {
+                "issues": "https://github.com/sunrise-php/vin/issues",
+                "source": "https://github.com/sunrise-php/vin/tree/v1.2.1"
+            },
+            "time": "2022-04-20T13:34:29+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -9800,12 +10015,14 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "errorname/vin-decoder": 20,
+        "mattsplat/vin-decode": 20,
         "phpoffice/phpword": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8.1"
+        "php": "^7.3|^8.1|^8.2"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"

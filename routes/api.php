@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\ApiApplicationController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\Api\ApiApplicationController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,10 +21,13 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
 
     Route::get('/applications/{status_id?}', [ApiApplicationController::class, 'index'])
         ->where('status_id', '[0-9]+')
-        ->middleware(['check_legal', 'check_child_owner_legal'])
-        ->name('api.applications.index');
-});
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/applications/create/{application?}', [apiApplicationController::class, 'create'])
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::post('/applications/store', [apiApplicationController::class, 'store'])
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::post('/application/{application}/upload', [apiApplicationController::class, 'addPhotos']);
 
-//Route::middleware('auth:api')->get('/users', function (Request $request) {
-//    return $request->user();
-//});
+    Route::post('image', [\App\Http\Controllers\Api\ImageController::class, 'imageStore']);
+
+});

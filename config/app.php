@@ -14,6 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'carapi' => env('CAR_API', 'https://lk2.bitok.kg/api/v1'),
 
     /*
     |--------------------------------------------------------------------------
