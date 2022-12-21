@@ -708,7 +708,7 @@ class ApplicationController extends AppController
         if (isset($applicationData['year'])) {
             $applicationData['car_title'] .= " {$applicationData['year']}";
         }
-        return trim($applicationData);
+        return ($applicationData);
     }
 
     public function removeAttachment($attachment)
