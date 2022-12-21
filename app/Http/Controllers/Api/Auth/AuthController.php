@@ -36,8 +36,20 @@ class AuthController extends Controller
 
     }
 
-    public function me(Request $request){
+    public function me(Request $request)
+    {
         return new UserResource($request->user());
+    }
+
+    /**
+     * Logout user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['message' => 'User successfully logged out.'], 200);
     }
 
 }

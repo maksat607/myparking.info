@@ -696,19 +696,19 @@ class ApplicationController extends AppController
 
 
         $applicationData['car_title'] = '';
-        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
+        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && isset($carTitleData->car_mark)) {
             $applicationData['car_title'] .= "{$carTitleData->car_mark}";
         }
-        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
+        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && isset($carTitleData->car_model)) {
             $applicationData['car_title'] .= " {$carTitleData->car_model}";
         }
-        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
+        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && isset($carTitleData->car_generation)) {
             $applicationData['car_title'] .= " {$carTitleData->car_generation}";
         }
         if (isset($applicationData['year'])) {
             $applicationData['car_title'] .= " {$applicationData['year']}";
         }
-        return $applicationData;
+        return trim($applicationData);
     }
 
     public function removeAttachment($attachment)
@@ -927,44 +927,7 @@ class ApplicationController extends AppController
     public function checkDuplicate(Request $request)
     {
 
-        $licensePlateDuplicates = (isset($request->license_plate) && strlen($request->license_plate) >= 3)
-            ?
-            Application::with('status')
-                ->where(function ($query) {
-                    if (!auth()->user()->hasRole('SuperAdmin')) {
-                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
-                    }
-                })
-                ->where('license_plate', 'like', '%' . $request->license_plate . '%')
-                ->get()->toArray()
-            : [];
-        $vinDuplicates = [];
-        if (is_array($request->vin) && count($request->vin) > 0) {
-            $searchVin = false;
-            $vinArray = $request->vin;
-            foreach ($vinArray as $key => $singleVin) {
-                if (empty($singleVin)) {
-                    unset($vinArray[$key]);
-                } elseif (strlen($singleVin) > 2) {
-                    $searchVin = true;
-                }
-            }
-
-            if ($searchVin) {
-                $singleVin = $vinArray[0];
-                $vinQuery = Application::with('status')
-                    ->where(function ($query) {
-                        if (!auth()->user()->hasRole('SuperAdmin')) {
-                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
-                        }
-                    })
-                    ->where('vin', 'like', '%' . $singleVin . '%');
-
-                $vinDuplicates = $vinQuery->get()->toArray();
-            }
-        }
+        list($licensePlateDuplicates, $vinDuplicates) = $this->applicationService->checkApplicationDuplicate($request);
 
         return response()->json([
             'license_plate' => $licensePlateDuplicates,
@@ -1255,6 +1218,8 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
+
+
 
 
 }

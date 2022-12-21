@@ -155,6 +155,11 @@
       <path value="$PROJECT_DIR$/vendor/sunrise/vin" />
       <path value="$PROJECT_DIR$/vendor/mattsplat/vin-decode" />
       <path value="$PROJECT_DIR$/vendor/errorname/vin-decoder" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

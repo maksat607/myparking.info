@@ -157,6 +157,11 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/sunrise/vin" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mattsplat/vin-decode" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/errorname/vin-decoder" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/dbal" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/deprecations" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/event-manager" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

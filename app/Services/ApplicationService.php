@@ -302,4 +302,50 @@ class ApplicationService
         });
 
     }
+    /**
+     * @param Request $request
+     * @return array[]
+     */
+    public function checkApplicationDuplicate(Request $request): array
+    {
+        $licensePlateDuplicates = (isset($request->license_plate) && strlen($request->license_plate) >= 3)
+            ?
+            Application::with('status')
+                ->where(function ($query) {
+                    if (!auth()->user()->hasRole('SuperAdmin')) {
+                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    }
+                })
+                ->where('license_plate', 'like', '%' . $request->license_plate . '%')
+                ->get()->toArray()
+            : [];
+        $vinDuplicates = [];
+        if (is_array($request->vin) && count($request->vin) > 0) {
+            $searchVin = false;
+            $vinArray = $request->vin;
+            foreach ($vinArray as $key => $singleVin) {
+                if (empty($singleVin)) {
+                    unset($vinArray[$key]);
+                } elseif (strlen($singleVin) > 2) {
+                    $searchVin = true;
+                }
+            }
+
+            if ($searchVin) {
+                $singleVin = $vinArray[0];
+                $vinQuery = Application::with('status')
+                    ->where(function ($query) {
+                        if (!auth()->user()->hasRole('SuperAdmin')) {
+                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        }
+                    })
+                    ->where('vin', 'like', '%' . $singleVin . '%');
+
+                $vinDuplicates = $vinQuery->get()->toArray();
+            }
+        }
+        return array($licensePlateDuplicates, $vinDuplicates);
+    }
 }

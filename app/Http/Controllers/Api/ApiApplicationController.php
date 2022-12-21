@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ModelResource;
 use App\Models\Application;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
@@ -51,9 +52,9 @@ class ApiApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
+//        return $request->all();
         $this->authorize('create', Application::class);
-        return $this->applicationService->store($request,$this->AttachmentController);
+        return $this->applicationService->store($request, $this->AttachmentController);
     }
 
     /**
@@ -95,7 +96,22 @@ class ApiApplicationController extends Controller
         if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
             $application->attachments()->saveMany($attachments);
         }
-        return response(['message' => 'successfull'], Response::HTTP_CREATED);
+        return response($application, Response::HTTP_CREATED);
+    }
+
+    public function checkDuplicate(Request $request)
+    {
+        if ($request->has('vin')) {
+            $request->request->replace(['vin' => [$request->get('vin')]]);
+        }
+        list($licensePlateDuplicates, $vinDuplicates) = $this->applicationService->checkApplicationDuplicate($request);
+
+        return response()->json([
+            'license_plates' => ModelResource::collection(json_decode(json_encode($licensePlateDuplicates)), 'status'),
+            'vins' => ModelResource::collection(json_decode(json_encode($vinDuplicates)), 'status'),
+//            'license_plates' => $licensePlateDuplicates,
+//            'vins' => $vinDuplicates,
+        ], 200);
     }
 
 }
