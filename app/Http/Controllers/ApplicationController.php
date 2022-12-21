@@ -638,7 +638,6 @@ class ApplicationController extends AppController
         if ($applicationData['status_id'] == 3) {
             $applicationData['issued_by'] = auth()->id();
         }
-
         $isUpdate = $application->update($applicationData);
 
         if ($application->status_id == 7) {
@@ -675,9 +674,8 @@ class ApplicationController extends AppController
 
     /**
      * @param array $applicationData
-     * @return array
      */
-    public function getCarTitle(array $applicationData): array
+    public function getCarTitle(array $applicationData)
     {
         $searchFilters = [];
         if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && $applicationData['car_mark_id'] > 0) {
@@ -708,7 +706,7 @@ class ApplicationController extends AppController
         if (isset($applicationData['year'])) {
             $applicationData['car_title'] .= " {$applicationData['year']}";
         }
-        return $applicationData;
+        return $applicationData['car_title'];
     }
 
     public function removeAttachment($attachment)
