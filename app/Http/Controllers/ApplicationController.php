@@ -696,19 +696,19 @@ class ApplicationController extends AppController
 
 
         $applicationData['car_title'] = '';
-        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id']) && isset($carTitleData->car_mark)) {
+        if (isset($applicationData['car_mark_id']) && is_numeric($applicationData['car_mark_id'])) {
             $applicationData['car_title'] .= "{$carTitleData->car_mark}";
         }
-        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id']) && isset($carTitleData->car_model)) {
+        if (isset($applicationData['car_model_id']) && is_numeric($applicationData['car_model_id'])) {
             $applicationData['car_title'] .= " {$carTitleData->car_model}";
         }
-        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id']) && isset($carTitleData->car_generation)) {
+        if (isset($applicationData['car_generation_id']) && is_numeric($applicationData['car_generation_id'])) {
             $applicationData['car_title'] .= " {$carTitleData->car_generation}";
         }
         if (isset($applicationData['year'])) {
             $applicationData['car_title'] .= " {$applicationData['year']}";
         }
-        return ($applicationData);
+        return $applicationData;
     }
 
     public function removeAttachment($attachment)
