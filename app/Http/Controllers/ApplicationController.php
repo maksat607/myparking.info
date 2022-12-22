@@ -356,7 +356,7 @@ class ApplicationController extends AppController
     public function store(Request $request)
     {
         $this->authorize('create', Application::class);
-        $application = $this->applicationService->store($request,$this->AttachmentController);
+        $application = $this->applicationService->store($request, $this->AttachmentController);
         if ($application) {
             Toastr::success(__('Saved.'));
             return redirect()->route('applications.index')->with('success', __('Saved.'));
@@ -985,12 +985,38 @@ class ApplicationController extends AppController
                 where T1.returned_values like '%0%'"
             ))[0];
         }
-
+        $dups = [];
+        Application::
+        applications()
+            ->filter($filters)
+            ->whereIn('id', explode(',', $duplicateIDs->tmp))
+            ->orderBy($groupBy)
+            ->get()
+            ->map(function ($item) use (&$dups, $groupBy) {
+                $dups[$item[$groupBy]][] = [
+                    'id' => $item->id,
+                    'vin' => $item->vin,
+                    'license_plate' => $item->license_plate,
+                    'returned' => $item->returned
+                ];
+            });
+        $duplicatedApps = collect($dups)->map(function ($item) {
+            return collect($item)->countBy(function ($app) {
+                if ($app['returned']) {
+                    return 'returned';
+                }
+                return 'not_returned';
+            });
+        })
+            ->reject(function ($item) {
+                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
+            })
+            ->keys();
         if (isset($duplicateIDs->tmp)) {
             $applicationQuery = Application::
             applications()
                 ->filter($filters)
-                ->whereIn('id', explode(',', $duplicateIDs->tmp))
+                ->whereIn($groupBy, $duplicatedApps)
                 ->with('parking')
                 ->with('issuedBy')
                 ->with('acceptedBy')
@@ -1002,20 +1028,8 @@ class ApplicationController extends AppController
                 ->with('acceptions')
                 ->with('issuance')
                 ->with('viewRequests')
-                ->orderBy('id', 'desc');
-
-            $applications = $applicationQuery->paginate(config('app.paginate_by', '25'))->withQueryString();
-            foreach ($applications as $key => $item) {
-                $pricing = Pricing::where([
-                    ['partner_id', $item->partner_id],
-                    ['car_type_id', $item->car_type_id]
-                ])
-                    ->select('discount_price', 'regular_price', 'free_days')
-                    ->first();
-
-                $applications[$key]['pricing'] = $pricing;
-                $item->currentParkingCost = $item->currentParkingCost;
-            }
+                ->orderBy($groupBy, 'desc');
+            $applications = $applicationQuery->paginate(24)->withQueryString();
         }
 
         $title = __('Duplicate');
@@ -1216,8 +1230,6 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
-
-
 
 
 }

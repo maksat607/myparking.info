@@ -22,6 +22,7 @@
 
 <div class="container">
     <ul class="page-nav">
+        @if(request()->route()->getName() != 'applications.duplicate')
         <li class="notification page-nav__item{{ (request()->route('status_id') == 2) ? ' active' : '' }}">
             <a href="{{ route('applications.index', array_merge(['status_id'=>2],$filters??[])) }}"
                class="page-nav__link">Хранение</a>
@@ -63,6 +64,8 @@
                class="page-nav__link">Отклонено</a>
             <div class="notification__count mk">{{ $totals[6] }}</div>
         </li>
+
+        @endif
         <li class="notification page-nav__item{{
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">
