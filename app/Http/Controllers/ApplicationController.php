@@ -1011,7 +1011,7 @@ class ApplicationController extends AppController
         })
             ->reject(function ($item) {
 //                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
-                return ($item['not_returned'] ?? 0)  != 2;
+                return ($item['not_returned'] ?? 0) != 2 && (($item['not_returned'] ?? 0) + ($item['returned'] ?? 0)) < 2;
             })
             ->keys();
 
