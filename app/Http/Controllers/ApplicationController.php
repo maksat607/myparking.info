@@ -1014,8 +1014,7 @@ class ApplicationController extends AppController
                 return ($item['not_returned'] ?? 0) + ($item['returned'] ?? 0) - ($item['returned'] ?? 0) == 1;
             })
             ->keys();
-        dump($duplicatedApps);
-        dump($groupBy);
+
         if (isset($duplicateIDs->tmp)) {
             $applicationQuery = Application::
             applications()
