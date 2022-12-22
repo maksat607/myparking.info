@@ -1009,7 +1009,8 @@ class ApplicationController extends AppController
             });
         })
             ->reject(function ($item) {
-                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
+//                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
+                return ($item['not_returned'] ?? 0) + ($item['returned'] ?? 0) - ($item['returned'] ?? 0) == 1;
             })
             ->keys();
         if (isset($duplicateIDs->tmp)) {
@@ -1017,6 +1018,7 @@ class ApplicationController extends AppController
             applications()
                 ->filter($filters)
                 ->whereIn($groupBy, $duplicatedApps)
+//                ->whereIn($groupBy, $duplicatedApps)
                 ->with('parking')
                 ->with('issuedBy')
                 ->with('acceptedBy')
