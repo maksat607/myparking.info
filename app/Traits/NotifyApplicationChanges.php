@@ -28,8 +28,8 @@ trait NotifyApplicationChanges
         static::retrieved(function ($item) {
         });
         static::saving(function ($item) {
-            $item->vin = $item->vin == "не указан" ? null : $item->vin;
-            $item->license_plate = $item->license_plate == "не указан" ? null : $item->license_plate;
+            $item->vin = mb_strtoupper($item->vin) == mb_strtoupper("не указан") ? null : mb_strtoupper($item->vin);
+            $item->license_plate = mb_strtoupper($item->license_plate) == mb_strtoupper("не указан") ? null : mb_strtoupper($item->license_plate);
 
 //            dump($item->status->id);
 //            dd($item->status_id);
@@ -40,7 +40,6 @@ trait NotifyApplicationChanges
                 isset($item['id']) &&
                 ($item->status->id != $item->status_id) ||
                 $item->status_id == self::$appStatuses['Модерация']
-
             ) {
                 ApplicationHasPending::firstOrCreate(['application_id' => $item->id, 'user_id' => auth()->user()->id]);
                 $item->status_id = self::$appStatuses['Модерация'];

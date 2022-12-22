@@ -47,10 +47,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
-        if (env('APP_ENV') == 'prod') {
-            resolve(\Illuminate\Routing\UrlGenerator::class)->forceScheme('https');
-            parent::boot();
-        }
+
     }
 
     /**

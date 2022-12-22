@@ -48,10 +48,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-//        if (env('APP_ENV') == 'prod') {
-//            \URL::forceScheme('https');
-//            $this->app['request']->server->set('HTTPS', 'on');
-//        }
+        if (env('APP_ENV') == 'prod') {
+            \URL::forceScheme('https');
+            $this->app['request']->server->set('HTTPS', 'on');
+        }
         Paginator::useBootstrap();
 //        Paginator::useBootstrapThree();
         View::composer(
