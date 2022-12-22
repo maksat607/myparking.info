@@ -994,7 +994,7 @@ class ApplicationController extends AppController
             ->where('status_id', '!=', 8)
             ->get()
             ->map(function ($item) use (&$dups, $groupBy) {
-                $dups[$item[$groupBy]][] = [
+                $dups[mb_strtoupper($item[$groupBy])][] = [
                     'id' => $item->id,
                     'vin' => $item->vin,
                     'license_plate' => $item->license_plate,
@@ -1014,6 +1014,8 @@ class ApplicationController extends AppController
                 return ($item['not_returned'] ?? 0) + ($item['returned'] ?? 0) - ($item['returned'] ?? 0) == 1;
             })
             ->keys();
+        dump($duplicatedApps);
+        dump($groupBy);
         if (isset($duplicateIDs->tmp)) {
             $applicationQuery = Application::
             applications()
