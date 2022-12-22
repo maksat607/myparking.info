@@ -1018,7 +1018,7 @@ class ApplicationController extends AppController
             applications()
                 ->filter($filters)
                 ->whereIn($groupBy, $duplicatedApps)
-                ->where('status', '!=', 8)
+                ->where('status_id', '!=', 8)
                 ->with('parking')
                 ->with('issuedBy')
                 ->with('acceptedBy')
