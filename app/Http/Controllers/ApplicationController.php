@@ -991,6 +991,7 @@ class ApplicationController extends AppController
             ->filter($filters)
             ->whereIn('id', explode(',', $duplicateIDs->tmp))
             ->orderBy($groupBy)
+            ->where('status_id', '!=', 8)
             ->get()
             ->map(function ($item) use (&$dups, $groupBy) {
                 $dups[$item[$groupBy]][] = [
@@ -1018,7 +1019,6 @@ class ApplicationController extends AppController
             applications()
                 ->filter($filters)
                 ->whereIn($groupBy, $duplicatedApps)
-                ->where('status_id', '!=', 8)
                 ->with('parking')
                 ->with('issuedBy')
                 ->with('acceptedBy')
