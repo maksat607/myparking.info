@@ -27,11 +27,18 @@ const checkDuplicate = {
         'cancelled-by-us': 'ОН'*/
     },
     init() {
-        $(`#vin, #license_plate`).on('input', {self: this}, function (e) {
+        $(`#vin`).on('input', {self: this}, function (e) {
             if ($(this).val().length < 1 && !$('.repeat-checkbox').hasClass('d-none')) {
                 $('#repeat-checkbox').prop('checked', false);
                 $('.repeat-checkbox').addClass('d-none');
             }
+            let self = e.data.self;
+            self.vin = $(`#vin`).val().split(',');
+
+            self.licensePlate = $(`#license_plate`).val();
+            self.duplicateExist();
+        });
+        $(`#license_plate`).on('input', {self: this}, function (e) {
             let self = e.data.self;
             self.vin = $(`#vin`).val().split(',');
 
@@ -83,7 +90,10 @@ const checkDuplicate = {
 
                 if (element.status.id == 3) {
                     $('.repeat-checkbox').removeClass('d-none')
-                    $('#repeat-checkbox').prop('checked', false);
+                    // if (!$('#repeat-checkbox').prop('checked')) {
+                    //     $('#repeat-checkbox').prop('checked', false);
+                    // }
+
                     allHtml += `<a class="conformity-link">`;
                 } else {
                     allHtml += `<a href="${APP_URL}/applications/${element.id}/edit" class="conformity-link">`;
