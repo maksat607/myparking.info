@@ -924,6 +924,20 @@ class ApplicationController extends AppController
 
     public function checkDuplicate(Request $request)
     {
+//        return auth()->user()->getUsersAdmin();
+//        return
+//        $licensePlateDuplicates = (isset($request->license_plate) && strlen($request->license_plate) >= 3)
+//            ?
+//            Application::with('status')
+//                ->where(function ($query) {
+//                    if (!auth()->user()->hasRole('SuperAdmin')) {
+//                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+//                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+//                    }
+//                })
+//                ->where('license_plate', 'like', '%' . $request->license_plate . '%')
+//                ->get()->toArray()
+//            : [];
 
         list($licensePlateDuplicates, $vinDuplicates) = $this->applicationService->checkApplicationDuplicate($request);
 
@@ -960,6 +974,7 @@ class ApplicationController extends AppController
      */
     public function duplicate(Request $request, ApplicationFilters $filters)
     {
+
         $totals = ApplicationTotalsService::totals(Status::activeStatuses(), $filters);
         $duplicateIDs = null;
         $groupBy = $request->get('group-by', 'vin');

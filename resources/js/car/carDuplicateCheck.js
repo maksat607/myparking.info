@@ -62,6 +62,7 @@ const checkDuplicate = {
                     id: this.application_id
                 }
             }).then(response => {
+                console.log(response.data)
                 this.vinDuplicates = response.data.vin;
                 this.licensePlateDuplicates = response.data.license_plate;
                 this.setHtml();
