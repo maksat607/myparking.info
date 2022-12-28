@@ -2,20 +2,16 @@
 
 namespace App\Providers;
 
-use App\Enums\AppUsers;
 use App\Helpers\HideUser;
-use App\Http\Resources\UserResource;
-use App\Models\Application;
-use App\Models\Role;
-use App\Models\User;
 use App\Notifications\TelegramNotification;
 use App\Services\TimeIntervalIntersection;
 use App\View\Composers\ApplicationFilterComposer;
+use DB;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use DB;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -71,19 +67,46 @@ class AppServiceProvider extends ServiceProvider
             return DB::table($table)
                     ->where($field, $value)
                     ->where($field, '!=', 'не указан')
-                    ->where('status_id', '!=', 8)->count() == 0;
+                    ->where('status_id', '!=', 8)
+                    ->where(function ($query) {
+                        if (!auth()->user()->hasRole('SuperAdmin')) {
+                            $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                                ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                        }
+                    })
+                    ->count() == 0;
         });
 
 
         Validator::extend('unique_custom_ignore', function ($attribute, $value, $parameters) {
             list($table, $field, $ignore) = $parameters;
-            return DB::table($table)
-                    ->where($field, $value)
-                    ->where($field, '!=', 'не указан')
-                    ->where('status_id', '!=', 8)
-                    ->where('id', '!=', $ignore)->count() == 0;
+            $result = DB::table($table)
+                ->where($field, $value)
+                ->where($field, '!=', 'не указан')
+                ->where('status_id', '!=', 8)
+                ->where(function ($query) {
+                    if (!auth()->user()->hasRole('SuperAdmin')) {
+                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
+                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
+                    }
+                })
+                ->select('returned', 'id')
+                ->get()
+                ->countBy(function ($items) use ($ignore) {
+                    if ($items->returned === 1 && $items->id == $ignore) {
+                        return 'this_marked_repeated';
+                    }
+                    if ($items->returned === 0 && $items->id == $ignore) {
+                        return 'this_not_marked_repeated';
+                    }
+                    return 'else';
+                });
+
+            $valid = true;
+            if (isset($result['this_not_marked_repeated']) && isset($result['else'])) {
+                $valid = false;
+            }
+            return $valid;
         });
-
-
     }
 }

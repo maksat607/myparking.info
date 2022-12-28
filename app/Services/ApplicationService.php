@@ -23,7 +23,6 @@ use Illuminate\Validation\Rule;
 
 class ApplicationService
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -190,8 +189,7 @@ class ApplicationService
         }
 
 //=========
-        return $this->storeApplication($request, $applicationData,$attachmentController);
-
+        return $this->storeApplication($request, $applicationData, $attachmentController);
     }
 
     public function validateStoreData($carRequest, bool $required, bool $returned, $car_type, $noTypeCar, array $statuses, $applicationRequest): void
@@ -218,14 +216,17 @@ class ApplicationService
             'status_id' => ['exists:statuses,id', Rule::in($statuses)]
         ]);
 
-        $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
-            $count = Application::where('vin', $carRequest['vin_array'])->count();
-            if ($count < 1) {
-                $fail('Нет такого дубликата!');
-            }
-        }, function ($input) {
-            return $input->returned == 1;
-        });
+        if (isset($carRequest['vin_array'])) {
+            $validator->sometimes('returned', function ($attribute, $value, $fail) use ($carRequest) {
+                $count = Application::where('vin', $carRequest['vin_array'])->count();
+                if ($count < 1) {
+                    $fail('Нет такого дубликата!');
+                }
+            }, function ($input) {
+                return $input->returned == 1;
+            });
+        }
+
 
 
         $validator->validate();
@@ -281,7 +282,7 @@ class ApplicationService
      * @param $application
      * @return mixed
      */
-    public function storeApplication(Request $request, array $applicationData, $attachmentController,$application = null)
+    public function storeApplication(Request $request, array $applicationData, $attachmentController, $application = null)
     {
         return DB::transaction(function () use ($request, $applicationData, $attachmentController) {
             $application = auth()->user()->applications()->create($applicationData);
@@ -300,7 +301,6 @@ class ApplicationService
             }
             return $application;
         });
-
     }
     /**
      * @param Request $request

@@ -70,7 +70,13 @@
                     (is_null(request()->route('status_id')) && request()->routeIs('applications.index')) ? ' active' : ''
                 }}">
             <a href="{{ route('applications.index',$filters??[]) }}" class="page-nav__link">Все</a>
-            <div class="notification__count mk">{{ $totals['all'] }}</div>
+            <div class="notification__count mk">
+                @if(request()->route()->getName() == 'applications.duplicate')
+                    {{ optional($applications)->total() ?? 0 }}
+                @else
+                    {{ $totals['all'] }}
+                @endif
+            </div>
         </li>
     </ul>
     <form id="appFilter" action="{{ url()->current() }}" method="GET" class="filter d-flex align-items-center">

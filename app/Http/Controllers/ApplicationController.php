@@ -542,7 +542,6 @@ class ApplicationController extends AppController
             ] : [],
             'license_plate' => $required ? [
                 'exclude_if:returned,1',
-//                $returned ? '' : Rule::unique('applications', 'license_plate')->ignore($application->id),
                 $returned ? '' : 'unique_custom_ignore:applications,license_plate,' . ($application->id),
                 'nullable'
             ] : [],
@@ -924,21 +923,6 @@ class ApplicationController extends AppController
 
     public function checkDuplicate(Request $request)
     {
-//        return auth()->user()->getUsersAdmin();
-//        return
-//        $licensePlateDuplicates = (isset($request->license_plate) && strlen($request->license_plate) >= 3)
-//            ?
-//            Application::with('status')
-//                ->where(function ($query) {
-//                    if (!auth()->user()->hasRole('SuperAdmin')) {
-//                        $query->whereIn('accepted_by', auth()->user()->getUsersAdmin())
-//                            ->orWhereIn('user_id', auth()->user()->getUsersAdmin());
-//                    }
-//                })
-//                ->where('license_plate', 'like', '%' . $request->license_plate . '%')
-//                ->get()->toArray()
-//            : [];
-
         list($licensePlateDuplicates, $vinDuplicates) = $this->applicationService->checkApplicationDuplicate($request);
 
         return response()->json([
@@ -976,35 +960,45 @@ class ApplicationController extends AppController
     {
 
         $totals = ApplicationTotalsService::totals(Status::activeStatuses(), $filters);
-        $duplicateIDs = null;
+        $duplicateIDs = [];
         $groupBy = $request->get('group-by', 'vin');
         if ($groupBy === 'license_plate') {
             $groupBy = 'license_plate';
-            $duplicateIDs = DB::select(DB::raw(
-                "SELECT GROUP_CONCAT(ids) as tmp FROM (
+
+
+            $t = collect(DB::select(DB::raw(
+                "
+
                     SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids
                     FROM `applications`
                     WHERE license_plate IS NOT NULL AND license_plate NOT LIKE '%Нет учета%'
                     group by license_plate
-                    having cnt > 1 )
-                T1"
-            ))[0];
+                    having cnt > 1
+
+                "
+            )))
+                ->map(function ($item) use (&$duplicateIDs) {
+                    $duplicateIDs = array_merge($duplicateIDs, explode(',', $item->ids));
+                });
+
         } elseif ($groupBy === 'vin') {
-            $duplicateIDs = DB::select(DB::raw(
-                "SELECT GROUP_CONCAT(ids) as tmp FROM (
-                    SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids, GROUP_CONCAT(`returned`) as returned_values
+            collect(DB::select(DB::raw(
+                "
+                    SELECT count(`id`) as cnt, GROUP_CONCAT(`id`) as ids
                     FROM `applications`
                     WHERE vin IS NOT NULL AND vin <> ''
-                    group by vin having cnt > 1 )
-                as T1
-                where T1.returned_values like '%0%'"
-            ))[0];
+                    group by vin having cnt > 1"
+
+            )))
+                ->map(function ($item) use (&$duplicateIDs) {
+                    $duplicateIDs = array_merge($duplicateIDs, explode(',', $item->ids));
+                });
         }
         $dups = [];
         Application::
         applications()
             ->filter($filters)
-            ->whereIn('id', explode(',', $duplicateIDs->tmp))
+            ->whereIn('id', $duplicateIDs)
             ->orderBy($groupBy)
             ->where('status_id', '!=', 8)
             ->get()
@@ -1016,6 +1010,7 @@ class ApplicationController extends AppController
                     'returned' => $item->returned
                 ];
             });
+//dump($dups);
         $duplicatedApps = collect($dups)->map(function ($item) {
             return collect($item)->countBy(function ($app) {
                 if ($app['returned']) {
@@ -1026,11 +1021,12 @@ class ApplicationController extends AppController
         })
             ->reject(function ($item) {
 //                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
-                return ($item['not_returned'] ?? 0) + ($item['returned'] ?? 0) - ($item['returned'] ?? 0) == 1;
+                return ($item['not_returned'] ?? 0) < 2;
             })
             ->keys();
 
-        if (isset($duplicateIDs->tmp)) {
+
+
             $applicationQuery = Application::
             applications()
                 ->filter($filters)
@@ -1048,7 +1044,7 @@ class ApplicationController extends AppController
                 ->with('viewRequests')
                 ->orderBy($groupBy, 'desc');
             $applications = $applicationQuery->paginate(24)->withQueryString();
-        }
+
 
         $title = __('Duplicate');
         if ($request->get('direction') == 'row') {
