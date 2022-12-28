@@ -89,7 +89,6 @@ class ApplicationController extends AppController
         $result = $this->applicationService->userDatasForNewApplication($application);
         if ($application->exists) {
             $updateData = array_merge(
-
                 $this->applicationUpdateData($application),
                 $result
             );
@@ -621,7 +620,6 @@ class ApplicationController extends AppController
 
         if (count($attachmentsDoc = $this->AttachmentController->storeToModelDoc($request, 'docs')) > 0) {
             $application->attachments()->saveMany($attachmentsDoc);
-
         }
         $car_fields = ['car_model_id', 'year', 'car_additional', 'car_engine_id', 'car_transmission_id', 'car_gear_id', 'car_generation_id', 'car_series_id', 'car_modification_id'];
 
@@ -980,7 +978,6 @@ class ApplicationController extends AppController
                 ->map(function ($item) use (&$duplicateIDs) {
                     $duplicateIDs = array_merge($duplicateIDs, explode(',', $item->ids));
                 });
-
         } elseif ($groupBy === 'vin') {
             collect(DB::select(DB::raw(
                 "
@@ -988,7 +985,6 @@ class ApplicationController extends AppController
                     FROM `applications`
                     WHERE vin IS NOT NULL AND vin <> ''
                     group by vin having cnt > 1"
-
             )))
                 ->map(function ($item) use (&$duplicateIDs) {
                     $duplicateIDs = array_merge($duplicateIDs, explode(',', $item->ids));
@@ -1020,37 +1016,41 @@ class ApplicationController extends AppController
             });
         })
             ->reject(function ($item) {
-//                return ($item['not_returned'] ?? 0) * ($item['returned'] ?? 0) == 1;
                 return ($item['not_returned'] ?? 0) < 2;
             })
             ->keys();
+        $colors = [];
 
-
-
-            $applicationQuery = Application::
-            applications()
-                ->filter($filters)
-                ->whereIn($groupBy, $duplicatedApps)
-                ->with('parking')
-                ->with('issuedBy')
-                ->with('acceptedBy')
-                ->with('status')
-                ->with('attachments')
-                ->with('carType')
-                ->with('partner')
-                ->with('issueAcceptions')
-                ->with('acceptions')
-                ->with('issuance')
-                ->with('viewRequests')
-                ->orderBy($groupBy, 'desc');
-            $applications = $applicationQuery->paginate(24)->withQueryString();
-
+        $applicationQuery = Application::
+        applications()
+            ->filter($filters)
+            ->whereIn($groupBy, $duplicatedApps)
+            ->with('parking')
+            ->with('issuedBy')
+            ->with('acceptedBy')
+            ->with('status')
+            ->with('attachments')
+            ->with('carType')
+            ->with('partner')
+            ->with('issueAcceptions')
+            ->with('acceptions')
+            ->with('issuance')
+            ->with('viewRequests')
+            ->orderBy($groupBy, 'desc');
+        $applications = $applicationQuery
+            ->paginate(24)
+            ->withQueryString()
+            ->tap(function ($items) use ($groupBy, &$colors) {
+                $items->map(function ($item) use ($groupBy, &$colors) {
+                    $colors [$item->$groupBy] = '#' . bin2hex(openssl_random_pseudo_bytes(3));
+                });
+            });
 
         $title = __('Duplicate');
         if ($request->get('direction') == 'row') {
             return view('applications.index_status', compact('title', 'applications', 'totals'));
         } else {
-            return view('applications.index', compact('title', 'applications', 'totals'));
+            return view('applications.index', compact('title', 'applications', 'totals', 'colors'));
         }
     }
 
@@ -1244,6 +1244,4 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
-
-
 }

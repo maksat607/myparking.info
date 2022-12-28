@@ -92,14 +92,18 @@
                                     <span class="car__subtitle">{{ @$application->parking->title }}</span>
 
                                 </div>
-                                <div class="car-col__info-item">
+                                <div class="car-col__info-item" >
                                     <div>
                                         <span>VIN</span>
-                                        {{ $application->vin }}
+                                        <div @isset( $colors[$application->vin]) style="border: solid 7px {{ $colors[$application->vin] }}" @endisset>
+                                            {{ $application->vin }}
+                                        </div>
                                     </div>
                                     <div>
                                         <span>Гос. номер</span>
-                                        {{ $application->license_plate }}
+                                        <div @isset( $colors[$application->license_plate]) style="border: solid 7px {{ $colors[$application->license_plate] }}" @endisset>
+                                            {{ $application->license_plate }}
+                                        </div>
                                     </div>
                                 </div>
 
