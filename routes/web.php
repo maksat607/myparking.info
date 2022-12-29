@@ -303,4 +303,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/csv-all-partner', [ReportController::class, 'csvAllPartner'])->name('report.csv-all-partner');
     Route::get('/report-all-partner', [ReportController::class, 'reportAllPartner'])->name('report.report-all-partner');
 });
-\URL::forceScheme('https');
+//\URL::forceScheme('https');

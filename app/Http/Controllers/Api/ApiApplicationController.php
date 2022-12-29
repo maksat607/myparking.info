@@ -17,6 +17,7 @@ class ApiApplicationController extends Controller
 
     public function __construct(protected AttachmentController $AttachmentController)
     {
+        $this->middleware(['check_legal', 'check_child_owner_legal']);
         $this->applicationService = new ApplicationService();
     }
 
@@ -25,11 +26,10 @@ class ApiApplicationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, ApplicationFilters $filters, $status_id = null)
+    public function index(Request $request, ApplicationFilters $filters, $status = null)
     {
-        $this->authorize('viewAny', Application::class);
-
-        return $this->applicationService->index($request, $filters, $status_id);
+//        $this->authorize('viewAny', Application::class);
+        return $this->applicationService->index($request, $filters, $status == 0 ? null : $status);
     }
 
     /**
@@ -41,6 +41,12 @@ class ApiApplicationController extends Controller
     {
         $this->authorize('create', Application::class);
         return $this->applicationService->userDatasForNewApplication($application);
+    }
+
+    public function edit(Application $application)
+    {
+        $this->authorize('update', $application);
+        return $this->applicationService->edit($application);
     }
 
 
@@ -75,9 +81,17 @@ class ApiApplicationController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Application $application)
     {
-        //
+        $this->authorize('update', $application);
+
+        list($application, $isUpdate) = $this->applicationService->update($request, $application);
+
+        if ($isUpdate) {
+            return response()->json(['message' => __('Updated.'), 'status_id' => $application->status->id], 200);
+        }
+        return response()->json(['message' => __('Error.')], 200);
+
     }
 
     /**

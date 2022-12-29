@@ -39,7 +39,9 @@ class ModelResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'id' => $this->when(isset($this->id), function () {
+                return $this->id;
+            }),
             'name' => $this->when(isset($this->name), function () {
                 return $this->name;
             }),
