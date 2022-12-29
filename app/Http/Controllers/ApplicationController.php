@@ -805,13 +805,13 @@ class ApplicationController extends AppController
             ->keys();
         $colors = [];
 
-        foreach ($duplicatedApps as $duplicatedApp) {
-            $applicationQuery = Application::where($groupBy, $duplicatedApp)
-                ->orderBy('arrived_at', 'desc')
-                ->first();
-            $applicationQuery->returned = 1;
-            $applicationQuery->save();
-        }
+//        foreach ($duplicatedApps as $duplicatedApp) {
+//            $applicationQuery = Application::where($groupBy, $duplicatedApp)
+//                ->orderBy('arrived_at', 'desc')
+//                ->first();
+//            $applicationQuery->returned = 1;
+//            $applicationQuery->save();
+//        }
 
         $applicationQuery = Application::
         applications()
