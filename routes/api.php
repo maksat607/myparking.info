@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\ApiApplicationController;
+use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\Api\ApiIssueRequestController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,9 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     Route::post('/logout', [AuthController::class, 'logout']);
 //    Route::get('applications', ApiApplicationController::class,array("as" => "api"));
 
+    Route::group(['prefix' => 'application'], function ($router) {
+        Route::get('/{application}/issuance/create', [ApiApplicationController::class, 'issuanceCreate']);
+    });
     Route::group(['prefix' => 'applications'], function ($router) {
         Route::get('/{status_id?}', [ApiApplicationController::class, 'index'])
             ->where('status_id', '[0-9]+');
@@ -30,8 +35,22 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
         Route::post('/{application}/upload', [apiApplicationController::class, 'addPhotos']);
         Route::get('/check-duplicate', [apiApplicationController::class, 'checkDuplicate']);
         Route::post('image', [\App\Http\Controllers\Api\ImageController::class, 'imageStore']);
+        Route::get('/get-model-content/{application_id}', [ApiApplicationController::class, 'getModelContent']);
+        Route::get('/get-model-content-app-chat/{application_id}', [ApiApplicationController::class, 'getModelChatContent']);
     });
 
+    Route::resource('users', ApiUserController::class, array("as" => "api"))
+        ->middleware(['check_legal', 'check_child_owner_legal']);
+    Route::get('/users/{user}/parking/all', [ApiUserController::class, 'allUserParking']);
+    Route::post('/users/{user}/message', [ApiUserController::class, 'message']);
+
+
+    Route::get('issue-requests', [ApiIssueRequestController::class, 'index']);
+    Route::get('applications/{application}/issue-requests/create', [ApiIssueRequestController::class, 'create']);
+    Route::post('applications/{application}/issue-requests', [ApiIssueRequestController::class, 'store']);
+    Route::get('issue-requests/{issue_request}/edit', [ApiIssueRequestController::class, 'edit']);
+    Route::put('issue-requests/{issue_request}', [ApiIssueRequestController::class, 'update']);
+    Route::delete('issue-requests/{issue_request}', [ApiIssueRequestController::class, 'destroy']);
 
 
 

@@ -589,5 +589,44 @@ class ApplicationService
         }
         return array($application, $isUpdate);
     }
+    public function renderModal(Request $request, $application_id)
+    {
+        $this->markNotificationAsRead($request);
+        $application = Application::applications()
+            ->where('id', $application_id)
+            ->with('parking')
+            ->with('issuedBy')
+            ->with('acceptedBy')
+            ->with('status')
+            ->with('attachments')
+            ->with('carType')
+            ->with('partner')
+            ->with('issueAcceptions')
+            ->with('acceptions')
+            ->with('issuance')->first();
+
+        if (!empty($application)) {
+            $pricing = Pricing::where([
+                ['partner_id', $application->partner_id],
+                ['car_type_id', $application->car_type_id]
+            ])
+                ->select('discount_price', 'regular_price', 'free_days')
+                ->first();
+
+            $application['pricing'] = $pricing;
+            $application->currentParkingCost = $application->currentParkingCost;
+            $storageNotifications = $application->storageNotifications();
+            $partnerNotifications = $application->partnerNotifications();
+
+            return  compact('application', 'partnerNotifications', 'storageNotifications');
+        }
+        return null;
+    }
+    public function markNotificationAsRead(Request $request)
+    {
+        if ($request->has('notification')) {
+            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
+        }
+    }
 
 }

@@ -1,37 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Application;
-use App\Models\Role;
 use App\Models\User;
-use App\Notifications\CreateUserNotifications;
 use App\Notifications\UserNotification;
-use App\Scopes\RoleScope;
 use App\Services\UserService;
-use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
-class UserController extends AppController
+class ApiUserController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct(public UserService $userService)
     {
-
-//        $this->authorizeResource(User::class, 'user');
-
-
+        $this->middleware(['check_legal', 'check_child_owner_legal']);
         $this->middleware(['permission:user_view'])->only('index', 'show');
         $this->middleware(['permission:user_create'])->only('create', 'store');
         $this->middleware(['permission:user_update'])->only('edit', 'update');
@@ -41,33 +24,28 @@ class UserController extends AppController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-
         $users = User::users()->with(['legals','children'])->get();
         $title = __('Users');
-        if ($users->isEmpty()) {
-            return view('users.empty', compact('title'));
-        }
-
-        return view('users.index', compact('users', 'title'));
+        return response()->json(compact('users', 'title'), 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
         $this->authorize('issetPartnerOperator', auth()->user());
-
         $roles = $this->userService->roles();
+//        @dump($roles);
         $title = __('Create new user');
-
-        return view('users.create', compact('roles', 'title'));
+        return response()->json(compact('roles', 'title'), 200);
     }
 
     /**
@@ -75,31 +53,26 @@ class UserController extends AppController
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
         $this->authorize('issetPartnerOperator', auth()->user());
         $user = $this->userService->store($request);
-        return ($user->exists)
-            ? redirect()->route('users.index')->with('success', __('Saved.'))
-            : redirect()->back()->with('error', __('Error'));
+        return response()->json(['success' => __('Saved.')], 200);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-
         $user = User::user($id)->firstOrFail();
         $this->authorize('viewUser', $user);
         $title = __('View user :User', ['user' => $user->name]);
-
-        return view('users.show', compact('user', 'title'));
+        return response()->json(compact('user', 'title'), 200);
     }
 
     /**
@@ -108,28 +81,21 @@ class UserController extends AppController
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit($id)
     {
-        $this->authorize('updateUser', $user);
-        list($roles, $title) = $this->userService->edit($user);
-        return view('users.edit', compact('user', 'roles', 'title'));
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        $this->authorize('updateUser', $user);
-        $user = $this->userService->update($request, $user);
-
-        return ($user->save())
-            ? redirect()->route('users.index')->with('success', __('Updated.'))
-            : redirect()->back()->with('error', __('Error'));
+        //
     }
 
     /**
@@ -142,32 +108,24 @@ class UserController extends AppController
     {
         $this->authorize('deleteUser', $user);
         if (Gate::denies('delete_self', $user)) {
-            return redirect()->back()->with('warning', __('You are not allowed to delete it.'));
+            return response()->json(['warning' => __('You are not allowed to delete it.')]);
         }
         $user->roles()->detach();
         $user->legals()->delete();
 
         return ($user->delete())
-            ? redirect()->back()->with('success', __('Deleted.'))
-            : redirect()->back()->with('error', __('Error'));
+            ? response()->json(['success' => __('Deleted.')])
+            : response()->json(['error' => __('Error')]);
     }
 
-
-
-    public function allUserParking($id)
+    public function allUserParking(User $user)
     {
-        $user = User::user($id)->firstOrFail();
         $managerParkings = $user->managerParkings;
         $title = __('Parking lots of the user :User', ['user' => $user->name]);
 
-        return view('users.parking.index', compact('managerParkings', 'title'));
+        return response()->json(compact('managerParkings', 'title'), 200);
     }
 
-    public function notifications()
-    {
-        $title = 'Уведомление';
-        return view('users.notifications.index', compact('title'));
-    }
 
     public function message(Request $request, User $user)
     {
@@ -181,7 +139,7 @@ class UserController extends AppController
             $content = array_merge(['message' => $request->message, 'title' => $title, 'id' => auth()->user()->id], $content);
             $user->notify(new UserNotification($content));
         }
-        return redirect()->back()->with('success', 'Отправлено');
+        return response()->json(['success' => 'Отправлено']);
     }
 
     public function sendMessage(User $user)
@@ -189,7 +147,4 @@ class UserController extends AppController
         $htmlRender = view('users.modals.message', compact('user'))->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
-
-
-
 }

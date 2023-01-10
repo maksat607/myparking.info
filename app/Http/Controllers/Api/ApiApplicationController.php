@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Models\Application;
 use App\Services\ApplicationService;
@@ -91,7 +92,6 @@ class ApiApplicationController extends Controller
             return response()->json(['message' => __('Updated.'), 'status_id' => $application->status->id], 200);
         }
         return response()->json(['message' => __('Error.')], 200);
-
     }
 
     /**
@@ -128,4 +128,25 @@ class ApiApplicationController extends Controller
         ], 200);
     }
 
+    public function getModelChatContent(Request $request, $application_id)
+    {
+        if ($request->has('notification') && $application = Application::find($application_id)) {
+            $notification = $application->notifications()->find($request->notification);
+            if ($notification) {
+                $notification->markAsRead();
+            }
+        }
+        return $this->getModelContent($request, $application_id);
+    }
+
+    public function getModelContent(Request $request, $application_id)
+    {
+        if (($htmlRender = $this->applicationService->renderModal($request, $application_id)) == null) {
+            return response()->noContent();
+        }
+        $application = [];
+        extract($htmlRender);
+        $application = new ApplicationResource($application);
+        return response()->json(compact('application', 'partnerNotifications', 'storageNotifications'), 200);
+    }
 }

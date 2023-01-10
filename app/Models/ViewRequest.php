@@ -94,7 +94,8 @@ class ViewRequest extends Model
 
     public function getStatusNameAttribute()
     {
-        return $this->statusLabels[$this->status_id];
+
+        return self::$statusLabels[$this->status_id];
     }
 
     public function getFormatedCreatedAtAttribute()

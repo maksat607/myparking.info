@@ -65,6 +65,9 @@ class ModelResource extends JsonResource
             'status' => $this->when(isset($this->status), function () {
                 return new $this($this->status);
             }),
+            'email' => $this->when(isset($this->email), function () {
+                return ($this->email);
+            }),
 
         ];
     }

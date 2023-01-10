@@ -7,15 +7,18 @@ use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
 use App\Models\Status;
-use App\Models\ViewRequest;
 use App\Services\ApplicationTotalsService;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\IssueRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Toastr;
 
 class IssueRequestController extends AppController
 {
+    public function __construct(public IssueRequestService $issueRequestService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,31 +29,18 @@ class IssueRequestController extends AppController
         if (request()->has('uncheckFilters')) {
             return redirect()->to(url()->current());
         }
-        $totals = ApplicationTotalsService::totals(Status::activeStatuses(),  $filters);
-        $applications = Application::applications()
-            ->where('status_id','!=',8)
-            ->with(['attachments', 'partner', 'parking', 'acceptions', 'issuance', 'viewRequests'])
-            ->filter($filters)
-            ->whereHas('issuance')
-            ->paginate( config('app.paginate_by', '25') )
-            ->withQueryString()
-            ;
+        $result = $this->issueRequestService->index($filters);
 
-        $title = __('Issue Requests');
-        /*if($request->get('direction') == 'row') {
-            return view('applications.index_status', compact('title', 'applications'));
-        } else {
-            return view('issue_request.index', compact('title', 'issueRequests'));
-        }*/
         switch ($request->get('direction', 'column')) {
             case 'table':
-                return view('applications.index_table', compact('title', 'applications','totals'));
+                return view('applications.index_table', $result);
             case 'row':
-                return view('applications.index_row', compact('title', 'applications','totals'));
+                return view('applications.index_row', $result);
             default:
-                return view('applications.index', compact('title', 'applications','totals'));
+                return view('applications.index', $result);
         }
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -60,11 +50,11 @@ class IssueRequestController extends AppController
     {
         $application = Application::application($application_id)->firstOrFail();
 //        dd($application);
-        if($application->status->code != 'storage') {
+        if ($application->status->code != 'storage') {
             return redirect()->back()->with('warning', __('The car is not yet in storage'));
         }
 
-        if($application->issuance) {
+        if ($application->issuance) {
             return redirect()->back()->with('warning', __('The application for issuing a car already exists'));
         }
 
@@ -73,48 +63,28 @@ class IssueRequestController extends AppController
         $title = __('Application for issue');
         return view('issue_request.create', compact(
             'title', 'application',
-                    'individualLegalOptions',
+            'individualLegalOptions',
         ));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request, $id)
     {
 
-        $clientData = $request->client;
-        $issueData = $request->issue_request;
-
-        Validator::make($clientData, [
-            'inn' => ['string', 'nullable'],
-            'organization_name' => ['string', 'nullable'],
-            'fio' => ['string', 'nullable'],
-            'phone' => ['numeric', 'nullable'],
-        ])->validate();
-
-        Validator::make($issueData, [
-            'arriving_at'=>['required'],
-            'arriving_interval' => ['required'],
-        ])->validate();
-
-
-        foreach ($clientData as $key => $value) {
-            if ( is_null($value) || $value == 'null') {
-                unset($clientData[$key]);
-            }
-        }
+        list($clientData, $issueData) = $this->issueRequestService->validate($request);
 
         $application = Application::application($id)->firstOrFail();
-        if($application->issuance) {
+        if ($application->issuance) {
             return redirect()->back()->with('warning', __('The application for issuing a car already exists'));
         }
 
         $client = Client::create($clientData);
-        if($client->exists) {
+        if ($client->exists) {
             $isIssue = $application->issueAcceptions()->create([
                 'client_id' => $client->id,
                 'user_id' => auth()->user()->id,
@@ -122,7 +92,6 @@ class IssueRequestController extends AppController
                 'arriving_at' => $issueData['arriving_at'],
                 'arriving_interval' => $issueData['arriving_interval'],
             ]);
-
         }
 
         if ($isIssue->exists) {
@@ -142,11 +111,12 @@ class IssueRequestController extends AppController
      */
     public function edit($issue_request_id)
     {
+        dump($issue_request_id);
         $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
         $application = $issueRequest->application;
         $client = $issueRequest->client;
 
-        if($application->status->code != 'storage') {
+        if ($application->status->code != 'storage') {
             return redirect()->back()->with('warning', __('The car is not yet in storage'));
         }
 
@@ -180,13 +150,13 @@ class IssueRequestController extends AppController
         ])->validate();
 
         Validator::make($issueData, [
-            'arriving_at'=>['required'],
+            'arriving_at' => ['required'],
             'arriving_interval' => ['required'],
         ])->validate();
 
 
         foreach ($clientData as $key => $value) {
-            if ( is_null($value) || $value == 'null') {
+            if (is_null($value) || $value == 'null') {
                 unset($clientData[$key]);
             }
         }
@@ -207,7 +177,7 @@ class IssueRequestController extends AppController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ViewRequest  $viewRequest
+     * @param \App\ViewRequest $viewRequest
      * @return \Illuminate\Http\Response
      */
     public function destroy($issue_request_id)
@@ -216,7 +186,7 @@ class IssueRequestController extends AppController
 
         $result = $issueRequest->delete();
 
-        if ( $result ) {
+        if ($result) {
             Toastr::success(__('Deleted.'));
             return redirect()->route('issue_requests.index');
         }
@@ -224,4 +194,8 @@ class IssueRequestController extends AppController
         Toastr::error(__('Error'));
         return redirect()->back();
     }
+
+
+
+
 }

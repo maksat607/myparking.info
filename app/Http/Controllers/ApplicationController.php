@@ -643,56 +643,19 @@ class ApplicationController extends AppController
                 $notification->markAsRead();
             }
         }
-        $htmlRender = $this->renderModal('notifications.modalchat', $request, $application_id);
+        $htmlRender = view('notifications.modalchat', $this->applicationService->renderModal($request, $application_id))->render();
         if ($htmlRender == null) {
             return null;
         }
         return response()->json(['success' => true, 'html' => $htmlRender]);
     }
 
-    public function renderModal($path, Request $request, $application_id)
-    {
-        $this->markNotificationAsRead($request);
-        $application = Application::where('id', $application_id)
-            ->with('parking')
-            ->with('issuedBy')
-            ->with('acceptedBy')
-            ->with('status')
-            ->with('attachments')
-            ->with('carType')
-            ->with('partner')
-            ->with('issueAcceptions')
-            ->with('acceptions')
-            ->with('issuance')->first();
 
-        if (!empty($application)) {
-            $pricing = Pricing::where([
-                ['partner_id', $application->partner_id],
-                ['car_type_id', $application->car_type_id]
-            ])
-                ->select('discount_price', 'regular_price', 'free_days')
-                ->first();
 
-            $application['pricing'] = $pricing;
-            $application->currentParkingCost = $application->currentParkingCost;
-            $storageNotifications = $application->storageNotifications();
-            $partnerNotifications = $application->partnerNotifications();
-            $htmlRender = view($path, compact('application', 'partnerNotifications', 'storageNotifications'))->render();
-            return $htmlRender;
-        }
-        return null;
-    }
-
-    public function markNotificationAsRead(Request $request)
-    {
-        if ($request->has('notification')) {
-            auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
-        }
-    }
 
     public function getModelContent(Request $request, $application_id)
     {
-        $htmlRender = $this->renderModal('applications.ajax.modal', $request, $application_id);
+        $htmlRender = view('applications.ajax.modal', $this->applicationService->renderModal($request, $application_id))->render();
         if ($htmlRender == null) {
             return null;
         }
@@ -1036,6 +999,4 @@ class ApplicationController extends AppController
             response()->download(($zip_file)) :
             redirect()->back()->with('warning', 'Фотографии нету:(');
     }
-
-
 }

@@ -62,7 +62,7 @@ class IssueAcception extends Model
             $operatorWithOwnerId = $authUser->owner->children()->without('owner')->role('Operator')->get()->modelKeys();
             $operatorWithOwnerId[] = $authUser->owner->id;
             return $query
-                ->whereIn('user_id', $operatorWithOwnerId)
+//                ->whereIn('user_id', $operatorWithOwnerId)
                 ->where('id', $id);
         }
     }
