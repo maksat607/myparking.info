@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\Color;
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
@@ -81,6 +82,7 @@ class ApplicationService
                 ->first();
 
             $applications[$key]['pricing'] = $pricing;
+//            $applications = new ApplicationResource($applications);
             $item->currentParkingCost = $item->currentParkingCost;
         }
 
@@ -398,6 +400,11 @@ class ApplicationService
         $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y');
         $dateTime = $dateDataApplication . ' ' . $application->arriving_interval;
         $title = __('Update a Request');
+        $parkings = ModelResource::collection($parkings);
+        $statuses = ModelResource::collection($statuses);
+        $managers = ModelResource::collection($managers);
+        $partners = ModelResource::collection($partners);
+        $application = new ModelResource($application);
 
         return compact(
             'title',

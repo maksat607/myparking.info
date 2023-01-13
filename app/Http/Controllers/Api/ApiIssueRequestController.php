@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ApplicationResource;
+use App\Http\Resources\ModelResource;
 use App\Models\Application;
 use App\Models\Client;
 use App\Models\IssueAcception;
 use App\Services\IssueRequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ApiIssueRequestController extends Controller
 {
@@ -24,7 +27,7 @@ class ApiIssueRequestController extends Controller
 
     public function create($application_id)
     {
-        $application = Application::application($application_id)->firstOrFail();
+        $application = new ApplicationResource(Application::application($application_id)->firstOrFail());
         if ($application->status->code != 'storage') {
             return response()->json(['warning' => __('The car is not yet in storage')]);
         }
@@ -74,30 +77,65 @@ class ApiIssueRequestController extends Controller
 
     public function edit($issue_request_id)
     {
-        $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
-        $application = $issueRequest->application;
+        $title = __('Editing an application for issuance');
+        $individualLegalOptions = Client::issuanceIndividualLegalOptions();
+        $issueRequest = new ModelResource(IssueAcception::issuance($issue_request_id)->with('application')->firstOrFail());
+
+        $application = new ApplicationResource($issueRequest->application);
         $client = $issueRequest->client;
-        return $application;
+
         if ($application->status->code != 'storage') {
             return response()->json(['warning' => __('The car is not yet in storage')]);
         }
-
-        $individualLegalOptions = Client::issuanceIndividualLegalOptions();
-
-        $title = __('Editing an application for issuance');
-
-        return response()->json([compact('title', 'issueRequest', 'client', 'application', 'individualLegalOptions')]);
+        return compact('title', 'issueRequest', 'client', 'individualLegalOptions');
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $issue_request_id)
     {
-        //
+
+        $clientData = $request->client;
+        $issueData = $request->issue_request;
+
+        Validator::make($clientData, [
+            'inn' => ['string', 'nullable'],
+            'organization_name' => ['string', 'nullable'],
+            'fio' => ['string', 'nullable'],
+            'phone' => ['numeric', 'nullable'],
+        ])->validate();
+
+        Validator::make($issueData, [
+            'arriving_at' => ['required'],
+            'arriving_interval' => ['required'],
+        ])->validate();
+
+
+        foreach ($clientData as $key => $value) {
+            if (is_null($value) || $value == 'null') {
+                unset($clientData[$key]);
+            }
+        }
+        $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
+
+        $issueRequest->client->update($clientData);
+        $result = $issueRequest->update($issueData);
+
+        if ($result) {
+            return response()->json(['success' => __('Saved.')]);
+        }
+        return response()->json(['success' => __('Error')]);
     }
 
 
-    public function destroy($id)
+    public function destroy($issue_request_id)
     {
-        //
+        $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
+
+        $result = $issueRequest->delete();
+
+        if ($result) {
+            return response()->json(['success' => __('Deleted')]);
+        }
+        return response()->json(['success' => __('Error')]);
     }
 }

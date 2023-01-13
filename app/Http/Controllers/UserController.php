@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\CreateUserNotifications;
 use App\Notifications\UserNotification;
 use App\Scopes\RoleScope;
+use App\Services\MakeFormData;
 use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
@@ -79,6 +80,7 @@ class UserController extends AppController
      */
     public function store(Request $request)
     {
+
         $this->authorize('issetPartnerOperator', auth()->user());
         $user = $this->userService->store($request);
         return ($user->exists)

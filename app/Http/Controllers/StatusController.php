@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ModelResource;
 use App\Models\Status;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class StatusController extends AppController
      */
     public function index()
     {
-        return Status::where('is_active', true)->orderBy('rank', 'desc')->orderBy('name', 'asc')->get();
+        $stautes = Status::where('is_active', true)->get();
+        return ModelResource::collection($stautes);
     }
     /**
      * Display a viewable statuses of the resource.

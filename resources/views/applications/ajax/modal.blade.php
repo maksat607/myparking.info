@@ -783,7 +783,8 @@
                 {{ route('application.issuance.create', ['application' => $application->id]) }}
                 @else
                 {{ route('issue_requests.edit', ['issue_request' => $application->issuance->id]) }}
-                @endif" class="btn btn-success">Заявка на выдачу</a>
+                @endif"
+                   class="btn btn-success">Заявка на выдачу</a>
             @else
                 <a href="@if(auth()->user()->hasRole(['Admin','Moderator', 'Manager']))
                 {{ route('application.issuance.create', ['application' => $application->id]) }}

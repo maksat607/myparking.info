@@ -28,6 +28,7 @@ class IssueAcception extends Model
     {
         return isset($this->arriving_at) ? $this->arriving_at->format('d-m-Y') : 'Не указана';
     }
+
     public function getFormatedArrivingIntervalAttribute()
     {
         return isset($this->arriving_interval) ? $this->arriving_interval : 'Не указан';
@@ -36,7 +37,7 @@ class IssueAcception extends Model
     public function scopeIssuances($query)
     {
         $authUser = auth()->user();
-        if($authUser->hasRole(['Admin'])) {
+        if ($authUser->hasRole(['Admin'])) {
             $childrenWithOwnerId = $authUser->children()->without('owner')->get()->modelKeys();
             $childrenWithOwnerId[] = $authUser->id;
             return $query->whereIn('user_id', $childrenWithOwnerId);
@@ -52,7 +53,7 @@ class IssueAcception extends Model
     public function scopeIssuance($query, $id)
     {
         $authUser = auth()->user();
-        if($authUser->hasRole(['Admin'])) {
+        if ($authUser->hasRole(['Admin', 'SuperAdmin'])) {
             $childrenWithOwnerId = $authUser->children()->without('owner')->get()->modelKeys();
             $childrenWithOwnerId[] = $authUser->id;
             return $query

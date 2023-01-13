@@ -8,8 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Models\Application;
+use App\Models\Attachment;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiApplicationController extends Controller
@@ -29,8 +32,10 @@ class ApiApplicationController extends Controller
      */
     public function index(Request $request, ApplicationFilters $filters, $status = null)
     {
-//        $this->authorize('viewAny', Application::class);
-        return $this->applicationService->index($request, $filters, $status == 0 ? null : $status);
+        $result = $this->applicationService->index($request, $filters, $status == 0 ? null : $status);
+        extract($result);
+        $applications =  ApplicationResource::collection($applications);
+        return compact('title', 'applications', 'totals');
     }
 
     /**
@@ -107,6 +112,56 @@ class ApiApplicationController extends Controller
 
     public function addPhotos(Request $request, Application $application)
     {
+        $fileKey = 'images';
+        $fileType = 'image'; $fileNameExtension = '_image.';
+//        $this->validate($request, [
+//            $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
+//        ]);
+
+        $files = $request->file($fileKey);
+
+
+        if ($fileKey == "imagespopup") {
+            $files = $request->all();
+        }
+
+        if (is_null($files)) {
+            return [];
+        }
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+        if (!is_dir(public_path('/uploads'))) {
+            mkdir(public_path('/uploads'), 0777);
+        }
+        if (!is_dir(public_path('/uploads/thumbnails'))) {
+            mkdir(public_path('/uploads/thumbnails'), 0777);
+        }
+
+//        return collect($files)->first();
+        foreach ($files as $key => $singleFile) {
+            $fileName = uniqid() . $fileNameExtension . '^' . $singleFile->getClientOriginalName();
+//            return $singleFile;
+
+            Storage::disk('uploads')->put($fileName, file_get_contents($singleFile));
+
+            Image::make($singleFile->path())->resize(300, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save(Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $fileName);
+
+            $attachments[] = new Attachment([
+                'name' => $fileName,
+                'file_type' => $fileType,
+                'url' => Storage::disk('uploads')->url($fileName),
+                'thumbnail_url' => Storage::disk('uploads')->url('thumbnails/' . $fileName)
+            ]);
+        }
+
+
+        if (count($attachments ) > 0) {
+            $application->attachments()->saveMany($attachments);
+        }
+        return response($application, Response::HTTP_CREATED);
         if (count($attachments = $this->AttachmentController->storeToModel($request, 'images')) > 0) {
             $application->attachments()->saveMany($attachments);
         }

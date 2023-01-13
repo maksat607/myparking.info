@@ -24,6 +24,7 @@ use App\Notifications\ApplicationNotifications;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationService;
 use App\Services\ApplicationTotalsService;
+use App\Services\MakeFormData;
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -348,6 +349,10 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+        $request->dump();
+        $translation = new MakeFormData();
+        $translation->applicationNestedArray($request->except('_token'));
+
         $this->authorize('create', Application::class);
         $application = $this->applicationService->store($request, $this->AttachmentController);
         if ($application) {

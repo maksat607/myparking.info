@@ -9,6 +9,7 @@ use App\Models\IssueAcception;
 use App\Models\Status;
 use App\Services\ApplicationTotalsService;
 use App\Services\IssueRequestService;
+use App\Services\MakeFormData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Toastr;
@@ -75,7 +76,6 @@ class IssueRequestController extends AppController
      */
     public function store(Request $request, $id)
     {
-
         list($clientData, $issueData) = $this->issueRequestService->validate($request);
 
         $application = Application::application($id)->firstOrFail();
@@ -111,7 +111,6 @@ class IssueRequestController extends AppController
      */
     public function edit($issue_request_id)
     {
-        dump($issue_request_id);
         $issueRequest = IssueAcception::issuance($issue_request_id)->firstOrFail();
         $application = $issueRequest->application;
         $client = $issueRequest->client;
@@ -139,6 +138,10 @@ class IssueRequestController extends AppController
      */
     public function update(Request $request, $issue_request_id)
     {
+        $m = new MakeFormData();
+        $m->applicationNestedArray($request->except('_token','_method'));
+        dump($issue_request_id);
+        $request->dd();
         $clientData = $request->client;
         $issueData = $request->issue_request;
 

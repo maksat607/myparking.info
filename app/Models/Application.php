@@ -49,7 +49,7 @@ class Application extends Model
         'favorite' => 'boolean',
         'returned' => 'boolean'
     ];
-    protected $with = ['issueAcceptions', 'status', 'acceptions'];
+    protected $with = ['issueAcceptions', 'status', 'acceptions','parking','partner'];
 
     public function getZeroAttribute()
     {

@@ -68,7 +68,23 @@ class ModelResource extends JsonResource
             'email' => $this->when(isset($this->email), function () {
                 return ($this->email);
             }),
+            'client_id' => $this->when(isset($this->client_id), function () {
+                return ($this->client_id);
+            }),
+            'is_issue' => $this->when(isset($this->is_issue), function () {
+                return ($this->is_issue);
+            }),
+            'arriving_interval' => $this->when(isset($this->formated_arriving_interval), function () {
+                return ($this->formated_arriving_interval);
+            }),
+            'arriving_at' => $this->when(isset($this->formated_arriving_at), function () {
+                return ($this->formated_arriving_at);
+            }),
+            'application' => $this->when(isset($this->application), function () {
+                return  new ApplicationResource($this->application);
+            }),
 
         ];
+
     }
 }

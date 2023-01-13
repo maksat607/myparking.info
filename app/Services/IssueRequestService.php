@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Filter\ApplicationFilters;
+use App\Http\Resources\ApplicationResource;
 use App\Models\Application;
 use App\Models\Status;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class IssueRequestService
             ->whereHas('issuance')
             ->paginate(config('app.paginate_by', '25'))
             ->withQueryString();
-
+        $applications = ApplicationResource::collection($applications);
         $title = __('Issue Requests');
         return compact('title', 'applications', 'totals');
     }
