@@ -75,6 +75,7 @@ class ApplicationResource extends JsonResource
             "partner" => new ModelResource($this->whenLoaded('partner')),
             "status" => new ModelResource($this->whenLoaded('status')),
             "acceptedBy" => new ModelResource($this->whenLoaded('acceptedBy')),
+            "attachments" => ($this->whenLoaded('attachments')),
             "issuance" => $this->whenLoaded('issuance'),
         ];
     }

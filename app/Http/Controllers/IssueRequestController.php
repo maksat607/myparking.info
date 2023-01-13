@@ -138,10 +138,10 @@ class IssueRequestController extends AppController
      */
     public function update(Request $request, $issue_request_id)
     {
-        $m = new MakeFormData();
-        $m->applicationNestedArray($request->except('_token','_method'));
-        dump($issue_request_id);
-        $request->dd();
+//        $m = new MakeFormData();
+//        $m->applicationNestedArray($request->except('_token','_method'));
+//        dump($issue_request_id);
+//        $request->dd();
         $clientData = $request->client;
         $issueData = $request->issue_request;
 
