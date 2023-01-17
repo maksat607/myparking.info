@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\DB;
 class Application extends Model
 {
     use HasFactory;
-//    use Notifiable;
-//    use NotifyApplicationChanges;
+    use Notifiable;
+    use NotifyApplicationChanges;
     use \Awobaz\Compoships\Compoships;
 
     protected $fillable = [
