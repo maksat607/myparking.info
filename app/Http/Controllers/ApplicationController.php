@@ -349,9 +349,9 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
-        $request->dump();
-        $translation = new MakeFormData();
-        $translation->applicationNestedArray($request->except('_token'));
+//        $request->dump();
+//        $translation = new MakeFormData();
+//        $translation->applicationNestedArray($request->except('_token'));
 
         $this->authorize('create', Application::class);
         $application = $this->applicationService->store($request, $this->AttachmentController);
