@@ -14,17 +14,15 @@ class AttachmentController extends AppController
     {
 
         $values = array(
-            $request->coordinates[0][0], $request->coordinates[0][1], // Point 2 (x, y)
-            $request->coordinates[1][0], $request->coordinates[1][1], // Point 2 (x, y)
-            $request->coordinates[2][0], $request->coordinates[2][1], // Point 2 (x, y)
-            $request->coordinates[3][0], $request->coordinates[3][1], // Point 2 (x, y)
+            ceil($request->coordinates[0][0] * $request->ratio), ceil($request->coordinates[0][1] * $request->ratio), // Point 2 (x, y)
+            ceil($request->coordinates[1][0] * $request->ratio), ceil($request->coordinates[1][1] * $request->ratio), // Point 2 (x, y)
+            ceil($request->coordinates[2][0] * $request->ratio), ceil($request->coordinates[2][1] * $request->ratio), // Point 2 (x, y)
+            ceil($request->coordinates[3][0] * $request->ratio), ceil($request->coordinates[3][1] * $request->ratio), // Point 2 (x, y)
         );
 
 
-
-
         header("Content-Type: image/jpg");
-        @sleep(1);
+
         @error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
         @ini_set('display_errors', true);
         @ini_set('html_errors', false);
@@ -112,29 +110,33 @@ class AttachmentController extends AppController
             return $string;
         }
 
-        $response = array();
 
-        $filePath =  $request->filename;
+        $filePath = $request->filename;
 
         $extension = pathinfo($filePath, PATHINFO_EXTENSION);
         $new_filename = upload_images_random_name(20) . '.' . $extension;
         $preview_width = 320; //ширина превью
         $preview_height = 240; //высота превью
+        $attachment = Attachment::find($request->id);
 
-        $fileNewPath = UPLOAD_DIR . '' . $new_filename;
-        $fileNewThumbPath = UPLOAD_DIR . 'thumb_' . $new_filename;
+//        $fileNewPath = UPLOAD_DIR . '' . $new_filename;
+//        $fileNewThumbPath = UPLOAD_DIR . 'thumb_' . $new_filename;
+        $fileNewPath = UPLOAD_DIR . $attachment->name;
+        $fileNewThumbPath = UPLOAD_DIR . 'thumbnails/' . $attachment->name;
+
+        $url = Storage::disk('uploads')->url('/');
+        $attachment->url = $url . $attachment->name;
+        $attachment->thumbnail_url = $url . 'thumbnails/' . $attachment->name;
+        $attachment->save();
 
 
-        $fileUrlThumb = $config['site_url'] . 'uploads/thumb_' . $new_filename;
+        $filePath = $fileNewPath;
+        $imgsize = getimagesize($fileNewPath);
 
-        $mX = intval($request->coordinates[0][0]);
-        $mY = intval($_REQUEST['y']);
-        $mW = intval($_REQUEST['w']);
-        $mH = intval($_REQUEST['h']);
-
-        $imgsize = getimagesize($filePath);
         $mime = $imgsize['mime'];
+
         $quality = 90;
+        $result = [];
 
         switch ($mime) {
             case 'image/gif':
@@ -152,24 +154,22 @@ class AttachmentController extends AppController
                 $image_create = "imagecreatefromjpeg";
                 $image_save = "imagejpeg";
                 break;
+            case 'image/jpg':
+                $image_create = "imagecreatefromjpeg";
+                $image_save = "imagejpeg";
+                break;
 
             default:
-                die();
+                $image_create = "no content";
+
                 break;
         }
 
 
         $img1 = $image_create($filePath);
 
-        $x = 200;
-        $y = 200;
 
         $gd = $img1;
-
-        $corners[0] = array(50, 25);
-        $corners[1] = array(25, 75);
-        $corners[2] = array(100, 10);
-        $corners[3] = array(150, 100);
 
 
 
@@ -186,41 +186,23 @@ class AttachmentController extends AppController
 //        }
 
         header('Content-Type: image/png');
-//        imagepng($gd);
+
         $image_save($gd, $fileNewPath, $quality);
 
-
-        $img2 = imagecreatetruecolor($mW, $mH); // create img2 for selection
-
-        imagecopy($img2, $img1, 0, 0, $mX, $mY, $mW, $mH); // copy selection to img2
-
-        $gaussian = array(
-            array(1.0, 2.0, 1.0),
-            array(2.0, 4.0, 2.0),
-            array(1.0, 2.0, 1.0)
-        );
-        for ($i = 0; $i <= 100; $i++) {
-            if ($i % 5 == 0) {//each 10th time apply 'IMG_FILTER_SMOOTH' with 'level of smoothness' set to -7
-                imagefilter($img2, IMG_FILTER_SMOOTH, -7);
-            }
-            imagefilter($img2, IMG_FILTER_GAUSSIAN_BLUR);
-            //imageconvolution($img2, $gaussian, 16, 0); // apply convolution to img2
-        }
-
-
-        imagecopymerge($img1, $img2, $mX, $mY, 0, 0, $mW, $mH, 100); // merge img2 in img1
-
-        $image_save($img1, $fileNewPath, $quality);
+        $result[] = $fileNewPath;
+        $result[] = $fileNewThumbPath;
+        $result[] = $attachment->name;
+        $result[] = $attachment->id;
 
         upload_images_resize_preview($preview_width, $preview_height, $fileNewPath, $fileNewThumbPath); //resize
 
         imagedestroy($img1);
-        imagedestroy($img2);
+//        imagedestroy($img2);
 
-        $response = array('name' => $new_filename, 'url' => $fileUrl, 'thumb_url' => $fileUrlThumb);
+//        $response = array('name' => $new_filename, 'url' => $fileUrl, 'thumb_url' => $fileUrlThumb);
 
         @header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($response);
+        echo json_encode($result);
         die();
 
     }

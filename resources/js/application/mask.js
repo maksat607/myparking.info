@@ -3,6 +3,7 @@
 const imageMask = {
     imgId: null,
     imageUrl: null,
+    ratio: 1,
     init() {
         $(`body`).on('click', `.page-file__mask`, {self:this}, this.maskFromDb);
     },
@@ -12,6 +13,8 @@ const imageMask = {
     maskFromDb(e) {
         $('#MaskImagesModal').modal('show');
         let imageUrl = $(this).data('url').replaceAll(' ', '%20');
+        let id = $(this).data('id');
+        this.imgId = id;
         this.imageUrl = imageUrl;
         console.log(imageUrl)
         var canvas = document.querySelector("canvas");
@@ -40,7 +43,9 @@ const imageMask = {
             axios.post(`${APP_URL}/upload`, {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 'filename': this.imageUrl,
-                'coordinates': points
+                'id': this.imgId,
+                'coordinates': points,
+                'ratio': this.ratio
 
 
             })
@@ -75,17 +80,20 @@ const imageMask = {
         }
 
         // resize the canvas for the image
-        var biggest = 500;
+        var biggest = 800;
         var axis
         const resize = (x, y) => {
-            biggest = x > y ? x : y;
-            $("#MaskImagesModal .output").css('width',y)
-            $("#MaskImagesModal .output").css('height',x)
+            // biggest = x > y ? x : y;
+
             // so that the biggest axis is always {biggest} px
             var ratio = x > y ? x / biggest : y / biggest
+            this.ratio = ratio
             axis = [x / ratio, y / ratio]
             canvas.height = axis[0]
             canvas.width = axis[1]
+            console.log(Math.ceil(axis[1]) + ":" + Math.ceil(axis[0]))
+            $("#MaskImagesModal .output").css('width',axis[1])
+            $("#MaskImagesModal .output").css('height', axis[0])
         }
 
         // load a new image
