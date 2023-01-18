@@ -146,6 +146,7 @@ const imageUpload = {
             html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
                                 <img src="${URL.createObjectURL(file)}" alt="">
                                 <div class="page-file__option">
+                                    <button type="button" class="page-file__mask"></button>
                                     <button type="button" class="page-file__zoom"></button>
                                      <button type="button" class="page-file__delete transfer__delete" data-img-id="${this.docs[file.name]}"></button>
                                 </div>
@@ -194,6 +195,7 @@ const imageUpload = {
             html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
                                 <img src="${URL.createObjectURL(file)}" alt="">
                                 <div class="page-file__option">
+                                     <button type="button" class="page-file__mask"></button>
                                     <button type="button" class="page-file__zoom"></button>
                                      <button type="button" class="page-file__delete transfer__delete"></button>
                                 </div>

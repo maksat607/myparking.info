@@ -23,6 +23,7 @@ $(function() {
     require('./partner/filter');
     require('./partner/partnerModalAjaxContent');
     require('./user/messageModalAjaxContent');
+    require('./application/mask');
 
     require('./common');
     require('./custom.v2');

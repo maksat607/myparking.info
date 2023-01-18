@@ -81,6 +81,8 @@ Route::get('/', function () {
 /*Auth Group*/
 Route::middleware(['auth', 'verified'])->group(function () {
     /*Users*/
+    Route::post('upload', [AttachmentController::class,'upload']);
+
     Route::resource('users', UserController::class)
         ->middleware(['check_legal', 'check_child_owner_legal']);
     Route::resource('notifications', NotificationController::class)

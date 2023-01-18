@@ -435,5 +435,5 @@
 <script src="{{ asset('js/app.js') }}"></script>
 {!! Toastr::message() !!}
 </body>
-
+@include('applications.ajax.mask')
 </html>

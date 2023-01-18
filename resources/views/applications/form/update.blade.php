@@ -989,6 +989,7 @@
                                             <img src="{{ $attachment->thumbnail_url }}" alt="">
                                             <div class="page-file__option">
                                                 <button type="button" class="page-file__zoom"></button>
+                                                <button data-url="{{ $attachment->url }}" type="button" id="file__mask" class="page-file__mask"></button>
                                                 <button type="button" class="page-file__delete"
                                                         data-img-id="{{ $attachment->id }}"></button>
                                             </div>

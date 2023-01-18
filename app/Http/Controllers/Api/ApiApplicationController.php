@@ -9,6 +9,7 @@ use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Models\Application;
 use App\Models\Attachment;
+use App\Models\Status;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -34,8 +35,17 @@ class ApiApplicationController extends Controller
     {
         $result = $this->applicationService->index($request, $filters, $status == 0 ? null : $status);
         extract($result);
+        $statuses = Status::all()->pluck('code','id');
+        $amounts =[];
+        foreach ($totals as $key=>$total){
+            if (isset($statuses[$key])){
+                $amounts[$statuses[$key]] = $totals[$key];
+            }else{
+                $amounts[$key] = $totals[$key];
+            }
+        }
         $applications =  ApplicationResource::collection($applications);
-        return compact('title', 'applications', 'totals');
+        return compact('title', 'applications', 'totals','amounts');
     }
 
     /**
