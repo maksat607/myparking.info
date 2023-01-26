@@ -3,13 +3,13 @@
     <div class="modal-dialog" style="max-width: 90vw;" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title" id="exampleModalLabel">Вы точно хотите одобрить?</h5>
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="info">
-                <p class="points-info">No points yet</p>
+                <p class="points-info"></p>
                 <input type="hidden" placeholder="Image URL">
             </div>
             <div class="scroll_body">
@@ -18,6 +18,7 @@
                     <div class="zoom d-none"></div>
                 </div>
             </div>
+            <button class="btn btn-white" id="putMask" style="display: flex; justify-content: center">Обновить</button>
         </div>
     </div>
 </div>

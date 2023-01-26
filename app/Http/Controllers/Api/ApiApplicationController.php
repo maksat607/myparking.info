@@ -10,9 +10,11 @@ use App\Http\Resources\ModelResource;
 use App\Models\Application;
 use App\Models\Attachment;
 use App\Models\Status;
+use App\Models\TemporaryFile;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Intervention\Image\Facades\Image;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,17 +37,17 @@ class ApiApplicationController extends Controller
     {
         $result = $this->applicationService->index($request, $filters, $status == 0 ? null : $status);
         extract($result);
-        $statuses = Status::all()->pluck('code','id');
-        $amounts =[];
-        foreach ($totals as $key=>$total){
-            if (isset($statuses[$key])){
+        $statuses = Status::all()->pluck('code', 'id');
+        $amounts = [];
+        foreach ($totals as $key => $total) {
+            if (isset($statuses[$key])) {
                 $amounts[$statuses[$key]] = $totals[$key];
-            }else{
+            } else {
                 $amounts[$key] = $totals[$key];
             }
         }
-        $applications =  ApplicationResource::collection($applications);
-        return compact('title', 'applications', 'totals','amounts');
+        $applications = ApplicationResource::collection($applications);
+        return compact('title', 'applications', 'totals', 'amounts');
     }
 
     /**
@@ -120,10 +122,56 @@ class ApiApplicationController extends Controller
         //
     }
 
+    public function addFiles(Request $request, $application)
+    {
+        $application = Application::find($application);
+        if (!$application) {
+            $application = TemporaryFile::create(['token' => $request->token]);
+        }
+
+        $arr = explode('.', $request->name);
+        $file = uniqid() . '.' . end($arr);
+        $upload_dir = public_path() . '/uploads/' . $file;
+        $image_parts = explode(";base64,", $request->file);
+        $image_type_aux = explode("image/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
+
+        $url = URL::to('/uploads') . '/' . $file;
+        file_put_contents($upload_dir, $image_base64);
+        chmod(public_path() . '/uploads/' . $file, 0777);
+
+//        if (in_array(strtolower(), ['jpg', 'jpeg', 'png', 'bmp'])) {
+        Image::make($upload_dir)->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save(Storage::disk('uploads')->getDriver()->getAdapter()->getPathPrefix() . 'thumbnails/' . $file);
+        $thumbnail_url = Storage::disk('uploads')->url('thumbnails/' . $file);
+
+
+        $attachments[] = new Attachment([
+            'name' => $file,
+            'file_type' => 'image',
+            'url' => $url,
+            'thumbnail_url' => $thumbnail_url
+        ]);
+        if (count($attachments) > 0) {
+            $application->attachments()->saveMany($attachments);
+            $id = $attachments[0]['id'];
+        }
+
+        return [
+            'url' => $url,
+            'name' => $file,
+            'id' => $application->id,
+            'attachments' => $id
+        ];
+    }
+
     public function addPhotos(Request $request, Application $application)
     {
         $fileKey = 'images';
-        $fileType = 'image'; $fileNameExtension = '_image.';
+        $fileType = 'image';
+        $fileNameExtension = '_image.';
 //        $this->validate($request, [
 //            $fileKey . '.*' => 'nullable|sometimes|mimes:jpg,jpeg,png,bmp',
 //        ]);
@@ -168,7 +216,7 @@ class ApiApplicationController extends Controller
         }
 
 
-        if (count($attachments ) > 0) {
+        if (count($attachments) > 0) {
             $application->attachments()->saveMany($attachments);
         }
         return response($application, Response::HTTP_CREATED);

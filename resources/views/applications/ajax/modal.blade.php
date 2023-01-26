@@ -598,11 +598,11 @@
                      aria-labelledby="v-pills-tab10-tab">
                     <form action="" id='picsForm' method="POST">
                         @csrf
-                        <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
+                        <input type="file" id="docUploader" name="images[]" class="d-none" multiple="">
                     </form>
 
-                    <div class="page-file-list" id="images">
-                        <div class="page-add-file upload-file docs">
+                    <div class="page-file-list" id="docsFiles">
+                        <div class="page-add-file upload-docs">
                             <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.6"

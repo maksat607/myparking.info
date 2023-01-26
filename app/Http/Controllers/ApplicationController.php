@@ -30,6 +30,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Session;
 use Toastr;
@@ -349,6 +350,7 @@ class ApplicationController extends AppController
      */
     public function store(Request $request)
     {
+
 //        $request->dump();
 //        $translation = new MakeFormData();
 //        $translation->applicationNestedArray($request->except('_token'));
@@ -398,8 +400,7 @@ class ApplicationController extends AppController
     public function addAttachmentsFromPopup(Request $request, $id)
     {
 
-//         return $request->all();
-
+//         return $request->doc;
         $application = Application::application($id)->firstOrFail();
 //        $this->authorize('update', $application);
 
@@ -491,9 +492,14 @@ class ApplicationController extends AppController
         return $applicationData['car_title'];
     }
 
-    public function removeAttachment($attachment)
+    public function removeAttachment(Attachment $attachment)
     {
-        return Attachment::where('id', $attachment)->delete();
+        Storage::disk('uploads')->delete($attachment->name);
+        Storage::disk('uploads')->delete('thumbnails/' . $attachment->name);
+        $attachment->attachable->delete();
+//        `<button type="button" class="page-file__delete transfer__delete" data-img-id="28231"></button>`
+//        `<button type="button" class="page-file__delete" data-img-id="28229"></button>`
+        return $attachment->delete();
     }
 
     /**
@@ -660,7 +666,7 @@ class ApplicationController extends AppController
 
     public function getModelContent(Request $request, $application_id)
     {
-        $htmlRender = view('applications.ajax.modal', $this->applicationService->renderModal($request, $application_id))->render();
+        $htmlRender = view('applications.ajax.modal', $this->applicationService->renderModal($request, $application_id) ==null ? [] : $this->applicationService->renderModal($request, $application_id))->render();
         if ($htmlRender == null) {
             return null;
         }

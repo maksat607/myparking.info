@@ -15,4 +15,8 @@ class TemporaryFile extends Model
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
+    public function attachable()
+    {
+        return $this->morphTo();
+    }
 }

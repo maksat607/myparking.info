@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/v1/login', [AuthController::class, 'login']);
+Route::post('v1/applications/upload/{application?}', [apiApplicationController::class, 'addFiles']);
 Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) {
     Route::post('/me', [AuthController::class, 'me']);
     Route::get('/statuses', [\App\Http\Controllers\StatusController::class, 'index']);
@@ -34,6 +35,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
         Route::put('/{application}', [apiApplicationController::class, 'update']);
         Route::post('/store', [apiApplicationController::class, 'store']);
         Route::post('/{application}/upload', [apiApplicationController::class, 'addPhotos']);
+
         Route::get('/check-duplicate', [apiApplicationController::class, 'checkDuplicate']);
 
         Route::get('/get-model-content/{application_id}', [ApiApplicationController::class, 'getModelContent']);

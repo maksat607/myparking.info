@@ -798,7 +798,10 @@
                                 Фотографии
                             </div>
                             <div class="page-file-list" id="images">
-                                <div class="page-add-file no-ajax upload-file">
+
+{{--                                <div class="page-add-file no-ajax upload-file">--}}
+                                <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
+                                <div class="page-add-file upload-file add-images">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path opacity="0.6"
@@ -806,6 +809,20 @@
                                               fill="#536E9B" />
                                     </svg>
                                 </div>
+
+                                @foreach(\App\Models\TemporaryFile::with('attachments')->where('token',csrf_token())->get() as $temp)
+                                    @foreach($temp->attachments as $attachment)
+                                    <div class="page-file-item" data-src="{{ $attachment->url }}">
+                                        <img src="{{ $attachment->thumbnail_url }}" alt="">
+                                        <div class="page-file__option">
+                                            <button type="button" class="page-file__zoom"></button>
+                                            <button data-url="{{ $attachment->url }}" data-id="{{ $attachment->id }}" type="button" id="file__mask" class="page-file__mask"></button>
+                                            <button type="button" class="page-file__delete"
+                                                    data-img-id="{{ $attachment->id }}"></button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                @endforeach
 
                             </div>
                             <input type="file" id="noAjaxFileUploader" name="images[]" class="d-none" multiple>

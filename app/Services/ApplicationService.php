@@ -5,15 +5,16 @@ namespace App\Services;
 use App\Enums\Color;
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\AttachmentController;
-use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
 use App\Models\ApplicationData;
+use App\Models\Attachment;
 use App\Models\CarType;
 use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\Pricing;
+use App\Models\TemporaryFile;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
@@ -307,9 +308,25 @@ class ApplicationService
             if (count($attachmentsDoc = $attachmentController->storeToModelDoc($request, 'docs')) > 0) {
                 $application->attachments()->saveMany($attachmentsDoc);
             }
-            if (count($attachments = $attachmentController->storeToModel($request, 'images')) > 0) {
-                $application->attachments()->saveMany($attachments);
-            }
+            $attachmentIds = [];
+            TemporaryFile::with('attachments')
+                ->where('token', $request->get('_token'))
+                ->get()
+                ->map(function ($item) use (&$attachmentIds) {
+                    if ($item->attachments) {
+                        $attachmentIds = array_merge($attachmentIds, $item->attachments->pluck('id')->toArray());
+                    }
+                })
+            ;
+            Attachment::whereIn('id', $attachmentIds)->update([
+                'attachable_type' => 'App\Models\Application',
+                'attachable_id' => $application->id,
+            ]);
+            TemporaryFile::where('token', $request->get('_token'))->delete();
+
+//            if (count($attachments = $attachmentController->storeToModel($request, 'images')) > 0) {
+//                $application->attachments()->saveMany($attachments);
+//            }
             return $application;
         });
     }
@@ -635,5 +652,4 @@ class ApplicationService
             auth()->user()->unreadNotifications->where('id', $request->notification)->markAsRead();
         }
     }
-
 }

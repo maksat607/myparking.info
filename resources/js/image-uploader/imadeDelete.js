@@ -7,9 +7,10 @@ const imageDelete = {
         el.remove();
     },
     async deleteFromDb(e) {
-        console.log('deleting..');
+        console.log('deleting..--');
         let self = e.data.self;
         self.imgId = $(this).data('img-id');
+        console.log(self.imgId)
         if(!self.imgId){
             self.remove($(this).parents(`.page-file-item`));
             console.log($('#noAjaxFileUploader')[0].files)
@@ -17,6 +18,7 @@ const imageDelete = {
         }
         await axios.get(`${APP_URL}/application/remove/attachment/${self.imgId}`)
             .then(response => {
+                console.log(response)
                 self.remove($(this).parents(`.page-file-item`));
             }).catch(error => {
                 console.log(error);

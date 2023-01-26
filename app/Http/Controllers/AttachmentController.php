@@ -172,8 +172,7 @@ class AttachmentController extends AppController
         $gd = $img1;
 
 
-
-        $red = imagecolorallocate($gd, 255, 0, 0);
+        $red = imagecolorallocate($gd, 255, 255, 255);
 //        $red = imagecolorallocatealpha($gd, 255, 255, 255, 127);
 
 //        imagepolygon($gd, $corners, 4, $red);
@@ -385,6 +384,7 @@ class AttachmentController extends AppController
      */
     public function destroy(Attachment $attachment)
     {
+
         $result = $this->delete($attachment);
         return ($result)
             ? response()->json([

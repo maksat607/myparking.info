@@ -39,7 +39,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/test', function (Request $request) {
 //    $data = \App\Models\Status::all()->filterStatusesByRole();
 
-    dd($request->url());
+    $attachmentIds = [];
+    \App\Models\TemporaryFile::with('attachments')
+        ->where('token','nHdnkOI7FPkmgJWUXyKTyZfjoleC8c3orMxwPWUD')
+        ->get()
+        ->map(function ($item) use(&$attachmentIds){
+            if($item->attachments){
+                $attachmentIds = array_merge($attachmentIds,$item->attachments->pluck('id')->toArray());
+            }
+        })
+    ;
+    dd($attachmentIds);
 });
 
 
