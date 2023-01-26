@@ -1,6 +1,7 @@
 <div class="modal fade" id="MaskImagesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" style="max-width: 90vw;" role="document">
+        <div class="points"></div>
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="exampleModalLabel"></h5>
@@ -14,7 +15,7 @@
             </div>
             <div class="scroll_body">
                 <div class="output">
-                    <canvas></canvas>
+
                     <div class="zoom d-none"></div>
                 </div>
             </div>

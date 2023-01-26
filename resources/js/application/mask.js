@@ -43,6 +43,8 @@ const imageMask = {
             }).catch(error => {
             console.log('error:', error);
         });
+        $('#MaskImagesModal').modal('hide');
+        $('.output canvas').remove();
     },
     maskFromDb(e) {
         let self = e.data.self;
@@ -51,22 +53,24 @@ const imageMask = {
         let id = $(this).data('id');
         self.imgId = id;
         self.imageUrl = imageUrl;
+        $('.output').prepend('<canvas></canvas>')
         var canvas = document.querySelector("canvas");
         var context = canvas.getContext("2d");
-
+        context.clearRect(0, 0, canvas.width, canvas.height);
         var infoPoints = document.querySelector(".points-info");
         var picker = document.querySelector("input")
         var zoomWindow = document.querySelector(".zoom")
         var clickPoints = [];
 
         canvas.addEventListener("click", evt => {
+            console.log(evt)
             clickPoints.push([evt.offsetX + 1, evt.offsetY + 1])
+            // $('.points').data(count,id);
             self.fourPoints.push([evt.offsetX + 1, evt.offsetY + 1])
             console.log(evt.offsetX + 1 + " - " + evt.offsetY + 1)
             drawDot(evt.offsetX + 1, evt.offsetY + 1)
             infoPoints.textContent = clickPoints.join(" : ")
             if (clickPoints.length >= 4) {
-                // self.points.push(clickPoints);
                 drawPoly(clickPoints);
 
             }

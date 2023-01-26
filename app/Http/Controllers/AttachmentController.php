@@ -201,7 +201,7 @@ class AttachmentController extends AppController
 //        $response = array('name' => $new_filename, 'url' => $fileUrl, 'thumb_url' => $fileUrlThumb);
 
         @header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($result);
+        echo json_encode(array_merge($result,$request->toArray()));
         die();
 
     }
