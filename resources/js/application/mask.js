@@ -6,6 +6,20 @@ const imageMask = {
     init() {
         $(`body`).on('click', `.page-file__mask`, {self: this}, this.maskFromDb);
         $(`body`).on('click', `#putMask`, {self: this}, this.uploadImage);
+        $(`body`).on('hidden.bs.modal', `#MaskImagesModal`, {self: this}, function (e) {
+            let self = e.data.self;
+            self.imgId = null;
+            self.imageUrl = null;
+            self.ratio = 1;
+            self.fourPoints = [];
+            console.log('on hidden')
+
+            $('.output').empty();
+
+
+        });
+
+
     },
     remove(el) {
         el.remove();
@@ -55,7 +69,7 @@ const imageMask = {
             console.log('error:', error);
         });
         $('#MaskImagesModal').modal('hide');
-        $('.output canvas').remove();
+        $('.output').empty();
     },
     maskFromDb(e) {
         let self = e.data.self;
@@ -145,8 +159,10 @@ const imageMask = {
 
             console.log('src: ' + src)
             rawImg.src = src
+            const randomId = new Date().getTime();
+
             rawImg.onload = () => {
-                canvas.style.backgroundImage = "url(" + self.imageUrl + ")"
+                canvas.style.backgroundImage = "url(" + src + `?random=${randomId}` +")"
                 // zoomWindow.style.backgroundImage = "url(" + src + ")"
                 // console.log(canvas.style.backgroundImage, zoomWindow.style.backgroundImage)
                 resize(rawImg.height, rawImg.width)
