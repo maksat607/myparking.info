@@ -163,7 +163,8 @@ class ApiApplicationController extends Controller
             'url' => $url,
             'name' => $file,
             'id' => $application->id,
-            'attachments' => $id
+            'attachments' => $id,
+            'thumbnail_url' => $thumbnail_url
         ];
     }
 

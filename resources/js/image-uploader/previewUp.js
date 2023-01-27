@@ -70,16 +70,16 @@ const imageUpload = {
 
             }
             self.files = this.files;
-                fd.append('doc', 'true');
-                self.form = fd;
-                console.log(fd)
-                self.appId = $('#appId').val();
+            fd.append('doc', 'true');
+            self.form = fd;
+            console.log(fd)
+            self.appId = $('#appId').val();
 
-                self.uploadDoc().then(v => {
-                    console.log(v)
-                    self.docs = v;
-                    self.loopFiles();
-                });
+            self.uploadDoc().then(v => {
+                console.log(v)
+                self.docs = v;
+                self.loopFiles();
+            });
 
         })
         $(`body`).on('change', `#uploader`, {self: this}, function (e) {
@@ -124,10 +124,11 @@ const imageUpload = {
                         if ($('#appId').length > 0) {
                             id = $('#appId').val();
                         }
-                        upload_image(fd,id).then(v => {
+                        upload_image(fd, id).then(v => {
                             console.log(v)
                             self.url = v['url'];
                             self.attId = v['attachments'];
+                            self.thumbnail_url = v['thumbnail_url'];
                             self.writeHtml(file)
 
                         });
@@ -265,8 +266,9 @@ const imageUpload = {
                                 </div>
                             </div>`;
         } else {
-            html = `<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">
-                                <img src="${URL.createObjectURL(file)}" alt="">
+            // html = `<!--<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">-->
+            html = `<div class="page-file-item transfer ${this.attId}" data-src="${this.url}">
+                                <img class="thumbnail ${this.attId}" src="${this.thumbnail_url}" alt="">
                                 <div class="page-file__option">
                                     <button type="button" class="page-file__zoom"></button>
                                     <button data-url="${this.url}" data-id="${this.attId}" type="button" id="file__mask"  class="page-file__mask"  ></button>

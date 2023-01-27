@@ -34,6 +34,17 @@ const imageMask = {
                 // self.appendToModalChat(message);
                 console.log("response.data")
                 console.log(response.data)
+                console.log(response.data.attId)
+                console.log(response.data.thumbnail)
+                $(`.thumbnail.${response.data.attId}`).remove();
+                $(`.page-file-item.transfer.${response.data.attId}`).prepend(`
+                    <img class="thumbnail ${response.data.attId}" src="${response.data.thumbnail}" alt="">
+                `);
+                console.log(`
+                    <img class="thumbnail ${response.data.attId}" src="${response.data.thumbnail}" alt="">
+                `)
+
+
                 if (response.data.success) {
 
                     // self.setHtml(response.data.html,`.chat__list.${type}`);
@@ -114,10 +125,10 @@ const imageMask = {
             // biggest = x > y ? x : y;
 
             // so that the biggest axis is always {biggest} px
-            x > y ? console.log(x + '/' + biggest) : console.log(y +'/'+ biggest)
+            x > y ? console.log(x + '/' + biggest) : console.log(y + '/' + biggest)
             console.log()
             var ratio = x > y ? x / biggest : y / biggest
-            console.log('ration is: '+ratio)
+            console.log('ration is: ' + ratio)
             self.ratio = ratio
             axis = [x / ratio, y / ratio]
             canvas.height = axis[0]

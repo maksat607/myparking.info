@@ -190,8 +190,9 @@ class AttachmentController extends AppController
 
         $result[] = $fileNewPath;
         $result[] = $fileNewThumbPath;
+        $result['thumbnail'] = $attachment->thumbnail_url;
         $result[] = $attachment->name;
-        $result[] = $attachment->id;
+        $result['attId'] = $attachment->id;
 
         upload_images_resize_preview($preview_width, $preview_height, $fileNewPath, $fileNewThumbPath); //resize
 
