@@ -18,13 +18,11 @@ use App\Models\CarModel;
 use App\Models\CarModification;
 use App\Models\CarSeries;
 use App\Models\Client;
-use App\Models\Pricing;
 use App\Models\Status;
 use App\Notifications\ApplicationNotifications;
 use App\Notifications\UserNotification;
 use App\Services\ApplicationService;
 use App\Services\ApplicationTotalsService;
-use App\Services\MakeFormData;
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -496,7 +494,9 @@ class ApplicationController extends AppController
     {
         Storage::disk('uploads')->delete($attachment->name);
         Storage::disk('uploads')->delete('thumbnails/' . $attachment->name);
-//        $attachment->attachable->delete();
+        if (class_basename($attachment->attachable) == "TemporaryFile") {
+            $attachment->attachable->delete();
+        }
 //        `<button type="button" class="page-file__delete transfer__delete" data-img-id="28231"></button>`
 //        `<button type="button" class="page-file__delete" data-img-id="28229"></button>`
         return $attachment->delete();
@@ -662,11 +662,9 @@ class ApplicationController extends AppController
     }
 
 
-
-
     public function getModelContent(Request $request, $application_id)
     {
-        $htmlRender = view('applications.ajax.modal', $this->applicationService->renderModal($request, $application_id) ==null ? [] : $this->applicationService->renderModal($request, $application_id))->render();
+        $htmlRender = view('applications.ajax.modal', $this->applicationService->renderModal($request, $application_id) == null ? [] : $this->applicationService->renderModal($request, $application_id))->render();
         if ($htmlRender == null) {
             return null;
         }

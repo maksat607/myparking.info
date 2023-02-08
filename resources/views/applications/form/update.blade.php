@@ -971,11 +971,14 @@
                                 </div>
                             </div>
                             <div class="inner-page__item">
+                                <input type="hidden" id="appId" value="{{$application->id}}">
+                                <input type="file" id="uploader" name="images[]" class="d-none" multiple="">
                                 <div class="inner-item-title">
                                     Фотографии
                                 </div>
                                 <div class="page-file-list" id="images">
-                                    <div class="page-add-file no-ajax upload-file">
+{{--                                    <div class="page-add-file no-ajax upload-file">--}}
+                                    <div class="page-add-file upload-file add-images">
                                         <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path opacity="0.6"
