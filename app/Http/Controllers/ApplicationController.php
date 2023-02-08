@@ -496,7 +496,7 @@ class ApplicationController extends AppController
     {
         Storage::disk('uploads')->delete($attachment->name);
         Storage::disk('uploads')->delete('thumbnails/' . $attachment->name);
-        $attachment->attachable->delete();
+//        $attachment->attachable->delete();
 //        `<button type="button" class="page-file__delete transfer__delete" data-img-id="28231"></button>`
 //        `<button type="button" class="page-file__delete" data-img-id="28229"></button>`
         return $attachment->delete();
