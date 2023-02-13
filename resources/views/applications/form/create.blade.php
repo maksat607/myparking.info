@@ -811,9 +811,8 @@
                                     </svg>
                                 </div>
 
-                                @foreach(\App\Models\TemporaryFile::with('attachments')->where('token',csrf_token())->get() as $temp)
-                                    @foreach($temp->attachments as $attachment)
-                                    <div class="page-file-item transfer {{ $attachment->id }}" data-src="{{ $attachment->url }}">
+                                @foreach($attachments as $attachment)
+                                    <div class="page-file-item transfer {{ $attachment->id }}" data-src="{{ $attachment->url }}" data-id="{{ $attachment->id }}">
                                         <img class="thumbnail {{ $attachment->id }}" src="{{ $attachment->thumbnail_url }}" alt="">
                                         <div class="page-file__option">
                                             <button type="button" class="page-file__zoom"></button>
@@ -823,7 +822,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                @endforeach
+
 
                             </div>
                             <input type="file" id="noAjaxFileUploader" name="images[]" class="d-none" multiple>
@@ -835,7 +834,7 @@
                                 Документы
                             </div>
                             Паспорт, доверенность и прочее
-                            <div class="page-file-list" id='images'>
+                            <div class="page-file-list">
                                 <div class="page-add-file no-ajax upload-file doc">
                                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">

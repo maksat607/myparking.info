@@ -14,8 +14,8 @@ use App\Models\CarType;
 use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\Pricing;
-use App\Models\TemporaryFile;
 use App\Models\Status;
+use App\Models\TemporaryFile;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class ApplicationService
     public function __construct()
     {
         $this->AttachmentController = new AttachmentController();
-        $this->exporter =  ExportInterface::class;
+        $this->exporter = ExportInterface::class;
     }
 
     /**
@@ -126,6 +126,16 @@ class ApplicationService
         $user = User::where('id', auth()->user()->getUserOwnerId())->first();
         $managers = $user->children()->role('Manager')->orderBy('name', 'asc')->get();
         $statuses = ModelResource::collection(Status::statuses($application)->get()->filterStatusesByRole());
+//        ->sortByDesc('order')
+        $attachments = [];
+        foreach (\App\Models\TemporaryFile::with('attachments')->where('token', csrf_token())->get() as $temp) {
+            foreach ($temp->attachments as $attachment) {
+                $attachments[] = $attachment;
+            }
+        }
+        if($attachments){
+          $attachments = collect($attachments)->sortBy('order');
+        }
 
 
         $title = __('Create a Request');
@@ -137,6 +147,7 @@ class ApplicationService
             'managers',
             'statuses',
             'colors',
+            'attachments'
         );
     }
 
@@ -316,8 +327,7 @@ class ApplicationService
                     if ($item->attachments) {
                         $attachmentIds = array_merge($attachmentIds, $item->attachments->pluck('id')->toArray());
                     }
-                })
-            ;
+                });
             Attachment::whereIn('id', $attachmentIds)->update([
                 'attachable_type' => 'App\Models\Application',
                 'attachable_id' => $application->id,
@@ -613,6 +623,7 @@ class ApplicationService
         }
         return array($application, $isUpdate);
     }
+
     public function renderModal(Request $request, $application_id)
     {
         $this->markNotificationAsRead($request);
@@ -642,10 +653,11 @@ class ApplicationService
             $storageNotifications = $application->storageNotifications();
             $partnerNotifications = $application->partnerNotifications();
 
-            return  compact('application', 'partnerNotifications', 'storageNotifications');
+            return compact('application', 'partnerNotifications', 'storageNotifications');
         }
         return null;
     }
+
     public function markNotificationAsRead(Request $request)
     {
         if ($request->has('notification')) {

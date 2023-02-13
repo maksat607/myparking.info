@@ -4,6 +4,7 @@ const imageMask = {
     ratio: 1,
     fourPoints: [],
     init() {
+
         $(`body`).on('click', `.page-file__mask`, {self: this}, this.maskFromDb);
         $(`body`).on('click', `#putMask`, {self: this}, this.uploadImage);
         $(`body`).on('hidden.bs.modal', `#MaskImagesModal`, {self: this}, function (e) {
@@ -162,7 +163,7 @@ const imageMask = {
             const randomId = new Date().getTime();
 
             rawImg.onload = () => {
-                canvas.style.backgroundImage = "url(" + src + `?random=${randomId}` +")"
+                canvas.style.backgroundImage = "url(" + src + `?random=${randomId}` + ")"
                 // zoomWindow.style.backgroundImage = "url(" + src + ")"
                 // console.log(canvas.style.backgroundImage, zoomWindow.style.backgroundImage)
                 resize(rawImg.height, rawImg.width)
@@ -198,3 +199,47 @@ const imageMask = {
 
 }
 imageMask.init();
+
+$(document).ready(function () {
+    $(".page-file-item.transfer").draggable({
+        helper: "clone"
+    });
+    $(".page-file-item.transfer").droppable({
+        drop: swapDivs
+    });
+
+    function swapDivs(event, ui) {
+        var target = $(event.target);
+        var source = ui.draggable;
+        var data = {};
+        var form = new FormData();
+        source.insertBefore(target);
+        data[source.data('id')] = source.index();
+        form.append(source.data('id'), source.index());
+        let divs = $('div#images div.transfer');
+        let i = 0;
+
+        divs.each(function (i) {
+            if (!data.hasOwnProperty($(this).data('id'))) {
+                data[$(this).data('id')] = $(this).index();
+                form.append($(this).data('id'), $(this).index());
+            }
+
+        });
+        console.log(data)
+        delete data[undefined];
+
+
+        const result = $.ajax({
+            url: `${APP_URL}/api/v1/applications/attachment`,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'post',
+            data: form,
+            contentType: false,
+            processData: false
+        });
+        console.log(result)
+    }
+});

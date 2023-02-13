@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="car-slide">
                                     @if($application->attachments->where('file_type','image')->count()>0)
-                                        @foreach($application->attachments->where('file_type','image')->all() as $attachment)
+                                        @foreach($application->attachments->where('file_type','image')->sortBy('order')->all() as $attachment)
                                             <div class="newcart__imgwrap">
                                                 <a href="{{ $attachment->url }}">
                                                     <img src="{{ $attachment->thumbnail_url }}" class="car-row__image">

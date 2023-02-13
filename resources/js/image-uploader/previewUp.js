@@ -126,10 +126,55 @@ const imageUpload = {
                         }
                         upload_image(fd, id).then(v => {
                             console.log(v)
+                            console.log('vvvvvvvvvvvvvvvvvvvvv')
                             self.url = v['url'];
                             self.attId = v['attachments'];
                             self.thumbnail_url = v['thumbnail_url'];
                             self.writeHtml(file)
+                            $(document).ready(function () {
+
+                                $(".page-file-item.transfer").draggable({
+                                    helper: "clone"
+                                });
+                                $(".page-file-item.transfer").droppable({
+                                    drop: swapDivs
+                                });
+
+                                function swapDivs(event, ui) {
+                                    var target = $(event.target);
+                                    var source = ui.draggable;
+                                    var data = {};
+                                    var form = new FormData();
+                                    source.insertBefore(target);
+                                    data[source.data('id')] = source.index();
+                                    form.append(source.data('id'), source.index());
+                                    let divs = $('div#images div.transfer');
+                                    let i = 0;
+
+                                    divs.each(function (i) {
+                                        if (!data.hasOwnProperty($(this).data('id'))) {
+                                            data[$(this).data('id')] = $(this).index();
+                                            form.append($(this).data('id'), $(this).index());
+                                        }
+
+                                    });
+                                    console.log(data)
+                                    delete data[undefined];
+
+
+                                    const result = $.ajax({
+                                        url: `${APP_URL}/api/v1/applications/attachment`,
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        type: 'post',
+                                        data: form,
+                                        contentType: false,
+                                        processData: false
+                                    });
+                                    console.log(result)
+                                }
+                            });
 
                         });
                     }, 0.5);
@@ -267,7 +312,7 @@ const imageUpload = {
                             </div>`;
         } else {
             // html = `<!--<div class="page-file-item transfer" data-src="${URL.createObjectURL(file)}">-->
-            html = `<div class="page-file-item transfer ${this.attId}" data-src="${this.url}">
+            html = `<div class="page-file-item transfer ${this.attId}" data-src="${this.url}" data-id="${this.attId}">
                                 <img class="thumbnail ${this.attId}" src="${this.thumbnail_url}" alt="">
                                 <div class="page-file__option">
                                     <button type="button" class="page-file__zoom"></button>

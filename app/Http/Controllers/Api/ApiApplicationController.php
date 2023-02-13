@@ -168,6 +168,17 @@ class ApiApplicationController extends Controller
         ];
     }
 
+    public function orderOfAttachment(Request $request)
+    {
+        $data = $request->except('token');
+        $keys = array_keys($data);
+        $orders = [];
+        foreach ($data as $key => $item) {
+            $orders[] = ['id' => $key, 'order' => $item];
+        }
+        Attachment::upsert($orders, ['id'], ['order']);
+    }
+
     public function addPhotos(Request $request, Application $application)
     {
         $fileKey = 'images';

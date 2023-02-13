@@ -12,7 +12,7 @@
             <div class="car-slide">
 
                 @if($application->attachments->isNotEmpty())
-                    @foreach($application->attachments->where('file_type','image')->all() as $attachment)
+                    @foreach($application->attachments->where('file_type','image')->sortBy('order')->all() as $attachment)
                         <div class="newcart__imgwrap">
                             <a href="{{ $attachment->url }}">
                                 <img src="{{ $attachment->thumbnail_url }}" class="car-row__image">
@@ -377,7 +377,7 @@
                             </svg>
                         </div>
 
-                        @foreach($application->attachments->where('file_type','image')->all() as $attachment)
+                        @foreach($application->attachments->where('file_type','image')->sortBy('order')->all() as $attachment)
                             <div class="page-file-item" data-src="{{ $attachment->url }}">
                                 <img src="{{ $attachment->thumbnail_url }}" alt="">
                                 <div class="page-file__option">

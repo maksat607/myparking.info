@@ -46,6 +46,9 @@ window.Echo = new Echo({
 
 window.select2 = require('select2');
 require('select2/dist/js/i18n/ru.js');
+require('jquery-ui/ui/widgets/draggable');
+require('jquery-ui/ui/widgets/droppable');
+// import 'jquery-ui/ui/widgets/datepicker.js';
 
 /**
  * Flatpickr
