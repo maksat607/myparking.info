@@ -4,6 +4,7 @@ namespace App\Export;
 
 use App\Application;
 use App\Interfaces\ExportInterface;
+use Illuminate\Support\Facades\Http;
 
 class WordExport implements ExportInterface
 {
@@ -20,6 +21,14 @@ class WordExport implements ExportInterface
 			$temp_file = storage_path('temp.docx');
 			copy($file, $temp_file);
 
+
+            $response = Http::get(env('CAR_API', 'https://lk2.bitok.kg/api/v1') . '/marks/'.$application->car_mark_id);
+            $carMark = (array)json_decode(json_encode(json_decode($response->body())));
+            $response = Http::get(env('CAR_API', 'https://lk2.bitok.kg/api/v1') . '/models/'.$application->car_model_id);
+            $carModel = (array)json_decode(json_encode(json_decode($response->body())));
+
+
+
 			if ($zip->open($temp_file) === TRUE) {
 			    //Read contents into memory
 			    $oldContents = $zip->getFromName($fileToModify);
@@ -31,8 +40,8 @@ class WordExport implements ExportInterface
                 $newContents = str_replace('arrivedat', $application->formated_arrived_at, $newContents);
                 $newContents = str_replace('storageaddress', $application->parking->address, $newContents);
                 $newContents = str_replace('issuedat', $application->formated_issued_at, $newContents);
-			    $newContents = str_replace('carmark', ($application->carMark->name ?? ''), $newContents);
-			    $newContents = str_replace('carmodel', ($application->carModel->name ?? ''), $newContents);
+			    $newContents = str_replace('carmark', ($carMark['name'] ?? ''), $newContents);
+			    $newContents = str_replace('carmodel', ($carModel['name'] ?? ''), $newContents);
 			    $newContents = str_replace('vinplaceholder', $application->vin, $newContents);
 			    $newContents = str_replace('yearplaceholder', $application->year, $newContents);
 			    $newContents = str_replace('lisencenumber', $application->license_plate, $newContents);

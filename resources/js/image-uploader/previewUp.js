@@ -182,7 +182,6 @@ const imageUpload = {
 
                     async function upload_image(fd, id) {
 
-
                         const result = await $.ajax({
                             type: 'post',
                             url: `/api/v1/applications/upload/${id}`,
