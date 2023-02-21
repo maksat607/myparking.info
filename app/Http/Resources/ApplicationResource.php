@@ -14,7 +14,7 @@ class ApplicationResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        return array_merge(parent::toArray($request),[
             "id" => $this->id ,
             "car_title" => $this->car_title,
             "vin" => $this->vin,
@@ -77,6 +77,6 @@ class ApplicationResource extends JsonResource
             "acceptedBy" => new ModelResource($this->whenLoaded('acceptedBy')),
             "attachments" => ($this->whenLoaded('attachments')),
             "issuance" => $this->whenLoaded('issuance'),
-        ];
+        ]);
     }
 }
