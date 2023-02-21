@@ -56,6 +56,9 @@ class ModelResource extends JsonResource
             'title' => $this->when(isset($this->title), function () {
                 return $this->title;
             }),
+            'car_title' => $this->when(isset($this->car_title), function () {
+                return $this->car_title;
+            }),
             'vin' => $this->when(isset($this->vin), function () {
                 return $this->vin;
             }),
@@ -70,6 +73,12 @@ class ModelResource extends JsonResource
             }),
             'client_id' => $this->when(isset($this->client_id), function () {
                 return ($this->client_id);
+            }),
+            'parking_id' => $this->when(isset($this->parking_id), function () {
+                return ($this->parking_id);
+            }),
+            'partner_id' => $this->when(isset($this->partner_id), function () {
+                return ($this->partner_id);
             }),
             'is_issue' => $this->when(isset($this->is_issue), function () {
                 return ($this->is_issue);
