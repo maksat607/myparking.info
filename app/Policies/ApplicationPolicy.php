@@ -132,9 +132,5 @@ class ApplicationPolicy
             return true;
         }
     }
-    protected function failedAuthorization()
-    {
-        $errorMessage = 'You are not authorized to update this post.';
-        return response()->json(['error' => $errorMessage], 401);
-    }
+
 }

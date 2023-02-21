@@ -274,4 +274,9 @@ class ApiApplicationController extends Controller
         $application = new ApplicationResource($application);
         return response()->json(compact('application', 'partnerNotifications', 'storageNotifications'), 200);
     }
+    protected function failedAuthorization()
+    {
+        $errorMessage = 'You are not authorized to update this post.';
+        return response()->json(['error' => $errorMessage], 401);
+    }
 }
