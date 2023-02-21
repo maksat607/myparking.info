@@ -428,20 +428,22 @@ class ApplicationService
         $dateDataApplication = ($application->arriving_at) ? $application->arriving_at->format('d-m-Y') : now()->format('d-m-Y');
         $dateTime = $dateDataApplication . ' ' . $application->arriving_interval;
         $title = __('Update a Request');
+//        array_search($myVariable, get_defined_vars());
         $parkings = ModelResource::collection($parkings);
         $statuses = ModelResource::collection($statuses);
         $managers = ModelResource::collection($managers);
         $partners = ModelResource::collection($partners);
+//        $application = ($application);
         $application = new ApplicationResource($application);
 
         return compact(
             'title',
+            'application',
             'partners',
             'parkings',
             'managers',
             'statuses',
             'colors',
-            'application',
             'attachments',
             'dataApplication',
             'carTypes',

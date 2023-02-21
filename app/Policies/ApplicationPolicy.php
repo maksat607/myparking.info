@@ -32,7 +32,6 @@ class ApplicationPolicy
      */
     public function view(User $user, Application $application)
     {
-
     }
 
     /**
@@ -58,16 +57,18 @@ class ApplicationPolicy
     public function update(User $user, Application $application)
     {
 
-        if(
-            ($user->can('application_update') || ($user->can('application_to_accept_update') && $application->status->code=='pending') )
-            && ($application ||
-                $application->status->code == 'draft' ||
-                $application->status->code == 'cancelled-by-us'||
-                $application->status->code == 'pending'
+        if (
+            ($user->can('application_update')
+            || ($user->can('application_to_accept_update')
+            && $application->status->code == 'pending') )
+            && ($application
+                || $application->status->code == 'draft'
+                || $application->status->code == 'cancelled-by-us'
+                || $application->status->code == 'pending'
 
 
-            ) &&
-            $user->hasRole(['Operator', 'Partner', 'PartnerOperator'])
+            )
+            && $user->hasRole(['Operator', 'Partner', 'PartnerOperator'])
         ) {
             return true;
         } elseif (
@@ -88,7 +89,7 @@ class ApplicationPolicy
      */
     public function delete(User $user, Application $application)
     {
-        if(
+        if (
             $user->can('application_delete') &&
             ($application->acceptions ||
                 $application->status->code == 'draft' ||
@@ -114,7 +115,7 @@ class ApplicationPolicy
      */
     public function colorRed(User $user, Application $application)
     {
-        if(
+        if (
             $user->can('application_delete') &&
             ($application->acceptions ||
                 $application->status->code == 'draft' ||
@@ -131,5 +132,9 @@ class ApplicationPolicy
             return true;
         }
     }
-
+    protected function failedAuthorization()
+    {
+        $errorMessage = 'You are not authorized to update this post.';
+        return response()->json(['error' => $errorMessage], 401);
+    }
 }

@@ -16,6 +16,12 @@ class ModelResource extends JsonResource
         'cancelled-by-us' => 'ОН',
         'deleted' => 'УН'
     ];
+    public static $tables = [
+        'Partner',
+        'Parking',
+        'Status',
+        'partners'
+    ];
     public static $model;
 
     public function __construct($resource)
@@ -53,6 +59,7 @@ class ModelResource extends JsonResource
                     ? self::$codes[$this->code]
                     : $this->code;
             }),
+
             'title' => $this->when(isset($this->title), function () {
                 return $this->title;
             }),
@@ -96,7 +103,7 @@ class ModelResource extends JsonResource
                 return ($this->arrived_at);
             }),
             'application' => $this->when(isset($this->application), function () {
-                return  new ApplicationResource($this->application);
+                return new ApplicationResource($this->application);
             }),
 
         ];
