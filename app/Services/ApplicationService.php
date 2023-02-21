@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\Color;
 use App\Filter\ApplicationFilters;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\ModelResource;
 use App\Interfaces\ExportInterface;
 use App\Models\Application;
@@ -431,7 +432,7 @@ class ApplicationService
         $statuses = ModelResource::collection($statuses);
         $managers = ModelResource::collection($managers);
         $partners = ModelResource::collection($partners);
-        $application = new ModelResource($application);
+        $application = new ApplicationResource($application);
 
         return compact(
             'title',
