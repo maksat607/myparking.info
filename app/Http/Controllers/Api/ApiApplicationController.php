@@ -12,6 +12,7 @@ use App\Models\Attachment;
 use App\Models\Status;
 use App\Models\TemporaryFile;
 use App\Services\ApplicationService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -63,11 +64,19 @@ class ApiApplicationController extends Controller
 
     public function edit(Application $application)
     {
-        $this->authorize('update', $application);
+//        try {
+            $this->authorize('update', $application);
+//        } catch (AuthorizationException $e) {
+//            return response()->json(['status' => 'error', 'message' => 'НЕАВТОРИЗОВАННОЕ ДЕЙСТВИЕ..'], 401);
+//        }
+
         return $this->applicationService->edit($application);
     }
 
-
+    protected function failedAuthorization()
+    {
+        return response()->json(['error' => 'You are not authorized to update this post.'], 403);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -274,9 +283,6 @@ class ApiApplicationController extends Controller
         $application = new ApplicationResource($application);
         return response()->json(compact('application', 'partnerNotifications', 'storageNotifications'), 200);
     }
-    protected function failedAuthorization()
-    {
-        $errorMessage = 'You are not authorized to update this post.';
-        return response()->json(['error' => $errorMessage], 401);
-    }
+
+
 }
