@@ -69,7 +69,7 @@ class ApplicationResource extends JsonResource
             "status_id" => $this->status_id ,
             "acceptedBy" => $this->accepted_by ,
             "created_user_id" => $this->created_user_id ,
-            "issued_by" => $this->issued_by ,
+            "issued_by" => new ModelResource($this->whenLoaded('issuedBy')) ,
             "car_type" => new ModelResource($this->whenLoaded('car_type')),
             "parking" => new ModelResource($this->whenLoaded('parking')),
             "partner" => new ModelResource($this->whenLoaded('partner')),
