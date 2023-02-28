@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use Toastr;
+
 use App\Filter\PartnerFilters;
 use App\Models\CarType;
-use App\Models\Parking;
 use App\Models\Partner;
 use App\Models\PartnerType;
 use App\Models\PartnerUser;
-use App\Models\Pricing;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -16,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Toastr;
 
 class PartnerController extends AppController
 {
@@ -122,6 +121,25 @@ class PartnerController extends AppController
 //        return ($partner->exists)
 //            ? redirect()->route('partners.index')->with('success', __('Saved.'))
 //            : redirect()->back()->with('error', __('Error'));
+    }
+
+    protected function validator(array $data, Request $request)
+    {
+
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:100', 'unique:partner_types'],
+            'address' => ['string', 'max:100', 'nullable'],
+            'phone' => ['numeric', 'min:20', 'nullable'],
+            'email' => ['string', 'email', 'nullable'],
+            'rank' => ['numeric', 'min:0'],
+            'partner_type' => ['required', 'exists:partner_types,id'],
+            'status' => ['boolean'],
+            'inn' => (isset($request->beingAdded) && $request->beingAdded == 'public') ? 'required' :
+                ['required',
+                    $request->has('update') ? (Rule::unique('partners')->ignore($request->partner)) :
+                        'unique:partners'
+                ]
+        ]);
     }
 
     /**
@@ -237,25 +255,6 @@ class PartnerController extends AppController
         //
     }
 
-    protected function validator(array $data, Request $request)
-    {
-
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:100', 'unique:partner_types'],
-            'address' => ['string', 'max:100', 'nullable'],
-            'phone' => ['numeric', 'min:20', 'nullable'],
-            'email' => ['string', 'email', 'nullable'],
-            'rank' => ['numeric', 'min:0'],
-            'partner_type' => ['required', 'exists:partner_types,id'],
-            'status' => ['boolean'],
-            'inn' => (isset($request->beingAdded) && $request->beingAdded == 'public') ? 'required' :
-                ['required',
-                    $request->has('update') ? (Rule::unique('partners')->ignore($request->partner)) :
-                        'unique:partners'
-                ]
-        ]);
-    }
-
     public function getParkings(Request $request)
     {
         if (!$request->ajax()) {
@@ -282,11 +281,36 @@ class PartnerController extends AppController
         return response()->json($this->groupInns());
     }
 
+    private function groupInns()
+    {
+        if (empty($this->parkingAjax)) {
+            return $this->parkingAjax;
+        }
+        $temps = [];
+        $this->parkingAjax->each(function ($item, $key) use (&$temps) {
+            if (Arr::exists($temps, $item->id)) {
+                $temps[$item->id]->inn .= ', ' . $item->inn;
+            } else {
+                $temps[$item->id] = $item;
+            }
+        });
+
+        return array_values(Arr::sort($temps, function ($value) {
+            return $value->title;
+        }));
+    }
+
     public function getModelUsersContent(Partner $partner)
     {
         $admins = $partner->users;
         $absentUsers = User::role('Admin')->whereNotIn('id', $admins->pluck('id'))->get();
-        $partnerUsers = PartnerUser::where('partner_id', $partner->id)->get();
+        $SuperAdmin = User::whereHas("roles", function ($q) {
+            $q->where("name", "SuperAdmin");
+        })->first();
+//        $partnerUsers = PartnerUser::where('partner_id', $partner->id)
+//            ->where('user_id', '!=', $SuperAdmin->id)->get();
+
+        $partnerUsers = $partner->partnerUser->where('user_id', '!=', $SuperAdmin->id);
 
         $htmlRender = view('partners.modals.admins', compact('partner', 'partnerUsers', 'absentUsers'))->render();
         return response()->json(['success' => true, 'html' => $htmlRender]);
@@ -302,7 +326,7 @@ class PartnerController extends AppController
 
     public function addPartnerUser(Request $request, Partner $partner, User $user)
     {
-        PartnerUser::create(['user_id' => $user->id,'partner_id' => $partner->id]);
+        PartnerUser::create(['user_id' => $user->id, 'partner_id' => $partner->id]);
         if ($request->has('role')) {
             Toastr::success('Добавлено');
             return redirect()->back();
@@ -407,24 +431,5 @@ class PartnerController extends AppController
         $pricings = createPriceList($car_types);
         $title = __('Create new Partner');
         return view('partners.search', compact('title', 'partner', 'pricings', 'personal', 'partner_types', 'disabled'));
-    }
-
-    private function groupInns()
-    {
-        if (empty($this->parkingAjax)) {
-            return $this->parkingAjax;
-        }
-        $temps = [];
-        $this->parkingAjax->each(function ($item, $key) use (&$temps) {
-            if (Arr::exists($temps, $item->id)) {
-                $temps[$item->id]->inn .= ', ' . $item->inn;
-            } else {
-                $temps[$item->id] = $item;
-            }
-        });
-
-        return array_values(Arr::sort($temps, function ($value) {
-            return $value->title;
-        }));
     }
 }

@@ -71,7 +71,7 @@ class PartnerUserController extends Controller
             'email_verified_at' => now()
         ];
 
-        dd($userData);
+
         try {
             DB::beginTransaction();
             $userModel = User::create($userData);

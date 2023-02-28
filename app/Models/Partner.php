@@ -11,8 +11,11 @@ use Kyslik\ColumnSortable\Sortable;
 
 class Partner extends Model
 {
-    use HasFactory, Notifiable, Sortable;
+    use HasFactory;
+    use Notifiable;
+    use Sortable;
 
+    public $sortable = ['shortname', 'name', 'inn', 'kpp', 'base_type', 'partner_type_id'];
     protected $fillable = [
         'name',
         'address',
@@ -29,7 +32,7 @@ class Partner extends Model
         'created_user_id',
         'moderation'
     ];
-    public $sortable = ['shortname', 'name', 'inn', 'kpp', 'base_type','partner_type_id'];
+
     public function partnerType()
     {
         return $this->belongsTo(PartnerType::class, 'partner_type_id', 'id');
@@ -40,26 +43,38 @@ class Partner extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function users(){
+    public function parkings()
+    {
+        $arr = collect([]);
+        $this->users()->each(function ($item) use (&$arr) {
+//            if ($item->hasRole(['SuperAdmin'])) {
+//                $arr = $arr->merge(new Parking());
+//            } else {
+            $arr = $arr->merge($item->parkings);
+//            }
+        });
+        return $arr->unique('id');
+    }
+
+    public function users()
+    {
+        $SuperAdmin = User::whereHas("roles", function ($q) {
+            $q->where("name", "SuperAdmin");
+        })->first();
         return $this->hasManyThrough(
-            User::class,//deplo
-            PartnerUser::class,//env
+            User::class, //deplo
+            PartnerUser::class, //env
             'partner_id', // Foreign key on the environments table...
             'id', // Foreign key on the deployments table...
             'id', // Local key on the projects table...
             'user_id' // Local key on the environments table...
-        );
+        )
+            ->where('users.id', '!=', $SuperAdmin->id);
     }
 
-    public function parkings(){
-        $arr = collect([]);
-        $this->users()->each(function ($item) use (&$arr){
-            if ($item->hasRole(['SuperAdmin'])) {
-                $arr = $arr->merge(new Parking());
-            }
-            $arr = $arr->merge($item->parkings);
-        });
-        return $arr->unique('id');
+    public function partnerUser()
+    {
+        return $this->hasMany(PartnerUser::class);
     }
 
     public function created_user()
@@ -81,6 +96,7 @@ class Partner extends Model
         }
         return $query;
     }
+
     public function scopeFilter(Builder $builder, QueryFilter $filters)
     {
         return $filters->apply($builder);

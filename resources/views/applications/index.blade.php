@@ -2,6 +2,7 @@
 
 @section('content')
     @include('applications.menu.top_menu_filter')
+{{--    @dump($partners)--}}
     <section class="car-col">
         <div class="container">
             <div class="row">
@@ -14,7 +15,6 @@
                     <div class="col-md-3 @if($application->favorite){{ 'select-favorite' }}@endif"
                          id="application_{{ $application->id }}">
                         <div class="car-col__item">
-                            {{--                    @if($application->ApplicationHasPending) border-top-0 border-danger @endif--}}
                             <div class="car-slide-wrap ">
                                 <span class="pagingInfo"></span>
                                 <div class="favorite" data-app-id="{{ $application->id }}">
