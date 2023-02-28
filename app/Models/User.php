@@ -79,9 +79,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function parkings()
     {
-        if ($this->hasRole(['SuperAdmin'])) {
-            return new Parking();
-        }
+
         return $this->hasMany(Parking::class, 'user_id', 'id');
     }
 

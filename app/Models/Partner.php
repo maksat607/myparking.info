@@ -53,8 +53,10 @@ class Partner extends Model
 
     public function parkings(){
         $arr = collect([]);
-        dd($this->users);
         $this->users()->each(function ($item) use (&$arr){
+            if ($item->hasRole(['SuperAdmin'])) {
+                $arr = $arr->merge(new Parking());
+            }
             $arr = $arr->merge($item->parkings);
         });
         return $arr->unique('id');
