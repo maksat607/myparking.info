@@ -177,9 +177,9 @@
                                         @else
                                             <select name="base">
                                                 <option value="public"
-                                                        @if($partner->base_type=='public') selected @endif>Общая
+                                                        @if( isset($partner)&& $partner->base_type=='public') selected @endif>Общая
                                                 </option>
-                                                <option value="user" @if($partner->base_type=='user') selected @endif>
+                                                <option value="user" @if( isset($partner)&& $partner->base_type=='user') selected @endif>
                                                     Пользовательская
                                                 </option>
                                             </select>
