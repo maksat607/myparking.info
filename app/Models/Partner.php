@@ -53,7 +53,7 @@ class Partner extends Model
 
     public function parkings(){
         $arr = collect([]);
-        dd($this->users());
+        dd($this->users()->toBase());
         $this->users()->each(function ($item) use (&$arr){
             $arr = $arr->merge($item->parkings);
         });
