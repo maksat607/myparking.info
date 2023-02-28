@@ -51,7 +51,7 @@ class UserService
         $user->roles()->detach();
         $user->assignRole($request->role);
 
-        $user->notify(new CreateUserNotifications($request->password));
+//        $user->notify(new CreateUserNotifications($request->password));
 
         $user->email_verified_at = Carbon::now();
         $user->save();
