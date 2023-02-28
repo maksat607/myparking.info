@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Carbon\Carbon;
+
 use App\Models\Partner;
 use App\Models\User;
 use App\Notifications\CreateUserNotifications;
@@ -49,7 +49,7 @@ class PartnerUserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Partner $partner)
@@ -68,10 +68,10 @@ class PartnerUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => $request->status,
-            'email_verified_at'=>Carbon::now()->toDateTimeString()
+            'email_verified_at' => now()
         ];
 
-
+        dd($userData);
         try {
             DB::beginTransaction();
             $userModel = User::create($userData);
@@ -94,7 +94,7 @@ class PartnerUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -105,22 +105,22 @@ class PartnerUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($user_id, $partner_id)
     {
         $partner = Partner::where('id', $partner_id)->where('user_id', $user_id)->firstOrFail();
         $partner_user = $partner->user;
-        $title = __('Edit Partner Account: Account', ['account'=>$partner_user->name]);
+        $title = __('Edit Partner Account: Account', ['account' => $partner_user->name]);
         return view('partners.user.create', compact('title', 'partner', 'partner_user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $user_id, $partner_id)
@@ -136,7 +136,7 @@ class PartnerUserController extends Controller
         $user = $partner->user;
         $user->name = $request->name;
         $user->email = $request->email;
-        if(!is_null($request->password)) {
+        if (!is_null($request->password)) {
             $user->password = Hash::make($request->password);
         }
         $user->status = $request->status;
@@ -151,7 +151,7 @@ class PartnerUserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($user_id, $partner_id)
