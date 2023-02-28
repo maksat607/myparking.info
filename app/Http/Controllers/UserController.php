@@ -67,7 +67,6 @@ class UserController extends AppController
 
         $roles = $this->userService->roles();
         $title = __('Create new user');
-
         return view('users.create', compact('roles', 'title'));
     }
 
@@ -80,7 +79,6 @@ class UserController extends AppController
      */
     public function store(Request $request)
     {
-
         $this->authorize('issetPartnerOperator', auth()->user());
         $user = $this->userService->store($request);
         return ($user->exists)

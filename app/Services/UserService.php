@@ -39,6 +39,7 @@ class UserService
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            'email_verified_at' => now(),
             'status' => $request->input('status', 0),
         ];
 
@@ -117,7 +118,6 @@ class UserService
         $user->assignRole($request->role);
         return $user;
     }
-
 
 
 }
